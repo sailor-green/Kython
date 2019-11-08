@@ -21,6 +21,7 @@
 plugins {
     kotlin("jvm") version "1.3.60-eap-76"
     id("application")
+    kotlin("kapt") version "1.3.60-eap-76"
 }
 
 group = "green.sailor"
@@ -30,18 +31,23 @@ repositories {
     maven {
         setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
     }
+    maven {
+        setUrl("https://dl.bintray.com/arrow-kt/arrow-kt/")
+    }
 
     mavenCentral()
 }
 
-dependencies {
-    implementation(
-        kotlin("stdlib-jdk8")
-    )
+val arrowVersion: String by project
 
-    implementation(
-        kotlin("reflect")
-    )
+dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
+
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+    kapt("io.arrow-kt:arrow-meta:$arrowVersion")
+
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
