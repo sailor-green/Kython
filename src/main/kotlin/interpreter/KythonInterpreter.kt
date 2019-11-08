@@ -79,7 +79,7 @@ object KythonInterpreter {
      * Runs a python thread.
      */
     fun runPythonThread(rootFrame: UserCodeStackFrame) {
-        rootFrame.runFrame(PyTuple.EMPTY, PyDict.EMPTY)
+        val result = rootFrame.runFrame(PyTuple.EMPTY, PyDict.EMPTY)
     }
 
     /**

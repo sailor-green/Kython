@@ -22,6 +22,7 @@ import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.KyFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyDict
+import green.sailor.kython.interpreter.objects.python.PyInt
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyTuple
 import java.util.*
@@ -35,11 +36,17 @@ class UserCodeStackFrame(
     val function: KyFunction
 ) : StackFrame() {
     companion object {
-        // no need for an enum
-        const val LT_CONST = 0
-        const val LT_FAST = 1
-        const val LT_NAME = 2
-        const val LT_ATTR = 3
+        /** Load pools for LOAD/STORE instructions. These represent where the instruction will operate on. */
+        enum class LoadPool {
+            CONST,
+            FAST,
+            NAME,
+            ATTR,
+        }
+
+        enum class BinaryOp {
+            ADD,
+        }
     }
 
     /**
@@ -76,15 +83,20 @@ class UserCodeStackFrame(
 
             // switch on opcode
             val opcodeResult: InterpreterResult = when (nextInstruction.opcode) {
-                // easy ones
-                InstructionOpcode.LOAD_FAST -> this.load(LT_FAST, param)
-                InstructionOpcode.LOAD_NAME -> this.load(LT_NAME, param)
-                InstructionOpcode.LOAD_CONST -> this.load(LT_CONST, param)
+                // load ops
+                InstructionOpcode.LOAD_FAST -> this.load(LoadPool.FAST, param)
+                InstructionOpcode.LOAD_NAME -> this.load(LoadPool.NAME, param)
+                InstructionOpcode.LOAD_CONST -> this.load(LoadPool.CONST, param)
 
-                InstructionOpcode.STORE_NAME -> this.store(LT_NAME, param)
-                InstructionOpcode.STORE_FAST -> this.store(LT_FAST, param)
+                // store ops
+                InstructionOpcode.STORE_NAME -> this.store(LoadPool.NAME, param)
+                InstructionOpcode.STORE_FAST -> this.store(LoadPool.FAST, param)
+
+                // binary ops
+                InstructionOpcode.BINARY_ADD -> this.binaryOp(BinaryOp.ADD, param)
 
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
+                InstructionOpcode.RETURN_VALUE -> this.returnValue(param)
 
                 InstructionOpcode.POP_TOP -> this.popTop(param)
 
@@ -101,16 +113,21 @@ class UserCodeStackFrame(
     // scary instruction implementations
     // this is all below the main class because there's a LOT going on here
 
+    fun returnValue(arg: Byte): InterpreterResult {
+        val tos = stack.pop()
+        return InterpreterResultReturn(tos)
+    }
+
     /**
      * LOAD_(NAME|FAST).
      */
-    fun load(pool: Int, opval: Byte): InterpreterResult {
+    fun load(pool: LoadPool, opval: Byte): InterpreterResult {
         // pool is the type we want to load
         val idx = opval.toInt()
         val toPush = when (pool) {
-            LT_CONST -> this.function.code.consts[idx]
-            LT_FAST -> this.realVarnames[idx]
-            LT_NAME -> {
+            LoadPool.CONST -> this.function.code.consts[idx]
+            LoadPool.FAST -> this.realVarnames[idx]
+            LoadPool.NAME -> {
                 // sometimes a global...
                 val realName = this.realNames[idx]
                 val result = if (realName == null) {
@@ -135,11 +152,11 @@ class UserCodeStackFrame(
     /**
      * STORE_(NAME|FAST).
      */
-    fun store(pool: Int, arg: Byte): InterpreterResult {
+    fun store(pool: LoadPool, arg: Byte): InterpreterResult {
         val idx = arg.toInt()
         val toStoreIn = when (pool) {
-            LT_NAME -> this.realNames
-            LT_FAST -> this.realVarnames
+            LoadPool.NAME -> this.realNames
+            LoadPool.FAST -> this.realVarnames
             else -> error("Can't store items in pool $pool")
         }
         toStoreIn[idx] = this.stack.pop()
@@ -193,5 +210,21 @@ class UserCodeStackFrame(
         this.stack.pop()
         this.bytecodePointer += 1
         return InterpreterResultNoAction
+    }
+
+    /**
+     * BINARY_* (ADD, etc)
+     */
+    fun binaryOp(type: BinaryOp, arg: Byte): InterpreterResult {
+        val result = when (type) {
+            BinaryOp.ADD -> {
+                // todo: __add__
+                stack.push(PyInt((stack.pop() as PyInt).wrappedInt + (stack.pop() as PyInt).wrappedInt))
+                InterpreterResultNoAction
+            }
+            else -> error("Unsupported binary op $type")
+        }
+        this.bytecodePointer += 1
+        return result
     }
 }
