@@ -71,6 +71,9 @@ abstract class PyObject() {
     /** The type of this PyObject. */
     lateinit var type: PyObject
 
+    /** The parent types of this PyObject. Exposed as `__bases__`. */
+    val parentTypes = mutableListOf<PyType>()
+
     /** The `__dict__` of this PyObject. */
     private val internalDict = mutableMapOf<String, PyObject>()
 
