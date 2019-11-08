@@ -18,9 +18,10 @@
 
 package green.sailor.kython.interpreter.objects
 
+import arrow.core.Either
 import green.sailor.kython.interpreter.instruction.Instruction
-import green.sailor.kython.interpreter.objects.functions.Builtins
 import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -47,13 +48,12 @@ class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
     /**
      * Gets a global from the globals for this function.
      */
-    fun getGlobal(name: String): PyObject {
+    fun getGlobal(name: String): Either<PyException, PyObject> {
         val wrapped = PyString(name)
         if (wrapped in Builtins.BUILTINS_MAP.items) {
-            return Builtins.BUILTINS_MAP.items[wrapped]!!
+            return Either.right(Builtins.BUILTINS_MAP.items[wrapped]!!)
         }
-
-        error("TODO: NameError et al.")
+        TODO()
     }
 
     override fun getFrame(parentFrame: StackFrame): StackFrame =

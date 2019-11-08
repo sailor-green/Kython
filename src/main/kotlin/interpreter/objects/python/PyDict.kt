@@ -35,4 +35,11 @@ class PyDict(val items: MutableMap<PyObject, PyObject>) : PyObject() {
         TODO("not implemented")
     }
 
+    /**
+     * Gets an item from the internal dict.
+     */
+    fun getItem(key: PyObject): PyObject? {
+        return this.items[key]
+    }
+
 }

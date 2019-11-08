@@ -18,13 +18,14 @@
 
 package green.sailor.kython.interpreter.stack
 
+import arrow.core.Either
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.none
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.KyFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
-import green.sailor.kython.interpreter.objects.python.PyDict
-import green.sailor.kython.interpreter.objects.python.PyInt
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyTuple
+import green.sailor.kython.interpreter.objects.python.*
 import java.util.*
 
 /**
@@ -73,7 +74,7 @@ class UserCodeStackFrame(
     /**
      * Runs this stack frame, executing the function within.
      */
-    override fun runFrame(args: PyTuple, kwargs: PyDict): InterpreterResult {
+    override fun runFrame(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
         while (true) {
             // simple fetch decode execute loop
             // maybe this could be pipelined.
@@ -81,8 +82,14 @@ class UserCodeStackFrame(
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
 
+            // special case this, because it returns from runFrame
+            if (nextInstruction.opcode == InstructionOpcode.RETURN_VALUE) {
+                val result = this.returnValue(param)
+                return Either.Right(result)
+            }
+
             // switch on opcode
-            val opcodeResult: InterpreterResult = when (nextInstruction.opcode) {
+            val opcodeResult = when (nextInstruction.opcode) {
                 // load ops
                 InstructionOpcode.LOAD_FAST -> this.load(LoadPool.FAST, param)
                 InstructionOpcode.LOAD_NAME -> this.load(LoadPool.NAME, param)
@@ -96,15 +103,16 @@ class UserCodeStackFrame(
                 InstructionOpcode.BINARY_ADD -> this.binaryOp(BinaryOp.ADD, param)
 
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
-                InstructionOpcode.RETURN_VALUE -> this.returnValue(param)
 
                 InstructionOpcode.POP_TOP -> this.popTop(param)
 
                 else -> error("Unimplemented opcode $opcode")
             }
 
-            if (opcodeResult != InterpreterResultNoAction) {
-                return opcodeResult
+            // TODO: Try handling
+            if (opcodeResult.isDefined()) {
+                // this will never be null, since we call isDefined.
+                return Either.Left(opcodeResult.orNull()!!)
             }
         }
     }
@@ -113,46 +121,58 @@ class UserCodeStackFrame(
     // scary instruction implementations
     // this is all below the main class because there's a LOT going on here
 
-    fun returnValue(arg: Byte): InterpreterResult {
-        val tos = stack.pop()
-        return InterpreterResultReturn(tos)
+    // i don't see how this can ever error...
+    fun returnValue(arg: Byte): PyObject {
+        return stack.pop()
     }
 
     /**
      * LOAD_(NAME|FAST).
      */
-    fun load(pool: LoadPool, opval: Byte): InterpreterResult {
+    fun load(pool: LoadPool, opval: Byte): Option<PyException> {
         // pool is the type we want to load
         val idx = opval.toInt()
-        val toPush = when (pool) {
-            LoadPool.CONST -> this.function.code.consts[idx]
-            LoadPool.FAST -> this.realVarnames[idx]
+        val loadResult = when (pool) {
+            LoadPool.CONST -> Either.Right(this.function.code.consts[idx])
+            LoadPool.FAST -> Either.Right(this.realVarnames[idx]!!)
             LoadPool.NAME -> {
                 // sometimes a global...
                 val realName = this.realNames[idx]
                 val result = if (realName == null) {
                     val name = this.function.code.names[idx]
                     val global = this.function.getGlobal(name)
-                    this.realNames[idx] = global
+
+                    if (global.isRight()) {
+                        this.realNames[idx] = (global as Either.Right).b
+                    }
+
                     global
                 } else {
-                    realName
+                    Either.Right(realName)
                 }
                 result
             }
-            else -> error("Unknown pool for LOAD_X instruction: $pool")
+            else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }
 
-        this.stack.push(toPush)
-        this.bytecodePointer += 1
+        return when (loadResult) {
+            is Either.Left -> {
+                Some(loadResult.a)
+            }
+            is Either.Right -> {
+                val toPush = loadResult.b
+                this.stack.push(toPush)
+                this.bytecodePointer += 1
+                none()
+            }
+        }
 
-        return InterpreterResultNoAction
     }
 
     /**
      * STORE_(NAME|FAST).
      */
-    fun store(pool: LoadPool, arg: Byte): InterpreterResult {
+    fun store(pool: LoadPool, arg: Byte): Option<PyException> {
         val idx = arg.toInt()
         val toStoreIn = when (pool) {
             LoadPool.NAME -> this.realNames
@@ -161,13 +181,13 @@ class UserCodeStackFrame(
         }
         toStoreIn[idx] = this.stack.pop()
         this.bytecodePointer += 1
-        return InterpreterResultNoAction
+        return none()
     }
 
     /**
      * CALL_FUNCTION.
      */
-    fun callFunction(opval: Byte): InterpreterResult {
+    fun callFunction(opval: Byte): Option<PyException> {
         // CALL_FUNCTION(argc)
         // pops (argc) arguments off the stack (right to left) then invokes a function.
         val args = opval.toInt()
@@ -179,18 +199,18 @@ class UserCodeStackFrame(
         val posArgs = PyTuple(toCallWith.reversed())
         val fn = this.stack.pop()
         if (fn !is PyCallable) {
-            error("CALL_FUNCTION called on a non-callable!")
+            error("CALL_FUNCTION called on non-callable $fn!")
         }
 
         val childFrame = fn.getFrame(this)
         this.childFrame = childFrame
         val result = childFrame.runFrame(posArgs, PyDict.EMPTY)
         // errors should be passed down, and results should be put onto the stack
-        if (result is InterpreterResultError) {
-            return result
-        } else {
+        if (result is Either.Left) {
+            return Some(result.a)
+        } else if (result is Either.Right) {
             // this cast must always succeed, because runFrame should never return anything other than these two
-            val unwrapped = (result as InterpreterResultReturn).result
+            val unwrapped = result.b
             this.stack.push(unwrapped)
             this.childFrame = null
             // not needed, but just to speed up GC
@@ -199,28 +219,28 @@ class UserCodeStackFrame(
 
 
         this.bytecodePointer += 1
-        return InterpreterResultNoAction
+        return none()
     }
 
     /**
      * POP_TOP.
      */
-    fun popTop(arg: Byte): InterpreterResult {
+    fun popTop(arg: Byte): Option<PyException> {
         assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
         this.stack.pop()
         this.bytecodePointer += 1
-        return InterpreterResultNoAction
+        return none()
     }
 
     /**
      * BINARY_* (ADD, etc)
      */
-    fun binaryOp(type: BinaryOp, arg: Byte): InterpreterResult {
-        val result = when (type) {
+    fun binaryOp(type: BinaryOp, arg: Byte): Option<PyException> {
+        val result: Option<PyException> = when (type) {
             BinaryOp.ADD -> {
                 // todo: __add__
                 stack.push(PyInt((stack.pop() as PyInt).wrappedInt + (stack.pop() as PyInt).wrappedInt))
-                InterpreterResultNoAction
+                none()
             }
             else -> error("Unsupported binary op $type")
         }

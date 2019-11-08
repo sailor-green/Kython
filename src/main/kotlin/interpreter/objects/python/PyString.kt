@@ -35,4 +35,8 @@ class PyString(val wrappedString: String) : PyObject() {
 
         return this.wrappedString == other.wrappedString
     }
+
+    override fun hashCode(): Int {
+        return wrappedString.hashCode()
+    }
 }

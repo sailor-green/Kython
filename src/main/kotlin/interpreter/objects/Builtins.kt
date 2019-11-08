@@ -16,24 +16,29 @@
  *
  */
 
-package green.sailor.kython.interpreter.stack
+package green.sailor.kython.interpreter.objects
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.KyBuiltinFunction
+import green.sailor.kython.interpreter.objects.functions.PrintBuiltinFunction
 import green.sailor.kython.interpreter.objects.python.PyDict
-import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyTuple
+import green.sailor.kython.interpreter.objects.python.PyInt
+import green.sailor.kython.interpreter.objects.python.PyString
 
 /**
- * Represents a built-in stack frame.
+ * Represents the builtins.
  */
-class BuiltinStackFrame(val builtinFunction: KyBuiltinFunction) : StackFrame() {
-    override fun runFrame(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-        return this.builtinFunction.callFunction(args, kwargs)
-    }
+object Builtins {
+    /** The print() builtin instance. */
+    val PRINT = PrintBuiltinFunction()
 
-    override fun getStackFrameInfo(): StackFrameInfo.BuiltinFrameInfo {
-        return StackFrameInfo.BuiltinFrameInfo(this)
-    }
+    val INT_TYPE = PyInt.PyIntType
+
+    /** The PyDict map of builtins. */
+    val BUILTINS_MAP = PyDict(
+        mutableMapOf(
+            PyString("print") to PRINT,
+
+            // class types
+            PyString("int") to INT_TYPE
+        )
+    )
 }

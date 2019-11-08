@@ -16,22 +16,18 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.functions
-
-import green.sailor.kython.interpreter.objects.python.PyDict
-import green.sailor.kython.interpreter.objects.python.PyString
+package green.sailor.kython.interpreter.objects.python
 
 /**
- * Represents the builtins.
+ * Represents an exception type.
  */
-object Builtins {
-    /** The print() builtin instance. */
-    val PRINT = PrintBuiltinFunction()
+class PyException(val args: PyTuple) : PyObject() {
+    override fun toPyString(): PyString {
+        TODO("not implemented")
+    }
 
-    /** The PyDict map of builtins. */
-    val BUILTINS_MAP = PyDict(
-        mutableMapOf(
-            PyString("print") to PRINT
-        )
-    )
+    override fun toPyStringRepr(): PyString {
+        TODO("not implemented")
+    }
+
 }
