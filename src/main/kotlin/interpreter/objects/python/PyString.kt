@@ -18,12 +18,22 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
+
 /**
  * Represents a Python string. This wraps a regular JVM string.
  */
 class PyString(val wrappedString: String) : PyObject() {
+    object PyStringType : PyType("str") {
+
+        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+            val item = args.subobjects.first()
+            return Either.Right(item.toPyString())
+        }
+    }
+
     override fun toPyString(): PyString = this
-    override fun toPyStringRepr(): PyString = this
+    override fun toPyStringRepr(): PyString = PyString("'$wrappedString'")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

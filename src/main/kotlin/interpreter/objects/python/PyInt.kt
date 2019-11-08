@@ -18,10 +18,38 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
+
 /**
  * Represents a Python int type. This internally wraps a long,
  */
-class PyInt(val wrappedInt: Long) : PyObject() {
+class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
+    object PyIntType : PyType("int") {
+        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+            if (args.subobjects.size < 0) {
+                TODO("too small error")
+            } else if (args.subobjects.size > 1) {
+                TODO("too big error")
+            }
+
+            val item = args.subobjects.first()
+            return if (item is PyInt) {
+                Either.Right(item)
+            } else {
+                // TODO: `__int__`
+                if (item !is PyString) {
+                    TODO("not an intable error")
+                }
+
+                val baseArg = PyString("base")
+                val pyBase: PyInt? = kwargs.getItem(baseArg) as PyInt?
+                val base = pyBase?.wrappedInt ?: 10
+                val converted = item.wrappedString.toInt(radix = base.toInt())
+                Either.Right(PyInt(converted.toLong()))
+            }
+        }
+    }
+
     override fun toPyString(): PyString =
         PyString(this.wrappedInt.toString())
 
