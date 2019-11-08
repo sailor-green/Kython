@@ -47,6 +47,9 @@ abstract class StackFrameInfo {
         error("This frame has no stack (is a builtin?)")
     }
 
+    /** Gets the traceback string for this stack frame, unindented. */
+    abstract fun getTracebackString(): String
+
     class UserFrameInfo(val frame: UserCodeStackFrame) : StackFrameInfo() {
         override val name: PyString
             get() = PyString(frame.function.code.codename)
@@ -64,6 +67,12 @@ abstract class StackFrameInfo {
         override fun getStack(): Deque<PyObject> {
             return this.frame.stack
         }
+
+        override fun getTracebackString(): String {
+            return "File ${frame.function.code.filename}, " +
+                    "instruction idx ${frame.bytecodePointer}, " +
+                    "in ${frame.function.code.codename}"
+        }
     }
 
     class BuiltinFrameInfo(val frame: BuiltinStackFrame) : StackFrameInfo() {
@@ -72,5 +81,9 @@ abstract class StackFrameInfo {
 
         override val filename: PyString
             get() = PyString("<builtin>")
+
+        override fun getTracebackString(): String {
+            return "File <builtin>, in ${frame.builtinFunction.name}"
+        }
     }
 }

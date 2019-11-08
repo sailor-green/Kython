@@ -100,17 +100,14 @@ object KythonInterpreter {
             val stacks = StackFrame.flatten(frame).reversed()
             for (frame in stacks) {
                 val info = frame.getStackFrameInfo()
-                System.err.println(
-                    "  File ${info.filename.wrappedString}, " +
-                            "in ${info.name.wrappedString}"
-                )
+                System.err.println("   " + info.getTracebackString())
                 if (info.hasDisassembly) {
                     val disassembly = info.getDisassembly()
                     System.err.println("Disassembly:\n$disassembly")
                 }
                 if (info.hasStack) {
-                    System.err.println("Function stack: ")
                     val stack = info.getStack()
+                    System.err.println("Function stack, size: ${stack.size}")
                     for ((idx, pyo) in stack.iterator().withIndex()) {
                         System.err.println("    $idx: $pyo")
                     }

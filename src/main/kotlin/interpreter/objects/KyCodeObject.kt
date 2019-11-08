@@ -99,6 +99,8 @@ class KyCodeObject(original: MarshalCodeObject) {
      * Gets a newline separated disassembly for this code object.
      */
     fun getDisassembly(frame: UserCodeStackFrame): String {
-        return this.instructions.joinToString("\n") { "   " + it.getDisassembly(frame) }
+        return this.instructions
+            .withIndex()
+            .joinToString("\n") { "    0x${it.index.toString(16)}: ${it.value.getDisassembly(frame)}" }
     }
 }
