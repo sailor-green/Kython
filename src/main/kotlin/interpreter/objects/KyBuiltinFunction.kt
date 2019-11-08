@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyString
 import green.sailor.kython.interpreter.objects.python.PyTuple
 import green.sailor.kython.interpreter.stack.BuiltinStackFrame
+import green.sailor.kython.interpreter.stack.InterpreterResult
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -36,7 +37,8 @@ abstract class KyBuiltinFunction(val name: String) : PyObject(), PyCallable {
     /**
      * Called when the function is called from within a stack frame.
      */
-    abstract fun callFunction(args: PyTuple, kwargs: PyDict)
+    abstract fun callFunction(args: PyTuple, kwargs: PyDict): InterpreterResult
 
-    override fun getFrame(): StackFrame = BuiltinStackFrame(this)
+    override fun getFrame(parentFrame: StackFrame): StackFrame =
+        BuiltinStackFrame(this).apply { this.parentFrame = parentFrame }
 }

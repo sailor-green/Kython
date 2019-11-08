@@ -26,8 +26,8 @@ import green.sailor.kython.interpreter.objects.python.PyTuple
  * Represents a built-in stack frame.
  */
 class BuiltinStackFrame(val builtinFunction: KyBuiltinFunction) : StackFrame() {
-    override fun runFrame(args: PyTuple, kwargs: PyDict) {
-        this.builtinFunction.callFunction(args, kwargs)
+    override fun runFrame(args: PyTuple, kwargs: PyDict): InterpreterResult {
+        return this.builtinFunction.callFunction(args, kwargs)
     }
 
     override fun getStackFrameInfo(): StackFrameInfo.BuiltinFrameInfo {

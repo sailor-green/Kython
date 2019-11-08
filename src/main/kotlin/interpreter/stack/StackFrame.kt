@@ -46,9 +46,14 @@ abstract class StackFrame {
     var childFrame: StackFrame? = null
 
     /**
+     * The parent frame for this stack frame, if any.
+     */
+    var parentFrame: StackFrame? = null
+
+    /**
      * Runs this stack frame, invoking the function underneath.
      */
-    abstract fun runFrame(args: PyTuple, kwargs: PyDict)
+    abstract fun runFrame(args: PyTuple, kwargs: PyDict): InterpreterResult
 
     /**
      * Gets the stack frame information for this stack frame.

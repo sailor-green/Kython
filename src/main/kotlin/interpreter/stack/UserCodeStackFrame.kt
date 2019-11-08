@@ -66,7 +66,7 @@ class UserCodeStackFrame(
     /**
      * Runs this stack frame, executing the function within.
      */
-    override fun runFrame(args: PyTuple, kwargs: PyDict) {
+    override fun runFrame(args: PyTuple, kwargs: PyDict): InterpreterResult {
         while (true) {
             // simple fetch decode execute loop
             // maybe this could be pipelined.
@@ -75,7 +75,7 @@ class UserCodeStackFrame(
             val param = nextInstruction.argument
 
             // switch on opcode
-            when (nextInstruction.opcode) {
+            val opcodeResult: InterpreterResult = when (nextInstruction.opcode) {
                 // easy ones
                 InstructionOpcode.LOAD_FAST -> this.load(LT_FAST, param)
                 InstructionOpcode.LOAD_NAME -> this.load(LT_NAME, param)
@@ -84,6 +84,10 @@ class UserCodeStackFrame(
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
 
                 else -> error("Unimplemented opcode $opcode")
+            }
+
+            if (opcodeResult != InterpreterResultNoAction) {
+                return opcodeResult
             }
         }
     }
@@ -95,7 +99,7 @@ class UserCodeStackFrame(
     /**
      * LOAD_(NAME|FAST).
      */
-    fun load(pool: Int, opval: Byte) {
+    fun load(pool: Int, opval: Byte): InterpreterResult {
         // pool is the type we want to load
         val idx = opval.toInt()
         val toPush = when (pool) {
@@ -119,12 +123,14 @@ class UserCodeStackFrame(
 
         this.stack.push(toPush)
         this.bytecodePointer += 1
+
+        return InterpreterResultNoAction
     }
 
     /**
      * CALL_FUNCTION.
      */
-    fun callFunction(opval: Byte) {
+    fun callFunction(opval: Byte): InterpreterResult {
         // CALL_FUNCTION(argc)
         // pops (argc) arguments off the stack (right to left) then invokes a function.
         val args = opval.toInt()
@@ -138,10 +144,25 @@ class UserCodeStackFrame(
         if (fn !is PyCallable) {
             error("CALL_FUNCTION called on a non-callable!")
         }
-        val childFrame = fn.getFrame()
-        // TODO: Results
+
+        val childFrame = fn.getFrame(this)
         this.childFrame = childFrame
-        childFrame.runFrame(posArgs, PyDict.EMPTY)
+        val result = childFrame.runFrame(posArgs, PyDict.EMPTY)
+        // errors should be passed down, and results should be put onto the stack
+        if (result is InterpreterResultError) {
+            return result
+        } else {
+            // this cast must always succeed, because runFrame should never return anything other than these two
+            val unwrapped = (result as InterpreterResultReturn).result
+            this.stack.push(unwrapped)
+            this.childFrame = null
+            // not needed, but just to speed up GC
+            childFrame.parentFrame = null
+        }
+
+
         this.bytecodePointer += 1
+        return InterpreterResultNoAction
+
     }
 }

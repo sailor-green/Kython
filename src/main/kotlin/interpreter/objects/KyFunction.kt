@@ -56,9 +56,8 @@ class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
         error("TODO: NameError et al.")
     }
 
-    override fun getFrame(): StackFrame {
-        return UserCodeStackFrame(this)
-    }
+    override fun getFrame(parentFrame: StackFrame): StackFrame =
+        UserCodeStackFrame(this).apply { this.parentFrame = parentFrame }
 
     override fun toPyString(): PyString = PyString("<user function ${code.codename}>")
     override fun toPyStringRepr(): PyString = toPyString()

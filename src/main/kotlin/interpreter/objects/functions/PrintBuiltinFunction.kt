@@ -21,14 +21,18 @@ package green.sailor.kython.interpreter.objects.functions
 import green.sailor.kython.interpreter.objects.KyBuiltinFunction
 import green.sailor.kython.interpreter.objects.python.PyDict
 import green.sailor.kython.interpreter.objects.python.PyTuple
+import green.sailor.kython.interpreter.stack.InterpreterResult
+import green.sailor.kython.interpreter.stack.InterpreterResultReturn
 
 /**
  * Represents the print() builtin.
  */
 class PrintBuiltinFunction : KyBuiltinFunction("print") {
-    override fun callFunction(args: PyTuple, kwargs: PyDict) {
+    override fun callFunction(args: PyTuple, kwargs: PyDict): InterpreterResult {
         // todo: more args
         val final = args.subobjects.joinToString(" ") { it.toPyStringRepr().wrappedString }
         println(final)
+
+        return InterpreterResultReturn.NONE_RETURN
     }
 }
