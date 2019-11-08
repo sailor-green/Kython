@@ -18,15 +18,24 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
+
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
  */
-class PyTuple(val subobjects: Collection<PyObject>) : PyObject() {
+class PyTuple(val subobjects: Collection<PyObject>) : PyObject(PyTupleType) {
     companion object {
         /**
          * Represents the empty tuple.
          */
         val EMPTY = PyTuple(listOf())
+    }
+
+    // simple passthrough
+    object PyTupleType : PyType("tuple") {
+        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+            return Either.right(args)
+        }
     }
 
     // ugly but it'll do.

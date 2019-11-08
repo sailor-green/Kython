@@ -18,10 +18,18 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
+
 /**
  * Represents the Python None.
  */
-object PyNone : PyObject() {
+object PyNone : PyObject(PyNoneType) {
+    object PyNoneType : PyType("NoneType") {
+        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+            TODO("Cannot create new NoneType instances.")
+        }
+    }
+
     private val noneString = PyString("None")
 
     override fun toPyString(): PyString =

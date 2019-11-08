@@ -18,13 +18,22 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
+
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: MutableMap<PyObject, PyObject>) : PyObject() {
+class PyDict(val items: MutableMap<PyObject, PyObject>) : PyObject(PyDictType) {
     companion object {
         /** Represents the empty dict. */
         val EMPTY = PyDict(mutableMapOf())
+    }
+
+    object PyDictType : PyType("dict") {
+        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+            // another simple passthrough
+            return Either.right(kwargs)
+        }
     }
 
     override fun toPyString(): PyString {

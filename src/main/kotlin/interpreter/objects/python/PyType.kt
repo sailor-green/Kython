@@ -28,6 +28,15 @@ import green.sailor.kython.interpreter.stack.StackFrame
  */
 abstract class PyType(val name: String) : PyObject(), PyCallable {
     /**
+     * Represents the root type. If the type of a PyObject is not set, this will be useed.
+     */
+    object PyRootType : PyType("type") {
+        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+            TODO("Type")
+        }
+    }
+
+    /**
      * Creates a new instance of the object represented by this type.
      *
      * This is the behind the scenes work for `object.__new__(class, *args, **kwargs)`. This is (generally) not called
