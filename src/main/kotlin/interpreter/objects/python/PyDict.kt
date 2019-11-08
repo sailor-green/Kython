@@ -21,10 +21,10 @@ package green.sailor.kython.interpreter.objects.python
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: Map<PyObject, PyObject>) : PyObject() {
+class PyDict(val items: MutableMap<PyObject, PyObject>) : PyObject() {
     companion object {
         /** Represents the empty dict. */
-        val EMPTY = PyDict(mapOf())
+        val EMPTY = PyDict(mutableMapOf())
     }
 
     override fun toPyString(): PyString {

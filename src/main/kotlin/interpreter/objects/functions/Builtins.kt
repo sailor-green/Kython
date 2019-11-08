@@ -30,7 +30,7 @@ object Builtins {
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = PyDict(
-        mapOf(
+        mutableMapOf(
             PyString("print") to PRINT
         )
     )

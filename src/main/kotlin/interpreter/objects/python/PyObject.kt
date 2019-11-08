@@ -71,8 +71,39 @@ abstract class PyObject() {
     /** The type of this PyObject. */
     lateinit var type: PyObject
 
+    /** The `__dict__` of this PyObject. */
+    private val internalDict = mutableMapOf<String, PyObject>()
+
     constructor(type: PyObject) : this() {
         this.type = type
+    }
+
+    // `object.X` implementations
+    /**
+     * Delegate for `LOAD_ATTR` on any object.
+     */
+    fun pyGetAttribute(name: String): PyObject? {
+        // TODO: Metaclasses, oh god
+
+        // special method lookup
+        if (name.startsWith("__") and name.endsWith("__")) {
+            return this.type.specialMethodLookup(name)
+        }
+
+        // try and find it on our dict, e.g. `__init__`
+        if (name in this.internalDict) {
+            return this.internalDict[name]!!
+        }
+
+        // delegate to the type object
+        return this.type.pyGetAttribute(name)
+    }
+
+    /**
+     * Performs special method lookup.
+     */
+    fun specialMethodLookup(name: String): PyObject? {
+        TODO("Special method lookup")
     }
 
     /**
@@ -84,4 +115,11 @@ abstract class PyObject() {
      * Turns this object into a PyString when repr() is called. This corresponds to the `__repr__` method.
      */
     abstract fun toPyStringRepr(): PyString
+
+    /**
+     * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.
+     */
+    fun getPyDict(): PyDict {
+        return PyDict(internalDict.mapKeys { PyString(it.key) }.toMutableMap())
+    }
 }
