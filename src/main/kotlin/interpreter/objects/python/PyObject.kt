@@ -18,7 +18,9 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import green.sailor.kython.marshal.MarshalDict
 import green.sailor.kython.marshal.MarshalNone
+import green.sailor.kython.marshal.MarshalTuple
 import green.sailor.kython.marshal.MarshalType
 
 /**
@@ -30,6 +32,16 @@ abstract class PyObject() {
          * Wraps a marshalled object from code into a PyObject.
          */
         fun wrapMarshalled(type: MarshalType): PyObject {
+            if (type is MarshalTuple) {
+                return PyTuple(type.wrapped.map { wrapMarshalled(it) })
+            } else if (type is MarshalDict) {
+                val map = mutableMapOf<PyObject, PyObject>()
+                for ((key, value) in type.wrapped.entries) {
+                    map[wrapMarshalled(key)] = wrapMarshalled(value)
+                }
+                return PyDict(map)
+            }
+
             if (type.wrapped != null) {
                 return wrapPrimitive(
                     type.wrapped!!
