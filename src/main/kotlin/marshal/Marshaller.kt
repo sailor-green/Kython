@@ -174,7 +174,6 @@ open class Marshaller(protected val buf: ByteBuffer) {
      */
     fun readByteString(): MarshalString {
         val size = buf.int
-        println("read $size for size")
 
         val ca = ByteArray(size)
         for (x in 0 until size) {
