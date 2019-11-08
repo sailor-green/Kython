@@ -23,7 +23,7 @@ import arrow.core.Either
 /**
  * Represents a Python string. This wraps a regular JVM string.
  */
-class PyString(val wrappedString: String) : PyObject() {
+class PyString(val wrappedString: String) : PyObject(PyStringType) {
     object PyStringType : PyType("str") {
 
         override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {

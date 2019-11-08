@@ -31,6 +31,7 @@ object Builtins {
     val PRINT = PrintBuiltinFunction()
 
     val INT_TYPE = PyInt.PyIntType
+    val STRING_TYPE = PyString.PyStringType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = PyDict(
@@ -38,7 +39,8 @@ object Builtins {
             PyString("print") to PRINT,
 
             // class types
-            PyString("int") to INT_TYPE
+            PyString("int") to INT_TYPE,
+            PyString("str") to STRING_TYPE
         )
     )
 }
