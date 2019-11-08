@@ -81,7 +81,12 @@ class UserCodeStackFrame(
                 InstructionOpcode.LOAD_NAME -> this.load(LT_NAME, param)
                 InstructionOpcode.LOAD_CONST -> this.load(LT_CONST, param)
 
+                InstructionOpcode.STORE_NAME -> this.store(LT_NAME, param)
+                InstructionOpcode.STORE_FAST -> this.store(LT_FAST, param)
+
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
+
+                InstructionOpcode.POP_TOP -> this.popTop(param)
 
                 else -> error("Unimplemented opcode $opcode")
             }
@@ -128,6 +133,21 @@ class UserCodeStackFrame(
     }
 
     /**
+     * STORE_(NAME|FAST).
+     */
+    fun store(pool: Int, arg: Byte): InterpreterResult {
+        val idx = arg.toInt()
+        val toStoreIn = when (pool) {
+            LT_NAME -> this.realNames
+            LT_FAST -> this.realVarnames
+            else -> error("Can't store items in pool $pool")
+        }
+        toStoreIn[idx] = this.stack.pop()
+        this.bytecodePointer += 1
+        return InterpreterResultNoAction
+    }
+
+    /**
      * CALL_FUNCTION.
      */
     fun callFunction(opval: Byte): InterpreterResult {
@@ -163,6 +183,15 @@ class UserCodeStackFrame(
 
         this.bytecodePointer += 1
         return InterpreterResultNoAction
+    }
 
+    /**
+     * POP_TOP.
+     */
+    fun popTop(arg: Byte): InterpreterResult {
+        assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
+        this.stack.pop()
+        this.bytecodePointer += 1
+        return InterpreterResultNoAction
     }
 }
