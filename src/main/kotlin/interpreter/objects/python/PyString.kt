@@ -28,12 +28,13 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
 
         override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
             val item = args.subobjects.first()
-            return Either.Right(item.toPyString())
+            return item.toPyString()
         }
     }
 
-    override fun toPyString(): PyString = this
-    override fun toPyStringRepr(): PyString = PyString("'$wrappedString'")
+    override fun toPyString(): Either<PyException, PyString> = Either.right(this)
+    override fun toPyStringRepr(): Either<PyException, PyString> =
+        Either.right(PyString("'$wrappedString'"))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

@@ -32,9 +32,9 @@ object PyNone : PyObject(PyNoneType) {
 
     private val noneString = PyString("None")
 
-    override fun toPyString(): PyString =
-        noneString
+    override fun toPyString(): Either<PyException, PyString> =
+        Either.right(noneString)
 
-    override fun toPyStringRepr(): PyString =
-        noneString
+    override fun toPyStringRepr(): Either<PyException, PyString> =
+        Either.right(noneString)
 }

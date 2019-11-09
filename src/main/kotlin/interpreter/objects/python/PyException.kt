@@ -18,6 +18,8 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
+
 /**
  * Represents an exception object. This should be subclassed for all built-in exceptions
  * (do not build the Python exception tree with Kotlin subclasses).
@@ -32,11 +34,12 @@ abstract class PyException(val args: PyTuple) : PyObject() {
 
     }
 
-    override fun toPyString(): PyString {
+    override fun toPyString(): Either<PyException, PyString> {
         require(this.type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
+        TODO()
     }
 
-    override fun toPyStringRepr(): PyString {
+    override fun toPyStringRepr(): Either<PyException, PyString> {
         TODO("not implemented")
     }
 }

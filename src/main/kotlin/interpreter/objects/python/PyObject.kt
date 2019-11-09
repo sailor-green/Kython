@@ -18,6 +18,7 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import arrow.core.Either
 import green.sailor.kython.marshal.MarshalDict
 import green.sailor.kython.marshal.MarshalNone
 import green.sailor.kython.marshal.MarshalTuple
@@ -112,12 +113,12 @@ abstract class PyObject() {
     /**
      * Turns this object into a PyString. This corresponds to the `__str__` method.
      */
-    abstract fun toPyString(): PyString
+    abstract fun toPyString(): Either<PyException, PyString>
 
     /**
      * Turns this object into a PyString when repr() is called. This corresponds to the `__repr__` method.
      */
-    abstract fun toPyStringRepr(): PyString
+    abstract fun toPyStringRepr(): Either<PyException, PyString>
 
     /**
      * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.

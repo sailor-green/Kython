@@ -39,25 +39,20 @@ class PyTuple(val subobjects: Collection<PyObject>) : PyObject(PyTupleType) {
     }
 
     // ugly but it'll do.
-    override fun toPyString(): PyString {
+    override fun toPyString(): Either<PyException, PyString> {
         val s = StringBuilder("(")
         for (item in subobjects) {
-            s.append(item.toPyString().wrappedString)
+            val maybeString = item.toPyStringRepr()
+            // pass through exceptions
+            if (maybeString.isLeft()) return maybeString
+            maybeString.map { s.append(it.wrappedString) }
             s.append(", ")
         }
         s.append(")")
-        return PyString(s.toString())
+        return Either.right(PyString(s.toString()))
     }
 
-    override fun toPyStringRepr(): PyString {
-        val s = StringBuilder("(")
-        for (item in subobjects) {
-            s.append(item.toPyStringRepr().wrappedString)
-            s.append(", ")
-        }
-        s.append(")")
-        return PyString(s.toString())
-    }
+    override fun toPyStringRepr(): Either<PyException, PyString> = this.toPyString()
 
 
 }

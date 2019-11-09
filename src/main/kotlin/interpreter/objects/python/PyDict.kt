@@ -36,11 +36,11 @@ class PyDict(val items: MutableMap<PyObject, PyObject>) : PyObject(PyDictType) {
         }
     }
 
-    override fun toPyString(): PyString {
+    override fun toPyString(): Either<PyException, PyString> {
         TODO("not implemented")
     }
 
-    override fun toPyStringRepr(): PyString {
+    override fun toPyStringRepr(): Either<PyException, PyString> {
         TODO("not implemented")
     }
 

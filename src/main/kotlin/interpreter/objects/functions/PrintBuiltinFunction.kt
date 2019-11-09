@@ -28,9 +28,15 @@ import green.sailor.kython.interpreter.objects.python.*
 class PrintBuiltinFunction : KyBuiltinFunction("print") {
     override fun callFunction(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
         // todo: more args
-        val final = args.subobjects.joinToString(" ") { it.toPyStringRepr().wrappedString }
-        println(final)
 
+        val sb = StringBuilder()
+        for (arg in args.subobjects) {
+            val result = arg.toPyStringRepr()
+            if (result.isLeft()) return result
+            result.map { sb.append(it.wrappedString) }
+        }
+
+        println(sb.toString())
         return Either.Right(PyNone)
     }
 }

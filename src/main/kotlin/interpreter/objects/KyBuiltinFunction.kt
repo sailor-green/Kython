@@ -28,8 +28,10 @@ import green.sailor.kython.interpreter.stack.StackFrame
  * Represents a built-in function, such as print().
  */
 abstract class KyBuiltinFunction(val name: String) : PyObject(), PyCallable {
-    override fun toPyString(): PyString = PyString("<built-in function $name>")
-    override fun toPyStringRepr(): PyString = toPyString()
+    override fun toPyString(): Either<PyException, PyString> =
+        Either.right(PyString("<built-in function $name>"))
+
+    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
 
     /**
      * Called when the function is called from within a stack frame.

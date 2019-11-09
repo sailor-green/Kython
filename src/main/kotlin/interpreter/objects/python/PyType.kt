@@ -61,7 +61,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     }
 
     // default impls
-    override fun toPyString(): PyString = this._pyString
+    override fun toPyString(): Either<PyException, PyString> = Either.right(this._pyString)
 
-    override fun toPyStringRepr(): PyString = this._pyString
+    override fun toPyStringRepr(): Either<PyException, PyString> = Either.right(this._pyString)
 }

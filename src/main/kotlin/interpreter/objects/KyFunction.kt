@@ -59,6 +59,8 @@ class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
     override fun getFrame(parentFrame: StackFrame): StackFrame =
         UserCodeStackFrame(this).apply { this.parentFrame = parentFrame }
 
-    override fun toPyString(): PyString = PyString("<user function ${code.codename}>")
-    override fun toPyStringRepr(): PyString = toPyString()
+    override fun toPyString(): Either<PyException, PyString> =
+        Either.right(PyString("<user function ${code.codename}>"))
+
+    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
 }

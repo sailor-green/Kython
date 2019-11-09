@@ -50,10 +50,10 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
         }
     }
 
-    override fun toPyString(): PyString =
-        PyString(this.wrappedInt.toString())
+    override fun toPyString(): Either<PyException, PyString> =
+        Either.right(PyString(this.wrappedInt.toString()))
 
-    override fun toPyStringRepr(): PyString = this.toPyString()
+    override fun toPyStringRepr(): Either<PyException, PyString> = this.toPyString()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
