@@ -19,15 +19,24 @@
 package green.sailor.kython.interpreter.objects.python
 
 /**
- * Represents an exception type.
+ * Represents an exception object. This should be subclassed for all built-in exceptions
+ * (do not build the Python exception tree with Kotlin subclasses).
+ *
+ * Each subclass should pass in the appropriate type to the PyObject constructor.
  */
-class PyException(val args: PyTuple) : PyObject() {
+abstract class PyException(val args: PyTuple) : PyObject() {
+    /**
+     * Represents the type of an exception.
+     */
+    abstract class PyExceptionType(name: String) : PyType(name) {
+
+    }
+
     override fun toPyString(): PyString {
-        TODO("not implemented")
+        require(this.type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
     }
 
     override fun toPyStringRepr(): PyString {
         TODO("not implemented")
     }
-
 }
