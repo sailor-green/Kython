@@ -16,7 +16,7 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.objects.functions
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.iface.PyCallable
@@ -29,7 +29,7 @@ import green.sailor.kython.interpreter.stack.StackFrame
 /**
  * Represents a built-in function, such as print().
  */
-abstract class KyBuiltinFunction(val name: String) : PyObject(), PyCallable {
+abstract class PyBuiltinFunction(val name: String) : PyObject(), PyCallable {
     override fun toPyString(): Either<PyException, PyString> =
         Either.right(PyString("<built-in function $name>"))
 

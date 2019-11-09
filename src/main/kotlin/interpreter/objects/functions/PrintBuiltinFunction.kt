@@ -19,7 +19,6 @@
 package green.sailor.kython.interpreter.objects.functions
 
 import arrow.core.Either
-import green.sailor.kython.interpreter.objects.KyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
@@ -30,7 +29,7 @@ import interpreter.objects.iface.ArgType
 /**
  * Represents the print() builtin.
  */
-class PrintBuiltinFunction : KyBuiltinFunction("print") {
+class PrintBuiltinFunction : PyBuiltinFunction("print") {
     override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
         // todo: more args
 

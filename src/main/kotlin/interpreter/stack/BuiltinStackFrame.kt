@@ -19,14 +19,14 @@
 package green.sailor.kython.interpreter.stack
 
 import arrow.core.Either
-import green.sailor.kython.interpreter.objects.KyBuiltinFunction
+import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 
 /**
  * Represents a built-in stack frame.
  */
-class BuiltinStackFrame(val builtinFunction: KyBuiltinFunction) : StackFrame() {
+class BuiltinStackFrame(val builtinFunction: PyBuiltinFunction) : StackFrame() {
     override fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
         return this.builtinFunction.callFunction(kwargs)
     }
