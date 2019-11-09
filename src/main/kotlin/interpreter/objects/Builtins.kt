@@ -24,10 +24,12 @@ import green.sailor.kython.interpreter.objects.python.*
 /**
  * Represents the builtins.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 object Builtins {
     /** The print() builtin instance. */
     val PRINT = PrintBuiltinFunction()
 
+    val TYPE = PyType.PyRootType
     val INT_TYPE = PyInt.PyIntType
     val STRING_TYPE = PyString.PyStringType
     val NONE = PyNone
@@ -41,6 +43,7 @@ object Builtins {
             PyString("print") to PRINT,
 
             // class types
+            PyString("type") to TYPE,
             PyString("int") to INT_TYPE,
             PyString("str") to STRING_TYPE,
             PyString("tuple") to TUPLE_TYPE,

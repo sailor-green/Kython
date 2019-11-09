@@ -19,6 +19,7 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -32,7 +33,13 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      */
     object PyRootType : PyType("type") {
         override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-            TODO("Type")
+            // one-arg form
+            if (args.subobjects.size == 1) {
+                return Either.right(args.subobjects.first().type)
+            }
+
+            // TODO: Three arg type version
+            return Either.left(Exceptions.NOT_IMPLEMENTED_ERROR.makeWithMessage("Three-arg form of type not impl'd yet"))
         }
     }
 

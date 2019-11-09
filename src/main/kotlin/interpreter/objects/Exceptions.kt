@@ -25,13 +25,24 @@ import green.sailor.kython.interpreter.objects.python.PyString
  * A nice list of exceptions.
  */
 object Exceptions {
-    val EXCEPTION = PyException.makeExceptionType("Exception", listOf())
+    // BaseException and its special subclasses
+    val BASE_EXCEPTION = PyException.makeExceptionType("BaseException", listOf())
+
+    // Root of all other exceptions
+    val EXCEPTION = BASE_EXCEPTION.typeSubclassOf("Exception")
 
     // main errors
     val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
 
+    // runtimeerror and its children
+    val RUNTIME_ERROR = EXCEPTION.typeSubclassOf("RuntimeError")
+    val NOT_IMPLEMENTED_ERROR = RUNTIME_ERROR.typeSubclassOf("NotImplementedError")
+
     val EXCEPTION_MAP = mapOf(
+        PyString("BaseException") to EXCEPTION,
         PyString("Exception") to EXCEPTION,
-        PyString("NameError") to NAME_ERROR
+        PyString("NameError") to NAME_ERROR,
+        PyString("RuntimeError") to RUNTIME_ERROR,
+        PyString("NotImplementedError") to NOT_IMPLEMENTED_ERROR
     )
 }
