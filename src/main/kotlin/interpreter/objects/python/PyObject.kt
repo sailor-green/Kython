@@ -19,10 +19,8 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
-import green.sailor.kython.marshal.MarshalDict
-import green.sailor.kython.marshal.MarshalNone
-import green.sailor.kython.marshal.MarshalTuple
-import green.sailor.kython.marshal.MarshalType
+import green.sailor.kython.interpreter.objects.KyCodeObject
+import green.sailor.kython.marshal.*
 
 /**
  * Represents a Python object. Examples include an int, strings, et cetera, or user-defined objects.
@@ -52,6 +50,7 @@ abstract class PyObject() {
             // special singletons
             return when (type) {
                 is MarshalNone -> PyNone
+                is MarshalCodeObject -> PyCodeObject(KyCodeObject(type))
                 else -> error("Unknown type $type")
             }
         }

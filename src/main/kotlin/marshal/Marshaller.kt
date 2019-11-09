@@ -279,28 +279,21 @@ open class Marshaller(protected val buf: ByteBuffer) {
 
         // more complex values
         val co_code = this.readObject()  // it says w_object, but this is reasonably only a bytestring.
-        val co_consts = this.readObject()
-        val co_names = this.readObject()
-        val co_varnames = this.readObject()
-        var co_freevars = this.readObject()
-        var co_cellvars = this.readObject()
+        val co_consts = this.readObject().ensureTuple()
+        val co_names = this.readObject().ensureTuple()
+        val co_varnames = this.readObject().ensureTuple()
+        val co_freevars = this.readObject().ensureTuple()
+        val co_cellvars = this.readObject().ensureTuple()
         val co_filename = this.readObject()
         val co_name = this.readObject()
         val co_firstlineno = this.readInt()
         val lnotab = this.readObject()
 
-        if (co_freevars !is MarshalTuple) {
-            co_freevars = MarshalTuple(arrayOf(co_freevars))
-        }
-        if (co_cellvars !is MarshalTuple) {
-            co_cellvars = MarshalTuple(arrayOf(co_cellvars))
-        }
-
         return MarshalCodeObject(
             co_argcount, MarshalInt(0), co_kwonlyargcount, co_nlocals, co_stacksize, co_flags,
 
-            (co_code as MarshalString), (co_consts as MarshalTuple), (co_names as MarshalTuple),
-            (co_varnames as MarshalTuple), (co_freevars as MarshalTuple), (co_cellvars as MarshalTuple),
+            (co_code as MarshalString), co_consts, co_names,
+            co_varnames, co_freevars, co_cellvars,
 
             (co_filename as MarshalUnicodeString), (co_name as MarshalUnicodeString),
             co_firstlineno, (lnotab as MarshalString)

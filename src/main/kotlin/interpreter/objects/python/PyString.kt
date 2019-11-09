@@ -25,7 +25,6 @@ import arrow.core.Either
  */
 class PyString(val wrappedString: String) : PyObject(PyStringType) {
     object PyStringType : PyType("str") {
-
         override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
             val item = args.subobjects.first()
             return item.toPyString()

@@ -99,6 +99,14 @@ sealed class MarshalType() {
     open val wrapped: Any? = null
 
     override fun toString(): String = "<Marshalled ${this.wrapped}>"
+
+    /**
+     * Ensures this marshalled object is a tuple.
+     */
+    fun ensureTuple(): MarshalTuple {
+        if (this is MarshalTuple) return this
+        return MarshalTuple(arrayOf(this))
+    }
 }
 
 /** An int. */
