@@ -18,6 +18,7 @@
 
 package green.sailor.kython.interpreter.objects
 
+import green.sailor.kython.interpreter.objects.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.objects.functions.PrintBuiltinFunction
 import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.*
@@ -27,8 +28,8 @@ import green.sailor.kython.interpreter.objects.python.primitives.*
  */
 @Suppress("MemberVisibilityCanBePrivate")
 object Builtins {
-    /** The print() builtin instance. */
     val PRINT = PrintBuiltinFunction()
+    val LOCALS = LocalsBuiltinFunction()
 
     val TYPE = PyType.PyRootType
     val INT_TYPE = PyInt.PyIntType
@@ -42,6 +43,7 @@ object Builtins {
     val BUILTINS_MAP = PyDict(
         mutableMapOf(
             PyString("print") to PRINT,
+            PyString("locals") to LOCALS,
 
             // class types
             PyString("type") to TYPE,
