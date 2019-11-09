@@ -65,7 +65,8 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         // CALL_FUNCTION does BOS(BOS-1, BOS-2, BOS-3, etc)
         // CALL_FUNCTION_KW does the same, but TOS is a tuple containing keyword arguments
         // fuck CALL_FUNCTION_EX for now.
-        val finalMap = mutableMapOf<String, PyObject>().apply { putAll(defaults) }
+        val finalMap = mutableMapOf<String, PyObject>()
+            .apply { putAll(defaults) }
 
         if (kwargsTuple == null) {
             // if no kwargs (i.e. call_function), we just nicely iterate over the signature args and
@@ -78,7 +79,11 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                         // raises a java error if the iterator is empty
                         val arg = Try { argsIt.next() }
                         if (arg.isFailure() && name !in finalMap) {
-                            return Either.left(Exceptions.TYPE_ERROR.makeWithMessage("No value provided for arg $name"))
+                            return Either.left(
+                                Exceptions.TYPE_ERROR.makeWithMessage(
+                                    "No value provided for arg $name"
+                                )
+                            )
                         } else {
                             arg.map { finalMap[name] = it; argsCount += 1 }
                         }
@@ -105,7 +110,8 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                 val remaining = argsIt.asSequence().toList().size
                 return Either.left(
                     Exceptions.TYPE_ERROR.makeWithMessage(
-                        "Passed too many arguments! Expected ${this.args.size}, got ${finalMap.size + remaining}"
+                        "Passed too many arguments! Expected ${this.args.size}, " +
+                                "got ${finalMap.size + remaining}"
                     )
                 )
             }

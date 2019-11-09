@@ -120,6 +120,11 @@ abstract class PyObject() {
     abstract fun toPyStringRepr(): Either<PyException, PyString>
 
     /**
+     * Gets the string of this object, safely. Used for exceptions, et al.
+     */
+    fun getPyStringSafe(): PyString = this.toPyString().fold({ PyString.UNPRINTABLE }, { it })
+
+    /**
      * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.
      */
     fun getPyDict(): PyDict {

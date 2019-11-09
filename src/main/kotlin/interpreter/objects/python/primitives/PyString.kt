@@ -29,6 +29,11 @@ import interpreter.objects.iface.ArgType
  * Represents a Python string. This wraps a regular JVM string.
  */
 class PyString(val wrappedString: String) : PyObject(PyStringType) {
+    companion object {
+        // some common strings
+        val UNPRINTABLE = PyString("<unprintable>")
+    }
+
     object PyStringType : PyType("str") {
         override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
             val arg = args["x"]!!

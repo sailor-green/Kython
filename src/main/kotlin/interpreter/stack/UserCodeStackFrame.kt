@@ -215,13 +215,14 @@ class UserCodeStackFrame(
         val childFrame = fn.getFrame(this)
         this.childFrame = childFrame
         val sig = fn.signature
+
         val argsToPass = sig.getFinalArgs(toCallWith)
         val result = argsToPass.flatMap { KythonInterpreter.runStackFrame(childFrame, it) }
+
         // errors should be passed down, and results should be put onto the stack
         if (result is Either.Left) {
             return Some(result.a)
         } else if (result is Either.Right) {
-            // this cast must always succeed, because runFrame should never return anything other than these two
             val unwrapped = result.b
             this.stack.push(unwrapped)
             this.childFrame = null

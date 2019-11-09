@@ -124,11 +124,10 @@ object KythonInterpreter {
             }
             val builder = StringBuilder()
             for (arg in error.args.subobjects) {
-                val maybeString = arg.toPyString()
-                builder.append(maybeString.fold({ "<unprintable>" }, { it.wrappedString }))
+                builder.append(arg.getPyStringSafe())
                 builder.append(" ")
             }
-            System.err.println("${errorName}: ${builder.toString()}")
+            System.err.println("${errorName}: $builder")
         }
     }
 
