@@ -195,7 +195,8 @@ open class Marshaller(protected val buf: ByteBuffer) {
 
     /** Reads an interned string ref. */
     fun readStringRef(): MarshalType {
-        return this.INTERN_TABLE[buf.int]
+        val idx = buf.int - 1
+        return this.INTERN_TABLE[idx]
     }
 
     /**

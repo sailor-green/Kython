@@ -25,12 +25,12 @@ package green.sailor.kython.util
 @Suppress("EXPERIMENTAL_API_USAGE", "EXPERIMENTAL_UNSIGNED_LITERALS")
 class Lnotab(val bytes: ByteArray) {
 
+    // maps bytecode idx to line number
+    val ranges = mutableListOf<Pair<IntRange, Int>>()
+
     init {
         buildRanges()
     }
-
-    // maps bytecode idx to line number
-    val ranges = mutableListOf<Pair<IntRange, Int>>()
 
     /**
      * Builds the lnotab ranges.
