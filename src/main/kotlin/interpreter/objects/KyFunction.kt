@@ -55,13 +55,7 @@ class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
             return Either.right(Builtins.BUILTINS_MAP.items[wrapped]!!)
         }
 
-        return Either.left(
-            Exceptions.NAME_ERROR.interpreterGetExceptionInstance(
-                listOf(
-                    PyString("Name $name is not defined")
-                )
-            )
-        )
+        return Either.left(Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined"))
     }
 
     override fun getFrame(parentFrame: StackFrame): StackFrame =
