@@ -24,6 +24,8 @@ import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.marshal.MarshalCodeObject
 import java.nio.ByteBuffer
+import kotlin.math.ceil
+import kotlin.math.log
 
 /**
  * Represents a Python code object. (Exposed as __code__ on a function).
@@ -99,8 +101,21 @@ class KyCodeObject(original: MarshalCodeObject) {
      * Gets a newline separated disassembly for this code object.
      */
     fun getDisassembly(frame: UserCodeStackFrame): String {
-        return this.instructions
-            .withIndex()
-            .joinToString("\n") { "    0x${it.index.toString(16)}: ${it.value.getDisassembly(frame)}" }
+        val builder = StringBuilder()
+        val padSize = ceil(log(this.instructions.size.toDouble(), 10.0)).toInt()
+
+        for ((idx, ins) in this.instructions.withIndex()) {
+            val idxFmt = idx.toString().padStart(padSize, '0')
+            builder.append("    $idxFmt ")
+            builder.append(ins.getDisassembly(frame))
+            // add a nice arrow
+            if (idx == frame.bytecodePointer) {
+                builder.append("  <-- HERE")
+            }
+            builder.append("\n")
+
+        }
+
+        return builder.toString()
     }
 }
