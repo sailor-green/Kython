@@ -16,21 +16,18 @@
  *
  */
 
-package green.sailor.kython
+package green.sailor.kython.interpreter.objects
 
-import green.sailor.kython.interpreter.KythonInterpreter
-import java.nio.file.Paths
+import green.sailor.kython.interpreter.objects.python.PyObject
+import java.nio.file.Path
 
 /**
- * Main initialiser for Kython.
+ * Represents a Kython module. This is the internal working; this is exposed separately as a PyObject to Python code.
+ *
+ * @param moduleFunction: The [KyFunction] that this module is built from.
+ * @param path: The source code path this module is from.
  */
-@ExperimentalStdlibApi
-object MakeUp {
-    @JvmStatic
-    fun main(args: Array<String>) {
-
-        val file = args[0]
-        KythonInterpreter.runPython(Paths.get(file))
-
-    }
+class KyModule(val moduleFunction: KyFunction, val path: Path) {
+    /** The mapping of attributes of this module. */
+    val attribs = mutableMapOf<String, PyObject>()
 }

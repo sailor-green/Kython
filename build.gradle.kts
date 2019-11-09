@@ -21,7 +21,7 @@
 plugins {
     kotlin("jvm") version "1.3.60-eap-76"
     id("application")
-    kotlin("kapt") version "1.3.60-eap-76"
+    kotlin("kapt") version "1.3.50"
 }
 
 group = "green.sailor"

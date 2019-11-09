@@ -29,7 +29,7 @@ class Lnotab(val bytes: ByteArray) {
      * Gets the line number for the bytecode index.
      */
     fun getLineNumberFromIdx(instructionIdx: Int): Int {
-        val realIndex = instructionIdx * 2
+        val realIndex = (instructionIdx - 2) * 2
         val it = this.bytes.iterator()
 
         // https://svn.python.org/projects/python/branches/pep-0384/Objects/lnotab_notes.txt

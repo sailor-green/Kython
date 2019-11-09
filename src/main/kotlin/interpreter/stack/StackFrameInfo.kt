@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyString
+import java.nio.file.Files
 import java.util.*
 
 /**
@@ -69,9 +70,16 @@ abstract class StackFrameInfo {
         }
 
         override fun getTracebackString(): String {
+            val module = this.frame.function.module
+            val sourceFile = module.path
+            val sourceLines = Files.readAllLines(sourceFile)
+            val lineNo = this.frame.getLineNo()
+            val sourceLine = sourceLines[lineNo].trimIndent()
+
             return "File ${frame.function.code.filename}, " +
                     "instruction idx ${frame.bytecodePointer}, " +
-                    "in ${frame.function.code.codename}"
+                    "in ${frame.function.code.codename}\n" +
+                    "    $sourceLine"
         }
     }
 

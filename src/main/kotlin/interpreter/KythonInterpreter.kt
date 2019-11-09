@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyFunction
+import green.sailor.kython.interpreter.objects.KyModule
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -39,7 +40,6 @@ import kotlin.system.exitProcess
  * @param mainFile: The main file to be invoked.
  */
 object KythonInterpreter {
-
     /** The CPython compiler backend. */
     @ExperimentalStdlibApi
     val cpyInterface = CPythonInterface(Paths.get("."))
@@ -49,6 +49,9 @@ object KythonInterpreter {
 
     /** The current stack frame for each thread. */
     val currentStackFrameLocal = ThreadLocal<StackFrame>()
+
+    /** The mapping of modules. */
+    val modules = mutableMapOf<String, KyModule>()
 
     /**
      * Gets the root frame for this thread.
@@ -81,10 +84,14 @@ object KythonInterpreter {
         cpyInterface.compileAllFiles()
 
         // todo: make this work properly
-        val mainFile = cpyInterface.getPycFilename(path.fileName.toString())
+        val pycFilename = path.fileName.toString().dropLast(3)
+        val mainFile = cpyInterface.getPycFilename(pycFilename)
         val marshalled = Marshaller.parsePycFile(Paths.get(mainFile))
 
         val rootFunction = KyFunction(marshalled)
+        val module = KyModule(rootFunction, path)
+        rootFunction.module = module
+        this.modules["__main__"] = module
 
         // todo: wrap this
         this.kickoffThread(rootFunction, child = false)
@@ -131,6 +138,7 @@ object KythonInterpreter {
      * @param child: If this is a child thread. If false, exceptions will be fatal.
      */
     fun kickoffThread(function: KyFunction, child: Boolean = true) {
+
         val frame = UserCodeStackFrame(function)
         try {
             this.runPythonThread(frame)

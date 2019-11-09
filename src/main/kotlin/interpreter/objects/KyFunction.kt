@@ -38,6 +38,9 @@ class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
     /** The code object for this function. */
     val code = KyCodeObject(codeObject)
 
+    /** The KyModule for this function. */
+    lateinit var module: KyModule
+
     // helper methods
     /**
      * Gets the instruction at the specified index.
