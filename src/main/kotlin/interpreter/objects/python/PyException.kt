@@ -20,6 +20,8 @@ package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**

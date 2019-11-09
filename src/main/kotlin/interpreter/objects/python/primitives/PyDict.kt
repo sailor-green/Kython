@@ -16,9 +16,12 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python
+package green.sailor.kython.interpreter.objects.python.primitives
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.PyType
 
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
@@ -33,8 +36,18 @@ class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDic
          */
         fun fromAnyMap(map: Map<*, *>): PyDict {
             val newMap = map.map {
-                val key = if (it.key !is PyObject) PyObject.wrapPrimitive(it.key) else (it.key as PyObject)
-                val value = if (it.key !is PyObject) PyObject.wrapPrimitive(it.value) else (it.value as PyObject)
+                val key = if (it.key !is PyObject) {
+                    wrapPrimitive(it.key)
+                } else {
+                    it.key as PyObject
+                }
+
+                val value = if (it.key !is PyObject) {
+                    wrapPrimitive(it.value)
+                } else {
+                    (it.value as PyObject)
+                }
+
                 Pair(key, value)
             }.toMap().toMutableMap()
             return PyDict(newMap)

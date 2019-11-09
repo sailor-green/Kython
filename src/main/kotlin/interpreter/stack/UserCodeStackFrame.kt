@@ -25,8 +25,8 @@ import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.PyInt
 import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.primitives.PyInt
 import java.util.*
 
 /**

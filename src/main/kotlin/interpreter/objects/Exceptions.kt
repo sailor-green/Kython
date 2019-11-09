@@ -19,7 +19,7 @@
 package green.sailor.kython.interpreter.objects
 
 import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.PyString
+import green.sailor.kython.interpreter.objects.python.primitives.PyString
 
 /**
  * A nice list of exceptions.

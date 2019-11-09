@@ -19,7 +19,8 @@
 package green.sailor.kython.interpreter.objects
 
 import green.sailor.kython.interpreter.objects.functions.PrintBuiltinFunction
-import green.sailor.kython.interpreter.objects.python.*
+import green.sailor.kython.interpreter.objects.python.PyType
+import green.sailor.kython.interpreter.objects.python.primitives.*
 
 /**
  * Represents the builtins.

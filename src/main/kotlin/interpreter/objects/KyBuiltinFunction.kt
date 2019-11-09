@@ -22,7 +22,7 @@ import arrow.core.Either
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyString
+import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.stack.BuiltinStackFrame
 import green.sailor.kython.interpreter.stack.StackFrame
 

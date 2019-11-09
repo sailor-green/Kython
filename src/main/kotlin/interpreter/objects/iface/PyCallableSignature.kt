@@ -23,7 +23,7 @@ import arrow.core.Try
 import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyTuple
+import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import interpreter.objects.iface.ArgType
 
 /**

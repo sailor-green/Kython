@@ -22,9 +22,9 @@ import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.PyNone
 import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyTuple
+import green.sailor.kython.interpreter.objects.python.primitives.PyNone
+import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import interpreter.objects.iface.ArgType
 
 /**

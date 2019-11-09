@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyCodeObject
+import green.sailor.kython.interpreter.objects.python.primitives.*
 import green.sailor.kython.marshal.*
 
 /**
@@ -31,6 +32,7 @@ abstract class PyObject() {
          * Wraps a marshalled object from code into a PyObject.
          */
         fun wrapMarshalled(type: MarshalType): PyObject {
+            // unwrap tuples and dicts from their inner types
             if (type is MarshalTuple) {
                 return PyTuple(type.wrapped.map { wrapMarshalled(it) })
             } else if (type is MarshalDict) {
@@ -42,9 +44,7 @@ abstract class PyObject() {
             }
 
             if (type.wrapped != null) {
-                return wrapPrimitive(
-                    type.wrapped!!
-                )
+                return wrapPrimitive(type.wrapped!!)
             }
 
             // special singletons

@@ -23,6 +23,8 @@ import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 import interpreter.objects.iface.ArgType
 

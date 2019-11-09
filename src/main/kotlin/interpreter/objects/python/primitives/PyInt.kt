@@ -16,11 +16,14 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python
+package green.sailor.kython.interpreter.objects.python.primitives
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.PyType
 import interpreter.objects.iface.ArgType
 
 /**
@@ -54,7 +57,11 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
             PyCallableSignature(
                 "value" to ArgType.POSITIONAL,
                 "base" to ArgType.POSITIONAL
-            ).withDefaults("base" to PyInt(10))
+            ).withDefaults(
+                "base" to PyInt(
+                    10
+                )
+            )
         }
     }
 
