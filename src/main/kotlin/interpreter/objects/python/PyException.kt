@@ -19,6 +19,8 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents an exception object. This should be subclassed for all built-in exceptions
@@ -31,7 +33,58 @@ abstract class PyException(val args: PyTuple) : PyObject() {
      * Represents the type of an exception.
      */
     abstract class PyExceptionType(name: String) : PyType(name) {
+        /**
+         * Internal method for getting an exception instance without using newInstance.
+         */
+        abstract fun interpreterGetExceptionInstance(args: List<PyString>): PyException
 
+        fun typeSubclassOf(name: String): PyExceptionType {
+            return makeExceptionType(name, listOf(this))
+        }
+    }
+
+    companion object {
+        /**
+         * Helper for making a new exception type.
+         *
+         * @param name: The name of the exception, e.g. NameError.
+         * @param bases: The bases for
+         */
+        fun makeExceptionType(name: String, bases: List<PyExceptionType>): PyExceptionType {
+            return object : PyExceptionType(name) {
+                override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+                    val strings = mutableListOf<PyString>()
+                    for (i in args.subobjects) {
+                        val maybeString = i.toPyString()
+                        if (maybeString.isLeft()) return maybeString
+                        maybeString.map { strings.add(it) }
+                    }
+
+                    return Either.Right(this.interpreterGetExceptionInstance(strings))
+                }
+
+                override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {
+                    val instance = object : PyException(PyTuple(args)) {
+                        init {
+                            this.parentTypes.addAll(bases)
+                        }
+                    }
+                    instance.type = this
+                    return instance
+                }
+            }
+        }
+    }
+
+    /**
+     * The list of exception frames this stack frame has travelled down.
+     */
+    val exceptionFrames: List<StackFrame>
+
+    init {
+        // this builds the traceback by walking down from the root frame to the last frame
+        val frames = StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())
+        this.exceptionFrames = frames
     }
 
     override fun toPyString(): Either<PyException, PyString> {

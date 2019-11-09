@@ -31,6 +31,8 @@ abstract class StackFrame {
     companion object {
         /**
          * Flattens the list of stack frames down.
+         *
+         * @param root: The root stack frame to flatten all the children to.
          */
         fun flatten(root: StackFrame): List<StackFrame> {
             val frames = mutableListOf(root)

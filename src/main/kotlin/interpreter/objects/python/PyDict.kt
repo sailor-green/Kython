@@ -23,7 +23,7 @@ import arrow.core.Either
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: MutableMap<PyObject, PyObject>) : PyObject(PyDictType) {
+class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDictType) {
     companion object {
         /** Represents the empty dict. */
         val EMPTY = PyDict(mutableMapOf())

@@ -16,21 +16,22 @@
  *
  */
 
-package green.sailor.kython
+package green.sailor.kython.interpreter.objects
 
-import green.sailor.kython.interpreter.KythonInterpreter
-import java.nio.file.Paths
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyString
 
 /**
- * Main initialiser for Kython.
+ * A nice list of exceptions.
  */
-@ExperimentalStdlibApi
-object MakeUp {
-    @JvmStatic
-    fun main(args: Array<String>) {
+object Exceptions {
+    val EXCEPTION = PyException.makeExceptionType("Exception", listOf())
 
-        val file = args[0].dropLast(3)
-        KythonInterpreter.runPython(Paths.get(file))
+    // main errors
+    val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
 
-    }
+    val EXCEPTION_MAP = mapOf(
+        PyString("Exception") to EXCEPTION,
+        PyString("NameError") to NAME_ERROR
+    )
 }

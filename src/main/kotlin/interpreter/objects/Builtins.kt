@@ -48,6 +48,6 @@ object Builtins {
 
             // specials
             PyString("None") to NONE
-        )
+        ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
     )
 }

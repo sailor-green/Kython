@@ -22,6 +22,7 @@ import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.none
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.KyFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
@@ -112,7 +113,9 @@ class UserCodeStackFrame(
             // TODO: Try handling
             if (opcodeResult.isDefined()) {
                 // this will never be null, since we call isDefined.
-                return Either.Left(opcodeResult.orNull()!!)
+                // we tag ourselves onto the traceback, too.
+                val exc = opcodeResult.orNull()!!
+                return Either.Left(exc)
             }
         }
     }
@@ -204,7 +207,7 @@ class UserCodeStackFrame(
 
         val childFrame = fn.getFrame(this)
         this.childFrame = childFrame
-        val result = childFrame.runFrame(posArgs, PyDict.EMPTY)
+        val result = KythonInterpreter.runStackFrame(childFrame, posArgs, PyDict.EMPTY)
         // errors should be passed down, and results should be put onto the stack
         if (result is Either.Left) {
             return Some(result.a)

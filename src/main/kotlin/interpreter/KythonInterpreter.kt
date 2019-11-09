@@ -18,8 +18,11 @@
 
 package green.sailor.kython.interpreter
 
+import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyFunction
 import green.sailor.kython.interpreter.objects.python.PyDict
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
@@ -39,21 +42,35 @@ import kotlin.system.exitProcess
  */
 object KythonInterpreter {
 
-    lateinit var path: Path
-
-    fun configure(path: Path) {
-        this.path = path
-    }
-
     /** The CPython compiler backend. */
     @ExperimentalStdlibApi
     val cpyInterface = CPythonInterface(Paths.get("."))
+
+    /** The root frame thread local storage for each thread. */
+    val rootFrameLocal = ThreadLocal<StackFrame>()
+
+    /** The current stack frame for each thread. */
+    val currentStackFrameLocal = ThreadLocal<StackFrame>()
+
+    /**
+     * Gets the root frame for this thread.
+     */
+    fun getRootFrameForThisThread(): StackFrame {
+        return this.rootFrameLocal.get()
+    }
+
+    /**
+     * Gets the current stack frame for this thread.
+     */
+    fun getCurrentFrameForThisThread(): StackFrame {
+        return this.currentStackFrameLocal.get()
+    }
 
     /**
      * The main entry point for the interpreter.
      */
     @ExperimentalStdlibApi
-    fun runPython() {
+    fun runPython(path: Path) {
         val version = cpyInterface.version
         if (version.minor < 6) {
             System.err.println("Required at least Python 3.6, got ${version.major}.${version.minor}.${version.patch}")
@@ -66,7 +83,7 @@ object KythonInterpreter {
         cpyInterface.compileAllFiles()
 
         // todo: make this work properly
-        val mainFile = cpyInterface.getPycFilename(this.path.fileName.toString())
+        val mainFile = cpyInterface.getPycFilename(path.fileName.toString())
         val marshalled = Marshaller.parsePycFile(Paths.get(mainFile))
 
         val rootFunction = KyFunction(marshalled)
@@ -76,10 +93,38 @@ object KythonInterpreter {
     }
 
     /**
+     * Runs a stack frame.
+     */
+    fun runStackFrame(frame: StackFrame, args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+        this.currentStackFrameLocal.set(frame)
+        val result = frame.runFrame(args, kwargs)
+        this.currentStackFrameLocal.remove()
+        return result
+    }
+
+    /**
      * Runs a python thread.
      */
     fun runPythonThread(rootFrame: UserCodeStackFrame) {
-        val result = rootFrame.runFrame(PyTuple.EMPTY, PyDict.EMPTY)
+        this.rootFrameLocal.set(rootFrame)
+
+        val result = this.runStackFrame(rootFrame, PyTuple.EMPTY, PyDict.EMPTY)
+        if (result.isLeft()) {
+            val error = (result as Either.Left).a
+            val errorName = error.type.name
+            System.err.println("\nKython stack (most recent frame last):")
+            for (frame in error.exceptionFrames) {
+                val info = frame.getStackFrameInfo()
+                System.err.println("   " + info.getTracebackString())
+            }
+            val builder = StringBuilder()
+            for (arg in error.args.subobjects) {
+                val maybeString = arg.toPyString()
+                builder.append(maybeString.fold({ "<unprintable>" }, { it.wrappedString }))
+                builder.append(" ")
+            }
+            System.err.println("${errorName}: ${builder.toString()}")
+        }
     }
 
     /**
