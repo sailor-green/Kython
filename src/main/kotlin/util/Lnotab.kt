@@ -18,35 +18,71 @@
 
 package green.sailor.kython.util
 
+
 /**
  * A wrapper around a co_lnotab used to get line number offsets.
  */
+@Suppress("EXPERIMENTAL_API_USAGE", "EXPERIMENTAL_UNSIGNED_LITERALS")
 class Lnotab(val bytes: ByteArray) {
-    // todo: make this more efficient...
-    // this'll do for now.
+
+    init {
+        buildRanges()
+    }
+
+    // maps bytecode idx to line number
+    val ranges = mutableListOf<Pair<IntRange, Int>>()
 
     /**
-     * Gets the line number for the bytecode index.
+     * Builds the lnotab ranges.
      */
-    fun getLineNumberFromIdx(instructionIdx: Int): Int {
-        val realIndex = (instructionIdx - 2) * 2
+    fun buildRanges() {
         val it = this.bytes.iterator()
+        val tempMap = mutableListOf(Pair(0, 0))
 
         // https://svn.python.org/projects/python/branches/pep-0384/Objects/lnotab_notes.txt
+        // rough translation of dis.findlinestarts from Python 3.7.4
 
         var lineno = 0
         var addr = 0
+        var lastLineNo = 0
 
         while (it.hasNext()) {
-            val addrIncr = it.nextByte()
-            val lineIncr = it.nextByte()
-            addr += addrIncr
-            if (addr > realIndex) {
-                return lineno
+            val addrIncr = it.nextByte().toUByte()
+            var lineIncr = it.nextByte()
+            if (addrIncr != 0u.toUByte()) {
+                if (lineno != lastLineNo) {
+                    tempMap.add(Pair(addr, lineno))
+                    lastLineNo = lineno
+                }
+            }
+            addr = (addr + addrIncr.toInt())
+
+            if (lineIncr > 0x80) {
+                lineIncr = (lineIncr - 0x100.toByte()).toByte()
             }
             lineno += lineIncr
         }
-        error("Instruction $instructionIdx past end of bytecode")
+        if (lineno != lastLineNo) {
+            tempMap.add(Pair(addr, lineno))
+        }
+
+        tempMap.reduce { first, second ->
+            this.ranges.add(Pair(IntRange(first.first, second.first - 1), first.second))
+            second
+        }
+    }
+
+    /**
+     * Gets the line number from the bytecode index.
+     */
+    fun getLineNumberFromIdx(idx: Int): Int {
+        val realIdx = idx * 2
+        for ((range, line) in this.ranges) {
+            if (realIdx in range) {
+                return line
+            }
+        }
+        return 0
     }
 
 }

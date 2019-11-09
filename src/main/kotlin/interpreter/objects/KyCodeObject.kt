@@ -124,6 +124,6 @@ class KyCodeObject(original: MarshalCodeObject) {
      * Gets the line number of code from the instruction index.
      */
     fun getLineNumber(idx: Int): Int {
-        return this.firstline + this.lnotab.getLineNumberFromIdx(idx)
+        return (this.firstline - 1) + this.lnotab.getLineNumberFromIdx(idx)
     }
 }
