@@ -27,12 +27,24 @@ class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDic
     companion object {
         /** Represents the empty dict. */
         val EMPTY = PyDict(mutableMapOf())
+
+        /**
+         * Creates a new PyDict from any map, wrapping primitive types.
+         */
+        fun fromAnyMap(map: Map<*, *>): PyDict {
+            val newMap = map.map {
+                val key = if (it.key !is PyObject) PyObject.wrapPrimitive(it.key) else (it.key as PyObject)
+                val value = if (it.key !is PyObject) PyObject.wrapPrimitive(it.value) else (it.value as PyObject)
+                Pair(key, value)
+            }.toMap().toMutableMap()
+            return PyDict(newMap)
+        }
     }
 
     object PyDictType : PyType("dict") {
-        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
             // another simple passthrough
-            return Either.right(kwargs)
+            return Either.right(fromAnyMap(args))
         }
     }
 

@@ -28,4 +28,9 @@ interface PyCallable {
      * Gets a runnable stack frame for this callable.
      */
     fun getFrame(parent: StackFrame): StackFrame
+
+    /**
+     * The signature for this function.
+     */
+    val signature: PyCallableSignature
 }

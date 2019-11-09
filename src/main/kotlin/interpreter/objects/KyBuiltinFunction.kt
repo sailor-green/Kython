@@ -20,7 +20,9 @@ package green.sailor.kython.interpreter.objects
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.iface.PyCallable
-import green.sailor.kython.interpreter.objects.python.*
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.PyString
 import green.sailor.kython.interpreter.stack.BuiltinStackFrame
 import green.sailor.kython.interpreter.stack.StackFrame
 
@@ -36,7 +38,7 @@ abstract class KyBuiltinFunction(val name: String) : PyObject(), PyCallable {
     /**
      * Called when the function is called from within a stack frame.
      */
-    abstract fun callFunction(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject>
+    abstract fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
 
     override fun getFrame(parentFrame: StackFrame): StackFrame =
         BuiltinStackFrame(this).apply { this.parentFrame = parentFrame }

@@ -21,6 +21,7 @@ package green.sailor.kython.interpreter.objects
 import arrow.core.Either
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyString
@@ -70,4 +71,7 @@ class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
         Either.right(PyString("<user function ${code.codename}>"))
 
     override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+
+    override val signature: PyCallableSignature
+        get() = TODO("not implemented")
 }

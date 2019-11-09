@@ -19,15 +19,18 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 
 /**
  * Represents the Python None.
  */
 object PyNone : PyObject(PyNoneType) {
     object PyNoneType : PyType("NoneType") {
-        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
             return Either.Right(PyNone)
         }
+
+        override val signature: PyCallableSignature = PyCallableSignature.EMPTY
     }
 
     private val noneString = PyString("None")

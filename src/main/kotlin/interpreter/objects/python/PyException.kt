@@ -60,8 +60,9 @@ abstract class PyException(val args: PyTuple) : PyObject() {
          */
         fun makeExceptionType(name: String, bases: List<PyExceptionType>): PyExceptionType {
             return object : PyExceptionType(name) {
-                override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+                override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
                     val strings = mutableListOf<PyString>()
+                    val args = kwargs["args"] as PyTuple
                     for (i in args.subobjects) {
                         val maybeString = i.toPyString()
                         if (maybeString.isLeft()) return maybeString

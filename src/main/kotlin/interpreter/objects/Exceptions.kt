@@ -33,6 +33,8 @@ object Exceptions {
 
     // main errors
     val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
+    val TYPE_ERROR = EXCEPTION.typeSubclassOf("TypeError")
+    val VALUE_ERROR = EXCEPTION.typeSubclassOf("ValueError")
 
     // runtimeerror and its children
     val RUNTIME_ERROR = EXCEPTION.typeSubclassOf("RuntimeError")
@@ -41,7 +43,11 @@ object Exceptions {
     val EXCEPTION_MAP = mapOf(
         PyString("BaseException") to EXCEPTION,
         PyString("Exception") to EXCEPTION,
+
         PyString("NameError") to NAME_ERROR,
+        PyString("TypeError") to TYPE_ERROR,
+        PyString("ValueError") to VALUE_ERROR,
+
         PyString("RuntimeError") to RUNTIME_ERROR,
         PyString("NotImplementedError") to NOT_IMPLEMENTED_ERROR
     )

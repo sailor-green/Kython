@@ -16,22 +16,14 @@
  *
  */
 
-package green.sailor.kython.interpreter.stack
-
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.KyBuiltinFunction
-import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.PyObject
+package interpreter.objects.iface
 
 /**
- * Represents a built-in stack frame.
+ * Represents an argument type.
  */
-class BuiltinStackFrame(val builtinFunction: KyBuiltinFunction) : StackFrame() {
-    override fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
-        return this.builtinFunction.callFunction(kwargs)
-    }
-
-    override fun getStackFrameInfo(): StackFrameInfo.BuiltinFrameInfo {
-        return StackFrameInfo.BuiltinFrameInfo(this)
-    }
+enum class ArgType {
+    POSITIONAL,  // def fn(arg), also works as a keyword argument
+    POSITIONAL_STAR,  // def fn(*arg)
+    KEYWORD,  // def fn(*, arg=default)
+    KEYWORD_STAR  // def fn(**arg)
 }

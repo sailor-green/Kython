@@ -19,16 +19,25 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import interpreter.objects.iface.ArgType
 
 /**
  * Represents a Python string. This wraps a regular JVM string.
  */
 class PyString(val wrappedString: String) : PyObject(PyStringType) {
     object PyStringType : PyType("str") {
-        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-            val item = args.subobjects.first()
-            return item.toPyString()
+        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
+            val arg = args["x"]!!
+            return arg.toPyString()
         }
+
+        override val signature: PyCallableSignature by lazy {
+            PyCallableSignature(
+                "x" to ArgType.POSITIONAL
+            )
+        }
+
     }
 
     override fun toPyString(): Either<PyException, PyString> = Either.right(this)

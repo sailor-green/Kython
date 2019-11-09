@@ -22,7 +22,9 @@ import arrow.core.Either
 import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.stack.StackFrame
+import interpreter.objects.iface.ArgType
 
 /**
  * Represents a python type (i.e. a class).
@@ -32,8 +34,10 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      * Represents the root type. If the type of a PyObject is not set, this will be useed.
      */
     object PyRootType : PyType("type") {
-        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
             // one-arg form
+            val args = kwargs["args"] as PyTuple
+
             if (args.subobjects.size == 1) {
                 return Either.right(args.subobjects.first().type)
             }
@@ -51,13 +55,32 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      */
     val builtinFunctionWrapper by lazy {
         object : KyBuiltinFunction(name) {
-            override fun callFunction(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-                return newInstance(args, kwargs)
+            override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+                return newInstance(kwargs)
+            }
+
+            override val signature: PyCallableSignature by lazy {
+                PyCallableSignature(
+                    "args" to ArgType.POSITIONAL_STAR,
+                    "kwargs" to ArgType.KEYWORD_STAR
+                )
             }
         }
     }
 
-    abstract fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject>
+    /**
+     * Makes a new instance of this builtin.
+     *
+     * @param kwargs: The arguments that were called for this object.
+     */
+    abstract fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
+
+    override val signature: PyCallableSignature by lazy {
+        PyCallableSignature(
+            "args" to ArgType.POSITIONAL_STAR,
+            "kwargs" to ArgType.KEYWORD_STAR
+        )
+    }
 
     override fun getFrame(parent: StackFrame): StackFrame {
         return this.builtinFunctionWrapper.getFrame(parent)

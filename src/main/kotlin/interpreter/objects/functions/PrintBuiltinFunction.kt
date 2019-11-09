@@ -20,16 +20,23 @@ package green.sailor.kython.interpreter.objects.functions
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyBuiltinFunction
-import green.sailor.kython.interpreter.objects.python.*
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyNone
+import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.PyTuple
+import interpreter.objects.iface.ArgType
 
 /**
  * Represents the print() builtin.
  */
 class PrintBuiltinFunction : KyBuiltinFunction("print") {
-    override fun callFunction(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+    override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
         // todo: more args
 
         val sb = StringBuilder()
+        val args = kwargs["args"] as PyTuple
+
         for (arg in args.subobjects) {
             val result = arg.toPyStringRepr()
             if (result.isLeft()) return result
@@ -38,5 +45,11 @@ class PrintBuiltinFunction : KyBuiltinFunction("print") {
 
         println(sb.toString())
         return Either.Right(PyNone)
+    }
+
+    override val signature: PyCallableSignature by lazy {
+        PyCallableSignature(
+            "args" to ArgType.POSITIONAL_STAR
+        )
     }
 }

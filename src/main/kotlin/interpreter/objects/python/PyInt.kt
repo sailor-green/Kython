@@ -19,34 +19,42 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.Exceptions
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import interpreter.objects.iface.ArgType
 
 /**
  * Represents a Python int type. This internally wraps a long,
  */
 class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
     object PyIntType : PyType("int") {
-        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-            if (args.subobjects.size < 0) {
-                TODO("too small error")
-            } else if (args.subobjects.size > 1) {
-                TODO("too big error")
-            }
-
-            val item = args.subobjects.first()
-            return if (item is PyInt) {
-                Either.Right(item)
+        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+            val value = kwargs["value"] ?: error("Built-in signature mismatch")
+            return if (value is PyInt) {
+                Either.Right(value)
             } else {
                 // TODO: `__int__`
-                if (item !is PyString) {
-                    TODO("not an intable error")
+                if (value !is PyString) {
+                    val typeName = value.type.name
+                    Either.Left(
+                        Exceptions.TYPE_ERROR.makeWithMessage(
+                            "int() argument must be a string, a bytes-like object, or a number, not '$typeName'"
+                        )
+                    )
+                } else {
+                    val pyBase = kwargs["base"] as PyInt
+                    val base = pyBase.wrappedInt
+                    val converted = value.wrappedString.toInt(radix = base.toInt())
+                    Either.Right(PyInt(converted.toLong()))
                 }
-
-                val baseArg = PyString("base")
-                val pyBase: PyInt? = kwargs.getItem(baseArg) as PyInt?
-                val base = pyBase?.wrappedInt ?: 10
-                val converted = item.wrappedString.toInt(radix = base.toInt())
-                Either.Right(PyInt(converted.toLong()))
             }
+        }
+
+        override val signature: PyCallableSignature by lazy {
+            PyCallableSignature(
+                "value" to ArgType.POSITIONAL,
+                "base" to ArgType.POSITIONAL
+            ).withDefaults("base" to PyInt(10))
         }
     }
 

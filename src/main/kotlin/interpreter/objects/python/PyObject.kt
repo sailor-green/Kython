@@ -58,7 +58,7 @@ abstract class PyObject() {
         /**
          * Wraps a primitive type into a PyObject.
          */
-        fun wrapPrimitive(obb: Any): PyObject =
+        fun wrapPrimitive(obb: Any?): PyObject =
             when (obb) {
                 is Short -> PyInt(obb.toLong())
                 is Int -> PyInt(obb.toLong())

@@ -19,6 +19,8 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import interpreter.objects.iface.ArgType
 
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
@@ -33,8 +35,15 @@ class PyTuple(val subobjects: Collection<PyObject>) : PyObject(PyTupleType) {
 
     // simple passthrough
     object PyTupleType : PyType("tuple") {
-        override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-            return Either.right(args)
+        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
+            val arg = args["x"]!!
+            return Either.right(PyTuple(listOf(arg)))
+        }
+
+        override val signature: PyCallableSignature by lazy {
+            PyCallableSignature(
+                "x" to ArgType.POSITIONAL
+            )
         }
     }
 

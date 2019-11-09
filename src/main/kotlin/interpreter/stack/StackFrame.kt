@@ -19,10 +19,8 @@
 package green.sailor.kython.interpreter.stack
 
 import arrow.core.Either
-import green.sailor.kython.interpreter.objects.python.PyDict
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyTuple
 
 /**
  * Base class for a stack frame. This can either be an abstract class stack frame, or a
@@ -58,7 +56,7 @@ abstract class StackFrame {
     /**
      * Runs this stack frame, invoking the function underneath.
      */
-    abstract fun runFrame(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject>
+    abstract fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
 
     /**
      * Gets the stack frame information for this stack frame.

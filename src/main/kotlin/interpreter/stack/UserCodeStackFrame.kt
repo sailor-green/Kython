@@ -18,15 +18,15 @@
 
 package green.sailor.kython.interpreter.stack
 
-import arrow.core.Either
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.none
+import arrow.core.*
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
-import green.sailor.kython.interpreter.objects.python.*
+import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyInt
+import green.sailor.kython.interpreter.objects.python.PyObject
 import java.util.*
 
 /**
@@ -34,6 +34,7 @@ import java.util.*
  *
  * @param function: The function being ran. This may not be a *real* function, but we treat it as if it is.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class UserCodeStackFrame(
     val function: KyFunction
 ) : StackFrame() {
@@ -75,7 +76,7 @@ class UserCodeStackFrame(
     /**
      * Runs this stack frame, executing the function within.
      */
-    override fun runFrame(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+    override fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
         while (true) {
             // simple fetch decode execute loop
             // maybe this could be pipelined.
@@ -199,15 +200,16 @@ class UserCodeStackFrame(
             toCallWith.add(this.stack.pop())
         }
 
-        val posArgs = PyTuple(toCallWith.reversed())
         val fn = this.stack.pop()
         if (fn !is PyCallable) {
-            error("CALL_FUNCTION called on non-callable $fn!")
+            return Some(Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable"))
         }
 
         val childFrame = fn.getFrame(this)
         this.childFrame = childFrame
-        val result = KythonInterpreter.runStackFrame(childFrame, posArgs, PyDict.EMPTY)
+        val sig = fn.signature
+        val argsToPass = sig.getFinalArgs(toCallWith)
+        val result = argsToPass.flatMap { KythonInterpreter.runStackFrame(childFrame, it) }
         // errors should be passed down, and results should be put onto the stack
         if (result is Either.Left) {
             return Some(result.a)

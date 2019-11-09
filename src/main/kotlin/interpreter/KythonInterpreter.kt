@@ -20,10 +20,8 @@ package green.sailor.kython.interpreter
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyFunction
-import green.sailor.kython.interpreter.objects.python.PyDict
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.marshal.Marshaller
@@ -95,9 +93,9 @@ object KythonInterpreter {
     /**
      * Runs a stack frame.
      */
-    fun runStackFrame(frame: StackFrame, args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
+    fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): Either<PyException, PyObject> {
         this.currentStackFrameLocal.set(frame)
-        val result = frame.runFrame(args, kwargs)
+        val result = frame.runFrame(args)
         this.currentStackFrameLocal.remove()
         return result
     }
@@ -108,7 +106,7 @@ object KythonInterpreter {
     fun runPythonThread(rootFrame: UserCodeStackFrame) {
         this.rootFrameLocal.set(rootFrame)
 
-        val result = this.runStackFrame(rootFrame, PyTuple.EMPTY, PyDict.EMPTY)
+        val result = this.runStackFrame(rootFrame, mapOf())
         if (result.isLeft()) {
             val error = (result as Either.Left).a
             val errorName = error.type.name
