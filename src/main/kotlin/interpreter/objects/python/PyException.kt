@@ -38,6 +38,14 @@ abstract class PyException(val args: PyTuple) : PyObject() {
          */
         abstract fun interpreterGetExceptionInstance(args: List<PyString>): PyException
 
+        /**
+         * Internal method for interpreter Python errors.
+         */
+        fun makeWithMessage(message: String): PyException {
+            val args = listOf(PyString(message))
+            return this.interpreterGetExceptionInstance(args)
+        }
+
         fun typeSubclassOf(name: String): PyExceptionType {
             return makeExceptionType(name, listOf(this))
         }
