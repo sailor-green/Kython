@@ -64,7 +64,7 @@ abstract class PyObject() {
                 is Int -> PyInt(obb.toLong())
                 is Long -> PyInt(obb.toLong())
                 is String -> PyString(obb.toString())
-                else -> error { "Don't know how to wrap $obb in a PyObject" }
+                else -> error("Don't know how to wrap $obb in a PyObject")
             }
     }
 

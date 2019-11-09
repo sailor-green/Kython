@@ -42,7 +42,7 @@ class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDic
                     it.key as PyObject
                 }
 
-                val value = if (it.key !is PyObject) {
+                val value = if (it.value !is PyObject) {
                     wrapPrimitive(it.value)
                 } else {
                     (it.value as PyObject)
@@ -62,12 +62,25 @@ class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDic
     }
 
     override fun toPyString(): Either<PyException, PyString> {
-        TODO("not implemented")
+        val builder = StringBuilder()
+        builder.append('{')
+        for ((k, v) in this.items) {
+            val maybeKey = k.toPyStringRepr()
+            if (maybeKey.isLeft()) return maybeKey
+            maybeKey.map { builder.append(it.wrappedString) }
+
+            builder.append(": ")
+
+            val maybeValue = v.toPyStringRepr()
+            if (maybeValue.isLeft()) return maybeValue
+            maybeValue.map { builder.append(it.wrappedString) }
+            builder.append(", ")
+        }
+        builder.append('}')
+        return Either.right(PyString(builder.toString()))
     }
 
-    override fun toPyStringRepr(): Either<PyException, PyString> {
-        TODO("not implemented")
-    }
+    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
 
     /**
      * Gets an item from the internal dict.
