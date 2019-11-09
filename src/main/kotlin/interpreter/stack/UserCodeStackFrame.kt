@@ -64,10 +64,8 @@ class UserCodeStackFrame(
      */
     val stack = ArrayDeque<PyObject>(this.function.code.stackSize)
 
-    /** The varname storage. */
-    val realVarnames = arrayOfNulls<PyObject>(this.function.code.varnames.size)
-    /** The name storage. */
-    val realNames = arrayOfNulls<PyObject>(this.function.code.names.size)
+    /** The local variables for this frame. */
+    val locals = mutableMapOf<String, PyObject>()
 
     override fun getStackFrameInfo(): StackFrameInfo.UserFrameInfo {
         return StackFrameInfo.UserFrameInfo(this)
@@ -144,19 +142,19 @@ class UserCodeStackFrame(
         // pool is the type we want to load
         val idx = opval.toInt()
         val loadResult = when (pool) {
-            LoadPool.CONST -> Either.Right(this.function.code.consts[idx])
-            LoadPool.FAST -> Either.Right(this.realVarnames[idx]!!)
+            LoadPool.CONST -> Either.right(this.function.code.consts[idx])
+            LoadPool.FAST -> {
+                val name = this.function.code.varnames[idx]
+                Either.right(this.locals[name]!!)
+            }
             LoadPool.NAME -> {
                 // sometimes a global...
-                val realName = this.realNames[idx]
+                val name = this.function.code.names[idx]
+                val realName = this.locals[name]
                 val result = if (realName == null) {
                     val name = this.function.code.names[idx]
                     val global = this.function.getGlobal(name)
-
-                    if (global.isRight()) {
-                        this.realNames[idx] = (global as Either.Right).b
-                    }
-
+                    global.map { this.locals[name] = it }
                     global
                 } else {
                     Either.Right(realName)
@@ -185,12 +183,13 @@ class UserCodeStackFrame(
      */
     fun store(pool: LoadPool, arg: Byte): Option<PyException> {
         val idx = arg.toInt()
-        val toStoreIn = when (pool) {
-            LoadPool.NAME -> this.realNames
-            LoadPool.FAST -> this.realVarnames
+        val toGetName = when (pool) {
+            LoadPool.NAME -> this.function.code.names
+            LoadPool.FAST -> this.function.code.varnames
             else -> error("Can't store items in pool $pool")
         }
-        toStoreIn[idx] = this.stack.pop()
+        val name = toGetName[idx]
+        this.locals[name] = this.stack.pop()
         this.bytecodePointer += 1
         return none()
     }
