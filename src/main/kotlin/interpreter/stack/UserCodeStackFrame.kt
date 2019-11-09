@@ -74,6 +74,13 @@ class UserCodeStackFrame(
     }
 
     /**
+     * Gets the source code line number currently being executed.
+     */
+    fun getLineNo(): Int {
+        return this.function.code.getLineNumber(this.bytecodePointer)
+    }
+
+    /**
      * Runs this stack frame, executing the function within.
      */
     override fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {

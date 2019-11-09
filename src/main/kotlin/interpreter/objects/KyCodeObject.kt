@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.marshal.MarshalCodeObject
+import green.sailor.kython.util.Lnotab
 import java.nio.ByteBuffer
 import kotlin.math.ceil
 import kotlin.math.log
@@ -77,7 +78,7 @@ class KyCodeObject(original: MarshalCodeObject) {
     val firstline = original.firstLineNumber.wrapped
 
     /** The lnotab for this function. */
-    val lnotab = original.lnotab.wrapped
+    val lnotab = Lnotab(original.lnotab.wrapped)
 
     // special properties
     val instructions by lazy { this.parseInstructions() }
@@ -117,5 +118,12 @@ class KyCodeObject(original: MarshalCodeObject) {
         }
 
         return builder.toString()
+    }
+
+    /**
+     * Gets the line number of code from the instruction index.
+     */
+    fun getLineNumber(idx: Int): Int {
+        return this.firstline + this.lnotab.getLineNumberFromIdx(idx)
     }
 }
