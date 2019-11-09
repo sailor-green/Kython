@@ -153,9 +153,7 @@ class UserCodeStackFrame(
                 val realName = this.locals[name]
                 val result = if (realName == null) {
                     val name = this.function.code.names[idx]
-                    val global = this.function.getGlobal(name)
-                    global.map { this.locals[name] = it }
-                    global
+                    this.function.getGlobal(name)
                 } else {
                     Either.Right(realName)
                 }
@@ -164,18 +162,15 @@ class UserCodeStackFrame(
             else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }
 
-        return when (loadResult) {
-            is Either.Left -> {
-                Some(loadResult.a)
-            }
-            is Either.Right -> {
-                val toPush = loadResult.b
-                this.stack.push(toPush)
+        val option: Option<PyException> = loadResult.fold(
+            { Some(it) },
+            {
+                this.stack.push(it)
                 this.bytecodePointer += 1
                 none()
             }
-        }
-
+        )
+        return option
     }
 
     /**
