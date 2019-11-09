@@ -26,7 +26,7 @@ import arrow.core.Either
 object PyNone : PyObject(PyNoneType) {
     object PyNoneType : PyType("NoneType") {
         override fun newInstance(args: PyTuple, kwargs: PyDict): Either<PyException, PyObject> {
-            TODO("Cannot create new NoneType instances.")
+            return Either.Right(PyNone)
         }
     }
 
