@@ -70,7 +70,7 @@ abstract class PyObject() {
     }
 
     /** The type of this PyObject. */
-    lateinit var type: PyType
+    var type: PyType = PyType.PyRootType
 
     /** The parent types of this PyObject. Exposed as `__bases__`. */
     val parentTypes = mutableListOf<PyType>()
