@@ -124,7 +124,7 @@ object KythonInterpreter {
             }
             val builder = StringBuilder()
             for (arg in error.args.subobjects) {
-                builder.append(arg.getPyStringSafe())
+                builder.append(arg.getPyStringSafe().wrappedString)
                 builder.append(" ")
             }
             System.err.println("${errorName}: $builder")
