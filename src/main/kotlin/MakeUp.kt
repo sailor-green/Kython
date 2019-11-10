@@ -30,7 +30,7 @@ object MakeUp {
     fun main(args: Array<String>) {
 
         val file = args[0]
-        KythonInterpreter.runPython(Paths.get(file))
+        KythonInterpreter.runPython(Paths.get(file).toAbsolutePath())
 
     }
 }
