@@ -25,7 +25,6 @@ import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
-import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.marshal.Marshaller
 import green.sailor.kython.util.CPythonInterface
 import java.nio.file.Path
@@ -91,18 +90,32 @@ object KythonInterpreter {
 
         val rootFunction = PyUserFunction(KyCodeObject(marshalled))
         val module = KyModule(rootFunction, path)
-        rootFunction.module = module
         this.modules["__main__"] = module
 
         // todo: wrap this
-        this.kickoffThread(rootFunction, child = false)
+        this.kickoffThread(module.stackFrame, child = false)
     }
 
+    /**
+     * Builds a module from a module function.
+     * This is the main entry point to import a new source-code module.
+     *
+     * @param moduleFunction: The module function that has been unmarshalled.
+     * @param sourcePath: The source path for the module.
+     */
+    fun buildModule(moduleFunction: PyUserFunction, sourcePath: Path): KyModule {
+        val module = KyModule(moduleFunction, sourcePath)
+        this.runStackFrame(module.stackFrame, mapOf())
+        return module
+    }
 
     /**
      * Runs a stack frame.
      */
-    fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): Either<PyException, PyObject> {
+    fun runStackFrame(
+        frame: StackFrame,
+        args: Map<String, PyObject>
+    ): Either<PyException, PyObject> {
         val parent: StackFrame? = this.currentStackFrameLocal.get()
         if (parent != null) {
             frame.parentFrame = parent
@@ -123,7 +136,7 @@ object KythonInterpreter {
     /**
      * Runs a python thread.
      */
-    fun runPythonThread(rootFrame: UserCodeStackFrame) {
+    fun runPythonThread(rootFrame: StackFrame) {
         this.rootFrameLocal.set(rootFrame)
 
         val result = this.runStackFrame(rootFrame, mapOf())
@@ -149,9 +162,7 @@ object KythonInterpreter {
      *
      * @param child: If this is a child thread. If false, exceptions will be fatal.
      */
-    fun kickoffThread(function: PyUserFunction, child: Boolean = true) {
-
-        val frame = UserCodeStackFrame(function)
+    fun kickoffThread(frame: StackFrame, child: Boolean = true) {
         try {
             this.runPythonThread(frame)
         } catch (e: Throwable) {  // blah blah, bad practice, who cares
