@@ -30,7 +30,7 @@ import green.sailor.kython.interpreter.objects.python.PyType
 object PyNone : PyObject(PyNoneType) {
     object PyNoneType : PyType("NoneType") {
         override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
-            return Either.Right(PyNone)
+            return Either.right(PyNone)
         }
 
         override val signature: PyCallableSignature = PyCallableSignature.EMPTY

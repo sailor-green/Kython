@@ -24,9 +24,11 @@ import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.python.PyCodeObject
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyInt
+import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import java.util.*
 
 /**
@@ -43,6 +45,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             FAST,
             NAME,
             ATTR,
+            GLOBAL
         }
 
         enum class BinaryOp {
@@ -90,7 +93,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             // special case this, because it returns from runFrame
             if (nextInstruction.opcode == InstructionOpcode.RETURN_VALUE) {
                 val result = this.returnValue(param)
-                return Either.Right(result)
+                return Either.right(result)
             }
 
             // switch on opcode
@@ -99,6 +102,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.LOAD_FAST -> this.load(LoadPool.FAST, param)
                 InstructionOpcode.LOAD_NAME -> this.load(LoadPool.NAME, param)
                 InstructionOpcode.LOAD_CONST -> this.load(LoadPool.CONST, param)
+                InstructionOpcode.LOAD_GLOBAL -> this.load(LoadPool.GLOBAL, param)
 
                 // store ops
                 InstructionOpcode.STORE_NAME -> this.store(LoadPool.NAME, param)
@@ -111,6 +115,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 InstructionOpcode.POP_TOP -> this.popTop(param)
 
+                InstructionOpcode.MAKE_FUNCTION -> this.makeFunction(param)
+
                 else -> error("Unimplemented opcode $opcode")
             }
 
@@ -119,7 +125,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // this will never be null, since we call isDefined.
                 // we tag ourselves onto the traceback, too.
                 val exc = opcodeResult.orNull()!!
-                return Either.Left(exc)
+                return Either.left(exc)
             }
         }
     }
@@ -153,9 +159,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     val name = this.function.code.names[idx]
                     this.function.getGlobal(name)
                 } else {
-                    Either.Right(realName)
+                    Either.right(realName)
                 }
                 result
+            }
+            LoadPool.GLOBAL -> {
+                val name = this.function.code.names[idx]
+                this.function.getGlobal(name)
             }
             else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }
@@ -211,14 +221,24 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val result = argsToPass.flatMap { KythonInterpreter.runStackFrame(childFrame, it) }
 
         // errors should be passed down, and results should be put onto the stack
-        if (result is Either.Left) {
-            return Some(result.a)
-        } else if (result is Either.Right) {
-            val unwrapped = result.b
-            this.stack.push(unwrapped)
-        }
+        return result.fold(
+            { Some(it) },
+            { this.stack.push(it); this.bytecodePointer += 1; none() }
+        )
+    }
 
+    /**
+     * MAKE_FUNCTION.
+     */
+    fun makeFunction(arg: Byte): Option<PyException> {
+        val qualifiedName = this.stack.pop()
+        require(qualifiedName is PyString) { "Function qualified name was not string!" }
 
+        val code = this.stack.pop()
+        require(code is PyCodeObject) { "Function code was not a code object!" }
+        val function = PyUserFunction(code.wrappedCodeObject)
+        function.module = this.function.module
+        this.stack.push(function)
         this.bytecodePointer += 1
         return none()
     }

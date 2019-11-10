@@ -34,12 +34,12 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
         override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
             val value = kwargs["value"] ?: error("Built-in signature mismatch")
             return if (value is PyInt) {
-                Either.Right(value)
+                Either.right(value)
             } else {
                 // TODO: `__int__`
                 if (value !is PyString) {
                     val typeName = value.type.name
-                    Either.Left(
+                    Either.left(
                         Exceptions.TYPE_ERROR.makeWithMessage(
                             "int() argument must be a string, a bytes-like object, or a number, not '$typeName'"
                         )
@@ -48,7 +48,7 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
                     val pyBase = kwargs["base"] as PyInt
                     val base = pyBase.wrappedInt
                     val converted = value.wrappedString.toInt(radix = base.toInt())
-                    Either.Right(PyInt(converted.toLong()))
+                    Either.right(PyInt(converted.toLong()))
                 }
             }
         }

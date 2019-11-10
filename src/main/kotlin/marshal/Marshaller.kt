@@ -24,6 +24,25 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.experimental.and
 
+/*
+NOTES ON INTERNING:
+
+You may think, haha, the intern table is an array! Not so fast. It's a Map. But with int keys.
+When an intern flag is seen, the counter is reserved *then*, so if you intern something once it's
+created, things will CRASH. Instead, you reserve the index for the item, and the next item is slotted
+into the next slot in the map.
+
+Not a good explanation, but whatever. Basically:
+
+ 1) If intern flag is set, get the current intern count as this object's intern offset
+ 2) Increment current intern count by one
+ 3) Once the object is constructed, store it in map[offset].
+
+Could be done with a list, but I don't care. Also, code objects are ALWAYS interned for some reason.
+So, explicitly set their intern flag on.
+ */
+
+
 /**
  * Object that supports marshalling and demarshalling.
  */
@@ -60,8 +79,11 @@ open class Marshaller(protected val buf: ByteBuffer) {
         }
     }
 
+    // this is very stupid
+    var lastInternIdx = 0
+
     /** The intern table... */
-    val INTERN_TABLE = mutableListOf<MarshalType>()
+    val INTERN_TABLE = mutableMapOf<Int, MarshalType>()
 
     /**
      * Unmarshals from a byte buffer.
@@ -77,6 +99,10 @@ open class Marshaller(protected val buf: ByteBuffer) {
         val type = (byte and (-0x81).toByte()).toChar()
         val flag = (byte and 0x80.toByte()).toInt()
         var shouldIntern = flag != 0
+        val internIdx = this.lastInternIdx
+        if (shouldIntern) {
+            this.lastInternIdx += 1
+        }
 
         val result = when (type) {
             // simple types...
@@ -117,13 +143,16 @@ open class Marshaller(protected val buf: ByteBuffer) {
             MarshalType.DICT -> this.readDict()
 
             // code type
-            MarshalType.CODE -> this.readCode()
+            MarshalType.CODE -> {
+                shouldIntern = true
+                this.readCode()
+            }
 
             else -> error("Unknown marshal type: $type")
         }
 
-        if (shouldIntern && result !in INTERN_TABLE) {
-            this.INTERN_TABLE.add(result)
+        if (shouldIntern) {
+            this.INTERN_TABLE.put(internIdx, result)
         }
 
         return result
@@ -165,15 +194,6 @@ open class Marshaller(protected val buf: ByteBuffer) {
     }
 
     /**
-     * Reads an interned string from the stream.
-     */
-    fun readStringInterned(short: Boolean = false): MarshalUnicodeString {
-        val string = this.readString(short = short)
-        this.INTERN_TABLE.add(string)
-        return string
-    }
-
-    /**
      * Reads a byte string from the stream.
      */
     fun readByteString(): MarshalString {
@@ -193,14 +213,14 @@ open class Marshaller(protected val buf: ByteBuffer) {
      */
     fun readByteStringInterned(): MarshalString {
         val bs = this.readByteString()
-        this.INTERN_TABLE.add(bs)
+        //this.INTERN_TABLE.add(bs)
         return bs
     }
 
     /** Reads an interned string ref. */
     fun readStringRef(): MarshalType {
         val idx = buf.int
-        return this.INTERN_TABLE[idx]
+        return this.INTERN_TABLE[idx]!!
     }
 
     /**

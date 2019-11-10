@@ -78,7 +78,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
                         maybeString.map { strings.add(it) }
                     }
 
-                    return Either.Right(this.interpreterGetExceptionInstance(strings))
+                    return Either.right(this.interpreterGetExceptionInstance(strings))
                 }
 
                 override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {

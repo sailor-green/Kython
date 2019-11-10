@@ -43,7 +43,7 @@ class PrintBuiltinFunction : PyBuiltinFunction("print") {
         }
 
         println(sb.toString())
-        return Either.Right(PyNone)
+        return Either.right(PyNone)
     }
 
     override val signature: PyCallableSignature by lazy {
