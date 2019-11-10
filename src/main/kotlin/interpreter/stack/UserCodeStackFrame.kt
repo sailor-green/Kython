@@ -131,6 +131,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
 
                 InstructionOpcode.POP_TOP -> this.popTop(param)
+                InstructionOpcode.ROT_TWO -> this.rotTwo(param)
+                InstructionOpcode.ROT_THREE -> this.rotThree(param)
 
                 InstructionOpcode.MAKE_FUNCTION -> this.makeFunction(param)
 
@@ -267,6 +269,32 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
         this.stack.pop()
         this.bytecodePointer += 1
+        return none()
+    }
+
+    /**
+     * ROT_TWO
+     */
+    fun rotTwo(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "ROT_TWO never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        stack.push(top)
+        stack.push(second)
+        return none()
+    }
+
+    /**
+     * ROT_THREE
+     */
+    fun rotThree(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "ROT_THREE never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        val third = stack.pop()
+        stack.push(top)
+        stack.push(third)
+        stack.push(second)
         return none()
     }
 
