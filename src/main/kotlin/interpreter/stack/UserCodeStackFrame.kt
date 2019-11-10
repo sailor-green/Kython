@@ -277,6 +277,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun popTop(arg: Byte): Option<PyException> {
         assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
+
         this.stack.pop()
         this.bytecodePointer += 1
         return none()
@@ -287,10 +288,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun rotTwo(arg: Byte): Option<PyException> {
         assert(arg.toInt() == 0) { "ROT_TWO never has an argument" }
+
         val top = stack.pop()
         val second = stack.pop()
         stack.push(top)
         stack.push(second)
+        this.bytecodePointer += 1
         return none()
     }
 
@@ -299,12 +302,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun rotThree(arg: Byte): Option<PyException> {
         assert(arg.toInt() == 0) { "ROT_THREE never has an argument" }
+
         val top = stack.pop()
         val second = stack.pop()
         val third = stack.pop()
         stack.push(top)
         stack.push(third)
         stack.push(second)
+        this.bytecodePointer += 1
         return none()
     }
 
@@ -313,6 +318,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun rotFour(arg: Byte): Option<PyException> {
         assert(arg.toInt() == 0) { "ROT_FOUR never has an argument" }
+
         val top = stack.pop()
         val second = stack.pop()
         val third = stack.pop()
@@ -321,6 +327,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         stack.push(fourth)
         stack.push(third)
         stack.push(second)
+
+        this.bytecodePointer += 1
         return none()
     }
 
@@ -331,6 +339,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         assert(arg.toInt() == 0) { "DUP_TOP never has an argument" }
         val top = stack.first
         stack.push(top)
+        this.bytecodePointer += 1
         return none()
     }
 
@@ -345,6 +354,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             stack.push(second)
             stack.push(top)
         }
+        this.bytecodePointer += 1
         return none()
     }
 
