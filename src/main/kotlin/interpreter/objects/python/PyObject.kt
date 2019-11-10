@@ -84,18 +84,19 @@ abstract class PyObject() {
     // `object.X` implementations
     /**
      * Delegate for `LOAD_ATTR` on any object.
+     *
+     * @param name: The name of the attribute to get.
+     * @param
      */
-    fun pyGetAttribute(name: String): PyObject? {
-        // TODO: Metaclasses, oh god
-
+    fun pyGetAttribute(name: String): Either<PyException, PyObject?> {
         // special method lookup
         if (name.startsWith("__") and name.endsWith("__")) {
-            return this.type.specialMethodLookup(name)
+            return Either.right(this.type.specialMethodLookup(name))
         }
 
         // try and find it on our dict, e.g. `__init__`
         if (name in this.internalDict) {
-            return this.internalDict[name]!!
+            return Either.right(this.internalDict[name])
         }
 
         // delegate to the type object
