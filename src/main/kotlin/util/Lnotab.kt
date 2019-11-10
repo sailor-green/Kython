@@ -25,70 +25,27 @@ package green.sailor.kython.util
 @Suppress("EXPERIMENTAL_API_USAGE", "EXPERIMENTAL_UNSIGNED_LITERALS")
 class Lnotab(val bytes: ByteArray) {
 
-    // maps bytecode idx to line number
-    val ranges = mutableListOf<Pair<IntRange, Int>>()
-
-    //init {
-    //buildRanges()
-    //}
-
     /**
-     * Builds the lnotab ranges.
+     * Gets the line number from a bytecode index.
      */
-    //fun buildRanges() {
     fun getLineNumberFromIdx(idx: Int): Int {
+        // loosely transliterated from
+        // https://github.com/python/cpython/blob/4a2edc34a405150d0b23ecfdcb401e7cf59f4650/Objects/codeobject.c
+
         val it = this.bytes.iterator()
-        val tempMap = mutableListOf(Pair(0, 0))
-
-        // https://svn.python.org/projects/python/branches/pep-0384/Objects/lnotab_notes.txt
-        // rough translation of dis.findlinestarts from Python 3.7.4
-
-        var lineno = 0
+        var size = this.bytes.size / 2
+        var line = 0
         var addr = 0
-        var lastLineNo = 0
+        while (true) {
+            size -= 1
+            if (size < 0) break
 
-        while (it.hasNext()) {
-            val addrIncr = it.nextByte().toUByte()
-            var lineIncr = it.nextByte()
-            if (addrIncr != 0u.toUByte()) {
-                if (lineno != lastLineNo) {
-                    //tempMap.add(Pair(addr, lineno))
-                    lastLineNo = lineno
-                }
-            }
-            addr = (addr + addrIncr.toInt())
-
-            if (lineIncr > 0x80) {
-                lineIncr = (lineIncr - 0x100.toByte()).toByte()
-            }
-            lineno += lineIncr
-
-            if (addr == (idx * 2)) {
-                return lineno
-            }
+            addr += it.next()
+            if (addr > idx * 2) break
+            line += it.next()
         }
-        return lineno
-        //if (lineno != lastLineNo) {
-        //    tempMap.add(Pair(addr, lineno))
-        //}
 
-        //tempMap.reduce { first, second ->
-        //    this.ranges.add(Pair(IntRange(first.first, second.first - 1), first.second))
-        //    second
-        //}
+        return line
     }
-
-    /**
-     * Gets the line number from the bytecode index.
-     */
-    /*fun getLineNumberFromIdx(idx: Int): Int {
-        val realIdx = idx * 2
-        for ((range, line) in this.ranges) {
-            if (realIdx in range) {
-                return line
-            }
-        }
-        return 0
-    }*/
 
 }
