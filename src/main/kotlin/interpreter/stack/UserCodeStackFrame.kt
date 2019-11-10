@@ -18,8 +18,10 @@
 
 package green.sailor.kython.interpreter.stack
 
-import arrow.core.*
-import green.sailor.kython.interpreter.KythonInterpreter
+import arrow.core.Either
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.none
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyUserFunction
@@ -243,11 +245,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             return Some(Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable"))
         }
 
-        val childFrame = fn.getFrame()
-        val sig = fn.signature
-
-        val argsToPass = sig.getFinalArgs(toCallWith)
-        val result = argsToPass.flatMap { KythonInterpreter.runStackFrame(childFrame, it) }
+        val result = fn.runCallable(toCallWith)
 
         // errors should be passed down, and results should be put onto the stack
         return result.fold(
