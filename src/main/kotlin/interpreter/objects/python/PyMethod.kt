@@ -66,17 +66,7 @@ class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMe
         return this.function.getFrame()
     }
 
-    override val signature: PyCallableSignature by lazy {
-        // this is the same signature as the function, with the first param chopped off
-        val original = function.signature
-        val firstArg = original.args.first()
-        val ourArgs = original.args.drop(1)
-        val ourDefaults = original.defaults.toMutableMap().apply {
-            this.remove(firstArg.first)
-        }
-
-        PyCallableSignature(*ourArgs.toTypedArray()).apply { defaults.putAll(ourDefaults) }
-    }
+    override val signature: PyCallableSignature = this.function.signature
 
     override fun toPyString(): Either<PyException, PyString> {
         val builder = StringBuilder()
