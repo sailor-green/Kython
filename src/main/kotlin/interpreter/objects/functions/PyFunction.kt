@@ -16,19 +16,13 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.objects.functions
 
-import green.sailor.kython.interpreter.objects.functions.PyUserFunction
+import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyObject
-import java.nio.file.Path
+import green.sailor.kython.interpreter.objects.python.PyType
 
 /**
- * Represents a Kython module. This is the internal working; this is exposed separately as a PyObject to Python code.
- *
- * @param moduleFunction: The [PyUserFunction] that this module is built from.
- * @param path: The source code path this module is from.
+ * Represents a Python function instance.
  */
-class KyModule(val moduleFunction: PyUserFunction, val path: Path) {
-    /** The mapping of attributes of this module. */
-    val attribs = mutableMapOf<String, PyObject>()
-}
+abstract class PyFunction(type: PyType) : PyObject(type), PyCallable

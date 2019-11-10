@@ -19,9 +19,10 @@
 package green.sailor.kython.interpreter.objects.functions
 
 import arrow.core.Either
-import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.stack.BuiltinStackFrame
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -29,7 +30,13 @@ import green.sailor.kython.interpreter.stack.StackFrame
 /**
  * Represents a built-in function, such as print().
  */
-abstract class PyBuiltinFunction(val name: String) : PyObject(), PyCallable {
+abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctionType) {
+    object PyBuiltinFunctionType : PyType("BuiltinType") {
+        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+            return Exceptions.TYPE_ERROR.makeWithMessageLeft("Cannot create builtin instances")
+        }
+    }
+
     override fun toPyString(): Either<PyException, PyString> =
         Either.right(PyString("<built-in function $name>"))
 

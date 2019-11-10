@@ -19,8 +19,9 @@
 package green.sailor.kython.interpreter
 
 import arrow.core.Either
-import green.sailor.kython.interpreter.objects.KyFunction
+import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.KyModule
+import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -88,7 +89,7 @@ object KythonInterpreter {
         val mainFile = cpyInterface.getPycFilename(pycFilename)
         val marshalled = Marshaller.parsePycFile(Paths.get(mainFile))
 
-        val rootFunction = KyFunction(marshalled)
+        val rootFunction = PyUserFunction(KyCodeObject(marshalled))
         val module = KyModule(rootFunction, path)
         rootFunction.module = module
         this.modules["__main__"] = module
@@ -136,7 +137,7 @@ object KythonInterpreter {
      *
      * @param child: If this is a child thread. If false, exceptions will be fatal.
      */
-    fun kickoffThread(function: KyFunction, child: Boolean = true) {
+    fun kickoffThread(function: PyUserFunction, child: Boolean = true) {
 
         val frame = UserCodeStackFrame(function)
         try {

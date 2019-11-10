@@ -22,7 +22,7 @@ import arrow.core.*
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.KyFunction
+import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
@@ -35,9 +35,7 @@ import java.util.*
  * @param function: The function being ran. This may not be a *real* function, but we treat it as if it is.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class UserCodeStackFrame(
-    val function: KyFunction
-) : StackFrame() {
+class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     companion object {
         /** Load pools for LOAD/STORE instructions. These represent where the instruction will operate on. */
         enum class LoadPool {

@@ -48,6 +48,13 @@ abstract class PyException(val args: PyTuple) : PyObject() {
             return this.interpreterGetExceptionInstance(args)
         }
 
+        /**
+         * Internal method for making an Either.left exception.
+         */
+        fun makeWithMessageLeft(message: String): Either<PyException, PyObject> {
+            return Either.left(this.makeWithMessage(message))
+        }
+
         fun typeSubclassOf(name: String): PyExceptionType {
             return makeExceptionType(name, listOf(this))
         }

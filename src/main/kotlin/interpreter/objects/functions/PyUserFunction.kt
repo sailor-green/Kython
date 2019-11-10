@@ -16,27 +16,50 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.objects.functions
 
 import arrow.core.Either
 import green.sailor.kython.interpreter.instruction.Instruction
-import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.Builtins
+import green.sailor.kython.interpreter.objects.Exceptions
+import green.sailor.kython.interpreter.objects.KyCodeObject
+import green.sailor.kython.interpreter.objects.KyModule
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
+import green.sailor.kython.interpreter.objects.python.PyCodeObject
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.marshal.MarshalCodeObject
+import interpreter.objects.iface.ArgType
 
 /**
  * Represents a Python function object.
  *
  * @param codeObject: The marshalled code object to transform into a real code object.
  */
-class KyFunction(codeObject: MarshalCodeObject) : PyCallable, PyObject() {
+class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) {
+    object PyUserFunctionType : PyType("function") {
+        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+            val code = kwargs["code"] ?: error("Built-in signature mismatch")
+            if (code !is PyCodeObject) {
+                return Exceptions.TYPE_ERROR.makeWithMessageLeft("Arg 'code' is not a code object")
+            }
+            return Either.right(PyUserFunction(code.wrappedCodeObject))
+        }
+
+        override val signature: PyCallableSignature by lazy {
+            PyCallableSignature(
+                "code" to ArgType.POSITIONAL,
+                "globals" to ArgType.POSITIONAL
+            )
+        }
+    }
+
+
     /** The code object for this function. */
-    val code = KyCodeObject(codeObject)
+    val code = codeObject
 
     /** The KyModule for this function. */
     lateinit var module: KyModule
