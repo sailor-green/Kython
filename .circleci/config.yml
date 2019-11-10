@@ -20,7 +20,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - ky-dependencies-{{ checksum "build.gradle" }}
+            - ky-dependencies-{{ checksum "build.gradle.kts" }}
             - ky-dependencies-
 
       - run: gradle dependencies
@@ -28,7 +28,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: ky-dependencies-{{ checksum "build.gradle" }}
+          key: ky-dependencies-{{ checksum "build.gradle.kts" }}
 
       - run: gradle test
 
