@@ -299,6 +299,22 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
+     * ROT_FOUR
+     */
+    fun rotFour(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "ROT_FOUR never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        val third = stack.pop()
+        val fourth = stack.pop()
+        stack.push(top)
+        stack.push(fourth)
+        stack.push(third)
+        stack.push(second)
+        return none()
+    }
+
+    /**
      * BINARY_* (ADD, etc)
      */
     fun binaryOp(type: BinaryOp, arg: Byte): Option<PyException> {
