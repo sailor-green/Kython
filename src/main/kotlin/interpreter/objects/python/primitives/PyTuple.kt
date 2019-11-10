@@ -28,7 +28,7 @@ import interpreter.objects.iface.ArgType
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
  */
-class PyTuple(val subobjects: Collection<PyObject>) : PyObject(PyTupleType) {
+class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
     companion object {
         /**
          * Represents the empty tuple.
