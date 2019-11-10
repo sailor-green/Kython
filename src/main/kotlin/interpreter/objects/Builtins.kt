@@ -52,10 +52,11 @@ object Builtins {
     val NONE_TYPE = PyNone.PyNoneType
     val TUPLE_TYPE = PyTuple.PyTupleType
     val DICT_TYPE = PyDict.PyDictType
+    val BOOL_TYPE = PyBool.PyBoolType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = PyDict(
-        mutableMapOf(
+        linkedMapOf(
             PyString("print") to PRINT,
             PyString("locals") to LOCALS,
 

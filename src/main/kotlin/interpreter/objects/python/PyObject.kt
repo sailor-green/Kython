@@ -36,7 +36,7 @@ abstract class PyObject() {
             if (type is MarshalTuple) {
                 return PyTuple(type.wrapped.map { wrapMarshalled(it) })
             } else if (type is MarshalDict) {
-                val map = mutableMapOf<PyObject, PyObject>()
+                val map = linkedMapOf<PyObject, PyObject>()
                 for ((key, value) in type.wrapped.entries) {
                     map[wrapMarshalled(key)] = wrapMarshalled(value)
                 }
@@ -64,6 +64,7 @@ abstract class PyObject() {
                 is Int -> PyInt(obb.toLong())
                 is Long -> PyInt(obb.toLong())
                 is String -> PyString(obb.toString())
+                is Boolean -> if (obb) PyBool.TRUE else PyBool.FALSE
                 else -> error("Don't know how to wrap $obb in a PyObject")
             }
     }
@@ -75,7 +76,7 @@ abstract class PyObject() {
     val parentTypes = mutableListOf<PyType>()
 
     /** The `__dict__` of this PyObject. */
-    private val internalDict = mutableMapOf<String, PyObject>()
+    private val internalDict = linkedMapOf<String, PyObject>()
 
     constructor(type: PyType) : this() {
         this.type = type
@@ -129,6 +130,6 @@ abstract class PyObject() {
      * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.
      */
     fun getPyDict(): PyDict {
-        return PyDict(internalDict.mapKeys { PyString(it.key) }.toMutableMap())
+        return PyDict(internalDict.mapKeys { PyString(it.key) }.toMutableMap() as LinkedHashMap)
     }
 }

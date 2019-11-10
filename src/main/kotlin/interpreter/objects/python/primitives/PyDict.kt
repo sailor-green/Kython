@@ -26,10 +26,10 @@ import green.sailor.kython.interpreter.objects.python.PyType
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDictType) {
+class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(PyDictType) {
     companion object {
         /** Represents the empty dict. */
-        val EMPTY = PyDict(mutableMapOf())
+        val EMPTY = PyDict(linkedMapOf())
 
         /**
          * Creates a new PyDict from any map, wrapping primitive types.
@@ -50,7 +50,7 @@ class PyDict(val items: MutableMap<out PyObject, out PyObject>) : PyObject(PyDic
 
                 Pair(key, value)
             }.toMap().toMutableMap()
-            return PyDict(newMap)
+            return PyDict(newMap as LinkedHashMap<out PyObject, out PyObject>)
         }
     }
 
