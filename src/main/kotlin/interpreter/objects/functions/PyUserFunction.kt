@@ -76,9 +76,12 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
      * Gets a global from the globals for this function.
      */
     fun getGlobal(name: String): Either<PyException, PyObject> {
-        val wrapped = PyString(name)
-        if (wrapped in Builtins.BUILTINS_MAP.items) {
-            return Either.right(Builtins.BUILTINS_MAP.items[wrapped]!!)
+        if (name in this.module.attribs) {
+            return Either.right(this.module.attribs[name]!!)
+        }
+
+        if (name in Builtins.BUILTINS_MAP) {
+            return Either.right(Builtins.BUILTINS_MAP[name]!!)
         }
 
         return Either.left(Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined"))
