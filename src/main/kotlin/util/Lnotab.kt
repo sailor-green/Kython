@@ -28,14 +28,15 @@ class Lnotab(val bytes: ByteArray) {
     // maps bytecode idx to line number
     val ranges = mutableListOf<Pair<IntRange, Int>>()
 
-    init {
-        buildRanges()
-    }
+    //init {
+    //buildRanges()
+    //}
 
     /**
      * Builds the lnotab ranges.
      */
-    fun buildRanges() {
+    //fun buildRanges() {
+    fun getLineNumberFromIdx(idx: Int): Int {
         val it = this.bytes.iterator()
         val tempMap = mutableListOf(Pair(0, 0))
 
@@ -51,7 +52,7 @@ class Lnotab(val bytes: ByteArray) {
             var lineIncr = it.nextByte()
             if (addrIncr != 0u.toUByte()) {
                 if (lineno != lastLineNo) {
-                    tempMap.add(Pair(addr, lineno))
+                    //tempMap.add(Pair(addr, lineno))
                     lastLineNo = lineno
                 }
             }
@@ -61,21 +62,26 @@ class Lnotab(val bytes: ByteArray) {
                 lineIncr = (lineIncr - 0x100.toByte()).toByte()
             }
             lineno += lineIncr
-        }
-        if (lineno != lastLineNo) {
-            tempMap.add(Pair(addr, lineno))
-        }
 
-        tempMap.reduce { first, second ->
-            this.ranges.add(Pair(IntRange(first.first, second.first - 1), first.second))
-            second
+            if (addr == (idx * 2)) {
+                return lineno
+            }
         }
+        return lineno
+        //if (lineno != lastLineNo) {
+        //    tempMap.add(Pair(addr, lineno))
+        //}
+
+        //tempMap.reduce { first, second ->
+        //    this.ranges.add(Pair(IntRange(first.first, second.first - 1), first.second))
+        //    second
+        //}
     }
 
     /**
      * Gets the line number from the bytecode index.
      */
-    fun getLineNumberFromIdx(idx: Int): Int {
+    /*fun getLineNumberFromIdx(idx: Int): Int {
         val realIdx = idx * 2
         for ((range, line) in this.ranges) {
             if (realIdx in range) {
@@ -83,6 +89,6 @@ class Lnotab(val bytes: ByteArray) {
             }
         }
         return 0
-    }
+    }*/
 
 }
