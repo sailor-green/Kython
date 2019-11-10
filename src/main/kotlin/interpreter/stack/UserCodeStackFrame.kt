@@ -29,6 +29,7 @@ import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyInt
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import java.util.*
 
 /**
@@ -50,6 +51,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
         enum class BinaryOp {
             ADD,
+        }
+
+        enum class BuildType {
+            TUPLE,
+            DICT,
+            LIST,
+            SET,
+            STRING,
         }
     }
 
@@ -109,6 +118,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // store ops
                 InstructionOpcode.STORE_NAME -> this.store(LoadPool.NAME, param)
                 InstructionOpcode.STORE_FAST -> this.store(LoadPool.FAST, param)
+
+                // build ops
+                InstructionOpcode.BUILD_TUPLE -> this.buildSimple(BuildType.TUPLE, param)
+                InstructionOpcode.BUILD_STRING -> this.buildSimple(BuildType.STRING, param)
 
                 // binary ops
                 InstructionOpcode.BINARY_ADD -> this.binaryOp(BinaryOp.ADD, param)
@@ -265,9 +278,31 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 stack.push(PyInt((stack.pop() as PyInt).wrappedInt + (stack.pop() as PyInt).wrappedInt))
                 none()
             }
-            else -> error("Unsupported binary op $type")
+            else -> TODO("Unsupported binary op $type")
         }
         this.bytecodePointer += 1
         return result
+    }
+
+    /**
+     * BUILD_* (TUPLE, LIST, SET, etc). Does not work for CONST_KEY_MAP!
+     */
+    fun buildSimple(type: BuildType, arg: Byte): Option<PyException> {
+        val count = arg.toInt()
+        val built = when (type) {
+            BuildType.TUPLE -> {
+                PyTuple((0 until count).map { this.stack.pop() })
+            }
+            BuildType.STRING -> {
+                val concatString = (0 until count)
+                    .map { (this.stack.pop() as PyString).wrappedString }
+                    .reduce { acc, s -> acc + s }
+                PyString(concatString)
+            }
+            else -> TODO("Unimplemented build type $type")
+        }
+        this.stack.push(built)
+        this.bytecodePointer += 1
+        return none()
     }
 }
