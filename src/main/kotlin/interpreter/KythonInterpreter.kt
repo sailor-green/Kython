@@ -140,8 +140,7 @@ object KythonInterpreter {
         this.rootFrameLocal.set(rootFrame)
 
         val result = this.runStackFrame(rootFrame, mapOf())
-        if (result.isLeft()) {
-            val error = (result as Either.Left).a
+        result.mapLeft { error ->
             val errorName = error.type.name
             System.err.println("\nKython stack (most recent frame last):")
             for (frame in error.exceptionFrames) {
