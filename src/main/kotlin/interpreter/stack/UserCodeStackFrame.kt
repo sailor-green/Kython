@@ -115,6 +115,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.LOAD_NAME -> this.load(LoadPool.NAME, param)
                 InstructionOpcode.LOAD_CONST -> this.load(LoadPool.CONST, param)
                 InstructionOpcode.LOAD_GLOBAL -> this.load(LoadPool.GLOBAL, param)
+                InstructionOpcode.LOAD_ATTR -> this.load(LoadPool.ATTR, param)
 
                 // store ops
                 InstructionOpcode.STORE_NAME -> this.store(LoadPool.NAME, param)
@@ -157,7 +158,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
-     * LOAD_(NAME|FAST).
+     * LOAD_*
      */
     fun load(pool: LoadPool, opval: Byte): Option<PyException> {
         // pool is the type we want to load
@@ -183,6 +184,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             LoadPool.GLOBAL -> {
                 val name = this.function.code.names[idx]
                 this.function.getGlobal(name)
+            }
+            LoadPool.ATTR -> {
+                val toGet = this.stack.pop()
+                val name = this.function.code.names[idx]
+                toGet.pyGetAttribute(name)
             }
             else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }

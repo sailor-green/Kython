@@ -19,6 +19,7 @@
 package green.sailor.kython.interpreter.objects.python.primitives
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
@@ -46,6 +47,17 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
             )
         }
 
+        init {
+            this.internalDict["upper"] = StringUpper
+        }
+    }
+
+    object StringUpper : PyBuiltinFunction("str.upper") {
+        override val signature = PyCallableSignature.EMPTY_METHOD
+        override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+            val self = kwargs["self"]!! as PyString
+            return Either.right(PyString(self.wrappedString.toUpperCase()))
+        }
     }
 
     override fun toPyString(): Either<PyException, PyString> = Either.right(this)

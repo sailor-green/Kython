@@ -19,7 +19,10 @@
 package green.sailor.kython.interpreter.objects.python
 
 import arrow.core.Either
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyCodeObject
+import green.sailor.kython.interpreter.objects.functions.magic.ObjectGetattribute
+import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.primitives.*
 import green.sailor.kython.marshal.*
 
@@ -67,6 +70,17 @@ abstract class PyObject() {
                 is Boolean -> if (obb) PyBool.TRUE else PyBool.FALSE
                 else -> error("Don't know how to wrap $obb in a PyObject")
             }
+
+        /**
+         * Gets the default object dict, containing the base implements of certain magic methods.
+         */
+        fun getDefaultDict(): LinkedHashMap<String, PyObject> {
+            val d = linkedMapOf<String, PyObject>(
+                "__getattribute__" to ObjectGetattribute
+            )
+
+            return d
+        }
     }
 
     /** The type of this PyObject. */
@@ -76,7 +90,8 @@ abstract class PyObject() {
     val parentTypes = mutableListOf<PyType>()
 
     /** The `__dict__` of this PyObject. */
-    private val internalDict = linkedMapOf<String, PyObject>()
+    internal val internalDict =
+        getDefaultDict()
 
     constructor(type: PyType) : this() {
         this.type = type
@@ -87,28 +102,37 @@ abstract class PyObject() {
      * Delegate for `LOAD_ATTR` on any object.
      *
      * @param name: The name of the attribute to get.
-     * @param
      */
-    fun pyGetAttribute(name: String): Either<PyException, PyObject?> {
-        // special method lookup
-        if (name.startsWith("__") and name.endsWith("__")) {
-            return Either.right(this.type.specialMethodLookup(name))
+    fun pyGetAttribute(name: String): Either<PyException, PyObject> {
+        // this will delegate to `__getattribute__`,
+
+        // forcibly do special method lookup
+        if (name.startsWith("__") && name.endsWith("__")) {
+            val specialMethod = this.specialMethodLookup(name)
+            if (specialMethod != null) {
+                return Either.right(specialMethod)
+            }
         }
 
-        // try and find it on our dict, e.g. `__init__`
-        if (name in this.internalDict) {
-            return Either.right(this.internalDict[name])
+        // try and run __getattribute__
+        val getAttribute = this.specialMethodLookup("__getattribute__")
+            ?: error("__getattribute__ does not exist - this must never happen")
+
+        if (getAttribute !is PyCallable) {
+            return Exceptions.TYPE_ERROR.makeWithMessageLeft("__getattribute__ is not callable")
         }
 
-        // delegate to the type object
-        return this.type.pyGetAttribute(name)
+        // todo: proper method wrapping...
+        return getAttribute.runCallable(listOf(PyString(name), this))
     }
 
     /**
      * Performs special method lookup.
+     *
+     * @return A [PyObject]? for the special method found, or null if it wasn't found.
      */
     fun specialMethodLookup(name: String): PyObject? {
-        TODO("Special method lookup")
+        return this.type.internalDict[name]
     }
 
     /**

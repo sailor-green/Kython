@@ -34,6 +34,11 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
     companion object {
         /** The empty signature. */
         val EMPTY = PyCallableSignature()
+
+        /** The empty method signature, for builtins. */
+        val EMPTY_METHOD = PyCallableSignature(
+            "self" to ArgType.POSITIONAL
+        )
     }
 
 
