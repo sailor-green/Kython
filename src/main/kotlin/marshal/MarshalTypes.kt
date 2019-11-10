@@ -98,7 +98,7 @@ sealed class MarshalType() {
 
     open val wrapped: Any? = null
 
-    override fun toString(): String = "<Marshalled ${this.wrapped}>"
+    override fun toString(): String = "<Marshalled ${this::class.simpleName} ${this.wrapped}>"
 
     /**
      * Ensures this marshalled object is a tuple.
@@ -107,18 +107,30 @@ sealed class MarshalType() {
         if (this is MarshalTuple) return this
         return MarshalTuple(listOf(this))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MarshalType
+
+        if (wrapped != other.wrapped) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return wrapped?.hashCode() ?: 0
+    }
+
+
 }
 
 /** An int. */
 class MarshalInt(override val wrapped: Int) : MarshalType()
 
 /** A string. Created from various string objects. */
-class MarshalString(override val wrapped: ByteArray) : MarshalType() {
-    override fun toString(): String {
-        return (this.wrapped as ByteArray).toString(Charsets.UTF_8)
-    }
-
-}
+class MarshalString(override val wrapped: ByteArray) : MarshalType()
 
 /** A unicode string. */
 class MarshalUnicodeString(override val wrapped: String) : MarshalType()

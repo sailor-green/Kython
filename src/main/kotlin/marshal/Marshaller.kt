@@ -60,10 +60,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
         }
     }
 
-    /** The string intern table. */
-    val STRING_INTERN_TABLE = mutableListOf<MarshalType>()
-
-    /** The generic ref intern table... */
+    /** The intern table... */
     val INTERN_TABLE = mutableListOf<MarshalType>()
 
     /**
@@ -79,6 +76,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
 
         val type = (byte and (-0x81).toByte()).toChar()
         val flag = (byte and 0x80.toByte()).toInt()
+        var shouldIntern = flag != 0
 
         val result = when (type) {
             // simple types...
@@ -91,9 +89,15 @@ open class Marshaller(protected val buf: ByteBuffer) {
 
             // string types
             MarshalType.ASCIISTRING, MarshalType.UNICODESTRING -> this.readString(false)
-            MarshalType.ASCIISTRING_INTERNED -> this.readStringInterned(false)
+            MarshalType.ASCIISTRING_INTERNED -> {
+                shouldIntern = true
+                this.readString(false)
+            }
             MarshalType.ASCIISTRING_SHORT -> this.readString(true)
-            MarshalType.ASCIISTRING_SHORT_INTERNED -> this.readStringInterned(short = true)
+            MarshalType.ASCIISTRING_SHORT_INTERNED -> {
+                shouldIntern = true
+                this.readString(short = true)
+            }
 
             // byte types
             MarshalType.BYTESTRING -> this.readByteString()
@@ -118,7 +122,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
             else -> error("Unknown marshal type: $type")
         }
 
-        if (flag != 0) {
+        if (shouldIntern && result !in INTERN_TABLE) {
             this.INTERN_TABLE.add(result)
         }
 
@@ -195,7 +199,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
 
     /** Reads an interned string ref. */
     fun readStringRef(): MarshalType {
-        val idx = buf.int - 1
+        val idx = buf.int
         return this.INTERN_TABLE[idx]
     }
 
