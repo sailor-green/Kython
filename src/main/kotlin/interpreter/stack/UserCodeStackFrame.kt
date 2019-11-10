@@ -130,9 +130,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
 
+                // stack ops
                 InstructionOpcode.POP_TOP -> this.popTop(param)
                 InstructionOpcode.ROT_TWO -> this.rotTwo(param)
                 InstructionOpcode.ROT_THREE -> this.rotThree(param)
+                InstructionOpcode.ROT_FOUR -> this.rotFour(param)
+                InstructionOpcode.DUP_TOP -> this.dupTop(param)
+                InstructionOpcode.DUP_TOP_TWO -> this.dupTopTwo(param)
 
                 InstructionOpcode.MAKE_FUNCTION -> this.makeFunction(param)
 
@@ -311,6 +315,30 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         stack.push(fourth)
         stack.push(third)
         stack.push(second)
+        return none()
+    }
+
+    /**
+     * DUP_TOP
+     */
+    fun dupTop(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "DUP_TOP never has an argument" }
+        val top = stack.first
+        stack.push(top)
+        return none()
+    }
+
+    /**
+     * DUP_TOP_TWO
+     */
+    fun dupTopTwo(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "DUP_TOP_TWO never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        repeat(2){
+            stack.push(second)
+            stack.push(top)
+        }
         return none()
     }
 
