@@ -83,6 +83,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * Runs this stack frame, executing the function within.
      */
     override fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        this.locals.putAll(kwargs)
+
         while (true) {
             // simple fetch decode execute loop
             // maybe this could be pipelined.
