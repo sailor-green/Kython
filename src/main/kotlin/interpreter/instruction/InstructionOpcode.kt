@@ -27,6 +27,7 @@ enum class InstructionOpcode(val opcode: Int) {
     ROT_THREE(3),
     DUP_TOP(4),
     DUP_TOP_TWO(5),
+    ROT_FOUR(6),
     NOP(9),
     UNARY_POSITIVE(10),
     UNARY_NEGATIVE(11),
@@ -151,6 +152,7 @@ enum class InstructionOpcode(val opcode: Int) {
                 3 -> ROT_THREE
                 4 -> DUP_TOP
                 5 -> DUP_TOP_TWO
+                6 -> ROT_FOUR
                 9 -> NOP
                 10 -> UNARY_POSITIVE
                 11 -> UNARY_NEGATIVE

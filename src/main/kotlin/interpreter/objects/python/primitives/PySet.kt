@@ -34,7 +34,16 @@ class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
     }
 
     override fun toPyString(): Either<PyException, PyString> {
-        TODO("not implemented")
+        val s = StringBuilder("{")
+        for (item in wrappedSet) {
+            val maybeString = item.toPyStringRepr()
+            // pass through exceptions
+            if (maybeString.isLeft()) return maybeString
+            maybeString.map { s.append(it.wrappedString) }
+            s.append(", ")
+        }
+        s.append("}")
+        return Either.right(PyString(s.toString()))
     }
 
     override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()

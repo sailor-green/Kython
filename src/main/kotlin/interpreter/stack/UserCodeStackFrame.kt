@@ -131,7 +131,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
 
+                // stack ops
                 InstructionOpcode.POP_TOP -> this.popTop(param)
+                InstructionOpcode.ROT_TWO -> this.rotTwo(param)
+                InstructionOpcode.ROT_THREE -> this.rotThree(param)
+                InstructionOpcode.ROT_FOUR -> this.rotFour(param)
+                InstructionOpcode.DUP_TOP -> this.dupTop(param)
+                InstructionOpcode.DUP_TOP_TWO -> this.dupTopTwo(param)
 
                 InstructionOpcode.MAKE_FUNCTION -> this.makeFunction(param)
 
@@ -273,6 +279,72 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
         this.stack.pop()
         this.bytecodePointer += 1
+        return none()
+    }
+
+    /**
+     * ROT_TWO
+     */
+    fun rotTwo(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "ROT_TWO never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        stack.push(top)
+        stack.push(second)
+        return none()
+    }
+
+    /**
+     * ROT_THREE
+     */
+    fun rotThree(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "ROT_THREE never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        val third = stack.pop()
+        stack.push(top)
+        stack.push(third)
+        stack.push(second)
+        return none()
+    }
+
+    /**
+     * ROT_FOUR
+     */
+    fun rotFour(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "ROT_FOUR never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        val third = stack.pop()
+        val fourth = stack.pop()
+        stack.push(top)
+        stack.push(fourth)
+        stack.push(third)
+        stack.push(second)
+        return none()
+    }
+
+    /**
+     * DUP_TOP
+     */
+    fun dupTop(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "DUP_TOP never has an argument" }
+        val top = stack.first
+        stack.push(top)
+        return none()
+    }
+
+    /**
+     * DUP_TOP_TWO
+     */
+    fun dupTopTwo(arg: Byte): Option<PyException> {
+        assert(arg.toInt() == 0) { "DUP_TOP_TWO never has an argument" }
+        val top = stack.pop()
+        val second = stack.pop()
+        repeat(2){
+            stack.push(second)
+            stack.push(top)
+        }
         return none()
     }
 
