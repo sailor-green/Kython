@@ -45,6 +45,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             FAST,
             NAME,
             ATTR,
+            GLOBAL
         }
 
         enum class BinaryOp {
@@ -101,6 +102,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.LOAD_FAST -> this.load(LoadPool.FAST, param)
                 InstructionOpcode.LOAD_NAME -> this.load(LoadPool.NAME, param)
                 InstructionOpcode.LOAD_CONST -> this.load(LoadPool.CONST, param)
+                InstructionOpcode.LOAD_GLOBAL -> this.load(LoadPool.GLOBAL, param)
 
                 // store ops
                 InstructionOpcode.STORE_NAME -> this.store(LoadPool.NAME, param)
@@ -160,6 +162,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     Either.Right(realName)
                 }
                 result
+            }
+            LoadPool.GLOBAL -> {
+                val name = this.function.code.names[idx]
+                this.function.getGlobal(name)
             }
             else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }
