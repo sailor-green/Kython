@@ -204,7 +204,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
      *
      * @param small: If this is a "small" container (TYPE_SMALL_TUPLE).
      */
-    fun getSizedContainer(small: Boolean = false): Array<MarshalType> {
+    fun getSizedContainer(small: Boolean = false): List<MarshalType> {
         val size = if (!small) {
             buf.int
         } else {
@@ -218,7 +218,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
         }
 
         // it shouldn't be a problem, but just in case...
-        val filtered = arr.filterNotNull().toTypedArray()
+        val filtered = arr.filterNotNull()
         check(filtered.size == size) { "Marshalled container didn't have $size elements but ${filtered.size}" }
         return filtered
     }

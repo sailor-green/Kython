@@ -105,7 +105,7 @@ sealed class MarshalType() {
      */
     fun ensureTuple(): MarshalTuple {
         if (this is MarshalTuple) return this
-        return MarshalTuple(arrayOf(this))
+        return MarshalTuple(listOf(this))
     }
 }
 
@@ -160,7 +160,7 @@ class MarshalFloat(override val wrapped: Double) : MarshalType()
 class MarshalList(override val wrapped: List<MarshalType>) : MarshalType()
 
 /** A marshalled tuple. */
-class MarshalTuple(override val wrapped: Array<MarshalType>) : MarshalType()
+class MarshalTuple(override val wrapped: List<MarshalType>) : MarshalType()
 
 /** A marshalled dict. */
 class MarshalDict(override val wrapped: Map<MarshalType, MarshalType>) : MarshalType()
