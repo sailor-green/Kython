@@ -71,8 +71,8 @@ class CPythonInterface(val workingDir: Path) {
     /**
      * Compiles all Python files using CPython.
      */
-    fun compileAllFiles() {
-        runCPythonCommand(listOf("-m", "compileall", this.workingDir.toString()), this.workingDir)
+    fun compileAllFiles(entrypoint: Path) {
+        runCPythonCommand(listOf("-m", "compileall", entrypoint.parent.toString()), this.workingDir)
     }
 
     /**
