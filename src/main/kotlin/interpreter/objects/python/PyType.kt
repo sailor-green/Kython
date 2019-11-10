@@ -47,8 +47,17 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
             // TODO: Three arg type version
             return Either.left(Exceptions.NOT_IMPLEMENTED_ERROR.makeWithMessage("Three-arg form of type not impl'd yet"))
         }
-    }
 
+        // root type doesn't make method wrappers because we have no type
+        override val internalDict: LinkedHashMap<String, PyObject> by lazy {
+            val map = linkedMapOf<String, PyObject>().apply { putAll(getDefaultDict()) }
+            map
+        }
+
+        override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
+            return mutableMapOf()
+        }
+    }
     /**
      * Creates a new instance of the object represented by this type.
      *
@@ -68,6 +77,13 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
                 )
             }
         }
+    }
+
+    /**
+     * Makes method wrappers for this type. These will be automatically copied into the object dict.
+     */
+    open fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
+        return PyRootType.makeMethodWrappers(instance)
     }
 
     /**

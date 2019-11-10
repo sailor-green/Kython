@@ -26,6 +26,12 @@ import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.primitives.*
 import green.sailor.kython.marshal.*
 
+// initialdict:
+// take PyString as an example
+// PyStringType contains all the methods, e.g. upper/lower/et cetera
+// internalDict copies all the method wrappers from PyStringType on creation, binding them to
+// the PyString object
+
 /**
  * Represents a Python object. Examples include an int, strings, et cetera, or user-defined objects.
  */
@@ -84,14 +90,26 @@ abstract class PyObject() {
     }
 
     /** The type of this PyObject. */
-    var type: PyType = PyType.PyRootType
+    open var type: PyType = PyType.PyRootType
 
     /** The parent types of this PyObject. Exposed as `__bases__`. */
-    val parentTypes = mutableListOf<PyType>()
+    open val parentTypes = mutableListOf<PyType>()
+
+    /**
+     * The initial dict for this PyObject. Copied into internalDict upon instantiating.
+     * Built-in methods should be defined on the type object's copy of this.
+     */
+    open val initialDict: Map<String, PyObject> = mapOf()
 
     /** The `__dict__` of this PyObject. */
-    internal val internalDict =
-        getDefaultDict()
+    internal open val internalDict by lazy {
+        getDefaultDict().apply {
+            // first copy all the parent type method wrappers
+            putAll(type.makeMethodWrappers(this@PyObject))
+            // then copy the "initial" dictionary
+            putAll(initialDict)
+        }
+    }
 
     constructor(type: PyType) : this() {
         this.type = type

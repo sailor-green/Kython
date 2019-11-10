@@ -22,6 +22,7 @@ import arrow.core.Either
 import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.objects.python.PyMethod
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import interpreter.objects.iface.ArgType
@@ -47,8 +48,16 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
             )
         }
 
-        init {
-            this.internalDict["upper"] = StringUpper
+        override val initialDict: Map<String, PyObject> by lazy {
+            mapOf(
+                "upper" to StringUpper
+            )
+        }
+
+        override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
+            val original = super.makeMethodWrappers(instance)
+            original["upper"] = PyMethod(StringUpper, instance)
+            return original
         }
     }
 
