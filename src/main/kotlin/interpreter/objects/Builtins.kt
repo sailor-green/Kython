@@ -55,20 +55,18 @@ object Builtins {
     val BOOL_TYPE = PyBool.PyBoolType
 
     /** The PyDict map of builtins. */
-    val BUILTINS_MAP = PyDict(
-        linkedMapOf(
-            PyString("print") to PRINT,
-            PyString("locals") to LOCALS,
+    val BUILTINS_MAP = linkedMapOf(
+        "print" to PRINT,
+        "locals" to LOCALS,
 
-            // class types
-            PyString("type") to TYPE,
-            PyString("int") to INT_TYPE,
-            PyString("str") to STRING_TYPE,
-            PyString("tuple") to TUPLE_TYPE,
-            PyString("dict") to DICT_TYPE,
+        // class types
+        "type" to TYPE,
+        "int" to INT_TYPE,
+        "str" to STRING_TYPE,
+        "tuple" to TUPLE_TYPE,
+        "dict" to DICT_TYPE,
 
-            // specials
-            PyString("None") to NONE
-        ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
-    )
+        // specials
+        "None" to NONE
+    ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
 }

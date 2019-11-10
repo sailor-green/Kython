@@ -19,7 +19,6 @@
 package green.sailor.kython.interpreter.objects
 
 import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.primitives.PyString
 
 /**
  * A nice list of exceptions.
@@ -41,14 +40,14 @@ object Exceptions {
     val NOT_IMPLEMENTED_ERROR = RUNTIME_ERROR.typeSubclassOf("NotImplementedError")
 
     val EXCEPTION_MAP = mapOf(
-        PyString("BaseException") to EXCEPTION,
-        PyString("Exception") to EXCEPTION,
+        "BaseException" to EXCEPTION,
+        "Exception" to EXCEPTION,
 
-        PyString("NameError") to NAME_ERROR,
-        PyString("TypeError") to TYPE_ERROR,
-        PyString("ValueError") to VALUE_ERROR,
+        "NameError" to NAME_ERROR,
+        "TypeError" to TYPE_ERROR,
+        "ValueError" to VALUE_ERROR,
 
-        PyString("RuntimeError") to RUNTIME_ERROR,
-        PyString("NotImplementedError") to NOT_IMPLEMENTED_ERROR
+        "RuntimeError" to RUNTIME_ERROR,
+        "NotImplementedError" to NOT_IMPLEMENTED_ERROR
     )
 }
