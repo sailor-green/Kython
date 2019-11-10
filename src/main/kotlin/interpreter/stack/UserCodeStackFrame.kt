@@ -204,8 +204,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             return Some(Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable"))
         }
 
-        val childFrame = fn.getFrame(this)
-        this.childFrame = childFrame
+        val childFrame = fn.getFrame()
         val sig = fn.signature
 
         val argsToPass = sig.getFinalArgs(toCallWith)
@@ -217,9 +216,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         } else if (result is Either.Right) {
             val unwrapped = result.b
             this.stack.push(unwrapped)
-            this.childFrame = null
-            // not needed, but just to speed up GC
-            childFrame.parentFrame = null
         }
 
 

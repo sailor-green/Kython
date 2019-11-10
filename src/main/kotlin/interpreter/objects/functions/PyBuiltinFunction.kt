@@ -47,6 +47,5 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
      */
     abstract fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
 
-    override fun getFrame(parentFrame: StackFrame): StackFrame =
-        BuiltinStackFrame(this).apply { this.parentFrame = parentFrame }
+    override fun getFrame(): StackFrame = BuiltinStackFrame(this)
 }

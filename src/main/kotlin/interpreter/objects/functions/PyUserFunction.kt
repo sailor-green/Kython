@@ -84,8 +84,8 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
         return Either.left(Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined"))
     }
 
-    override fun getFrame(parentFrame: StackFrame): StackFrame =
-        UserCodeStackFrame(this).apply { this.parentFrame = parentFrame }
+    override fun getFrame(): StackFrame =
+        UserCodeStackFrame(this)
 
     override fun toPyString(): Either<PyException, PyString> =
         Either.right(PyString("<user function ${code.codename}>"))

@@ -98,13 +98,25 @@ object KythonInterpreter {
         this.kickoffThread(rootFunction, child = false)
     }
 
+
     /**
      * Runs a stack frame.
      */
     fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): Either<PyException, PyObject> {
+        val parent: StackFrame? = this.currentStackFrameLocal.get()
+        if (parent != null) {
+            frame.parentFrame = parent
+            parent.childFrame = frame
+        }
         this.currentStackFrameLocal.set(frame)
         val result = frame.runFrame(args)
-        this.currentStackFrameLocal.remove()
+        frame.parentFrame = null
+
+        if (parent != null) {
+            parent.childFrame = null
+            this.currentStackFrameLocal.set(parent)
+        }
+
         return result
     }
 
