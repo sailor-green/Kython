@@ -24,9 +24,11 @@ import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
+import green.sailor.kython.interpreter.objects.python.PyCodeObject
 import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyInt
+import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import java.util.*
 
 /**
@@ -110,6 +112,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
 
                 InstructionOpcode.POP_TOP -> this.popTop(param)
+
+                InstructionOpcode.MAKE_FUNCTION -> this.makeFunction(param)
 
                 else -> error("Unimplemented opcode $opcode")
             }
@@ -219,6 +223,22 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         }
 
 
+        this.bytecodePointer += 1
+        return none()
+    }
+
+    /**
+     * MAKE_FUNCTION.
+     */
+    fun makeFunction(arg: Byte): Option<PyException> {
+        val qualifiedName = this.stack.pop()
+        require(qualifiedName is PyString) { "Function qualified name was not string!" }
+
+        val code = this.stack.pop()
+        require(code is PyCodeObject) { "Function code was not a code object!" }
+        val function = PyUserFunction(code.wrappedCodeObject)
+        function.module = this.function.module
+        this.stack.push(function)
         this.bytecodePointer += 1
         return none()
     }

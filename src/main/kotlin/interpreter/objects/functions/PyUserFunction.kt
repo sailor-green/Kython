@@ -92,6 +92,45 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
 
     override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
 
-    override val signature: PyCallableSignature
-        get() = TODO("not implemented")
+    /**
+     * Generates a [PyCallableSignature] for this function.
+     */
+    fun generateSignature(): PyCallableSignature {
+        // ref: inspect._signature_from_function
+        // varnames starting format: args, args with defaults, *args, kwonly, **kwargs
+
+        // add args
+        val args = mutableListOf<Pair<String, ArgType>>()
+        for (x in 0 until this.code.argCount) {
+            val name = this.code.varnames[x]
+            args.add(Pair(name, ArgType.POSITIONAL))
+        }
+
+        // todo: with defaults
+        // add a *args if we have one
+        if (this.code.flags and KyCodeObject.CO_HAS_VARARGS != 0) {
+            val name = this.code.varnames[this.code.argCount]
+            args.add(Pair(name, ArgType.POSITIONAL_STAR))
+        }
+
+        // keyword only
+        for (x in 0 until this.code.kwOnlyArgCount) {
+            val offset = this.code.argCount + x
+            val name = this.code.varnames[offset]
+            args.add(Pair(name, ArgType.KEYWORD))
+        }
+
+        // **kwargs
+        if (this.code.flags and KyCodeObject.CO_HAS_VARKWARGS != 0) {
+            val name = this.code.varnames[this.code.argCount + this.code.kwOnlyArgCount]
+            args.add(Pair(name, ArgType.KEYWORD_STAR))
+        }
+
+        val sig = PyCallableSignature(*args.toTypedArray())
+        return sig
+    }
+
+    override val signature: PyCallableSignature by lazy {
+        this.generateSignature()
+    }
 }
