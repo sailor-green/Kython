@@ -81,12 +81,12 @@ object KythonInterpreter {
 
         // compile all in working directory
         println("Calling CPython to produce bytecode...")
-        cpyInterface.compileAllFiles()
+        cpyInterface.compileAllFiles(path)
 
         // todo: make this work properly
         val pycFilename = path.fileName.toString().dropLast(3)
-        val mainFile = cpyInterface.getPycFilename(pycFilename)
-        val marshalled = Marshaller.parsePycFile(Paths.get(mainFile))
+        val mainFile = path.parent.toString() + "/" + cpyInterface.getPycFilename(pycFilename)
+        val marshalled = Marshaller.parsePycFile(Paths.get(mainFile.toString()))
 
         val rootFunction = PyUserFunction(KyCodeObject(marshalled))
         val module = KyModule(rootFunction, path)
