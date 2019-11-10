@@ -93,7 +93,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             // special case this, because it returns from runFrame
             if (nextInstruction.opcode == InstructionOpcode.RETURN_VALUE) {
                 val result = this.returnValue(param)
-                return Either.Right(result)
+                return Either.right(result)
             }
 
             // switch on opcode
@@ -125,7 +125,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // this will never be null, since we call isDefined.
                 // we tag ourselves onto the traceback, too.
                 val exc = opcodeResult.orNull()!!
-                return Either.Left(exc)
+                return Either.left(exc)
             }
         }
     }
@@ -159,7 +159,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     val name = this.function.code.names[idx]
                     this.function.getGlobal(name)
                 } else {
-                    Either.Right(realName)
+                    Either.right(realName)
                 }
                 result
             }
@@ -221,16 +221,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val result = argsToPass.flatMap { KythonInterpreter.runStackFrame(childFrame, it) }
 
         // errors should be passed down, and results should be put onto the stack
-        if (result is Either.Left) {
-            return Some(result.a)
-        } else if (result is Either.Right) {
-            val unwrapped = result.b
-            this.stack.push(unwrapped)
-        }
-
-
-        this.bytecodePointer += 1
-        return none()
+        return result.fold(
+            { Some(it) },
+            { this.stack.push(it); this.bytecodePointer += 1; none() }
+        )
     }
 
     /**
