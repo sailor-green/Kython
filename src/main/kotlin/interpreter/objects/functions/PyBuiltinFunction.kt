@@ -18,11 +18,13 @@
 
 package green.sailor.kython.interpreter.objects.functions
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.stack.BuiltinStackFrame
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.throwKy
 
 /**
  * Represents a built-in function, such as print().
@@ -30,8 +32,7 @@ import green.sailor.kython.interpreter.stack.StackFrame
 abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctionType) {
     object PyBuiltinFunctionType : PyType("BuiltinType") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            TODO("Throwable exceptions")
-            //return Exceptions.TYPE_ERROR.makeWithMessageLeft("Cannot create builtin instances")
+            Exceptions.TYPE_ERROR.makeWithMessage("Cannot create builtin instances").throwKy()
         }
     }
 

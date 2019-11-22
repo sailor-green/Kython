@@ -137,8 +137,11 @@ object KythonInterpreter {
     fun runPythonThread(rootFrame: StackFrame) {
         this.rootFrameLocal.set(rootFrame)
 
-        val result = this.runStackFrame(rootFrame, mapOf())
-        /*result.mapLeft { error ->
+        try {
+            val result = this.runStackFrame(rootFrame, mapOf())
+        } catch (e: KyError) {
+            // bubbled error, means no user code handled it
+            val error = e.wrapped
             val errorName = error.type.name
             System.err.println("\nKython stack (most recent frame last):")
             for (frame in error.exceptionFrames) {
@@ -151,7 +154,7 @@ object KythonInterpreter {
                 builder.append(" ")
             }
             System.err.println("${errorName}: $builder")
-        }*/
+        }
     }
 
     /**

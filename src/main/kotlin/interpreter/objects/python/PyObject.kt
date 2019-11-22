@@ -18,10 +18,12 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.primitives.*
+import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.marshal.*
 
 // initialdict:
@@ -135,8 +137,7 @@ abstract class PyObject() {
             ?: error("__getattribute__ does not exist - this must never happen")
 
         if (getAttribute !is PyCallable) {
-            TODO("Throwable errors")
-            // return Exceptions.TYPE_ERROR.makeWithMessageLeft("__getattribute__ is not callable")
+            Exceptions.TYPE_ERROR.makeWithMessage("__getattribute__ is not callable").throwKy()
         }
 
         return getAttribute.runCallable(listOf(PyString(name), this))

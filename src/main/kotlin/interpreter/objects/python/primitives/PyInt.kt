@@ -18,9 +18,11 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
+import green.sailor.kython.interpreter.throwKy
 import interpreter.objects.iface.ArgType
 
 /**
@@ -36,12 +38,11 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
                 // TODO: `__int__`
                 if (value !is PyString) {
                     val typeName = value.type.name
-                    TODO("Throwable exceptions")
-                    /*Either.left(
-                        Exceptions.TYPE_ERROR.makeWithMessage(
-                            "int() argument must be a string, a bytes-like object, or a number, not '$typeName'"
-                        )
-                    )*/
+                    Exceptions.TYPE_ERROR
+                        .makeWithMessage(
+                            "int() argument must be a string, a bytes-like object, " +
+                            "or a number, not '$typeName'"
+                        ).throwKy()
                 } else {
                     val pyBase = kwargs["base"] as PyInt
                     val base = pyBase.wrappedInt

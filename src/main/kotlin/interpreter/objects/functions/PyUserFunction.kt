@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.objects.functions
 
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.objects.Builtins
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.KyModule
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
@@ -29,6 +30,7 @@ import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.interpreter.throwKy
 import interpreter.objects.iface.ArgType
 
 /**
@@ -41,8 +43,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
             if (code !is PyCodeObject) {
-                TODO("Throwable errors")
-                // return Exceptions.TYPE_ERROR.makeWithMessageLeft("Arg 'code' is not a code object")
+                Exceptions.TYPE_ERROR.makeWithMessage("Arg 'code' is not a code object").throwKy()
             }
             return PyUserFunction(code.wrappedCodeObject)
         }
@@ -82,8 +83,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
             return Builtins.BUILTINS_MAP[name]!!
         }
 
-        TODO("Throwable exceptions")
-        //return Either.left(Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined"))
+        Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined").throwKy()
     }
 
     override fun getFrame(): StackFrame =

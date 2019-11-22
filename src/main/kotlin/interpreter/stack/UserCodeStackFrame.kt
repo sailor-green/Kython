@@ -19,6 +19,7 @@
 package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyCodeObject
@@ -27,6 +28,7 @@ import green.sailor.kython.interpreter.objects.python.primitives.PyInt
 import green.sailor.kython.interpreter.objects.python.primitives.PySet
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
+import green.sailor.kython.interpreter.throwKy
 import java.util.*
 
 /**
@@ -97,11 +99,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val nextInstruction = this.function.getInstruction(this.bytecodePointer)
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
-            if (opcode != InstructionOpcode.CALL_FUNCTION) {
-                println("running $opcode at $bytecodePointer")
-            }
-            println("stack size is ${stack.size}")
-
             // special case this, because it returns from runFrame
             if (nextInstruction.opcode == InstructionOpcode.RETURN_VALUE) {
                 val result = this.returnValue(param)
@@ -230,8 +227,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val fn = this.stack.pop()
         if (fn !is PyCallable) {
             // todo
-            TODO("Throw exceptions")
-            // return Some(Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable"))
+            Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable").throwKy()
         }
 
         val result = fn.runCallable(toCallWith)

@@ -18,11 +18,13 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.throwKy
 import interpreter.objects.iface.ArgType
 
 /**
@@ -36,8 +38,7 @@ class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMe
             val instance = kwargs["instance"] ?: error("Built-in signature mismatch")
 
             if (function !is PyCallable) {
-                TODO("Throwable errors")
-                // return Exceptions.TYPE_ERROR.makeWithMessageLeft("Wasn't passed a callable")
+                Exceptions.TYPE_ERROR.makeWithMessage("Wasn't passed a callable").throwKy()
             }
 
             return PyMethod(function, instance)

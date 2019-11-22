@@ -18,8 +18,10 @@
 
 package green.sailor.kython.interpreter.objects.iface
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
+import green.sailor.kython.interpreter.throwKy
 import interpreter.objects.iface.ArgType
 
 /**
@@ -57,7 +59,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
      * @param args: The arguments provided on the stack, from right to left.
      * @param kwargsTuple: The keyword arguments tuple, if there is any.
      *
-     * @return Either an exception, or a map of arg -> object to call the function with. This will be loaded into
+     * @return A map of arg -> object to call the function with. This will be loaded into
      *         NAMES on the function object.
      */
     fun getFinalArgs(args: List<PyObject>, kwargsTuple: PyTuple? = null): Map<String, PyObject> {
@@ -73,6 +75,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // match them with the function call args
             val argsIt = args.asReversed().iterator()
             var argsCount = 0
+
             for ((name, type) in this.args) {
                 when (type) {
                     ArgType.POSITIONAL -> {
@@ -83,7 +86,8 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                             argsCount += 1
                         } catch (e: NoSuchElementException) {
                             if (name !in finalMap) {
-                                TODO("Throwable exceptions")
+                                Exceptions.TYPE_ERROR.makeWithMessage("No value provided for arg $name")
+                                    .throwKy()
                             }
                         }
                     }
@@ -95,12 +99,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
 
                     // keyword args are NOT allowed for this function
                     ArgType.KEYWORD ->
-                        TODO("Throwable exceptions")
-                        /*return Either.left(
-                            Exceptions.TYPE_ERROR.makeWithMessage(
-                                "This function takes $name as a keyword, not a positional argument"
-                            )
-                        )*/
+                        Exceptions.TYPE_ERROR
+                            .makeWithMessage("This function takes $name as a keyword, not a positional argument")
+                            .throwKy()
+
                     // keyword_star is irrelevant because this doesn't take keyword arguments.
                 }
             }
@@ -108,13 +110,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // make sure too many args weren't passed
             if (argsIt.hasNext()) {
                 val remaining = argsIt.asSequence().toList().size
-                TODO("Throwable exceptions")
-                /*return Either.left(
-                    Exceptions.TYPE_ERROR.makeWithMessage(
-                        "Passed too many arguments! Expected ${this.args.size}, " +
-                                "got ${finalMap.size + remaining}"
-                    )
-                )*/
+                Exceptions.TYPE_ERROR.makeWithMessage(
+                    "Passed too many arguments! Expected ${this.args.size}, " +
+                    "got ${finalMap.size + remaining}"
+                ).throwKy()
             }
         }
 

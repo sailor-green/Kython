@@ -18,11 +18,13 @@
 
 package green.sailor.kython.interpreter.objects.functions.magic
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.throwKy
 import interpreter.objects.iface.ArgType
 
 /**
@@ -33,8 +35,9 @@ object ObjectGetattribute : PyBuiltinFunction("<object __getattribute__>") {
         val self = kwargs["self"]!!
         val name = kwargs["name"]!!
         if (name !is PyString) {
-            TODO("Throwable errors")
-            //return Exceptions.TYPE_ERROR.makeWithMessageLeft("Attribute name must be string")
+            Exceptions.TYPE_ERROR
+                .makeWithMessage("Attribute name must be type str, not ${name.type.name}")
+                .throwKy()
         }
         val attrName = name.wrappedString
 
@@ -52,16 +55,12 @@ object ObjectGetattribute : PyBuiltinFunction("<object __getattribute__>") {
         val getattrFn = self.specialMethodLookup("__getattr__")
         if (getattrFn != null) {
             if (getattrFn !is PyCallable) {
-                TODO("Throwable errors")
-                //return Exceptions.TYPE_ERROR.makeWithMessageLeft("__getattr__ is not a callable")
+                Exceptions.TYPE_ERROR.makeWithMessage("__getattr__ is not a callable").throwKy()
             }
             return getattrFn.runCallable(listOf(name))
         }
 
-        // can't load
-        TODO("Throwable errors")
-        // return Exceptions.NAME_ERROR.makeWithMessageLeft("Object has no attribute $attrName")
-
+        Exceptions.NAME_ERROR.makeWithMessage("Object has no attribute $attrName").throwKy()
     }
 
     override val signature: PyCallableSignature by lazy {

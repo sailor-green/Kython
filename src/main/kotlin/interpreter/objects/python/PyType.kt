@@ -18,12 +18,14 @@
 
 package green.sailor.kython.interpreter.objects.python
 
+import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.throwKy
 import interpreter.objects.iface.ArgType
 
 /**
@@ -43,8 +45,9 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
             }
 
             // TODO: Three arg type version
-            TODO("Throwable errors")
-            // return Either.left(Exceptions.NOT_IMPLEMENTED_ERROR.makeWithMessage("Three-arg form of type not impl'd yet"))
+            Exceptions.NOT_IMPLEMENTED_ERROR
+                .makeWithMessage("Three-arg form of type not impl'd yet")
+                .throwKy()
         }
 
         // root type doesn't make method wrappers because we have no type
