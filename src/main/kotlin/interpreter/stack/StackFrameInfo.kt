@@ -78,6 +78,7 @@ abstract class StackFrameInfo {
 
             return "File ${frame.function.code.filename}, " +
                     "instruction idx ${frame.bytecodePointer}, " +
+                    "line ${frame.getLineNo()}, " +
                     "in ${frame.function.code.codename}\n" +
                     "    $sourceLine"
         }
