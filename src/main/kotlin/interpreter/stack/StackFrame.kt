@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.stack
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 
 /**
@@ -56,7 +54,7 @@ abstract class StackFrame {
     /**
      * Runs this stack frame, invoking the function underneath.
      */
-    abstract fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
+    abstract fun runFrame(kwargs: Map<String, PyObject>): PyObject
 
     /**
      * Gets the stack frame information for this stack frame.

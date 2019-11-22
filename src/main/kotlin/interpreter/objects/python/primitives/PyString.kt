@@ -18,10 +18,8 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyMethod
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
@@ -37,7 +35,7 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
     }
 
     object PyStringType : PyType("str") {
-        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(args: Map<String, PyObject>): PyObject {
             val arg = args["x"]!!
             return arg.toPyString()
         }
@@ -63,15 +61,14 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
 
     object StringUpper : PyBuiltinFunction("str.upper") {
         override val signature = PyCallableSignature.EMPTY_METHOD
-        override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
             val self = kwargs["self"]!! as PyString
-            return Either.right(PyString(self.wrappedString.toUpperCase()))
+            return PyString(self.wrappedString.toUpperCase())
         }
     }
 
-    override fun toPyString(): Either<PyException, PyString> = Either.right(this)
-    override fun toPyStringRepr(): Either<PyException, PyString> =
-        Either.right(PyString("'$wrappedString'"))
+    override fun toPyString(): PyString = this
+    override fun toPyStringRepr(): PyString = PyString("'${this.wrappedString}'")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

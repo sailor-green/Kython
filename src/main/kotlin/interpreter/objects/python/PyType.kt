@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
@@ -36,16 +34,17 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      * Represents the root type. If the type of a PyObject is not set, this will be useed.
      */
     object PyRootType : PyType("type") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             // one-arg form
             val args = kwargs["args"] as PyTuple
 
             if (args.subobjects.size == 1) {
-                return Either.right(args.subobjects.first().type)
+                return args.subobjects.first().type
             }
 
             // TODO: Three arg type version
-            return Either.left(Exceptions.NOT_IMPLEMENTED_ERROR.makeWithMessage("Three-arg form of type not impl'd yet"))
+            TODO("Throwable errors")
+            // return Either.left(Exceptions.NOT_IMPLEMENTED_ERROR.makeWithMessage("Three-arg form of type not impl'd yet"))
         }
 
         // root type doesn't make method wrappers because we have no type
@@ -66,7 +65,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      */
     val builtinFunctionWrapper by lazy {
         object : PyBuiltinFunction(name) {
-            override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+            override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
                 return newInstance(kwargs)
             }
 
@@ -91,7 +90,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      *
      * @param kwargs: The arguments that were called for this object.
      */
-    abstract fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
+    abstract fun newInstance(kwargs: Map<String, PyObject>): PyObject
 
     override val signature: PyCallableSignature by lazy {
         PyCallableSignature(
@@ -109,7 +108,6 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     }
 
     // default impls
-    override fun toPyString(): Either<PyException, PyString> = Either.right(this._pyString)
-
-    override fun toPyStringRepr(): Either<PyException, PyString> = Either.right(this._pyString)
+    override fun toPyString(): PyString = this._pyString
+    override fun toPyStringRepr(): PyString = this._pyString
 }

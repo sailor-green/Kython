@@ -18,7 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
@@ -48,13 +47,6 @@ abstract class PyException(val args: PyTuple) : PyObject() {
             return this.interpreterGetExceptionInstance(args)
         }
 
-        /**
-         * Internal method for making an Either.left exception.
-         */
-        fun makeWithMessageLeft(message: String): Either<PyException, PyObject> {
-            return Either.left(this.makeWithMessage(message))
-        }
-
         fun typeSubclassOf(name: String): PyExceptionType {
             return makeExceptionType(name, listOf(this))
         }
@@ -69,16 +61,11 @@ abstract class PyException(val args: PyTuple) : PyObject() {
          */
         fun makeExceptionType(name: String, bases: List<PyExceptionType>): PyExceptionType {
             return object : PyExceptionType(name) {
-                override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
-                    val strings = mutableListOf<PyString>()
+                override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
                     val args = kwargs["args"] as PyTuple
-                    for (i in args.subobjects) {
-                        val maybeString = i.toPyString()
-                        if (maybeString.isLeft()) return maybeString
-                        maybeString.map { strings.add(it) }
-                    }
+                    val strings = args.subobjects.map { it.toPyString() }
 
-                    return Either.right(this.interpreterGetExceptionInstance(strings))
+                    return this.interpreterGetExceptionInstance(strings)
                 }
 
                 override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {
@@ -105,12 +92,12 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         this.exceptionFrames = frames
     }
 
-    override fun toPyString(): Either<PyException, PyString> {
+    override fun toPyString(): PyString {
         require(this.type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
         TODO()
     }
 
-    override fun toPyStringRepr(): Either<PyException, PyString> {
+    override fun toPyStringRepr(): PyString {
         TODO("not implemented")
     }
 }

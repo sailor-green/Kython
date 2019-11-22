@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 
@@ -55,32 +53,17 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
     }
 
     object PyDictType : PyType("dict") {
-        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(args: Map<String, PyObject>): PyObject {
             // another simple passthrough
-            return Either.right(fromAnyMap(args))
+            return fromAnyMap(args)
         }
     }
 
-    override fun toPyString(): Either<PyException, PyString> {
-        val builder = StringBuilder()
-        builder.append('{')
-        for ((k, v) in this.items) {
-            val maybeKey = k.toPyStringRepr()
-            if (maybeKey.isLeft()) return maybeKey
-            maybeKey.map { builder.append(it.wrappedString) }
+    override fun toPyString(): PyString = PyString("{" + this.items.entries.joinToString(", ") {
+                it.key.toPyStringRepr().wrappedString + ": " + it.value.toPyStringRepr().wrappedString
+            } + "}")
 
-            builder.append(": ")
-
-            val maybeValue = v.toPyStringRepr()
-            if (maybeValue.isLeft()) return maybeValue
-            maybeValue.map { builder.append(it.wrappedString) }
-            builder.append(", ")
-        }
-        builder.append('}')
-        return Either.right(PyString(builder.toString()))
-    }
-
-    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+    override fun toPyStringRepr(): PyString = toPyString()
 
     /**
      * Gets an item from the internal dict.

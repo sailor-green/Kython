@@ -18,10 +18,7 @@
 
 package green.sailor.kython.interpreter.objects.iface
 
-import arrow.core.Either
-import arrow.core.flatMap
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -46,8 +43,8 @@ interface PyCallable {
     fun runCallable(
         args: List<PyObject>,
         kwargsTuple: PyTuple? = null
-    ): Either<PyException, PyObject> {
-        return signature.getFinalArgs(args, kwargsTuple)
-            .flatMap { KythonInterpreter.runStackFrame(this.getFrame(), it) }
+    ): PyObject {
+        val finalArgs = signature.getFinalArgs(args, kwargsTuple)
+        return KythonInterpreter.runStackFrame(getFrame(), finalArgs)
     }
 }

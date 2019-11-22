@@ -18,10 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.iface
 
-import arrow.core.Either
-import arrow.core.Try
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
 import interpreter.objects.iface.ArgType
@@ -64,8 +60,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
      * @return Either an exception, or a map of arg -> object to call the function with. This will be loaded into
      *         NAMES on the function object.
      */
-    fun getFinalArgs(args: List<PyObject>, kwargsTuple: PyTuple? = null):
-            Either<PyException, Map<String, PyObject>> {
+    fun getFinalArgs(args: List<PyObject>, kwargsTuple: PyTuple? = null): Map<String, PyObject> {
         // complicated...
         // CALL_FUNCTION does BOS(BOS-1, BOS-2, BOS-3, etc)
         // CALL_FUNCTION_KW does the same, but TOS is a tuple containing keyword arguments
@@ -82,15 +77,14 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                 when (type) {
                     ArgType.POSITIONAL -> {
                         // raises a java error if the iterator is empty
-                        val arg = Try { argsIt.next() }
-                        if (arg.isFailure() && name !in finalMap) {
-                            return Either.left(
-                                Exceptions.TYPE_ERROR.makeWithMessage(
-                                    "No value provided for arg $name"
-                                )
-                            )
-                        } else {
-                            arg.map { finalMap[name] = it; argsCount += 1 }
+                        try {
+                            val arg = argsIt.next()
+                            finalMap[name] = arg
+                            argsCount += 1
+                        } catch (e: NoSuchElementException) {
+                            if (name !in finalMap) {
+                                TODO("Throwable exceptions")
+                            }
                         }
                     }
                     ArgType.POSITIONAL_STAR -> {
@@ -101,11 +95,12 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
 
                     // keyword args are NOT allowed for this function
                     ArgType.KEYWORD ->
-                        return Either.left(
+                        TODO("Throwable exceptions")
+                        /*return Either.left(
                             Exceptions.TYPE_ERROR.makeWithMessage(
                                 "This function takes $name as a keyword, not a positional argument"
                             )
-                        )
+                        )*/
                     // keyword_star is irrelevant because this doesn't take keyword arguments.
                 }
             }
@@ -113,15 +108,16 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // make sure too many args weren't passed
             if (argsIt.hasNext()) {
                 val remaining = argsIt.asSequence().toList().size
-                return Either.left(
+                TODO("Throwable exceptions")
+                /*return Either.left(
                     Exceptions.TYPE_ERROR.makeWithMessage(
                         "Passed too many arguments! Expected ${this.args.size}, " +
                                 "got ${finalMap.size + remaining}"
                     )
-                )
+                )*/
             }
         }
 
-        return Either.right(finalMap)
+        return finalMap
     }
 }

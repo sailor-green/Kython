@@ -18,9 +18,7 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import interpreter.objects.iface.ArgType
@@ -38,9 +36,9 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
 
     // simple passthrough
     object PyTupleType : PyType("tuple") {
-        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(args: Map<String, PyObject>): PyObject {
             val arg = args["x"]!!
-            return Either.right(PyTuple(listOf(arg)))
+            return PyTuple(listOf(arg))
         }
 
         override val signature: PyCallableSignature by lazy {
@@ -51,20 +49,11 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
     }
 
     // ugly but it'll do.
-    override fun toPyString(): Either<PyException, PyString> {
-        val s = StringBuilder("(")
-        for (item in subobjects) {
-            val maybeString = item.toPyStringRepr()
-            // pass through exceptions
-            if (maybeString.isLeft()) return maybeString
-            maybeString.map { s.append(it.wrappedString) }
-            s.append(", ")
-        }
-        s.append(")")
-        return Either.right(PyString(s.toString()))
+    override fun toPyString(): PyString {
+        TODO("reimplement")
     }
 
-    override fun toPyStringRepr(): Either<PyException, PyString> = this.toPyString()
+    override fun toPyStringRepr(): PyString = this.toPyString()
 
 
 }

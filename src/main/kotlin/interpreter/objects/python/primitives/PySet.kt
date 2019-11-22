@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 
@@ -28,23 +26,13 @@ import green.sailor.kython.interpreter.objects.python.PyType
  */
 class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
     object PySetType : PyType("set") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             TODO("not implemented")
         }
     }
 
-    override fun toPyString(): Either<PyException, PyString> {
-        val s = StringBuilder("{")
-        for (item in wrappedSet) {
-            val maybeString = item.toPyStringRepr()
-            // pass through exceptions
-            if (maybeString.isLeft()) return maybeString
-            maybeString.map { s.append(it.wrappedString) }
-            s.append(", ")
-        }
-        s.append("}")
-        return Either.right(PyString(s.toString()))
-    }
-
-    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+    override fun toPyString(): PyString = PyString(
+        this.wrappedSet.joinToString(", ") { it.toPyStringRepr().wrappedString }
+    )
+    override fun toPyStringRepr(): PyString = toPyString()
 }

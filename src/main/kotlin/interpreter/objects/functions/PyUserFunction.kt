@@ -18,15 +18,12 @@
 
 package green.sailor.kython.interpreter.objects.functions
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.objects.Builtins
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.KyModule
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.PyCodeObject
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
@@ -41,12 +38,13 @@ import interpreter.objects.iface.ArgType
  */
 class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) {
     object PyUserFunctionType : PyType("function") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
             if (code !is PyCodeObject) {
-                return Exceptions.TYPE_ERROR.makeWithMessageLeft("Arg 'code' is not a code object")
+                TODO("Throwable errors")
+                // return Exceptions.TYPE_ERROR.makeWithMessageLeft("Arg 'code' is not a code object")
             }
-            return Either.right(PyUserFunction(code.wrappedCodeObject))
+            return PyUserFunction(code.wrappedCodeObject)
         }
 
         override val signature: PyCallableSignature by lazy {
@@ -75,25 +73,24 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
     /**
      * Gets a global from the globals for this function.
      */
-    fun getGlobal(name: String): Either<PyException, PyObject> {
+    fun getGlobal(name: String): PyObject {
         if (name in this.module.attribs) {
-            return Either.right(this.module.attribs[name]!!)
+            return this.module.attribs[name]!!
         }
 
         if (name in Builtins.BUILTINS_MAP) {
-            return Either.right(Builtins.BUILTINS_MAP[name]!!)
+            return Builtins.BUILTINS_MAP[name]!!
         }
 
-        return Either.left(Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined"))
+        TODO("Throwable exceptions")
+        //return Either.left(Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined"))
     }
 
     override fun getFrame(): StackFrame =
         UserCodeStackFrame(this)
 
-    override fun toPyString(): Either<PyException, PyString> =
-        Either.right(PyString("<user function ${code.codename}>"))
-
-    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+    override fun toPyString(): PyString = PyString("<user function ${code.codename}>")
+    override fun toPyStringRepr(): PyString = toPyString()
 
     /**
      * Generates a [PyCallableSignature] for this function.

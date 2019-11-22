@@ -18,11 +18,8 @@
 
 package green.sailor.kython.interpreter.objects.functions
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyDict
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
@@ -33,16 +30,17 @@ import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 class LocalsBuiltinFunction : PyBuiltinFunction("locals") {
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY
 
-    override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+    override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val frame = KythonInterpreter.getCurrentFrameForThisThread().parentFrame
             ?: error("Parent frame was null!")
         if (frame !is UserCodeStackFrame) {
-            return Either.left(
-                Exceptions.RUNTIME_ERROR.makeWithMessage(
-                    "Built-in frames do not have locals"
-                )
-            )
+            TODO("Throwable exceptions")
+            //return Either.left(
+            //    Exceptions.RUNTIME_ERROR.makeWithMessage(
+            //        "Built-in frames do not have locals"
+            //    )
+            //)
         }
-        return Either.right(PyDict.fromAnyMap(frame.locals))
+        return PyDict.fromAnyMap(frame.locals)
     }
 }

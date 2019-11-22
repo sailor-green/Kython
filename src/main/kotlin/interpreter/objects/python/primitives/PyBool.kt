@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 
@@ -35,15 +33,15 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
     }
 
     object PyBoolType : PyType("bool") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             TODO("not implemented")
         }
     }
 
-    override fun toPyString(): Either<PyException, PyString> {
-        return Either.right(PyString(if (this.wrapped) "True" else "False"))
-    }
+    val cachedTrueString = PyString("True")
+    val cachedFalseString = PyString("False")
 
-    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+    override fun toPyString(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
+    override fun toPyStringRepr(): PyString = toPyString()
 
 }

@@ -18,17 +18,10 @@
 
 package green.sailor.kython.interpreter.objects
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.objects.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.objects.functions.PrintBuiltinFunction
-import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyException
-import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.*
-import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents the builtins.
@@ -37,14 +30,6 @@ import green.sailor.kython.interpreter.stack.StackFrame
 object Builtins {
     val PRINT = PrintBuiltinFunction()
     val LOCALS = LocalsBuiltinFunction()
-    val DEBUG_PRINTFRAMES = object : PyBuiltinFunction("debug_printframes") {
-        override val signature: PyCallableSignature = PyCallableSignature.EMPTY
-        override fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
-            println(StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread()))
-            return Either.left(Exceptions.BASE_EXCEPTION.makeWithMessage("Debug"))
-        }
-    }
-
     val TYPE = PyType.PyRootType
     val INT_TYPE = PyInt.PyIntType
     val STRING_TYPE = PyString.PyStringType

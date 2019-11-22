@@ -18,10 +18,7 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import interpreter.objects.iface.ArgType
@@ -31,24 +28,25 @@ import interpreter.objects.iface.ArgType
  */
 class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
     object PyIntType : PyType("int") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val value = kwargs["value"] ?: error("Built-in signature mismatch")
             return if (value is PyInt) {
-                Either.right(value)
+                value
             } else {
                 // TODO: `__int__`
                 if (value !is PyString) {
                     val typeName = value.type.name
-                    Either.left(
+                    TODO("Throwable exceptions")
+                    /*Either.left(
                         Exceptions.TYPE_ERROR.makeWithMessage(
                             "int() argument must be a string, a bytes-like object, or a number, not '$typeName'"
                         )
-                    )
+                    )*/
                 } else {
                     val pyBase = kwargs["base"] as PyInt
                     val base = pyBase.wrappedInt
                     val converted = value.wrappedString.toInt(radix = base.toInt())
-                    Either.right(PyInt(converted.toLong()))
+                    PyInt(converted.toLong())
                 }
             }
         }
@@ -65,10 +63,8 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
         }
     }
 
-    override fun toPyString(): Either<PyException, PyString> =
-        Either.right(PyString(this.wrappedInt.toString()))
-
-    override fun toPyStringRepr(): Either<PyException, PyString> = this.toPyString()
+    override fun toPyString(): PyString = PyString(this.wrappedInt.toString())
+    override fun toPyStringRepr(): PyString = this.toPyString()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

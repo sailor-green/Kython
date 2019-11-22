@@ -19,9 +19,9 @@
 // gradle sucks!!!!!
 
 plugins {
-    kotlin("jvm") version "1.3.60-eap-76"
+    kotlin("jvm") version "1.3.60"
     id("application")
-    kotlin("kapt") version "1.3.50"
+    // kotlin("kapt") version "1.3.50"
 }
 
 group = "green.sailor"
@@ -30,9 +30,6 @@ version = "3.8"
 repositories {
     maven {
         setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
-    }
-    maven {
-        setUrl("https://dl.bintray.com/arrow-kt/arrow-kt/")
     }
 
     mavenCentral()
@@ -43,11 +40,6 @@ val arrowVersion: String by project
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
-
-    implementation("io.arrow-kt:arrow-core:$arrowVersion")
-    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
-    kapt("io.arrow-kt:arrow-meta:$arrowVersion")
-
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }

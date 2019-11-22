@@ -18,11 +18,9 @@
 
 package green.sailor.kython.interpreter
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.KyModule
 import green.sailor.kython.interpreter.objects.functions.PyUserFunction
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.marshal.Marshaller
@@ -115,7 +113,7 @@ object KythonInterpreter {
     fun runStackFrame(
         frame: StackFrame,
         args: Map<String, PyObject>
-    ): Either<PyException, PyObject> {
+    ): PyObject {
         val parent: StackFrame? = this.currentStackFrameLocal.get()
         if (parent != null) {
             frame.parentFrame = parent
@@ -140,7 +138,7 @@ object KythonInterpreter {
         this.rootFrameLocal.set(rootFrame)
 
         val result = this.runStackFrame(rootFrame, mapOf())
-        result.mapLeft { error ->
+        /*result.mapLeft { error ->
             val errorName = error.type.name
             System.err.println("\nKython stack (most recent frame last):")
             for (frame in error.exceptionFrames) {
@@ -153,7 +151,7 @@ object KythonInterpreter {
                 builder.append(" ")
             }
             System.err.println("${errorName}: $builder")
-        }
+        }*/
     }
 
     /**

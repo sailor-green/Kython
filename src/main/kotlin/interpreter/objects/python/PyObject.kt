@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.objects.iface.PyCallable
@@ -121,14 +119,14 @@ abstract class PyObject() {
      *
      * @param name: The name of the attribute to get.
      */
-    fun pyGetAttribute(name: String): Either<PyException, PyObject> {
+    fun pyGetAttribute(name: String): PyObject {
         // this will delegate to `__getattribute__`,
 
         // forcibly do special method lookup
         if (name.startsWith("__") && name.endsWith("__")) {
             val specialMethod = this.specialMethodLookup(name)
             if (specialMethod != null) {
-                return Either.right(specialMethod)
+                return specialMethod
             }
         }
 
@@ -137,10 +135,10 @@ abstract class PyObject() {
             ?: error("__getattribute__ does not exist - this must never happen")
 
         if (getAttribute !is PyCallable) {
-            return Exceptions.TYPE_ERROR.makeWithMessageLeft("__getattribute__ is not callable")
+            TODO("Throwable errors")
+            // return Exceptions.TYPE_ERROR.makeWithMessageLeft("__getattribute__ is not callable")
         }
 
-        // todo: proper method wrapping...
         return getAttribute.runCallable(listOf(PyString(name), this))
     }
 
@@ -156,17 +154,21 @@ abstract class PyObject() {
     /**
      * Turns this object into a PyString. This corresponds to the `__str__` method.
      */
-    abstract fun toPyString(): Either<PyException, PyString>
+    abstract fun toPyString(): PyString
 
     /**
      * Turns this object into a PyString when repr() is called. This corresponds to the `__repr__` method.
      */
-    abstract fun toPyStringRepr(): Either<PyException, PyString>
+    abstract fun toPyStringRepr(): PyString
 
     /**
      * Gets the string of this object, safely. Used for exceptions, et al.
      */
-    fun getPyStringSafe(): PyString = this.toPyString().fold({ PyString.UNPRINTABLE }, { it })
+    fun getPyStringSafe(): PyString = try {
+        this.toPyString()
+    } catch (e: Throwable) {
+        PyString.UNPRINTABLE
+    }
 
     /**
      * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.

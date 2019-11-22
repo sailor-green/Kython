@@ -18,9 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.functions
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
@@ -32,20 +29,21 @@ import green.sailor.kython.interpreter.stack.StackFrame
  */
 abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctionType) {
     object PyBuiltinFunctionType : PyType("BuiltinType") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
-            return Exceptions.TYPE_ERROR.makeWithMessageLeft("Cannot create builtin instances")
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+            TODO("Throwable exceptions")
+            //return Exceptions.TYPE_ERROR.makeWithMessageLeft("Cannot create builtin instances")
         }
     }
 
-    override fun toPyString(): Either<PyException, PyString> =
-        Either.right(PyString("<built-in function $name>"))
+    override fun toPyString(): PyString =
+        PyString("<built-in function $name>")
 
-    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+    override fun toPyStringRepr(): PyString = toPyString()
 
     /**
      * Called when the function is called from within a stack frame.
      */
-    abstract fun callFunction(kwargs: Map<String, PyObject>): Either<PyException, PyObject>
+    abstract fun callFunction(kwargs: Map<String, PyObject>): PyObject
 
     override fun getFrame(): StackFrame = BuiltinStackFrame(this)
 }

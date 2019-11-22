@@ -297,6 +297,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
         // simple int values
         val co_argcount = this.readInt()
         // TODO: co_posonlyargcount
+        val co_posonlyargcount = this.readInt()
         val co_kwonlyargcount = this.readInt()
         val co_nlocals = this.readInt()
         val co_stacksize = this.readInt()

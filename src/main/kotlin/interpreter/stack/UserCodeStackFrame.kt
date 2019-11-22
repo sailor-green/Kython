@@ -18,16 +18,10 @@
 
 package green.sailor.kython.interpreter.stack
 
-import arrow.core.Either
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.none
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.functions.PyUserFunction
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.python.PyCodeObject
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyInt
 import green.sailor.kython.interpreter.objects.python.primitives.PySet
@@ -94,7 +88,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * Runs this stack frame, executing the function within.
      */
-    override fun runFrame(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+    override fun runFrame(kwargs: Map<String, PyObject>): PyObject {
         this.locals.putAll(kwargs)
 
         while (true) {
@@ -103,15 +97,19 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val nextInstruction = this.function.getInstruction(this.bytecodePointer)
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
+            if (opcode != InstructionOpcode.CALL_FUNCTION) {
+                println("running $opcode at $bytecodePointer")
+            }
+            println("stack size is ${stack.size}")
 
             // special case this, because it returns from runFrame
             if (nextInstruction.opcode == InstructionOpcode.RETURN_VALUE) {
                 val result = this.returnValue(param)
-                return Either.right(result)
+                return result
             }
 
             // switch on opcode
-            val opcodeResult = when (nextInstruction.opcode) {
+            try { when (nextInstruction.opcode) {
                 // load ops
                 InstructionOpcode.LOAD_FAST -> this.load(LoadPool.FAST, param)
                 InstructionOpcode.LOAD_NAME -> this.load(LoadPool.NAME, param)
@@ -144,15 +142,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.MAKE_FUNCTION -> this.makeFunction(param)
 
                 else -> error("Unimplemented opcode $opcode")
+            } } catch (e: Throwable) {
+                throw e
             }
 
-            // TODO: Try handling
-            if (opcodeResult.isDefined()) {
-                // this will never be null, since we call isDefined.
-                // we tag ourselves onto the traceback, too.
-                val exc = opcodeResult.orNull()!!
-                return Either.left(exc)
-            }
         }
     }
 
@@ -168,24 +161,25 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * LOAD_*
      */
-    fun load(pool: LoadPool, opval: Byte): Option<PyException> {
+    fun load(pool: LoadPool, opval: Byte) {
         // pool is the type we want to load
         val idx = opval.toInt()
         val loadResult = when (pool) {
-            LoadPool.CONST -> Either.right(this.function.code.consts[idx])
+            LoadPool.CONST -> this.function.code.consts[idx]
             LoadPool.FAST -> {
                 val name = this.function.code.varnames[idx]
-                Either.right(this.locals[name]!!)
+                this.locals[name]!!
             }
             LoadPool.NAME -> {
                 // sometimes a global...
                 val name = this.function.code.names[idx]
                 val realName = this.locals[name]
+
                 val result = if (realName == null) {
                     val name = this.function.code.names[idx]
                     this.function.getGlobal(name)
                 } else {
-                    Either.right(realName)
+                    realName
                 }
                 result
             }
@@ -201,21 +195,15 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }
 
-        val option: Option<PyException> = loadResult.fold(
-            { Some(it) },
-            {
-                this.stack.push(it)
-                this.bytecodePointer += 1
-                none()
-            }
-        )
-        return option
+        this.stack.push(loadResult)
+        this.bytecodePointer += 1
+
     }
 
     /**
      * STORE_(NAME|FAST).
      */
-    fun store(pool: LoadPool, arg: Byte): Option<PyException> {
+    fun store(pool: LoadPool, arg: Byte) {
         val idx = arg.toInt()
         val toGetName = when (pool) {
             LoadPool.NAME -> this.function.code.names
@@ -225,13 +213,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val name = toGetName[idx]
         this.locals[name] = this.stack.pop()
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * CALL_FUNCTION.
      */
-    fun callFunction(opval: Byte): Option<PyException> {
+    fun callFunction(opval: Byte) {
         // CALL_FUNCTION(argc)
         // pops (argc) arguments off the stack (right to left) then invokes a function.
         val args = opval.toInt()
@@ -242,49 +229,52 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
         val fn = this.stack.pop()
         if (fn !is PyCallable) {
-            return Some(Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable"))
+            // todo
+            TODO("Throw exceptions")
+            // return Some(Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable"))
         }
 
         val result = fn.runCallable(toCallWith)
+        this.stack.push(result)
+        this.bytecodePointer += 1
 
         // errors should be passed down, and results should be put onto the stack
-        return result.fold(
-            { Some(it) },
-            { this.stack.push(it); this.bytecodePointer += 1; none() }
-        )
+        // return result.fold(
+        //    { Some(it) },
+        //    { this.stack.push(it); this.bytecodePointer += 1; none() }
+        //)
     }
 
     /**
      * MAKE_FUNCTION.
      */
-    fun makeFunction(arg: Byte): Option<PyException> {
+    fun makeFunction(arg: Byte) {
         val qualifiedName = this.stack.pop()
         require(qualifiedName is PyString) { "Function qualified name was not string!" }
 
         val code = this.stack.pop()
         require(code is PyCodeObject) { "Function code was not a code object!" }
+
         val function = PyUserFunction(code.wrappedCodeObject)
         function.module = this.function.module
         this.stack.push(function)
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * POP_TOP.
      */
-    fun popTop(arg: Byte): Option<PyException> {
+    fun popTop(arg: Byte){
         assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
 
         this.stack.pop()
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * ROT_TWO
      */
-    fun rotTwo(arg: Byte): Option<PyException> {
+    fun rotTwo(arg: Byte) {
         assert(arg.toInt() == 0) { "ROT_TWO never has an argument" }
 
         val top = stack.pop()
@@ -292,13 +282,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         stack.push(top)
         stack.push(second)
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * ROT_THREE
      */
-    fun rotThree(arg: Byte): Option<PyException> {
+    fun rotThree(arg: Byte) {
         assert(arg.toInt() == 0) { "ROT_THREE never has an argument" }
 
         val top = stack.pop()
@@ -308,13 +297,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         stack.push(third)
         stack.push(second)
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * ROT_FOUR
      */
-    fun rotFour(arg: Byte): Option<PyException> {
+    fun rotFour(arg: Byte) {
         assert(arg.toInt() == 0) { "ROT_FOUR never has an argument" }
 
         val top = stack.pop()
@@ -327,24 +315,23 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         stack.push(second)
 
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * DUP_TOP
      */
-    fun dupTop(arg: Byte): Option<PyException> {
+    fun dupTop(arg: Byte) {
         assert(arg.toInt() == 0) { "DUP_TOP never has an argument" }
         val top = stack.first
         stack.push(top)
+
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * DUP_TOP_TWO
      */
-    fun dupTopTwo(arg: Byte): Option<PyException> {
+    fun dupTopTwo(arg: Byte) {
         assert(arg.toInt() == 0) { "DUP_TOP_TWO never has an argument" }
         val top = stack.pop()
         val second = stack.pop()
@@ -352,30 +339,28 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             stack.push(second)
             stack.push(top)
         }
+
         this.bytecodePointer += 1
-        return none()
     }
 
     /**
      * BINARY_* (ADD, etc)
      */
-    fun binaryOp(type: BinaryOp, arg: Byte): Option<PyException> {
-        val result: Option<PyException> = when (type) {
+    fun binaryOp(type: BinaryOp, arg: Byte) {
+        val result = when (type) {
             BinaryOp.ADD -> {
                 // todo: __add__
                 stack.push(PyInt((stack.pop() as PyInt).wrappedInt + (stack.pop() as PyInt).wrappedInt))
-                none()
             }
             else -> TODO("Unsupported binary op $type")
         }
         this.bytecodePointer += 1
-        return result
     }
 
     /**
      * BUILD_* (TUPLE, LIST, SET, etc). Does not work for CONST_KEY_MAP!
      */
-    fun buildSimple(type: BuildType, arg: Byte): Option<PyException> {
+    fun buildSimple(type: BuildType, arg: Byte) {
         val count = arg.toInt()
         val built = when (type) {
             BuildType.TUPLE -> {
@@ -399,6 +384,5 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         }
         this.stack.push(built)
         this.bytecodePointer += 1
-        return none()
     }
 }

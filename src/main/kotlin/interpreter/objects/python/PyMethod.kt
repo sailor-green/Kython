@@ -18,8 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python
 
-import arrow.core.Either
-import green.sailor.kython.interpreter.objects.Exceptions
 import green.sailor.kython.interpreter.objects.iface.PyCallable
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
@@ -33,15 +31,16 @@ import interpreter.objects.iface.ArgType
 class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMethodType),
     PyCallable {
     object PyMethodType : PyType("method") {
-        override fun newInstance(kwargs: Map<String, PyObject>): Either<PyException, PyObject> {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val function = kwargs["function"] ?: error("Built-in signature mismatch")
             val instance = kwargs["instance"] ?: error("Built-in signature mismatch")
 
             if (function !is PyCallable) {
-                return Exceptions.TYPE_ERROR.makeWithMessageLeft("Wasn't passed a callable")
+                TODO("Throwable errors")
+                // return Exceptions.TYPE_ERROR.makeWithMessageLeft("Wasn't passed a callable")
             }
 
-            return Either.right(PyMethod(function, instance))
+            return PyMethod(function, instance)
         }
 
         override val signature: PyCallableSignature by lazy {
@@ -57,7 +56,7 @@ class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMe
     override fun runCallable(
         args: List<PyObject>,
         kwargsTuple: PyTuple?
-    ): Either<PyException, PyObject> {
+    ): PyObject {
         val realArgs = listOf(instance, *args.toTypedArray())
         return super.runCallable(realArgs, kwargsTuple)
     }
@@ -68,7 +67,7 @@ class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMe
 
     override val signature: PyCallableSignature = this.function.signature
 
-    override fun toPyString(): Either<PyException, PyString> {
+    override fun toPyString(): PyString {
         val builder = StringBuilder()
 
         builder.append("<method '")
@@ -77,9 +76,9 @@ class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMe
         builder.append(this.instance.getPyStringSafe().wrappedString)
         builder.append("'>")
 
-        return Either.right(PyString(builder.toString()))
+        return PyString(builder.toString())
     }
 
-    override fun toPyStringRepr(): Either<PyException, PyString> = this.toPyString()
+    override fun toPyStringRepr(): PyString = this.toPyString()
 
 }

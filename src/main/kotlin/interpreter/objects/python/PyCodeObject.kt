@@ -18,7 +18,6 @@
 
 package green.sailor.kython.interpreter.objects.python
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.objects.KyCodeObject
 import green.sailor.kython.interpreter.objects.python.primitives.PyString
 
@@ -26,10 +25,10 @@ import green.sailor.kython.interpreter.objects.python.primitives.PyString
  * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.
  */
 class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
-    override fun toPyString(): Either<PyException, PyString> {
-        return Either.right(PyString("<code object ${wrappedCodeObject.codename}>"))
+    override fun toPyString(): PyString {
+        return PyString("<code object ${wrappedCodeObject.codename}>")
     }
 
-    override fun toPyStringRepr(): Either<PyException, PyString> = toPyString()
+    override fun toPyStringRepr(): PyString = toPyString()
 
 }

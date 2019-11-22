@@ -18,9 +18,7 @@
 
 package green.sailor.kython.interpreter.objects.python.primitives
 
-import arrow.core.Either
 import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyException
 import green.sailor.kython.interpreter.objects.python.PyObject
 import green.sailor.kython.interpreter.objects.python.PyType
 
@@ -29,8 +27,8 @@ import green.sailor.kython.interpreter.objects.python.PyType
  */
 object PyNone : PyObject(PyNoneType) {
     object PyNoneType : PyType("NoneType") {
-        override fun newInstance(args: Map<String, PyObject>): Either<PyException, PyObject> {
-            return Either.right(PyNone)
+        override fun newInstance(args: Map<String, PyObject>): PyObject {
+            return PyNone
         }
 
         override val signature: PyCallableSignature = PyCallableSignature.EMPTY
@@ -38,9 +36,6 @@ object PyNone : PyObject(PyNoneType) {
 
     private val noneString = PyString("None")
 
-    override fun toPyString(): Either<PyException, PyString> =
-        Either.right(noneString)
-
-    override fun toPyStringRepr(): Either<PyException, PyString> =
-        Either.right(noneString)
+    override fun toPyString(): PyString = noneString
+    override fun toPyStringRepr(): PyString = noneString
 }
