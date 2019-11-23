@@ -16,28 +16,21 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.pyobject.types.PyTupleType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyNone
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
- * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
+ * Represents the type of None (types.NoneType).
  */
-class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
-    companion object {
-        /**
-         * Represents the empty tuple.
-         */
-        val EMPTY = PyTuple(listOf())
+object PyNoneType : PyType("NoneType") {
+    override fun newInstance(args: Map<String, PyObject>): PyObject {
+        return PyNone
     }
 
-    override fun toPyString(): PyString {
-        return PyString("(" + this.subobjects.joinToString {
-            it.toPyStringRepr().wrappedString
-        } + ")")
-    }
-
-    override fun toPyStringRepr(): PyString = this.toPyString()
-
-
+    override val signature: PyCallableSignature =
+        PyCallableSignature.EMPTY
 }

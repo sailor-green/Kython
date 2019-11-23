@@ -18,6 +18,8 @@
 
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.pyobject.types.PyBoolType
+
 /**
  * Represents a Python boolean.
  */
@@ -27,12 +29,6 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
         val TRUE = PyBool(true)
         // The FALSE instance of this.
         val FALSE = PyBool(false)
-    }
-
-    object PyBoolType : PyType("bool") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            TODO("not implemented")
-        }
     }
 
     val cachedTrueString =

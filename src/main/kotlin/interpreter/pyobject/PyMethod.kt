@@ -18,39 +18,17 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.types.PyMethodType
 import green.sailor.kython.interpreter.stack.StackFrame
-import green.sailor.kython.interpreter.throwKy
 
 /**
  * Represents a method (a function bound to a self object).
  */
-class PyMethod(val function: PyCallable, val instance: PyObject) : PyObject(PyMethodType),
-    PyCallable {
-    object PyMethodType : PyType("method") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            val function = kwargs["function"] ?: error("Built-in signature mismatch")
-            val instance = kwargs["instance"] ?: error("Built-in signature mismatch")
-
-            if (function !is PyCallable) {
-                Exceptions.TYPE_ERROR.makeWithMessage("Wasn't passed a callable").throwKy()
-            }
-
-            return PyMethod(function, instance)
-        }
-
-        override val signature: PyCallableSignature by lazy {
-            PyCallableSignature(
-                "function" to ArgType.POSITIONAL,
-                "instance" to ArgType.POSITIONAL
-            )
-        }
-
-
-    }
+class PyMethod(
+    val function: PyCallable, val instance: PyObject
+) : PyObject(PyMethodType), PyCallable {
 
     override fun runCallable(
         args: List<PyObject>,

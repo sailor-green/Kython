@@ -21,8 +21,8 @@ package green.sailor.kython.interpreter
 import green.sailor.kython.interpreter.functions.DirBuiltinFunction
 import green.sailor.kython.interpreter.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.functions.PrintBuiltinFunction
-import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.pyobject.primitives.*
+import green.sailor.kython.interpreter.pyobject.PyNone
+import green.sailor.kython.interpreter.pyobject.types.*
 
 /**
  * Represents the builtins.
@@ -33,14 +33,14 @@ object Builtins {
     val LOCALS = LocalsBuiltinFunction()
     val DIR = DirBuiltinFunction()
 
-    val TYPE = PyType.PyRootType
-    val INT_TYPE = PyInt.PyIntType
-    val STRING_TYPE = PyString.PyStringType
+    val TYPE = PyRootType
+    val INT_TYPE = PyIntType
+    val STRING_TYPE = PyStringType
     val NONE = PyNone
-    val NONE_TYPE = PyNone.PyNoneType
-    val TUPLE_TYPE = PyTuple.PyTupleType
-    val DICT_TYPE = PyDict.PyDictType
-    val BOOL_TYPE = PyBool.PyBoolType
+    val NONE_TYPE = PyNoneType
+    val TUPLE_TYPE = PyTupleType
+    val DICT_TYPE = PyDictType
+    val BOOL_TYPE = PyBoolType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(

@@ -18,14 +18,15 @@
 
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.pyobject.types.PyDictType
+
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
 class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(PyDictType) {
     companion object {
         /** Represents the empty dict. */
-        val EMPTY =
-            PyDict(linkedMapOf())
+        val EMPTY = PyDict(linkedMapOf())
 
         /**
          * Creates a new PyDict from any map, wrapping primitive types.
@@ -50,20 +51,12 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
         }
     }
 
-    object PyDictType : PyType("dict") {
-        override fun newInstance(args: Map<String, PyObject>): PyObject {
-            // another simple passthrough
-            return fromAnyMap(
-                args
-            )
+    override fun toPyString(): PyString {
+        val joined = this.items.entries.joinToString {
+            it.key.toPyStringRepr().wrappedString + ": " + it.value.toPyStringRepr().wrappedString
         }
+        return PyString("{$joined}")
     }
-
-    override fun toPyString(): PyString =
-        PyString(
-            "{" + this.items.entries.joinToString(", ") {
-                it.key.toPyStringRepr().wrappedString + ": " + it.value.toPyStringRepr().wrappedString
-            } + "}")
 
     override fun toPyStringRepr(): PyString = toPyString()
 

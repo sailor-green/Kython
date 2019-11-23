@@ -18,9 +18,8 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.functions.PyBuiltinFunction
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.types.PyStringType
+
 
 /**
  * Represents a Python string. This wraps a regular JVM string.
@@ -30,36 +29,6 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
         // some common strings
         val UNPRINTABLE =
             PyString("<unprintable>")
-    }
-
-    object PyStringType : PyType("str") {
-        override fun newInstance(args: Map<String, PyObject>): PyObject {
-            val arg = args["x"]!!
-            return arg.toPyString()
-        }
-
-        override val signature: PyCallableSignature by lazy {
-            PyCallableSignature(
-                "x" to ArgType.POSITIONAL
-            )
-        }
-
-        val pyUpper = PyBuiltinFunction.wrap("upper", PyCallableSignature.EMPTY_METHOD) {
-            val self = it["self"]!!.cast<PyString>()
-            PyString(self.wrappedString.toUpperCase())
-        }
-
-        override val initialDict: Map<String, PyObject> by lazy {
-            mapOf(
-                "upper" to pyUpper
-            )
-        }
-
-        override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
-            val original = super.makeMethodWrappers(instance)
-            original["upper"] = PyMethod(pyUpper, instance)
-            return original
-        }
     }
 
     override fun toPyString(): PyString = this

@@ -16,28 +16,16 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.pyobject.types.PyTupleType
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
- * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
+ * Represents the type of the boolean object.
  */
-class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
-    companion object {
-        /**
-         * Represents the empty tuple.
-         */
-        val EMPTY = PyTuple(listOf())
+object PyBoolType : PyType("bool") {
+    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+        TODO("not implemented")
     }
-
-    override fun toPyString(): PyString {
-        return PyString("(" + this.subobjects.joinToString {
-            it.toPyStringRepr().wrappedString
-        } + ")")
-    }
-
-    override fun toPyStringRepr(): PyString = this.toPyString()
-
-
 }

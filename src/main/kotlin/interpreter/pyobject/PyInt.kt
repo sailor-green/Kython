@@ -18,49 +18,12 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.pyobject.types.PyIntType
 
 /**
  * Represents a Python int type. This internally wraps a long,
  */
 class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
-    object PyIntType : PyType("int") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            val value = kwargs["value"] ?: error("Built-in signature mismatch")
-            return if (value is PyInt) {
-                value
-            } else {
-                // TODO: `__int__`
-                if (value !is PyString) {
-                    val typeName = value.type.name
-                    Exceptions.TYPE_ERROR
-                        .makeWithMessage(
-                            "int() argument must be a string, a bytes-like object, " +
-                            "or a number, not '$typeName'"
-                        ).throwKy()
-                } else {
-                    val pyBase = kwargs["base"] as PyInt
-                    val base = pyBase.wrappedInt
-                    val converted = value.wrappedString.toInt(radix = base.toInt())
-                    PyInt(converted.toLong())
-                }
-            }
-        }
-
-        override val signature: PyCallableSignature by lazy {
-            PyCallableSignature(
-                "value" to ArgType.POSITIONAL,
-                "base" to ArgType.POSITIONAL
-            ).withDefaults(
-                "base" to PyInt(
-                    10
-                )
-            )
-        }
-    }
 
     override fun toPyString(): PyString =
         PyString(this.wrappedInt.toString())

@@ -18,15 +18,13 @@
 
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.pyobject.types.PySetType
+
+
 /**
  * Represents an ordered Python set.
  */
 class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
-    object PySetType : PyType("set") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            TODO("not implemented")
-        }
-    }
 
     override fun toPyString(): PyString =
         PyString(

@@ -18,46 +18,17 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
-import green.sailor.kython.interpreter.throwKy
 
 /**
  * Represents a python type (i.e. a class).
  */
 abstract class PyType(val name: String) : PyObject(), PyCallable {
-    /**
-     * Represents the root type. If the type of a PyObject is not set, this will be useed.
-     */
-    object PyRootType : PyType("type") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            // one-arg form
-            val args = kwargs["args"] as PyTuple
-
-            if (args.subobjects.size == 1) {
-                return args.subobjects.first().type
-            }
-
-            // TODO: Three arg type version
-            Exceptions.NOT_IMPLEMENTED_ERROR
-                .makeWithMessage("Three-arg form of type not impl'd yet")
-                .throwKy()
-        }
-
-        // root type doesn't make method wrappers because we have no type
-        override val internalDict: LinkedHashMap<String, PyObject> by lazy {
-            val map = linkedMapOf<String, PyObject>().apply { putAll(getDefaultDict()) }
-            map
-        }
-
-        override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
-            return mutableMapOf()
-        }
-    }
     /**
      * Creates a new instance of the object represented by this type.
      *

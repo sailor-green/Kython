@@ -18,19 +18,12 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.types.PyNoneType
 
 /**
  * Represents the Python None.
  */
 object PyNone : PyObject(PyNoneType) {
-    object PyNoneType : PyType("NoneType") {
-        override fun newInstance(args: Map<String, PyObject>): PyObject {
-            return PyNone
-        }
-
-        override val signature: PyCallableSignature = PyCallableSignature.EMPTY
-    }
 
     private val noneString =
         PyString("None")
