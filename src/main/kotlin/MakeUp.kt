@@ -24,7 +24,6 @@ import java.nio.file.Paths
 /**
  * Main initialiser for Kython.
  */
-@ExperimentalStdlibApi
 object MakeUp {
     @JvmStatic
     fun main(args: Array<String>) {

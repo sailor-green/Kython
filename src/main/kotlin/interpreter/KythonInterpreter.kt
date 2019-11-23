@@ -16,6 +16,8 @@
  *
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.PyUserFunction
@@ -63,7 +65,6 @@ object KythonInterpreter {
     /**
      * The main entry point for the interpreter.
      */
-    @ExperimentalStdlibApi
     fun runPython(path: Path) {
         val fn = this.cpyInterface.compile(path)
 
