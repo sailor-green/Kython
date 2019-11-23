@@ -20,9 +20,9 @@ package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.primitives.PyNone
-import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
+import green.sailor.kython.interpreter.pyobject.PyTuple
 
 /**
  * Represents the print() builtin.

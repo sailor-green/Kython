@@ -16,10 +16,7 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject.primitives
-
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
+package green.sailor.kython.interpreter.pyobject
 
 /**
  * Represents a Python boolean.
@@ -38,8 +35,10 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
         }
     }
 
-    val cachedTrueString = PyString("True")
-    val cachedFalseString = PyString("False")
+    val cachedTrueString =
+        PyString("True")
+    val cachedFalseString =
+        PyString("False")
 
     override fun toPyString(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
     override fun toPyStringRepr(): PyString = toPyString()

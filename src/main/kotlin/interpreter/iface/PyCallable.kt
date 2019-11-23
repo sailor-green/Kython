@@ -20,7 +20,7 @@ package green.sailor.kython.interpreter.iface
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
+import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**

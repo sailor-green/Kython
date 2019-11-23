@@ -16,12 +16,10 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject.primitives
+package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
@@ -50,7 +48,9 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
 
     // ugly but it'll do.
     override fun toPyString(): PyString {
-        return PyString("(" + this.subobjects.joinToString { it.toPyStringRepr().wrappedString } + ")")
+        return PyString("(" + this.subobjects.joinToString {
+            it.toPyStringRepr().wrappedString
+        } + ")")
     }
 
     override fun toPyStringRepr(): PyString = this.toPyString()

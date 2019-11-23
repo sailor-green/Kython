@@ -27,8 +27,8 @@ import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyCodeObject
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.pyobject.primitives.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy
@@ -89,7 +89,8 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
     override fun getFrame(): StackFrame =
         UserCodeStackFrame(this)
 
-    override fun toPyString(): PyString = PyString("<user function ${code.codename}>")
+    override fun toPyString(): PyString =
+        PyString("<user function ${code.codename}>")
     override fun toPyStringRepr(): PyString = toPyString()
 
     /**

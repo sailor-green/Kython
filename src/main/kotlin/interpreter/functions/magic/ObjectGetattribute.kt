@@ -24,7 +24,7 @@ import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.primitives.PyString
+import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.throwKy
 
 /**

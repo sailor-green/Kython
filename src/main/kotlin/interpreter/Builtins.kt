@@ -21,7 +21,7 @@ package green.sailor.kython.interpreter
 import green.sailor.kython.interpreter.functions.DirBuiltinFunction
 import green.sailor.kython.interpreter.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.functions.PrintBuiltinFunction
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.primitives.*
 
 /**

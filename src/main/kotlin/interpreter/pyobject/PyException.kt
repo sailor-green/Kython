@@ -19,8 +19,6 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.primitives.PyString
-import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -43,7 +41,11 @@ abstract class PyException(val args: PyTuple) : PyObject() {
          * Internal method for interpreter Python errors.
          */
         fun makeWithMessage(message: String): PyException {
-            val args = listOf(PyString(message))
+            val args = listOf(
+                PyString(
+                    message
+                )
+            )
             return this.interpreterGetExceptionInstance(args)
         }
 
@@ -69,7 +71,11 @@ abstract class PyException(val args: PyTuple) : PyObject() {
                 }
 
                 override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {
-                    val instance = object : PyException(PyTuple(args)) {
+                    val instance = object : PyException(
+                        PyTuple(
+                            args
+                        )
+                    ) {
                         init {
                             this.parentTypes.addAll(bases)
                         }

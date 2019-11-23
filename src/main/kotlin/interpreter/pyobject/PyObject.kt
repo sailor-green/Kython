@@ -44,7 +44,11 @@ abstract class PyObject() {
         fun wrapKyc(type: BaseKycType): PyObject {
             // unwrap tuples and dicts from their inner types
             if (type is KycTuple) {
-                return PyTuple(type.wrapped.map { wrapKyc(it) })
+                return PyTuple(type.wrapped.map {
+                    wrapKyc(
+                        it
+                    )
+                })
             } else if (type is KycDict) {
                 val map = linkedMapOf<PyObject, PyObject>()
                 for ((key, value) in type.wrapped.entries) {
@@ -73,7 +77,9 @@ abstract class PyObject() {
                 is Short -> PyInt(obb.toLong())
                 is Int -> PyInt(obb.toLong())
                 is Long -> PyInt(obb.toLong())
-                is String -> PyString(obb.toString())
+                is String -> PyString(
+                    obb.toString()
+                )
                 is Boolean -> if (obb) PyBool.TRUE else PyBool.FALSE
                 else -> error("Don't know how to wrap $obb in a PyObject")
             }
@@ -153,7 +159,10 @@ abstract class PyObject() {
             Exceptions.TYPE_ERROR.makeWithMessage("__getattribute__ is not callable").throwKy()
         }
 
-        return getAttribute.runCallable(listOf(PyString(name), this))
+        return getAttribute.runCallable(listOf(
+            PyString(
+                name
+            ), this))
     }
 
     /**
@@ -188,6 +197,10 @@ abstract class PyObject() {
      * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.
      */
     fun getPyDict(): PyDict {
-        return PyDict(internalDict.mapKeys { PyString(it.key) }.toMutableMap() as LinkedHashMap)
+        return PyDict(internalDict.mapKeys {
+            PyString(
+                it.key
+            )
+        }.toMutableMap() as LinkedHashMap)
     }
 }

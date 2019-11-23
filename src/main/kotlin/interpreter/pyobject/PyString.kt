@@ -16,14 +16,11 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject.primitives
+package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyMethod
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a Python string. This wraps a regular JVM string.
@@ -31,7 +28,8 @@ import green.sailor.kython.interpreter.pyobject.PyType
 class PyString(val wrappedString: String) : PyObject(PyStringType) {
     companion object {
         // some common strings
-        val UNPRINTABLE = PyString("<unprintable>")
+        val UNPRINTABLE =
+            PyString("<unprintable>")
     }
 
     object PyStringType : PyType("str") {
@@ -65,7 +63,8 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
     }
 
     override fun toPyString(): PyString = this
-    override fun toPyStringRepr(): PyString = PyString("'${this.wrappedString}'")
+    override fun toPyStringRepr(): PyString =
+        PyString("'${this.wrappedString}'")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

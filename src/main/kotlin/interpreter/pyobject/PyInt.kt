@@ -16,13 +16,11 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject.primitives
+package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 
 /**
@@ -64,7 +62,8 @@ class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
         }
     }
 
-    override fun toPyString(): PyString = PyString(this.wrappedInt.toString())
+    override fun toPyString(): PyString =
+        PyString(this.wrappedInt.toString())
     override fun toPyStringRepr(): PyString = this.toPyString()
 
     override fun equals(other: Any?): Boolean {

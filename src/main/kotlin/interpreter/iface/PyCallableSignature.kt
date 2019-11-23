@@ -20,7 +20,7 @@ package green.sailor.kython.interpreter.iface
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
+import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.throwKy
 
 /**
@@ -97,7 +97,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                         }
                     }
                     ArgType.POSITIONAL_STAR -> {
-                        val tup = PyTuple(argsIt.asSequence().toList())
+                        val tup =
+                            PyTuple(
+                                argsIt.asSequence().toList()
+                            )
                         finalMap[name] = tup
                         argsCount += tup.subobjects.size
                     }

@@ -19,7 +19,6 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
-import green.sailor.kython.interpreter.pyobject.primitives.PyString
 
 /**
  * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.

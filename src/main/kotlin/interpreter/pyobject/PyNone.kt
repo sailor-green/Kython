@@ -16,23 +16,27 @@
  *
  */
 
-package green.sailor.kython.interpreter.pyobject.primitives
+package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 
 /**
- * Represents an ordered Python set.
+ * Represents the Python None.
  */
-class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
-    object PySetType : PyType("set") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            TODO("not implemented")
+object PyNone : PyObject(PyNoneType) {
+    object PyNoneType : PyType("NoneType") {
+        override fun newInstance(args: Map<String, PyObject>): PyObject {
+            return PyNone
         }
+
+        override val signature: PyCallableSignature = PyCallableSignature.EMPTY
     }
 
-    override fun toPyString(): PyString = PyString(
-        this.wrappedSet.joinToString(", ") { it.toPyStringRepr().wrappedString }
-    )
-    override fun toPyStringRepr(): PyString = toPyString()
+    private val noneString =
+        PyString("None")
+
+    override fun toPyString(): PyString =
+        noneString
+    override fun toPyStringRepr(): PyString =
+        noneString
 }
