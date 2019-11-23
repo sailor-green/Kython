@@ -43,6 +43,8 @@ object PyRootType : PyType("type") {
             .throwKy()
     }
 
+    override var type: PyType = PyRootType
+
     // root type doesn't make method wrappers because we have no type
     override val internalDict: LinkedHashMap<String, PyObject> by lazy {
         val map = linkedMapOf<String, PyObject>().apply { putAll(getDefaultDict()) }

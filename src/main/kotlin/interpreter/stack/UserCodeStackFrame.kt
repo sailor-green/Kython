@@ -40,6 +40,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             FAST,
             NAME,
             ATTR,
+            METHOD,
             GLOBAL
         }
 
@@ -108,6 +109,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.LOAD_CONST -> this.load(LoadPool.CONST, param)
                 InstructionOpcode.LOAD_GLOBAL -> this.load(LoadPool.GLOBAL, param)
                 InstructionOpcode.LOAD_ATTR -> this.load(LoadPool.ATTR, param)
+                InstructionOpcode.LOAD_METHOD -> this.load(LoadPool.METHOD, param)
 
                 // store ops
                 InstructionOpcode.STORE_NAME -> this.store(LoadPool.NAME, param)
@@ -121,6 +123,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // binary ops
                 InstructionOpcode.BINARY_ADD -> this.binaryOp(BinaryOp.ADD, param)
 
+                // fundamentally the same thing.
+                InstructionOpcode.CALL_METHOD -> this.callFunction(param)
                 InstructionOpcode.CALL_FUNCTION -> this.callFunction(param)
 
                 // stack ops
@@ -180,9 +184,17 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 this.function.getGlobal(name)
             }
             LoadPool.ATTR -> {
-                val toGet = this.stack.pop()
+                val toGetFrom = this.stack.pop()
                 val name = this.function.code.names[idx]
-                toGet.pyGetAttribute(name)
+                toGetFrom.pyGetAttribute(name)
+            }
+            LoadPool.METHOD -> {
+                // load_method sucks shit, for the record.
+                // we just treat this as an attribute load, for functions only
+                // because we already generated all the method wrappers anyway.
+                val toGetFrom = this.stack.pop()
+                val name = this.function.code.names[idx]
+                toGetFrom.pyGetAttribute(name)
             }
             else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
         }
@@ -228,12 +240,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val result = fn.runCallable(toCallWith)
         this.stack.push(result)
         this.bytecodePointer += 1
-
-        // errors should be passed down, and results should be put onto the stack
-        // return result.fold(
-        //    { Some(it) },
-        //    { this.stack.push(it); this.bytecodePointer += 1; none() }
-        //)
     }
 
     /**

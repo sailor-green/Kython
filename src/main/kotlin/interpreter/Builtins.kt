@@ -21,6 +21,9 @@ package green.sailor.kython.interpreter
 import green.sailor.kython.interpreter.functions.DirBuiltinFunction
 import green.sailor.kython.interpreter.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.functions.PrintBuiltinFunction
+import green.sailor.kython.interpreter.functions.PyBuiltinFunction
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.types.*
 
@@ -32,6 +35,12 @@ object Builtins {
     val PRINT = PrintBuiltinFunction()
     val LOCALS = LocalsBuiltinFunction()
     val DIR = DirBuiltinFunction()
+    val KY_PRINT = PyBuiltinFunction.wrap(
+        "ky_print", PyCallableSignature("any" to ArgType.POSITIONAL)
+    ) {
+        println(it["any"])
+        PyNone
+    }
 
     val TYPE = PyRootType
     val INT_TYPE = PyIntType
@@ -47,6 +56,7 @@ object Builtins {
         "print" to PRINT,
         "locals" to LOCALS,
         "dir" to DIR,
+        "_ky_print" to KY_PRINT,
 
         // class types
         "type" to TYPE,

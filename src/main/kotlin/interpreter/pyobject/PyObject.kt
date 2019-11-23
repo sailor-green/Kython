@@ -149,7 +149,8 @@ abstract class PyObject() {
         if (name.startsWith("__") && name.endsWith("__")) {
             val specialMethod = this.specialMethodLookup(name)
             if (specialMethod != null) {
-                return specialMethod
+                return PyMethod(specialMethod as PyCallable, this)
+                //return specialMethod
             }
         }
 
@@ -170,7 +171,8 @@ abstract class PyObject() {
      * @return A [PyObject]? for the special method found, or null if it wasn't found.
      */
     fun specialMethodLookup(name: String): PyObject? {
-        return this.type.internalDict[name]
+        val type = this.type ?: PyRootType
+        return type.internalDict[name]
     }
 
     /**
