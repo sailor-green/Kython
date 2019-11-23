@@ -41,6 +41,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
+    // implementation(group = "org.zeroturnaround", name = "zt-process-killer", version = "1.10")
+
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
 

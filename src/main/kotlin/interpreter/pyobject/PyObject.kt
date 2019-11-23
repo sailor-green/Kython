@@ -24,7 +24,7 @@ import green.sailor.kython.interpreter.kyobject.Exceptions
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.pyobject.primitives.*
 import green.sailor.kython.interpreter.throwKy
-import green.sailor.kython.marshal.*
+import green.sailor.kython.kyc.*
 
 // initialdict:
 // take PyString as an example
@@ -40,14 +40,14 @@ abstract class PyObject() {
         /**
          * Wraps a marshalled object from code into a PyObject.
          */
-        fun wrapMarshalled(type: MarshalType): PyObject {
+        fun wrapKyc(type: BaseKycType): PyObject {
             // unwrap tuples and dicts from their inner types
-            if (type is MarshalTuple) {
-                return PyTuple(type.wrapped.map { wrapMarshalled(it) })
-            } else if (type is MarshalDict) {
+            if (type is KycTuple) {
+                return PyTuple(type.wrapped.map { wrapKyc(it) })
+            } else if (type is KycDict) {
                 val map = linkedMapOf<PyObject, PyObject>()
                 for ((key, value) in type.wrapped.entries) {
-                    map[wrapMarshalled(key)] = wrapMarshalled(value)
+                    map[wrapKyc(key)] = wrapKyc(value)
                 }
                 return PyDict(map)
             }
@@ -58,8 +58,8 @@ abstract class PyObject() {
 
             // special singletons
             return when (type) {
-                is MarshalNone -> PyNone
-                is MarshalCodeObject -> PyCodeObject(KyCodeObject(type))
+                is KycNone -> PyNone
+                is KycCodeObject -> PyCodeObject(KyCodeObject(type))
                 else -> error("Unknown type $type")
             }
         }

@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.marshal.MarshalCodeObject
+import green.sailor.kython.kyc.KycCodeObject
 import green.sailor.kython.util.Lnotab
 import java.nio.ByteBuffer
 import kotlin.math.ceil
@@ -34,7 +34,7 @@ import kotlin.math.log
  * @param original: The marshalled code object to build from.
  */
 @Suppress("unused")
-class KyCodeObject(original: MarshalCodeObject) {
+class KyCodeObject(original: KycCodeObject) {
     companion object {
         // code flags
 
@@ -90,7 +90,7 @@ class KyCodeObject(original: MarshalCodeObject) {
 
     // TODO: Unwrap these into real objects.
     /** The constants for this function. */
-    val consts = original.consts.wrapped.map { PyObject.wrapMarshalled(it) }
+    val consts = original.consts.wrapped.map { PyObject.wrapKyc(it) }
 
     /** The names for this function. */
     val names = original.names.wrapped.map { it.wrapped as String }

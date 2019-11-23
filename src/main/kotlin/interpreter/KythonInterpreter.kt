@@ -19,15 +19,11 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.PyUserFunction
-import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
-import green.sailor.kython.marshal.Marshaller
-import green.sailor.kython.util.CPythonInterface
+import green.sailor.kython.util.CPythonCompiler
 import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 // todo: config params?
 
@@ -39,8 +35,7 @@ import kotlin.system.exitProcess
  */
 object KythonInterpreter {
     /** The CPython compiler backend. */
-    @ExperimentalStdlibApi
-    val cpyInterface = CPythonInterface(Paths.get("."))
+    val cpyInterface = CPythonCompiler("/usr/bin/python3")
 
     /** The root frame thread local storage for each thread. */
     val rootFrameLocal = ThreadLocal<StackFrame>()
@@ -70,23 +65,10 @@ object KythonInterpreter {
      */
     @ExperimentalStdlibApi
     fun runPython(path: Path) {
-        val version = cpyInterface.version
-        if (version.minor < 6) {
-            System.err.println("Required at least Python 3.6, got ${version.major}.${version.minor}.${version.patch}")
-            exitProcess(1)
-        }
-        println("Using CPython ${version.major}.${version.minor}.${version.patch} for bytecode compilation")
-
-        // compile all in working directory
-        println("Calling CPython to produce bytecode...")
-        cpyInterface.compileAllFiles(path)
+        val fn = this.cpyInterface.compile(path)
 
         // todo: make this work properly
-        val pycFilename = path.fileName.toString().dropLast(3)
-        val mainFile = path.parent.toString() + "/" + cpyInterface.getPycFilename(pycFilename)
-        val marshalled = Marshaller.parsePycFile(Paths.get(mainFile.toString()))
-
-        val rootFunction = PyUserFunction(KyCodeObject(marshalled))
+        val rootFunction = PyUserFunction(fn)
         val module = KyModule(rootFunction, path)
         this.modules["__main__"] = module
 
