@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -33,24 +34,34 @@ import green.sailor.kython.interpreter.throwKy
 object PyIntType : PyType("int") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val value = kwargs["value"] ?: error("Built-in signature mismatch")
-        return if (value is PyInt) {
-            value
-        } else {
-            // TODO: `__int__`
-            if (value !is PyString) {
-                val typeName = value.type.name
-
-                Exceptions.TYPE_ERROR
-                    .makeWithMessage(
-                        "int() argument must be a string, a bytes-like object, " +
-                        "or a number, not '$typeName'"
+        when (value) {
+            is PyInt -> {
+                return value
+            }
+            is PyString -> {  // special case, for int(x, base)
+                val base = kwargs["base"]!!.cast<PyInt>()
+                try {
+                    return PyInt(value.wrappedString.toInt(base.wrappedInt.toInt()).toLong())
+                } catch (e: NumberFormatException) {
+                    Exceptions.VALUE_ERROR.makeWithMessage(
+                        "Cannot convert '${value.wrappedString}' to int with base ${base.wrappedInt}"
                     ).throwKy()
-            } else {
-                val pyBase = kwargs["base"] as PyInt
-                val base = pyBase.wrappedInt
+                }
+            }
+            else -> {
+                val intMagic = value.specialMethodLookup("__int__")
+                    ?: Exceptions.TYPE_ERROR
+                        .makeWithMessage(
+                            "int() argument must be a string, a bytes-like object, " +
+                                    "or a number, not '${value.type.name}'"
+                        ).throwKy()
 
-                val converted = value.wrappedString.toInt(radix = base.toInt())
-                PyInt(converted.toLong())
+                if (intMagic !is PyCallable) {
+                    Exceptions.TYPE_ERROR.makeWithMessage("__int__ is not callable").throwKy()
+                }
+
+                // type(value).__int__(value)
+                return intMagic.runCallable(listOf(value))
             }
         }
     }

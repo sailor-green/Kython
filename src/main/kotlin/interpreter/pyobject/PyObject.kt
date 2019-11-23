@@ -101,6 +101,7 @@ abstract class PyObject() {
         this.type = type
     }
 
+    // attribs
     /** The type of this PyObject. */
     open var type: PyType = PyRootType
 
@@ -124,7 +125,6 @@ abstract class PyObject() {
     }
 
     // helper functions
-
     /**
      * Casts this [PyObject] to its concrete subclass, raising a PyException if it fails.
      */
@@ -134,6 +134,8 @@ abstract class PyObject() {
         }
         return this
     }
+
+
     // `object.X` implementations
     /**
      * Delegate for `LOAD_ATTR` on any object.
@@ -159,10 +161,7 @@ abstract class PyObject() {
             Exceptions.TYPE_ERROR.makeWithMessage("__getattribute__ is not callable").throwKy()
         }
 
-        return getAttribute.runCallable(listOf(
-            PyString(
-                name
-            ), this))
+        return getAttribute.runCallable(listOf(PyString(name), this))
     }
 
     /**

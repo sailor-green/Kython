@@ -18,13 +18,12 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyMethod
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.throwKy
 
 object PyStringType : PyType("str") {
     override fun newInstance(args: Map<String, PyObject>): PyObject {
@@ -44,14 +43,30 @@ object PyStringType : PyType("str") {
         PyString(self.wrappedString.toUpperCase())
     }
 
+    // there *is* special casing
+    /** str.__int__() */
+    val pyStrInt = PyBuiltinFunction.wrap("__int__", PyCallableSignature.EMPTY_METHOD) {
+        val self = it["self"]!!.cast<PyString>()
+        try {
+            PyInt(self.wrappedString.toInt().toLong())
+        } catch (e: NumberFormatException) {
+            Exceptions.VALUE_ERROR.makeWithMessage("Cannot convert '${self.wrappedString}' to int").throwKy()
+        }
+    }
+
     override val initialDict: Map<String, PyObject> by lazy {
         mapOf(
+            // magic method impls
+            "__int__" to pyStrInt,
+
+            // regular method impls
             "upper" to pyUpper
         )
     }
 
     override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
         val original = super.makeMethodWrappers(instance)
+        original["__int__"] = PyMethod(pyStrInt, instance)
         original["upper"] = PyMethod(pyUpper, instance)
         return original
     }
