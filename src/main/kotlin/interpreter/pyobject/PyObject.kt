@@ -89,6 +89,10 @@ abstract class PyObject() {
         }
     }
 
+    constructor(type: PyType) : this() {
+        this.type = type
+    }
+
     /** The type of this PyObject. */
     open var type: PyType = PyType.PyRootType
 
@@ -111,10 +115,17 @@ abstract class PyObject() {
         }
     }
 
-    constructor(type: PyType) : this() {
-        this.type = type
-    }
+    // helper functions
 
+    /**
+     * Casts this [PyObject] to its concrete subclass, raising a PyException if it fails.
+     */
+    inline fun <reified T : PyObject> cast(): T {
+        if (this !is T) {
+            Exceptions.TYPE_ERROR.makeWithMessage("Invalid type: ${this.type.name}").throwKy()
+        }
+        return this
+    }
     // `object.X` implementations
     /**
      * Delegate for `LOAD_ATTR` on any object.

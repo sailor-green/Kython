@@ -36,6 +36,12 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         val EMPTY_METHOD = PyCallableSignature(
             "self" to ArgType.POSITIONAL
         )
+
+        /** The all-consuming signature. */
+        val ALL_CONSUMING = PyCallableSignature(
+            "args" to ArgType.POSITIONAL_STAR,
+            "kwargs" to ArgType.KEYWORD_STAR
+        )
     }
 
 

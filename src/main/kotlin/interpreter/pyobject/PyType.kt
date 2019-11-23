@@ -67,18 +67,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      * from Kotlin land.
      */
     val builtinFunctionWrapper by lazy {
-        object : PyBuiltinFunction(name) {
-            override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-                return newInstance(kwargs)
-            }
-
-            override val signature: PyCallableSignature by lazy {
-                PyCallableSignature(
-                    "args" to ArgType.POSITIONAL_STAR,
-                    "kwargs" to ArgType.KEYWORD_STAR
-                )
-            }
-        }
+        PyBuiltinFunction.wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
     }
 
     /**

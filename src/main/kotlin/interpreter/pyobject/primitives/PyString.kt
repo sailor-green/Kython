@@ -46,24 +46,21 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
             )
         }
 
+        val pyUpper = PyBuiltinFunction.wrap("upper", PyCallableSignature.EMPTY_METHOD) {
+            val self = it["self"]!!.cast<PyString>()
+            PyString(self.wrappedString.toUpperCase())
+        }
+
         override val initialDict: Map<String, PyObject> by lazy {
             mapOf(
-                "upper" to StringUpper
+                "upper" to pyUpper
             )
         }
 
         override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
             val original = super.makeMethodWrappers(instance)
-            original["upper"] = PyMethod(StringUpper, instance)
+            original["upper"] = PyMethod(pyUpper, instance)
             return original
-        }
-    }
-
-    object StringUpper : PyBuiltinFunction("str.upper") {
-        override val signature = PyCallableSignature.EMPTY_METHOD
-        override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-            val self = kwargs["self"]!! as PyString
-            return PyString(self.wrappedString.toUpperCase())
         }
     }
 

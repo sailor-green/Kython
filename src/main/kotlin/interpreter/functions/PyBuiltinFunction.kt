@@ -18,6 +18,7 @@
 
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.kyobject.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
@@ -30,6 +31,23 @@ import green.sailor.kython.interpreter.throwKy
  * Represents a built-in function, such as print().
  */
 abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctionType) {
+    companion object {
+
+        /**
+         * Makes a wrapper around a regular function.
+         */
+        fun wrap(name: String, signature: PyCallableSignature,
+                 fn: (Map<String, PyObject>) -> PyObject): PyBuiltinFunction {
+            return object : PyBuiltinFunction(name) {
+                override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
+                    return fn(kwargs)
+                }
+
+                override val signature: PyCallableSignature = signature
+            }
+        }
+    }
+
     object PyBuiltinFunctionType : PyType("BuiltinType") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             Exceptions.TYPE_ERROR.makeWithMessage("Cannot create builtin instances").throwKy()
