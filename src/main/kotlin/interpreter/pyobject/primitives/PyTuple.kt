@@ -50,7 +50,7 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
 
     // ugly but it'll do.
     override fun toPyString(): PyString {
-        TODO("reimplement")
+        return PyString("(" + this.subobjects.joinToString { it.toPyStringRepr().wrappedString } + ")")
     }
 
     override fun toPyStringRepr(): PyString = this.toPyString()

@@ -30,7 +30,7 @@ import green.sailor.kython.interpreter.throwKy
 /**
  * Represents the default object __getattribute__.
  */
-object ObjectGetattribute : PyBuiltinFunction("<object __getattribute__>") {
+object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"]!!
         val name = kwargs["name"]!!

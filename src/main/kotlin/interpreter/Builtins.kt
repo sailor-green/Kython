@@ -18,6 +18,7 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.interpreter.functions.DirBuiltinFunction
 import green.sailor.kython.interpreter.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.functions.PrintBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.PyType
@@ -30,6 +31,8 @@ import green.sailor.kython.interpreter.pyobject.primitives.*
 object Builtins {
     val PRINT = PrintBuiltinFunction()
     val LOCALS = LocalsBuiltinFunction()
+    val DIR = DirBuiltinFunction()
+
     val TYPE = PyType.PyRootType
     val INT_TYPE = PyInt.PyIntType
     val STRING_TYPE = PyString.PyStringType
@@ -43,6 +46,7 @@ object Builtins {
     val BUILTINS_MAP = linkedMapOf(
         "print" to PRINT,
         "locals" to LOCALS,
+        "dir" to DIR,
 
         // class types
         "type" to TYPE,

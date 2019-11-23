@@ -19,6 +19,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.functions.magic.ObjectDir
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
@@ -82,7 +83,8 @@ abstract class PyObject() {
          */
         fun getDefaultDict(): LinkedHashMap<String, PyObject> {
             val d = linkedMapOf<String, PyObject>(
-                "__getattribute__" to ObjectGetattribute
+                "__getattribute__" to ObjectGetattribute,
+                "__dir__" to ObjectDir
             )
 
             return d
