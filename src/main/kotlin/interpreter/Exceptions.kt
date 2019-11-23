@@ -16,7 +16,7 @@
  *
  */
 
-package green.sailor.kython.interpreter.kyobject
+package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.pyobject.PyException
 

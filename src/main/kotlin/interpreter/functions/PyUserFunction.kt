@@ -18,11 +18,11 @@
 
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.Builtins
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.instruction.Instruction
-import green.sailor.kython.interpreter.kyobject.Builtins
-import green.sailor.kython.interpreter.kyobject.Exceptions
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyCodeObject

@@ -18,10 +18,10 @@
 
 package green.sailor.kython.interpreter.stack
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
-import green.sailor.kython.interpreter.kyobject.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyCodeObject
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.primitives.PyInt

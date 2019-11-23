@@ -18,9 +18,9 @@
 
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.kyobject.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.primitives.PyDict
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame

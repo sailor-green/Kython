@@ -16,7 +16,7 @@
  *
  */
 
-package green.sailor.kython.interpreter.kyobject
+package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.LocalsBuiltinFunction
 import green.sailor.kython.interpreter.functions.PrintBuiltinFunction
