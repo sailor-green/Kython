@@ -16,13 +16,13 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python
+package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.KyCodeObject
-import green.sailor.kython.interpreter.objects.functions.magic.ObjectGetattribute
-import green.sailor.kython.interpreter.objects.iface.PyCallable
-import green.sailor.kython.interpreter.objects.python.primitives.*
+import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
+import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.kyobject.Exceptions
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.interpreter.pyobject.primitives.*
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.marshal.*
 

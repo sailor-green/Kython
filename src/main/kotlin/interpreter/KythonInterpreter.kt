@@ -18,10 +18,10 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.interpreter.objects.KyCodeObject
-import green.sailor.kython.interpreter.objects.KyModule
-import green.sailor.kython.interpreter.objects.functions.PyUserFunction
-import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.functions.PyUserFunction
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.interpreter.kyobject.KyModule
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.marshal.Marshaller
 import green.sailor.kython.util.CPythonInterface

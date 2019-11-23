@@ -16,17 +16,17 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python
+package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
-import green.sailor.kython.interpreter.objects.iface.PyCallable
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.primitives.PyString
-import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
+import green.sailor.kython.interpreter.functions.PyBuiltinFunction
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.kyobject.Exceptions
+import green.sailor.kython.interpreter.pyobject.primitives.PyString
+import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.throwKy
-import interpreter.objects.iface.ArgType
 
 /**
  * Represents a python type (i.e. a class).

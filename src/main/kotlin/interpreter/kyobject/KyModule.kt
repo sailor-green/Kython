@@ -16,9 +16,9 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.kyobject
 
-import green.sailor.kython.interpreter.objects.functions.PyUserFunction
+import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import java.nio.file.Path
 

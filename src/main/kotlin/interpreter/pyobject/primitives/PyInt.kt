@@ -16,14 +16,14 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python.primitives
+package green.sailor.kython.interpreter.pyobject.primitives
 
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.kyobject.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
-import interpreter.objects.iface.ArgType
 
 /**
  * Represents a Python int type. This internally wraps a long,

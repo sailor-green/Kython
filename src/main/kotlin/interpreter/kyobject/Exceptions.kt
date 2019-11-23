@@ -16,9 +16,9 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.kyobject
 
-import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.pyobject.PyException
 
 /**
  * A nice list of exceptions.

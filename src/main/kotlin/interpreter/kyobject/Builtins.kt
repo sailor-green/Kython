@@ -16,12 +16,12 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.kyobject
 
-import green.sailor.kython.interpreter.objects.functions.LocalsBuiltinFunction
-import green.sailor.kython.interpreter.objects.functions.PrintBuiltinFunction
-import green.sailor.kython.interpreter.objects.python.PyType
-import green.sailor.kython.interpreter.objects.python.primitives.*
+import green.sailor.kython.interpreter.functions.LocalsBuiltinFunction
+import green.sailor.kython.interpreter.functions.PrintBuiltinFunction
+import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.primitives.*
 
 /**
  * Represents the builtins.

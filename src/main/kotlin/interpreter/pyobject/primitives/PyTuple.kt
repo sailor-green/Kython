@@ -16,12 +16,12 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python.primitives
+package green.sailor.kython.interpreter.pyobject.primitives
 
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
-import interpreter.objects.iface.ArgType
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.

@@ -18,7 +18,7 @@
 
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**
  * Base class for a stack frame. This can either be an abstract class stack frame, or a

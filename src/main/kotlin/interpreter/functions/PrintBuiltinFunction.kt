@@ -16,13 +16,13 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.functions
+package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.primitives.PyNone
-import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
-import interpreter.objects.iface.ArgType
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.primitives.PyNone
+import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
 
 /**
  * Represents the print() builtin.

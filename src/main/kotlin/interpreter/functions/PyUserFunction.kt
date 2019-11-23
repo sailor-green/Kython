@@ -16,22 +16,22 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.functions
+package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.instruction.Instruction
-import green.sailor.kython.interpreter.objects.Builtins
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.KyCodeObject
-import green.sailor.kython.interpreter.objects.KyModule
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyCodeObject
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
-import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.kyobject.Builtins
+import green.sailor.kython.interpreter.kyobject.Exceptions
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.interpreter.kyobject.KyModule
+import green.sailor.kython.interpreter.pyobject.PyCodeObject
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.primitives.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy
-import interpreter.objects.iface.ArgType
 
 /**
  * Represents a Python function object.

@@ -16,13 +16,13 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.functions
+package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.primitives.PyDict
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.kyobject.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.primitives.PyDict
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy
 

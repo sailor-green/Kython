@@ -16,14 +16,14 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python.primitives
+package green.sailor.kython.interpreter.pyobject.primitives
 
-import green.sailor.kython.interpreter.objects.functions.PyBuiltinFunction
-import green.sailor.kython.interpreter.objects.iface.PyCallableSignature
-import green.sailor.kython.interpreter.objects.python.PyMethod
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
-import interpreter.objects.iface.ArgType
+import green.sailor.kython.interpreter.functions.PyBuiltinFunction
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyMethod
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a Python string. This wraps a regular JVM string.

@@ -18,7 +18,7 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.interpreter.objects.python.PyException
+import green.sailor.kython.interpreter.pyobject.PyException
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**

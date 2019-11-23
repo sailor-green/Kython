@@ -16,19 +16,13 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python
+package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.objects.KyCodeObject
-import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
- * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.
+ * Represents a Python function instance.
  */
-class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
-    override fun toPyString(): PyString {
-        return PyString("<code object ${wrappedCodeObject.codename}>")
-    }
-
-    override fun toPyStringRepr(): PyString = toPyString()
-
-}
+abstract class PyFunction(type: PyType) : PyObject(type), PyCallable

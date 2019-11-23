@@ -16,11 +16,11 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python
+package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.objects.python.primitives.PyString
-import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
+import green.sailor.kython.interpreter.pyobject.primitives.PyString
+import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**

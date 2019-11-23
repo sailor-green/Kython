@@ -16,14 +16,19 @@
  *
  */
 
-package interpreter.objects.iface
+package green.sailor.kython.interpreter.pyobject
+
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.interpreter.pyobject.primitives.PyString
 
 /**
- * Represents an argument type.
+ * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.
  */
-enum class ArgType {
-    POSITIONAL,  // def fn(arg), also works as a keyword argument
-    POSITIONAL_STAR,  // def fn(*arg)
-    KEYWORD,  // def fn(*, arg=default)
-    KEYWORD_STAR  // def fn(**arg)
+class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
+    override fun toPyString(): PyString {
+        return PyString("<code object ${wrappedCodeObject.codename}>")
+    }
+
+    override fun toPyStringRepr(): PyString = toPyString()
+
 }

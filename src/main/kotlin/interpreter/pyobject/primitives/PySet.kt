@@ -16,32 +16,23 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python.primitives
+package green.sailor.kython.interpreter.pyobject.primitives
 
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
- * Represents a Python boolean.
+ * Represents an ordered Python set.
  */
-class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
-    companion object {
-        // The TRUE instance of this.
-        val TRUE = PyBool(true)
-        // The FALSE instance of this.
-        val FALSE = PyBool(false)
-    }
-
-    object PyBoolType : PyType("bool") {
+class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
+    object PySetType : PyType("set") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             TODO("not implemented")
         }
     }
 
-    val cachedTrueString = PyString("True")
-    val cachedFalseString = PyString("False")
-
-    override fun toPyString(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
+    override fun toPyString(): PyString = PyString(
+        this.wrappedSet.joinToString(", ") { it.toPyStringRepr().wrappedString }
+    )
     override fun toPyStringRepr(): PyString = toPyString()
-
 }

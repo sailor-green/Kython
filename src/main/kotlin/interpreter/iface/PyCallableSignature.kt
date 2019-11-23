@@ -16,13 +16,12 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.iface
+package green.sailor.kython.interpreter.iface
 
-import green.sailor.kython.interpreter.objects.Exceptions
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.primitives.PyTuple
+import green.sailor.kython.interpreter.kyobject.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.primitives.PyTuple
 import green.sailor.kython.interpreter.throwKy
-import interpreter.objects.iface.ArgType
 
 /**
  * Represents a callable signature. This is created for every function instance (including built-in functions) and is

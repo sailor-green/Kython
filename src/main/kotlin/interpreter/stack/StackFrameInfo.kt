@@ -18,8 +18,8 @@
 
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.primitives.PyString
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.primitives.PyString
 import java.nio.file.Files
 import java.util.*
 

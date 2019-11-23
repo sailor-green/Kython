@@ -16,23 +16,14 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python.primitives
-
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
+package green.sailor.kython.interpreter.iface
 
 /**
- * Represents an ordered Python set.
+ * Represents an argument type.
  */
-class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
-    object PySetType : PyType("set") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            TODO("not implemented")
-        }
-    }
-
-    override fun toPyString(): PyString = PyString(
-        this.wrappedSet.joinToString(", ") { it.toPyStringRepr().wrappedString }
-    )
-    override fun toPyStringRepr(): PyString = toPyString()
+enum class ArgType {
+    POSITIONAL,  // def fn(arg), also works as a keyword argument
+    POSITIONAL_STAR,  // def fn(*arg)
+    KEYWORD,  // def fn(*, arg=default)
+    KEYWORD_STAR  // def fn(**arg)
 }

@@ -16,10 +16,10 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects.python.primitives
+package green.sailor.kython.interpreter.pyobject.primitives
 
-import green.sailor.kython.interpreter.objects.python.PyObject
-import green.sailor.kython.interpreter.objects.python.PyType
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.

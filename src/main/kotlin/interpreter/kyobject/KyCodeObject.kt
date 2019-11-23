@@ -16,11 +16,11 @@
  *
  */
 
-package green.sailor.kython.interpreter.objects
+package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
-import green.sailor.kython.interpreter.objects.python.PyObject
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.marshal.MarshalCodeObject
 import green.sailor.kython.util.Lnotab
