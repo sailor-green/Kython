@@ -34,7 +34,7 @@ class PyMethod(
         args: List<PyObject>,
         kwargsTuple: PyTuple?
     ): PyObject {
-        val realArgs = listOf(instance, *args.toTypedArray())
+        val realArgs = args.toMutableList().apply { add(instance) }
         return super.runCallable(realArgs, kwargsTuple)
     }
 
@@ -44,7 +44,7 @@ class PyMethod(
 
     override val signature: PyCallableSignature = this.function.signature
 
-    override fun toPyString(): PyString {
+    override fun pyStr(): PyString {
         val builder = StringBuilder()
 
         builder.append("<method '")
@@ -56,6 +56,6 @@ class PyMethod(
         return PyString(builder.toString())
     }
 
-    override fun toPyStringRepr(): PyString = this.toPyString()
+    override fun pyRepr(): PyString = this.pyStr()
 
 }

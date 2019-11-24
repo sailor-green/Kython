@@ -32,7 +32,7 @@ class PrintBuiltinFunction : PyBuiltinFunction("print") {
         // todo: more args
 
         val args = kwargs["args"] as PyTuple
-        val result = args.subobjects.joinToString(" ") { it.toPyStringRepr().wrappedString }
+        val result = args.subobjects.joinToString(" ") { it.pyRepr().wrappedString }
 
         println(result)
         return PyNone

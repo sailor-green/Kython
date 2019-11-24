@@ -123,6 +123,7 @@ object KythonInterpreter {
         try {
             val result = this.runStackFrame(rootFrame, mapOf())
         } catch (e: KyError) {
+            // throw e  // used for debugging
             // bubbled error, means no user code handled it
             val error = e.wrapped
             val errorName = error.type.name

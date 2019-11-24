@@ -22,13 +22,16 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 
 object PyStringType : PyType("str") {
     override fun newInstance(args: Map<String, PyObject>): PyObject {
         val arg = args["x"]!!
-        return arg.toPyString()
+        return arg.pyStr()
     }
 
     override val signature: PyCallableSignature by lazy {
@@ -62,12 +65,5 @@ object PyStringType : PyType("str") {
             // regular method impls
             "upper" to pyUpper
         )
-    }
-
-    override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
-        val original = super.makeMethodWrappers(instance)
-        original["__int__"] = PyMethod(pyStrInt, instance)
-        original["upper"] = PyMethod(pyUpper, instance)
-        return original
     }
 }

@@ -25,9 +25,9 @@ import green.sailor.kython.interpreter.pyobject.types.PyIntType
  */
 class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
 
-    override fun toPyString(): PyString =
+    override fun pyStr(): PyString =
         PyString(this.wrappedInt.toString())
-    override fun toPyStringRepr(): PyString = this.toPyString()
+    override fun pyRepr(): PyString = this.pyStr()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

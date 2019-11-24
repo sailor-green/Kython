@@ -19,7 +19,6 @@
 package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.PyMethod
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
@@ -44,14 +43,4 @@ object PyRootType : PyType("type") {
     }
 
     override var type: PyType = PyRootType
-
-    // root type doesn't make method wrappers because we have no type
-    override val internalDict: LinkedHashMap<String, PyObject> by lazy {
-        val map = linkedMapOf<String, PyObject>().apply { putAll(getDefaultDict()) }
-        map
-    }
-
-    override fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
-        return mutableMapOf()
-    }
 }

@@ -344,7 +344,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * BINARY_* (ADD, etc)
      */
     fun binaryOp(type: BinaryOp, arg: Byte) {
-        val result = when (type) {
+        when (type) {
             BinaryOp.ADD -> {
                 // todo: __add__
                 stack.push(PyInt((stack.pop() as PyInt).wrappedInt + (stack.pop() as PyInt).wrappedInt))

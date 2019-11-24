@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -37,13 +36,6 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      */
     val builtinFunctionWrapper by lazy {
         PyBuiltinFunction.wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
-    }
-
-    /**
-     * Makes method wrappers for this type. These will be automatically copied into the object dict.
-     */
-    open fun makeMethodWrappers(instance: PyObject): MutableMap<String, PyMethod> {
-        return PyRootType.makeMethodWrappers(instance)
     }
 
     /**
@@ -69,6 +61,6 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     }
 
     // default impls
-    override fun toPyString(): PyString = this._pyString
-    override fun toPyStringRepr(): PyString = this._pyString
+    override fun pyStr(): PyString = this._pyString
+    override fun pyRepr(): PyString = this._pyString
 }

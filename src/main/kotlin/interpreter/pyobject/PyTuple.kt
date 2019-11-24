@@ -31,13 +31,13 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
         val EMPTY = PyTuple(listOf())
     }
 
-    override fun toPyString(): PyString {
+    override fun pyStr(): PyString {
         return PyString("(" + this.subobjects.joinToString {
-            it.toPyStringRepr().wrappedString
+            it.pyRepr().wrappedString
         } + ")")
     }
 
-    override fun toPyStringRepr(): PyString = this.toPyString()
+    override fun pyRepr(): PyString = this.pyStr()
 
 
 }

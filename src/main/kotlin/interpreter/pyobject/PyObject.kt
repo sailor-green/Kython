@@ -19,7 +19,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.functions.magic.ObjectDir
+import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
@@ -88,11 +88,7 @@ abstract class PyObject() {
          * Gets the default object dict, containing the base implements of certain magic methods.
          */
         fun getDefaultDict(): LinkedHashMap<String, PyObject> {
-            val d = linkedMapOf<String, PyObject>(
-                "__getattribute__" to ObjectGetattribute,
-                "__dir__" to ObjectDir
-            )
-
+            val d = linkedMapOf<String, PyObject>()
             return d
         }
     }
@@ -117,8 +113,6 @@ abstract class PyObject() {
     /** The `__dict__` of this PyObject. */
     internal open val internalDict by lazy {
         getDefaultDict().apply {
-            // first copy all the parent type method wrappers
-            putAll(type.makeMethodWrappers(this@PyObject))
             // then copy the "initial" dictionary
             putAll(initialDict)
         }
@@ -142,27 +136,23 @@ abstract class PyObject() {
      *
      * @param name: The name of the attribute to get.
      */
-    fun pyGetAttribute(name: String): PyObject {
+    open fun pyGetAttribute(name: String): PyObject {
         // this will delegate to `__getattribute__`,
 
-        // forcibly do special method lookup
-        if (name.startsWith("__") && name.endsWith("__")) {
-            val specialMethod = this.specialMethodLookup(name)
-            if (specialMethod != null) {
-                return PyMethod(specialMethod as PyCallable, this)
-                //return specialMethod
-            }
-        }
-
         // try and run __getattribute__
-        val getAttribute = this.specialMethodLookup("__getattribute__")
-            ?: error("__getattribute__ does not exist - this must never happen")
+        val getAttribute = try {
+            ObjectGetattribute.runCallable(
+                listOf(PyString("__getattribute__"), this)
+            )
+        } catch (e: KyError) {
+            ObjectGetattribute.pyDescriptorGet(this, this.type)
+        }
 
         if (getAttribute !is PyCallable) {
             Exceptions.TYPE_ERROR.makeWithMessage("__getattribute__ is not callable").throwKy()
         }
 
-        return getAttribute.runCallable(listOf(PyString(name), this))
+        return getAttribute.runCallable(listOf(PyString(name)))
     }
 
     /**
@@ -170,34 +160,62 @@ abstract class PyObject() {
      *
      * @return A [PyObject]? for the special method found, or null if it wasn't found.
      */
-    fun specialMethodLookup(name: String): PyObject? {
+    open fun specialMethodLookup(name: String): PyObject? {
         val type = this.type ?: PyRootType
         return type.internalDict[name]
     }
 
+    // == Descriptors ==
+
+    /**
+     * Implements `__get__` for this object.
+     *
+     * @param parent: The parent instance.
+     * @param klass: The parent class.
+     */
+    open fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject = this
+
+    /**
+     * Implements `__set__` for this object.
+     */
+    open fun pyDescriptorSet(): PyObject {
+        TODO()
+    }
+
+    /**
+     * Implements `__set_name__` for this object.
+     */
+    open fun pyDescriptorSetName(): PyObject {
+        TODO()
+    }
+
+    // == str() / repr() ==
     /**
      * Turns this object into a PyString. This corresponds to the `__str__` method.
      */
-    abstract fun toPyString(): PyString
+    abstract fun pyStr(): PyString
 
     /**
      * Turns this object into a PyString when repr() is called. This corresponds to the `__repr__` method.
      */
-    abstract fun toPyStringRepr(): PyString
+    abstract fun pyRepr(): PyString
+
 
     /**
      * Gets the string of this object, safely. Used for exceptions, et al.
      */
     fun getPyStringSafe(): PyString = try {
-        this.toPyString()
+        this.pyStr()
     } catch (e: Throwable) {
         PyString.UNPRINTABLE
     }
 
+    // attributes
+
     /**
-     * Gets the internal `__dict__` of this method, wrapped. This corresponds to `__dict__`.
+     * Gets the internal `__dict__` of this object, wrapped. This corresponds to `__dict__`.
      */
-    fun getPyDict(): PyDict {
+    fun pyGetDict(): PyDict {
         return PyDict(internalDict.mapKeys {
             PyString(
                 it.key

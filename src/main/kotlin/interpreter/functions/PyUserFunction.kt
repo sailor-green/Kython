@@ -89,9 +89,9 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
     override fun getFrame(): StackFrame =
         UserCodeStackFrame(this)
 
-    override fun toPyString(): PyString =
+    override fun pyStr(): PyString =
         PyString("<user function ${code.codename}>")
-    override fun toPyStringRepr(): PyString = toPyString()
+    override fun pyRepr(): PyString = pyStr()
 
     /**
      * Generates a [PyCallableSignature] for this function.

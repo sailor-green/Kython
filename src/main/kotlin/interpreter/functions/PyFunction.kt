@@ -19,10 +19,20 @@
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.pyobject.PyMethod
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a Python function instance.
  */
-abstract class PyFunction(type: PyType) : PyObject(type), PyCallable
+abstract class PyFunction(type: PyType) : PyObject(type), PyCallable {
+    // overridden for method binding
+    override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
+        if (parent is PyNone) {
+            return this
+        }
+        return PyMethod(this, parent)
+    }
+}

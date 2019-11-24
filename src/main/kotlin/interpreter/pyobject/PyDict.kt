@@ -51,14 +51,14 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
         }
     }
 
-    override fun toPyString(): PyString {
+    override fun pyStr(): PyString {
         val joined = this.items.entries.joinToString {
-            it.key.toPyStringRepr().wrappedString + ": " + it.value.toPyStringRepr().wrappedString
+            it.key.pyRepr().wrappedString + ": " + it.value.pyRepr().wrappedString
         }
         return PyString("{$joined}")
     }
 
-    override fun toPyStringRepr(): PyString = toPyString()
+    override fun pyRepr(): PyString = pyStr()
 
     /**
      * Gets an item from the internal dict.

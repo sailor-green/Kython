@@ -54,10 +54,10 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
         }
     }
 
-    override fun toPyString(): PyString =
+    override fun pyStr(): PyString =
         PyString("<built-in function $name>")
 
-    override fun toPyStringRepr(): PyString = toPyString()
+    override fun pyRepr(): PyString = pyStr()
 
     /**
      * Called when the function is called from within a stack frame.

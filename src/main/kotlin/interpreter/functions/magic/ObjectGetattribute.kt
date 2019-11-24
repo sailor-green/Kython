@@ -42,13 +42,15 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         val attrName = name.wrappedString
 
         // try and find the object on the dict
+        // effectively corresponds to x.attr.__get__(x, type(x)
         if (attrName in self.internalDict) {
             return self.internalDict[attrName]!!
         }
 
         // if it's in the class dict...
+        // effectively corresponds to x.attr.__get__(None, type(x))
         if (attrName in self.type.internalDict) {
-            return self.type.internalDict[attrName]!!
+            return self.type.internalDict[attrName]!!.pyDescriptorGet(self, self.type)
         }
 
         // try and load `__getattr__`
@@ -60,7 +62,7 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
             return getattrFn.runCallable(listOf(name))
         }
 
-        Exceptions.NAME_ERROR.makeWithMessage("Object has no attribute $attrName").throwKy()
+        Exceptions.NAME_ERROR.makeWithMessage("Object ${self.type.name} has no attribute $attrName").throwKy()
     }
 
     override val signature: PyCallableSignature by lazy {
