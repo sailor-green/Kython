@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.kyc.*
@@ -102,7 +103,7 @@ abstract class PyObject() {
     open var type: PyType = PyRootType
 
     /** The parent types of this PyObject. Exposed as `__bases__`. */
-    open val parentTypes = mutableListOf<PyType>()
+    open val parentTypes = mutableListOf<PyType>(PyRootObjectType)
 
     /**
      * The initial dict for this PyObject. Copied into internalDict upon instantiating.

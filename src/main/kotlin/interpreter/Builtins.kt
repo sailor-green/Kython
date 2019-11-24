@@ -42,6 +42,7 @@ object Builtins {
         PyNone
     }
 
+    val OBJECT = PyRootObjectType
     val TYPE = PyRootType
     val INT_TYPE = PyIntType
     val STRING_TYPE = PyStringType
@@ -59,11 +60,13 @@ object Builtins {
         "_ky_print" to KY_PRINT,
 
         // class types
+        "object" to OBJECT,
         "type" to TYPE,
         "int" to INT_TYPE,
         "str" to STRING_TYPE,
         "tuple" to TUPLE_TYPE,
         "dict" to DICT_TYPE,
+        "bool" to BOOL_TYPE,
 
         // specials
         "None" to NONE
