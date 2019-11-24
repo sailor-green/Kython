@@ -36,7 +36,7 @@ class LocalsBuiltinFunction : PyBuiltinFunction("locals") {
         val frame = KythonInterpreter.getCurrentFrameForThisThread().parentFrame
             ?: error("Parent frame was null!")
         if (frame !is UserCodeStackFrame) {
-            Exceptions.RUNTIME_ERROR.makeWithMessage("Built-in frames do not have locals").throwKy()
+            Exceptions.RUNTIME_ERROR("Built-in frames do not have locals").throwKy()
         }
         return PyDict.fromAnyMap(frame.locals)
     }

@@ -50,7 +50,7 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
 
     object PyBuiltinFunctionType : PyType("BuiltinType") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            Exceptions.TYPE_ERROR.makeWithMessage("Cannot create builtin instances").throwKy()
+            Exceptions.TYPE_ERROR("Cannot create builtin instances").throwKy()
         }
     }
 

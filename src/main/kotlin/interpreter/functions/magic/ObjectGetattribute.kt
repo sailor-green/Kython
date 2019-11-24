@@ -35,9 +35,7 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         val self = kwargs["self"]!!
         val name = kwargs["name"]!!
         if (name !is PyString) {
-            Exceptions.TYPE_ERROR
-                .makeWithMessage("Attribute name must be type str, not ${name.type.name}")
-                .throwKy()
+            Exceptions.TYPE_ERROR("Attribute name must be type str, not ${name.type.name}").throwKy()
         }
         val attrName = name.wrappedString
 
@@ -57,12 +55,12 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         val getattrFn = self.specialMethodLookup("__getattr__")
         if (getattrFn != null) {
             if (getattrFn !is PyCallable) {
-                Exceptions.TYPE_ERROR.makeWithMessage("__getattr__ is not a callable").throwKy()
+                Exceptions.TYPE_ERROR("__getattr__ is not a callable").throwKy()
             }
             return getattrFn.runCallable(listOf(name))
         }
 
-        Exceptions.NAME_ERROR.makeWithMessage("Object ${self.type.name} has no attribute $attrName").throwKy()
+        Exceptions.NAME_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
     }
 
     override val signature: PyCallableSignature by lazy {

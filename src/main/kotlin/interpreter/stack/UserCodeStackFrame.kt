@@ -234,7 +234,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val fn = this.stack.pop()
         if (fn !is PyCallable) {
             // todo
-            Exceptions.TYPE_ERROR.makeWithMessage("'${fn.type.name}' is not callable").throwKy()
+            Exceptions.TYPE_ERROR("'${fn.type.name}' is not callable").throwKy()
         }
 
         val result = fn.runCallable(toCallWith)

@@ -53,7 +53,7 @@ object PyStringType : PyType("str") {
         try {
             PyInt(self.wrappedString.toInt().toLong())
         } catch (e: NumberFormatException) {
-            Exceptions.VALUE_ERROR.makeWithMessage("Cannot convert '${self.wrappedString}' to int").throwKy()
+            Exceptions.VALUE_ERROR("Cannot convert '${self.wrappedString}' to int").throwKy()
         }
     }
 

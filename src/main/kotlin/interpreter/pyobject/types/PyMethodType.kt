@@ -36,7 +36,7 @@ object PyMethodType : PyType("method") {
         val instance = kwargs["instance"] ?: error("Built-in signature mismatch")
 
         if (function !is PyCallable) {
-            Exceptions.TYPE_ERROR.makeWithMessage("Method first param must be a callable").throwKy()
+            Exceptions.TYPE_ERROR("Method first param must be a callable").throwKy()
         }
 
         return PyMethod(function, instance)

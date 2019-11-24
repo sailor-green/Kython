@@ -125,7 +125,7 @@ abstract class PyObject() {
      */
     inline fun <reified T : PyObject> cast(): T {
         if (this !is T) {
-            Exceptions.TYPE_ERROR.makeWithMessage("Invalid type: ${this.type.name}").throwKy()
+            Exceptions.TYPE_ERROR("Invalid type: ${this.type.name}").throwKy()
         }
         return this
     }
@@ -150,7 +150,7 @@ abstract class PyObject() {
         }
 
         if (getAttribute !is PyCallable) {
-            Exceptions.TYPE_ERROR.makeWithMessage("__getattribute__ is not callable").throwKy()
+            Exceptions.TYPE_ERROR("__getattribute__ is not callable").throwKy()
         }
 
         return getAttribute.runCallable(listOf(PyString(name)))

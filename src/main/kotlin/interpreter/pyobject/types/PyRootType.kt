@@ -37,8 +37,7 @@ object PyRootType : PyType("type") {
         }
 
         // TODO: Three arg type version
-        Exceptions.NOT_IMPLEMENTED_ERROR
-            .makeWithMessage("Three-arg form of type not impl'd yet")
+        Exceptions.NOT_IMPLEMENTED_ERROR("Three-arg form of type not impl'd yet")
             .throwKy()
     }
 

@@ -91,8 +91,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                             argsCount += 1
                         } catch (e: NoSuchElementException) {
                             if (name !in finalMap) {
-                                Exceptions.TYPE_ERROR.makeWithMessage("No value provided for arg $name")
-                                    .throwKy()
+                                Exceptions.TYPE_ERROR("No value provided for arg $name").throwKy()
                             }
                         }
                     }
@@ -107,8 +106,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
 
                     // keyword args are NOT allowed for this function
                     ArgType.KEYWORD ->
-                        Exceptions.TYPE_ERROR
-                            .makeWithMessage("This function takes $name as a keyword, not a positional argument")
+                        Exceptions.TYPE_ERROR("This function takes $name as a keyword, not a positional argument")
                             .throwKy()
 
                     // keyword_star is irrelevant because this doesn't take keyword arguments.
@@ -118,7 +116,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // make sure too many args weren't passed
             if (argsIt.hasNext()) {
                 val remaining = argsIt.asSequence().toList().size
-                Exceptions.TYPE_ERROR.makeWithMessage(
+                Exceptions.TYPE_ERROR(
                     "Passed too many arguments! Expected ${this.args.size}, " +
                     "got ${finalMap.size + remaining}"
                 ).throwKy()

@@ -43,21 +43,20 @@ object PyIntType : PyType("int") {
                 try {
                     return PyInt(value.wrappedString.toInt(base.wrappedInt.toInt()).toLong())
                 } catch (e: NumberFormatException) {
-                    Exceptions.VALUE_ERROR.makeWithMessage(
+                    Exceptions.VALUE_ERROR(
                         "Cannot convert '${value.wrappedString}' to int with base ${base.wrappedInt}"
                     ).throwKy()
                 }
             }
             else -> {
                 val intMagic = value.specialMethodLookup("__int__")
-                    ?: Exceptions.TYPE_ERROR
-                        .makeWithMessage(
+                    ?: Exceptions.TYPE_ERROR(
                             "int() argument must be a string, a bytes-like object, " +
                                     "or a number, not '${value.type.name}'"
                         ).throwKy()
 
                 if (intMagic !is PyCallable) {
-                    Exceptions.TYPE_ERROR.makeWithMessage("__int__ is not callable").throwKy()
+                    Exceptions.TYPE_ERROR("__int__ is not callable").throwKy()
                 }
 
                 // type(value).__int__(value)

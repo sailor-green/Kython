@@ -35,7 +35,7 @@ class DirBuiltinFunction : PyBuiltinFunction("dir") {
         val obb = kwargs["obb"] ?: error("Built-in signature mismatch!")
         val dir = obb.pyGetAttribute("__dir__")
         if (dir !is PyCallable) {
-            Exceptions.TYPE_ERROR.makeWithMessage("__dir__ is not callable").throwKy()
+            Exceptions.TYPE_ERROR("__dir__ is not callable").throwKy()
         }
         return dir.runCallable(listOf(obb))
     }

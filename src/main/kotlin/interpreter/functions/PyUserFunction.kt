@@ -43,7 +43,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
             if (code !is PyCodeObject) {
-                Exceptions.TYPE_ERROR.makeWithMessage("Arg 'code' is not a code object").throwKy()
+                Exceptions.TYPE_ERROR("Arg 'code' is not a code object").throwKy()
             }
             return PyUserFunction(code.wrappedCodeObject)
         }
@@ -83,7 +83,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
             return Builtins.BUILTINS_MAP[name]!!
         }
 
-        Exceptions.NAME_ERROR.makeWithMessage("Name $name is not defined").throwKy()
+        Exceptions.NAME_ERROR("Name $name is not defined").throwKy()
     }
 
     override fun getFrame(): StackFrame =
