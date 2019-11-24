@@ -162,7 +162,7 @@ abstract class PyObject() {
      */
     open fun specialMethodLookup(name: String): PyObject? {
         val type = this.type ?: PyRootType
-        return type.internalDict[name]
+        return type.internalDict[name]?.pyDescriptorGet(this, this.type)
     }
 
     // == Descriptors ==
