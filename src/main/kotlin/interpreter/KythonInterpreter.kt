@@ -150,11 +150,10 @@ object KythonInterpreter {
                     }
 
                     if (hasStack) {
-                        getStack().run {
-                            System.err.println("Function stack, size: $size")
-                            forEachIndexed { index, pyObject ->
-                                System.err.println("    $index: $pyObject")
-                            }
+                        val stack = getStack()
+                        System.err.println("Function stack, size: ${stack.size}")
+                        stack.forEachIndexed { index, pyObject ->
+                            System.err.println("    $index: $pyObject")
                         }
                     }
                 }
