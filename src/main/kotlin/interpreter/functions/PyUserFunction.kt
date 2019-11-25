@@ -40,11 +40,12 @@ import green.sailor.kython.interpreter.throwKy
 class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) {
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            val code = kwargs["code"] ?: error("Built-in signature mismatch")
-            if (code !is PyCodeObject) {
-                Exceptions.TYPE_ERROR("Arg 'code' is not a code object").throwKy()
-            }
-            return PyUserFunction(code.wrappedCodeObject)
+            return kwargs["code"]?.let {
+                if (it !is PyCodeObject) {
+                    Exceptions.TYPE_ERROR("Arg 'code' is not a code object").throwKy()
+                }
+                PyUserFunction(it.wrappedCodeObject)
+            } ?: error("Built-in signature mismatch")
         }
 
         override val signature: PyCallableSignature by lazy {
@@ -65,27 +66,17 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
     /**
      * Gets the instruction at the specified index.
      */
-    fun getInstruction(idx: Int): Instruction {
-        return this.code.instructions[idx]
-    }
+    fun getInstruction(idx: Int): Instruction = code.instructions[idx]
 
     /**
      * Gets a global from the globals for this function.
      */
     fun getGlobal(name: String): PyObject {
-        if (name in this.module.attribs) {
-            return this.module.attribs[name]!!
-        }
-
-        if (name in Builtins.BUILTINS_MAP) {
-            return Builtins.BUILTINS_MAP[name]!!
-        }
-
-        Exceptions.NAME_ERROR("Name $name is not defined").throwKy()
+        return module.attribs[name] ?: Builtins.BUILTINS_MAP[name]
+        ?: Exceptions.NAME_ERROR("Name $name is not defined").throwKy()
     }
 
-    override fun getFrame(): StackFrame =
-        UserCodeStackFrame(this)
+    override fun getFrame(): StackFrame = UserCodeStackFrame(this)
 
     override fun getPyStr(): PyString = PyString("<user function ${code.codename}>")
 
@@ -100,36 +91,33 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
 
         // add args
         val args = mutableListOf<Pair<String, ArgType>>()
-        for (x in 0 until this.code.argCount) {
-            val name = this.code.varnames[x]
+        for (x in 0 until code.argCount) {
+            val name = code.varnames[x]
             args.add(Pair(name, ArgType.POSITIONAL))
         }
 
         // todo: with defaults
         // add a *args if we have one
-        if (this.code.flags and KyCodeObject.CO_HAS_VARARGS != 0) {
-            val name = this.code.varnames[this.code.argCount]
+        if (code.flags and KyCodeObject.CO_HAS_VARARGS != 0) {
+            val name = code.varnames[code.argCount]
             args.add(Pair(name, ArgType.POSITIONAL_STAR))
         }
 
         // keyword only
-        for (x in 0 until this.code.kwOnlyArgCount) {
-            val offset = this.code.argCount + x
-            val name = this.code.varnames[offset]
+        for (x in 0 until code.kwOnlyArgCount) {
+            val offset = code.argCount + x
+            val name = code.varnames[offset]
             args.add(Pair(name, ArgType.KEYWORD))
         }
 
         // **kwargs
-        if (this.code.flags and KyCodeObject.CO_HAS_VARKWARGS != 0) {
-            val name = this.code.varnames[this.code.argCount + this.code.kwOnlyArgCount]
+        if (code.flags and KyCodeObject.CO_HAS_VARKWARGS != 0) {
+            val name = code.varnames[code.argCount + code.kwOnlyArgCount]
             args.add(Pair(name, ArgType.KEYWORD_STAR))
         }
 
-        val sig = PyCallableSignature(*args.toTypedArray())
-        return sig
+        return PyCallableSignature(*args.toTypedArray())
     }
 
-    override val signature: PyCallableSignature by lazy {
-        this.generateSignature()
-    }
+    override val signature: PyCallableSignature by lazy { generateSignature() }
 }
