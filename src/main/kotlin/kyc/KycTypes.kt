@@ -206,6 +206,10 @@ data class KycCodeObject(
     override fun wrap(): PyObject = PyCodeObject(KyCodeObject(this))
 }
 
-class KycFile(val pyHash: Long, val comment: KycUnicodeString, val code: KycCodeObject) : BaseKycType() {
+class KycFile(
+    val pyHash: Long,
+    val comment: KycUnicodeString,
+    val code: KycCodeObject
+) : BaseKycType() {
     override fun wrap(): PyObject = TODO()
 }

@@ -165,7 +165,9 @@ open class UnKyc(protected val buf: ByteBuffer) {
 
         // it shouldn't be a problem, but just in case...
         val filtered = arr.filterNotNull()
-        check(filtered.size == size) { "Marshalled container didn't have $size elements but ${filtered.size}" }
+        check(filtered.size == size) {
+            "Encoded container didn't have $size elements but ${filtered.size}"
+        }
         return filtered
     }
 

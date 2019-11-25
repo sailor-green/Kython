@@ -193,7 +193,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 val name = this.function.code.names[idx]
                 toGetFrom.pyGetAttribute(name)
             }
-            else -> error("Unknown pool for LOAD_X instruction: $pool") // interpreter error, not python error
+            // interpreter error, not python error
+            else -> error("Unknown pool for LOAD_X instruction: $pool")
         }
 
         this.stack.push(loadResult)
@@ -343,7 +344,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         when (type) {
             BinaryOp.ADD -> {
                 // todo: __add__
-                stack.push(PyInt((stack.pop() as PyInt).wrappedInt + (stack.pop() as PyInt).wrappedInt))
+                val first = stack.pop() as PyInt
+                val second = stack.pop() as PyInt
+                stack.push(PyInt(first.wrappedInt + second.wrappedInt))
             }
             else -> TODO("Unsupported binary op $type")
         }

@@ -34,7 +34,8 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         val self = kwargs["self"]!!
         val name = kwargs["name"]!!
         if (name !is PyString) {
-            Exceptions.TYPE_ERROR("Attribute name must be type str, not ${name.type.name}").throwKy()
+            Exceptions.TYPE_ERROR("Attribute name must be type str, not ${name.type.name}")
+                .throwKy()
         }
         val attrName = name.wrappedString
 

@@ -23,16 +23,26 @@ jobs:
             - ky-dependencies-{{ checksum "build.gradle.kts" }}
             - ky-dependencies-
 
-      - run: gradle dependencies
+      - run:
+          name: Download dependencies
+          command: gradle dependencies
 
       - save_cache:
           paths:
             - ~/.gradle
           key: ky-dependencies-{{ checksum "build.gradle.kts" }}
 
-      - run: gradle test
+      - run:
+          name: Run spotless
+          command: gradle spotlessCheck
 
-      - run: gradle distZip
+      - run:
+          name: Run tests
+          command: gradle test
+
+      - run:
+          name: Build dist output
+          command: gradle distZip
 
       - store_artifacts:
           path: ~/ky/build/distributions

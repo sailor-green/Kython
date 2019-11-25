@@ -240,7 +240,9 @@ open class Marshaller(protected val buf: ByteBuffer) {
 
         // it shouldn't be a problem, but just in case...
         val filtered = arr.filterNotNull()
-        check(filtered.size == size) { "Marshalled container didn't have $size elements but ${filtered.size}" }
+        check(filtered.size == size) {
+            "Marshalled container didn't have $size elements but ${filtered.size}"
+        }
         return filtered
     }
 
@@ -301,7 +303,8 @@ open class Marshaller(protected val buf: ByteBuffer) {
         val co_flags = this.readInt()
 
         // more complex values
-        val co_code = this.readObject() // it says w_object, but this is reasonably only a bytestring.
+        // it says w_object, but this is reasonably only a bytestring.
+        val co_code = this.readObject()
         val co_consts = this.readObject().ensureTuple()
         val co_names = this.readObject().ensureTuple()
         val co_varnames = this.readObject().ensureTuple()

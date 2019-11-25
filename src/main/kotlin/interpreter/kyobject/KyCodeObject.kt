@@ -124,7 +124,8 @@ class KyCodeObject(original: KycCodeObject) {
         val instructions = mutableListOf<Instruction>()
         val buf = ByteBuffer.wrap(this.rawBytecode)
         while (buf.hasRemaining()) {
-            val opcode = buf.get().toUByte().toInt() // prevents opcodes >128 from turning into -opcode
+            // prevents opcodes >128 from turning into -opcode
+            val opcode = buf.get().toUByte().toInt()
             val opval = buf.get()
             instructions.add(Instruction(InstructionOpcode.get(opcode), opval))
         }

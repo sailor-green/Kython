@@ -120,7 +120,9 @@ object KythonInterpreter {
                     System.err.println("   " + it.getStackFrameInfo().getTracebackString())
                 }
 
-                val errorString = args.subobjects.joinToString(" ") { it.getPyStringSafe().wrappedString }
+                val errorString = args.subobjects.joinToString(" ") {
+                    it.getPyStringSafe().wrappedString
+                }
                 System.err.println("${type.name}: $errorString")
             }
         }

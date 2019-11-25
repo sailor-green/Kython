@@ -29,7 +29,10 @@ class KyError(val wrapped: PyException) : RuntimeException() {
     public val frames: List<StackFrame> get() = wrapped.exceptionFrames
 
     override fun toString(): String {
-        return "KyError: " + this.wrapped.type.name + ": " + this.wrapped.args.subobjects.joinToString { it.getPyStringSafe().wrappedString }
+        return "KyError: " +
+            this.wrapped.type.name +
+            ": " +
+            this.wrapped.args.subobjects.joinToString { it.getPyStringSafe().wrappedString }
     }
 }
 

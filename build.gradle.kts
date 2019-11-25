@@ -46,7 +46,10 @@ dependencies {
 
 spotless {
     kotlin {
-        ktlint().userData(mapOf("disabled_rules" to "no-wildcard-imports"))
+        ktlint().userData(mapOf(
+            "disabled_rules" to "no-wildcard-imports",
+            "max_line_length" to "100"
+        ))
         @Suppress("INACCESSIBLE_TYPE")  // this works fine?
         licenseHeaderFile("gradle/LICENCE-HEADER")
     }

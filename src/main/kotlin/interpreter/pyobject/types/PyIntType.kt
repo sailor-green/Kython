@@ -43,7 +43,8 @@ object PyIntType : PyType("int") {
                     return PyInt(value.wrappedString.toInt(base.wrappedInt.toInt()).toLong())
                 } catch (e: NumberFormatException) {
                     Exceptions.VALUE_ERROR(
-                        "Cannot convert '${value.wrappedString}' to int with base ${base.wrappedInt}"
+                        "Cannot convert '${value.wrappedString}' to int " +
+                        "with base ${base.wrappedInt}"
                     ).throwKy()
                 }
             }

@@ -104,8 +104,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
 
                     // keyword args are NOT allowed for this function
                     ArgType.KEYWORD ->
-                        Exceptions.TYPE_ERROR("This function takes $name as a keyword, not a positional argument")
-                            .throwKy()
+                        Exceptions.TYPE_ERROR(
+                            "This function takes $name as a keyword, " +
+                            "not a positional argument"
+                        ).throwKy()
 
                     // keyword_star is irrelevant because this doesn't take keyword arguments.
                 }
