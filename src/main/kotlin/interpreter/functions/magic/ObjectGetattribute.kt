@@ -52,12 +52,11 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         }
 
         // try and load `__getattr__`
-        val getattrFn = self.specialMethodLookup("__getattr__")
-        if (getattrFn != null) {
-            if (getattrFn !is PyCallable) {
+        self.specialMethodLookup("__getattr__")?.let {
+            if (it !is PyCallable) {
                 Exceptions.TYPE_ERROR("__getattr__ is not a callable").throwKy()
             }
-            return getattrFn.runCallable(listOf(name))
+            return it.runCallable(listOf(name))
         }
 
         Exceptions.NAME_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
