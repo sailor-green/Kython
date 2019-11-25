@@ -15,11 +15,9 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
-
 
 /**
  * Represents a Python string. This wraps a regular JVM string.

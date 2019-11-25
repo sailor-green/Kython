@@ -15,15 +15,14 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.iface
 
 /**
  * Represents an argument type.
  */
 enum class ArgType {
-    POSITIONAL,  // def fn(arg), also works as a keyword argument
-    POSITIONAL_STAR,  // def fn(*arg)
-    KEYWORD,  // def fn(*, arg=default)
-    KEYWORD_STAR  // def fn(**arg)
+    POSITIONAL, // def fn(arg), also works as a keyword argument
+    POSITIONAL_STAR, // def fn(*arg)
+    KEYWORD, // def fn(*, arg=default)
+    KEYWORD_STAR // def fn(**arg)
 }

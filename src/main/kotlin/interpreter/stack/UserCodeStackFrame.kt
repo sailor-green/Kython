@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.Exceptions
@@ -141,10 +140,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             } } catch (e: Throwable) {
                 throw e
             }
-
         }
     }
-
 
     // scary instruction implementations
     // this is all below the main class because there's a LOT going on here
@@ -196,12 +193,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 val name = this.function.code.names[idx]
                 toGetFrom.pyGetAttribute(name)
             }
-            else -> error("Unknown pool for LOAD_X instruction: $pool")  // interpreter error, not python error
+            else -> error("Unknown pool for LOAD_X instruction: $pool") // interpreter error, not python error
         }
 
         this.stack.push(loadResult)
         this.bytecodePointer += 1
-
     }
 
     /**
@@ -261,7 +257,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * POP_TOP.
      */
-    fun popTop(arg: Byte){
+    fun popTop(arg: Byte) {
         assert(arg.toInt() == 0) { "POP_TOP never has an argument" }
 
         this.stack.pop()
@@ -332,7 +328,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         assert(arg.toInt() == 0) { "DUP_TOP_TWO never has an argument" }
         val top = stack.pop()
         val second = stack.pop()
-        repeat(2){
+        repeat(2) {
             stack.push(second)
             stack.push(top)
         }

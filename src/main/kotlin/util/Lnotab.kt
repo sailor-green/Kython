@@ -15,9 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.util
-
 
 /**
  * A wrapper around a co_lnotab used to get line number offsets.
@@ -47,5 +45,4 @@ class Lnotab(val bytes: ByteArray) {
 
         return line
     }
-
 }

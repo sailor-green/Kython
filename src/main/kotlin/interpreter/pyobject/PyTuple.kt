@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.pyobject.types.PyTupleType
@@ -38,6 +37,4 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
     }
 
     override fun getPyRepr(): PyString = this.getPyStr()
-
-
 }

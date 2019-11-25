@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.util
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
@@ -31,7 +30,6 @@ import java.nio.file.Path
 class CPythonCompiler(val cpythonPath: String = "python3") {
     val kycPyPath = Files.createTempDirectory("kython").resolve("kyc.py")
 
-
     init {
         Files.copy(this.javaClass.classLoader.getResource("kyc.py").openStream(), kycPyPath)
     }
@@ -40,8 +38,8 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
         val builder = ProcessBuilder()
         builder.command(listOf(
             cpythonPath,
-            "-I",  // isolate cpython, not using user site or env vars,
-            "-S",  // no site.py
+            "-I", // isolate cpython, not using user site or env vars,
+            "-S", // no site.py
             kycPyPath.toAbsolutePath().toString(),
             path.toAbsolutePath().toString()
         ))
@@ -59,5 +57,4 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
         buf.order(ByteOrder.LITTLE_ENDIAN)
         return KyCodeObject(UnKyc.parseKycFile(buf).code)
     }
-
 }

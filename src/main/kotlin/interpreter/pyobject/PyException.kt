@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.KythonInterpreter
@@ -50,8 +49,6 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         fun typeSubclassOf(name: String): PyExceptionType {
             return makeExceptionType(name, listOf(this))
         }
-
-
     }
 
     companion object {

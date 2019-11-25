@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.kyc
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
@@ -65,14 +64,13 @@ enum class KycType(val c: Char) {
             error("Unknown type '$c'")
         }
     }
-
 }
 
 /** The root marshal type. */
 sealed class BaseKycType : Wrappable<PyObject> {
     open val wrapped: Any? = null
 
-    override fun toString(): String = "<Kyc object ${javaClass.simpleName} ${wrapped}>"
+    override fun toString(): String = "<Kyc object ${javaClass.simpleName} $wrapped>"
 
     /**
      * Ensures this marshalled object is a tuple.
@@ -96,8 +94,6 @@ sealed class BaseKycType : Wrappable<PyObject> {
     override fun hashCode(): Int {
         return wrapped?.hashCode() ?: 0
     }
-
-
 }
 
 /** An int. */
@@ -128,7 +124,6 @@ class KycBoolean private constructor(override val wrapped: Boolean) : BaseKycTyp
     }
 
     override fun wrap(): PyBool = if (wrapped) PyBool.TRUE else PyBool.FALSE
-
 }
 
 /** An encoded None. */
@@ -205,7 +200,7 @@ data class KycCodeObject(
     val lnotab: KycString
 ) : BaseKycType() {
     override fun toString(): String {
-        return "<kyc code object ${codeName}, file $filename>"
+        return "<kyc code object $codeName, file $filename>"
     }
 
     override fun wrap(): PyObject = PyCodeObject(KyCodeObject(this))

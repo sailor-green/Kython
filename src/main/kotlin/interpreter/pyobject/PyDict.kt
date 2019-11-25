@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.pyobject.types.PyDictType
@@ -66,5 +65,4 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
     fun getItem(key: PyObject): PyObject? {
         return this.items[key]
     }
-
 }

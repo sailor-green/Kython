@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.iface.PyCallable
@@ -27,7 +26,8 @@ import green.sailor.kython.interpreter.stack.StackFrame
  * Represents a method (a function bound to a self object).
  */
 class PyMethod(
-    val function: PyCallable, val instance: PyObject
+    val function: PyCallable,
+    val instance: PyObject
 ) : PyObject(PyMethodType), PyCallable {
 
     override fun runCallable(
@@ -57,5 +57,4 @@ class PyMethod(
     }
 
     override fun getPyRepr(): PyString = this.getPyStr()
-
 }

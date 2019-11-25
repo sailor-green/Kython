@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython
 
 import green.sailor.kython.interpreter.KythonInterpreter
@@ -30,6 +29,5 @@ object MakeUp {
 
         val file = args[0]
         KythonInterpreter.runPython(Paths.get(file).toAbsolutePath())
-
     }
 }

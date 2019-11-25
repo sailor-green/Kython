@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.marshal
 
 /**
@@ -122,8 +121,6 @@ sealed class MarshalType() {
     override fun hashCode(): Int {
         return wrapped?.hashCode() ?: 0
     }
-
-
 }
 
 /** An int. */
@@ -141,7 +138,6 @@ class MarshalBoolean private constructor(override val wrapped: Boolean) : Marsha
         val TRUE = MarshalBoolean(true)
         val FALSE = MarshalBoolean(false)
     }
-
 }
 
 /** A marshalled None. */
@@ -199,6 +195,6 @@ data class MarshalCodeObject(
     val lnotab: MarshalString
 ) : MarshalType() {
     override fun toString(): String {
-        return "<cpython code object ${codeName}, file $filename>"
+        return "<cpython code object $codeName, file $filename>"
     }
 }

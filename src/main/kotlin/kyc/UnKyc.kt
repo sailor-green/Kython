@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.kyc
 
 import java.nio.ByteBuffer
@@ -54,7 +53,6 @@ open class UnKyc(protected val buf: ByteBuffer) {
         }
     }
 
-
     /**
      * Reads an object from the stream.
      */
@@ -65,7 +63,7 @@ open class UnKyc(protected val buf: ByteBuffer) {
 
         val result = when (type) {
             // simple types...
-            KycType.FALSE-> KycBoolean.FALSE
+            KycType.FALSE -> KycBoolean.FALSE
             KycType.TRUE -> KycBoolean.TRUE
             KycType.NONE -> KycNone
             // MarshalType.ELLIPSIS -> MarshalEllipsis
@@ -184,7 +182,7 @@ open class UnKyc(protected val buf: ByteBuffer) {
      */
     fun readList(): KycList {
         val arr = this.getSizedContainer()
-        return KycList(arr.toList())  // inefficient, but, oh well.
+        return KycList(arr.toList()) // inefficient, but, oh well.
     }
 
     /**

@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
@@ -95,7 +94,6 @@ abstract class PyObject() {
         return this
     }
 
-
     // `object.X` implementations
     /**
      * Delegate for `LOAD_ATTR` on any object.
@@ -164,7 +162,6 @@ abstract class PyObject() {
      * Returns the [string representation][PyString] of repr(). This corresponds to the `__repr__` method.
      */
     abstract fun getPyRepr(): PyString
-
 
     /**
      * Gets the string of this object, safely. Used for exceptions, et al.

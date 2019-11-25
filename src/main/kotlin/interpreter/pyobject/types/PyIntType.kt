@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.Exceptions
@@ -38,7 +37,7 @@ object PyIntType : PyType("int") {
             is PyInt -> {
                 return value
             }
-            is PyString -> {  // special case, for int(x, base)
+            is PyString -> { // special case, for int(x, base)
                 val base = kwargs["base"]!!.cast<PyInt>()
                 try {
                     return PyInt(value.wrappedString.toInt(base.wrappedInt.toInt()).toLong())

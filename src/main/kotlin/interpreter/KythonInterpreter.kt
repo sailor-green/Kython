@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 @file:Suppress("MemberVisibilityCanBePrivate")
 
 package green.sailor.kython.interpreter
@@ -135,7 +134,7 @@ object KythonInterpreter {
     fun kickoffThread(frame: StackFrame, child: Boolean = true) {
         try {
             runPythonThread(frame)
-        } catch (e: Throwable) {  // blah blah, bad practice, who cares
+        } catch (e: Throwable) { // blah blah, bad practice, who cares
 
             System.err.println("Fatal interpreter error!")
             e.printStackTrace(System.err)
@@ -159,9 +158,9 @@ object KythonInterpreter {
                 }
             }
 
-            //if (!child) {
+            // if (!child) {
             //    throw e
-            //}
+            // }
         }
     }
 }

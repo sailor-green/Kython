@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.instruction.Instruction
@@ -42,10 +41,10 @@ class KyCodeObject(original: KycCodeObject) {
         const val CO_NEWLOCALS = 2
 
         // function has an *args argument
-        const val CO_HAS_VARARGS = 4  // CO_VARARGS
+        const val CO_HAS_VARARGS = 4 // CO_VARARGS
 
         // function has a **kwargs argument
-        const val CO_HAS_VARKWARGS = 8  // CO_VARKWARGS
+        const val CO_HAS_VARKWARGS = 8 // CO_VARKWARGS
 
         // function is nested
         const val CO_NESTED = 16
@@ -57,7 +56,7 @@ class KyCodeObject(original: KycCodeObject) {
         const val CO_NOFREE = 64
 
         // async function
-        const val CO_ASYNC_FUNCTION = 128  // CO_COROUTINE
+        const val CO_ASYNC_FUNCTION = 128 // CO_COROUTINE
 
         // not sure
         const val CO_ITERABLE_ASYNC_FUNCTION = 256
@@ -125,7 +124,7 @@ class KyCodeObject(original: KycCodeObject) {
         val instructions = mutableListOf<Instruction>()
         val buf = ByteBuffer.wrap(this.rawBytecode)
         while (buf.hasRemaining()) {
-            val opcode = buf.get().toUByte().toInt()  // prevents opcodes >128 from turning into -opcode
+            val opcode = buf.get().toUByte().toInt() // prevents opcodes >128 from turning into -opcode
             val opval = buf.get()
             instructions.add(Instruction(InstructionOpcode.get(opcode), opval))
         }
@@ -149,7 +148,6 @@ class KyCodeObject(original: KycCodeObject) {
                 builder.append("  <-- HERE")
             }
             builder.append("\n")
-
         }
 
         return builder.toString()

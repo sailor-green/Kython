@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.pyobject.types.PyBoolType
@@ -38,5 +37,4 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
 
     override fun getPyStr(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
     override fun getPyRepr(): PyString = getPyStr()
-
 }

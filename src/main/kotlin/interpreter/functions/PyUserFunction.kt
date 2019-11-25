@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.Builtins
@@ -55,7 +54,6 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
             )
         }
     }
-
 
     /** The code object for this function. */
     val code = codeObject

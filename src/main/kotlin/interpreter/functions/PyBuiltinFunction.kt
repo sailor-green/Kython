@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.Exceptions
@@ -37,7 +36,8 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
          * Makes a wrapper around a regular function.
          */
         fun wrap(
-            name: String, signature: PyCallableSignature,
+            name: String,
+            signature: PyCallableSignature,
             fn: (Map<String, PyObject>) -> PyObject
         ): PyBuiltinFunction {
             return object : PyBuiltinFunction(name) {

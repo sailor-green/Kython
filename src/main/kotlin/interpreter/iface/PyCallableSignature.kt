@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.iface
 
 import green.sailor.kython.interpreter.Exceptions
@@ -43,7 +42,6 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             "kwargs" to ArgType.KEYWORD_STAR
         )
     }
-
 
     /** The default values for keyword arguments. */
     val defaults = mutableMapOf<String, PyObject>()

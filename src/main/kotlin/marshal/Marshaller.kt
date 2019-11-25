@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.marshal
 
 import java.nio.ByteBuffer
@@ -41,7 +40,6 @@ Not a good explanation, but whatever. Basically:
 Could be done with a list, but I don't care. Also, code objects are ALWAYS interned for some reason.
 So, explicitly set their intern flag on.
  */
-
 
 /**
  * Object that supports marshalling and demarshalling.
@@ -111,7 +109,6 @@ open class Marshaller(protected val buf: ByteBuffer) {
             MarshalType.NONE -> MarshalNone
             MarshalType.ELLIPSIS -> MarshalEllipsis
             MarshalType.NULL -> MarshalNull
-
 
             // string types
             MarshalType.ASCIISTRING, MarshalType.UNICODESTRING -> this.readString(false)
@@ -213,7 +210,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
      */
     fun readByteStringInterned(): MarshalString {
         val bs = this.readByteString()
-        //this.INTERN_TABLE.add(bs)
+        // this.INTERN_TABLE.add(bs)
         return bs
     }
 
@@ -262,7 +259,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
      */
     fun readList(): MarshalList {
         val arr = this.getSizedContainer()
-        return MarshalList(arr.toList())  // inefficient, but, oh well.
+        return MarshalList(arr.toList()) // inefficient, but, oh well.
     }
 
     /**
@@ -304,7 +301,7 @@ open class Marshaller(protected val buf: ByteBuffer) {
         val co_flags = this.readInt()
 
         // more complex values
-        val co_code = this.readObject()  // it says w_object, but this is reasonably only a bytestring.
+        val co_code = this.readObject() // it says w_object, but this is reasonably only a bytestring.
         val co_consts = this.readObject().ensureTuple()
         val co_names = this.readObject().ensureTuple()
         val co_varnames = this.readObject().ensureTuple()
