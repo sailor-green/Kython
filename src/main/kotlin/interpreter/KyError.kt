@@ -26,19 +26,19 @@ import green.sailor.kython.interpreter.stack.StackFrame
  * Python stack trace.
  */
 class KyError(val wrapped: PyException) : RuntimeException() {
-    public val frames: List<StackFrame> get() = wrapped.exceptionFrames
+    val frames: List<StackFrame> get() = wrapped.exceptionFrames
 
     override fun toString(): String {
-        return "KyError: " +
-            this.wrapped.type.name +
-            ": " +
-            this.wrapped.args.subobjects.joinToString { it.getPyStringSafe().wrappedString }
+        return buildString {
+            append("KyError: ")
+            append(wrapped.type.name)
+            append(": ")
+            append(wrapped.args.subobjects.joinToString { it.getPyStringSafe().wrappedString })
+        }
     }
 }
 
 /**
  * Throws a PyException as a KyError.
  */
-fun PyException.throwKy(): Nothing {
-    throw KyError(this)
-}
+fun PyException.throwKy(): Nothing = throw KyError(this)
