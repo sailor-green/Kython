@@ -44,7 +44,7 @@ class PyMethod(
 
     override val signature: PyCallableSignature = this.function.signature
 
-    override fun pyStr(): PyString {
+    override fun getPyStr(): PyString {
         val builder = StringBuilder()
 
         builder.append("<method '")
@@ -56,6 +56,6 @@ class PyMethod(
         return PyString(builder.toString())
     }
 
-    override fun pyRepr(): PyString = this.pyStr()
+    override fun getPyRepr(): PyString = this.getPyStr()
 
 }

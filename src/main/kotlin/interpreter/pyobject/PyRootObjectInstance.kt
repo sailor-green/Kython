@@ -32,6 +32,7 @@ class PyRootObjectInstance : PyObject(PyRootObjectType) {
         _cached = if (ooEnabled) PyString("[object Object]") else PyString("<object object>")
     }
 
-    override fun pyRepr(): PyString = pyStr()
-    override fun pyStr(): PyString = _cached
+    override fun getPyRepr(): PyString = getPyStr()
+
+    override fun getPyStr(): PyString = _cached
 }

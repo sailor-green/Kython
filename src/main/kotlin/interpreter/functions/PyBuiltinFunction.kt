@@ -36,8 +36,10 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
         /**
          * Makes a wrapper around a regular function.
          */
-        fun wrap(name: String, signature: PyCallableSignature,
-                 fn: (Map<String, PyObject>) -> PyObject): PyBuiltinFunction {
+        fun wrap(
+            name: String, signature: PyCallableSignature,
+            fn: (Map<String, PyObject>) -> PyObject
+        ): PyBuiltinFunction {
             return object : PyBuiltinFunction(name) {
                 override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
                     return fn(kwargs)
@@ -54,10 +56,9 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
         }
     }
 
-    override fun pyStr(): PyString =
-        PyString("<built-in function $name>")
+    override fun getPyStr(): PyString = PyString("<built-in function $name>")
 
-    override fun pyRepr(): PyString = pyStr()
+    override fun getPyRepr(): PyString = getPyStr()
 
     /**
      * Called when the function is called from within a stack frame.

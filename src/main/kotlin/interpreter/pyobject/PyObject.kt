@@ -22,11 +22,9 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.throwKy
-import green.sailor.kython.kyc.*
 
 // initialdict:
 // take PyString as an example
@@ -39,37 +37,6 @@ import green.sailor.kython.kyc.*
  */
 abstract class PyObject() {
     companion object {
-        /**
-         * Wraps a marshalled object from code into a PyObject.
-         */
-        fun wrapKyc(type: BaseKycType): PyObject {
-            // unwrap tuples and dicts from their inner types
-            if (type is KycTuple) {
-                return PyTuple(type.wrapped.map {
-                    wrapKyc(
-                        it
-                    )
-                })
-            } else if (type is KycDict) {
-                val map = linkedMapOf<PyObject, PyObject>()
-                for ((key, value) in type.wrapped.entries) {
-                    map[wrapKyc(key)] = wrapKyc(value)
-                }
-                return PyDict(map)
-            }
-
-            if (type.wrapped != null) {
-                return wrapPrimitive(type.wrapped!!)
-            }
-
-            // special singletons
-            return when (type) {
-                is KycNone -> PyNone
-                is KycCodeObject -> PyCodeObject(KyCodeObject(type))
-                else -> error("Unknown type $type")
-            }
-        }
-
         /**
          * Wraps a primitive type into a PyObject.
          */
@@ -86,12 +53,10 @@ abstract class PyObject() {
             }
 
         /**
-         * Gets the default object dict, containing the base implements of certain magic methods.
+         * The default object dict, containing the base implements of certain magic methods.
          */
-        fun getDefaultDict(): LinkedHashMap<String, PyObject> {
-            val d = linkedMapOf<String, PyObject>()
-            return d
-        }
+        val defaultDict: LinkedHashMap<String, PyObject>
+            get() = linkedMapOf()
     }
 
     constructor(type: PyType) : this() {
@@ -113,7 +78,7 @@ abstract class PyObject() {
 
     /** The `__dict__` of this PyObject. */
     internal open val internalDict by lazy {
-        getDefaultDict().apply {
+        defaultDict.apply {
             // then copy the "initial" dictionary
             putAll(initialDict)
         }
@@ -125,7 +90,7 @@ abstract class PyObject() {
      */
     inline fun <reified T : PyObject> cast(): T {
         if (this !is T) {
-            Exceptions.TYPE_ERROR("Invalid type: ${this.type.name}").throwKy()
+            Exceptions.TYPE_ERROR("Invalid type: ${type.name}").throwKy()
         }
         return this
     }
@@ -146,7 +111,7 @@ abstract class PyObject() {
                 listOf(PyString("__getattribute__"), this)
             )
         } catch (e: KyError) {
-            ObjectGetattribute.pyDescriptorGet(this, this.type)
+            ObjectGetattribute.pyDescriptorGet(this, type)
         }
 
         if (getAttribute !is PyCallable) {
@@ -162,8 +127,7 @@ abstract class PyObject() {
      * @return A [PyObject]? for the special method found, or null if it wasn't found.
      */
     open fun specialMethodLookup(name: String): PyObject? {
-        val type = this.type ?: PyRootType
-        return type.internalDict[name]?.pyDescriptorGet(this, this.type)
+        return type.internalDict[name]?.pyDescriptorGet(this, type)
     }
 
     // == Descriptors ==
@@ -192,21 +156,21 @@ abstract class PyObject() {
 
     // == str() / repr() ==
     /**
-     * Turns this object into a PyString. This corresponds to the `__str__` method.
+     * Returns the [string representation][PyString] of str(). This corresponds to the `__str__` method.
      */
-    abstract fun pyStr(): PyString
+    abstract fun getPyStr(): PyString
 
     /**
-     * Turns this object into a PyString when repr() is called. This corresponds to the `__repr__` method.
+     * Returns the [string representation][PyString] of repr(). This corresponds to the `__repr__` method.
      */
-    abstract fun pyRepr(): PyString
+    abstract fun getPyRepr(): PyString
 
 
     /**
      * Gets the string of this object, safely. Used for exceptions, et al.
      */
     fun getPyStringSafe(): PyString = try {
-        this.pyStr()
+        getPyStr()
     } catch (e: Throwable) {
         PyString.UNPRINTABLE
     }
@@ -214,13 +178,14 @@ abstract class PyObject() {
     // attributes
 
     /**
-     * Gets the internal `__dict__` of this object, wrapped. This corresponds to `__dict__`.
+     * The internal [`__dict__`][PyDict] of this object, wrapped. This corresponds to `__dict__`.
      */
-    fun pyGetDict(): PyDict {
-        return PyDict(internalDict.mapKeys {
-            PyString(
-                it.key
-            )
-        }.toMutableMap() as LinkedHashMap)
-    }
+    val pyDict: PyDict
+        get() {
+            return PyDict(internalDict.mapKeys {
+                PyString(
+                    it.key
+                )
+            }.toMutableMap() as LinkedHashMap)
+        }
 }

@@ -18,6 +18,9 @@
 
 package green.sailor.kython.kyc
 
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.interpreter.pyobject.*
+
 /**
  * The enum for marshal types.
  */
@@ -66,10 +69,10 @@ enum class KycType(val c: Char) {
 }
 
 /** The root marshal type. */
-sealed class BaseKycType() {
+sealed class BaseKycType : Wrappable<PyObject> {
     open val wrapped: Any? = null
 
-    override fun toString(): String = "<Kyc object ${this::class.simpleName} ${this.wrapped}>"
+    override fun toString(): String = "<Kyc object ${javaClass.simpleName} ${wrapped}>"
 
     /**
      * Ensures this marshalled object is a tuple.
@@ -98,16 +101,24 @@ sealed class BaseKycType() {
 }
 
 /** An int. */
-class KycInt(override val wrapped: Int) : BaseKycType()
+class KycInt(override val wrapped: Int) : BaseKycType() {
+    override fun wrap(): PyInt = PyInt(wrapped.toLong())
+}
 
 /** A long. */
-class KycLong(override val wrapped: Long) : BaseKycType()
+class KycLong(override val wrapped: Long) : BaseKycType() {
+    override fun wrap(): PyInt = PyInt(wrapped)
+}
 
 /** A string. Created from various string objects. */
-class KycString(override val wrapped: ByteArray) : BaseKycType()
+class KycString(override val wrapped: ByteArray) : BaseKycType() {
+    override fun wrap(): PyString = PyString(wrapped.toString())
+}
 
 /** A unicode string. */
-class KycUnicodeString(override val wrapped: String) : BaseKycType()
+class KycUnicodeString(override val wrapped: String) : BaseKycType() {
+    override fun wrap(): PyString = PyString(wrapped)
+}
 
 /** An encoded boolean. */
 class KycBoolean private constructor(override val wrapped: Boolean) : BaseKycType() {
@@ -116,6 +127,8 @@ class KycBoolean private constructor(override val wrapped: Boolean) : BaseKycTyp
         val FALSE = KycBoolean(false)
     }
 
+    override fun wrap(): PyBool = if (wrapped) PyBool.TRUE else PyBool.FALSE
+
 }
 
 /** An encoded None. */
@@ -123,6 +136,8 @@ object KycNone : BaseKycType() {
     override fun toString(): String {
         return "<Kycled None>"
     }
+
+    override fun wrap(): PyNone = PyNone
 }
 
 /** An encoded null. */
@@ -130,6 +145,9 @@ object KycNull : BaseKycType() {
     override fun toString(): String {
         return "<Kycled null>"
     }
+
+    // Unsure about this one.
+    override fun wrap(): PyNone = PyNone
 }
 
 /** An encoded ellipsis. */
@@ -137,19 +155,33 @@ object KycEllipsis : BaseKycType() {
     override fun toString(): String {
         return "<Kycled ...>"
     }
+
+    override fun wrap(): PyObject = TODO()
 }
 
 /** An encoded float. */
-class KycFloat(override val wrapped: Double) : BaseKycType()
+class KycFloat(override val wrapped: Double) : BaseKycType() {
+    override fun wrap(): PyObject = TODO()
+}
 
 /** An encoded list. */
-class KycList(override val wrapped: List<BaseKycType>) : BaseKycType()
+class KycList(override val wrapped: List<BaseKycType>) : BaseKycType() {
+    override fun wrap(): PyObject = TODO()
+}
 
 /** An encoded tuple. */
-class KycTuple(override val wrapped: List<BaseKycType>) : BaseKycType()
+class KycTuple(override val wrapped: List<BaseKycType>) : BaseKycType() {
+    override fun wrap(): PyTuple = PyTuple(wrapped.map { it.wrap() })
+}
 
 /** An encoded dict. */
-class KycDict(override val wrapped: Map<BaseKycType, BaseKycType>) : BaseKycType()
+class KycDict(override val wrapped: Map<BaseKycType, BaseKycType>) : BaseKycType() {
+    override fun wrap(): PyDict {
+        val transformed =
+            wrapped.entries.associateByTo(linkedMapOf(), { it.key.wrap() }, { it.value.wrap() })
+        return PyDict(transformed)
+    }
+}
 
 /** An encoded code object. */
 data class KycCodeObject(
@@ -175,10 +207,10 @@ data class KycCodeObject(
     override fun toString(): String {
         return "<kyc code object ${codeName}, file $filename>"
     }
+
+    override fun wrap(): PyObject = PyCodeObject(KyCodeObject(this))
 }
 
-class KycFile(
-    val pyHash: Long,
-    val comment: KycUnicodeString,
-    val code: KycCodeObject
-) : BaseKycType()
+class KycFile(val pyHash: Long, val comment: KycUnicodeString, val code: KycCodeObject) : BaseKycType() {
+    override fun wrap(): PyObject = TODO()
+}

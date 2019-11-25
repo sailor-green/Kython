@@ -20,7 +20,6 @@ package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
-import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.kyc.KycCodeObject
 import green.sailor.kython.util.Lnotab
@@ -90,7 +89,7 @@ class KyCodeObject(original: KycCodeObject) {
 
     // TODO: Unwrap these into real objects.
     /** The constants for this function. */
-    val consts = original.consts.wrapped.map { PyObject.wrapKyc(it) }
+    val consts = original.consts.wrap()
 
     /** The names for this function. */
     val names = original.names.wrapped.map { it.wrapped as String }
