@@ -65,3 +65,6 @@ atlassian-ide-plugin.xml
 .nbattrs
 
 testfile/
+
+# kyc compiled files
+*.kyc

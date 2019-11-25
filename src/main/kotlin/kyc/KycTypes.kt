@@ -108,7 +108,7 @@ class KycLong(override val wrapped: Long) : BaseKycType() {
 
 /** A string. Created from various string objects. */
 class KycString(override val wrapped: ByteArray) : BaseKycType() {
-    override fun wrap(): PyString = PyString(wrapped.toString())
+    override fun wrap(): PyBytes = PyBytes(wrapped)
 }
 
 /** A unicode string. */

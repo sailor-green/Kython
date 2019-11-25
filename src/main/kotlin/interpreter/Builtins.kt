@@ -50,6 +50,7 @@ object Builtins {
     val TUPLE_TYPE = PyTupleType
     val DICT_TYPE = PyDictType
     val BOOL_TYPE = PyBoolType
+    val BYTES_TYPE = PyBytesType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
@@ -66,6 +67,7 @@ object Builtins {
         "tuple" to TUPLE_TYPE,
         "dict" to DICT_TYPE,
         "bool" to BOOL_TYPE,
+        "bytes" to BYTES_TYPE,
 
         // specials
         "None" to NONE

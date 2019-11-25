@@ -48,6 +48,7 @@ abstract class PyObject() {
                     obb.toString()
                 )
                 is Boolean -> if (obb) PyBool.TRUE else PyBool.FALSE
+                is ByteArray -> PyBytes(obb)
                 else -> error("Don't know how to wrap $obb in a PyObject")
             }
 

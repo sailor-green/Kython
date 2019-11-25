@@ -33,6 +33,7 @@ object Exceptions {
     val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
     val TYPE_ERROR = EXCEPTION.typeSubclassOf("TypeError")
     val VALUE_ERROR = EXCEPTION.typeSubclassOf("ValueError")
+    val INDEX_ERROR = EXCEPTION.typeSubclassOf("IndexError")
 
     // runtimeerror and its children
     val RUNTIME_ERROR = EXCEPTION.typeSubclassOf("RuntimeError")
@@ -45,6 +46,7 @@ object Exceptions {
         "NameError" to NAME_ERROR,
         "TypeError" to TYPE_ERROR,
         "ValueError" to VALUE_ERROR,
+        "IndexError" to INDEX_ERROR,
 
         "RuntimeError" to RUNTIME_ERROR,
         "NotImplementedError" to NOT_IMPLEMENTED_ERROR
