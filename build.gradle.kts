@@ -22,6 +22,7 @@ plugins {
     kotlin("jvm") version "1.3.60"
     id("application")
     // kotlin("kapt") version "1.3.50"
+    id("com.diffplug.gradle.spotless") version "3.26.0"
 }
 
 group = "green.sailor"
@@ -35,15 +36,20 @@ repositories {
     mavenCentral()
 }
 
-val arrowVersion: String by project
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    // implementation(group = "org.zeroturnaround", name = "zt-process-killer", version = "1.10")
-
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+}
+
+spotless {
+    kotlin {
+        ktlint().userData(mapOf("disabled_rules" to "no-wildcard-imports"))
+        @Suppress("INACCESSIBLE_TYPE")  // this works fine?
+        licenseHeaderFile("gradle/LICENCE-HEADER")
+    }
 }
 
 
