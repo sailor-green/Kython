@@ -89,7 +89,7 @@ class KyCodeObject(original: KycCodeObject) {
 
     // TODO: Unwrap these into real objects.
     /** The constants for this function. */
-    val consts = original.consts.wrap()
+    val consts = original.consts.wrapped.map { it.wrap() }
 
     /** The names for this function. */
     val names = original.names.wrapped.map { it.wrapped as String }
