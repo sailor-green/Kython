@@ -70,15 +70,12 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         // CALL_FUNCTION does BOS(BOS-1, BOS-2, BOS-3, etc)
         // CALL_FUNCTION_KW does the same, but TOS is a tuple containing keyword arguments
         // fuck CALL_FUNCTION_EX for now.
-        val finalMap = mutableMapOf<String, PyObject>()
-            .apply { putAll(defaults) }
+        val finalMap = defaults.toMutableMap()
 
         if (kwargsTuple == null) {
             // if no kwargs (i.e. call_function), we just nicely iterate over the signature args and
             // match them with the function call args
             val argsIt = args.asReversed().iterator()
-            var argsCount = 0
-
             for ((name, type) in this.args) {
                 when (type) {
                     ArgType.POSITIONAL -> {
@@ -86,7 +83,6 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                         try {
                             val arg = argsIt.next()
                             finalMap[name] = arg
-                            argsCount += 1
                         } catch (e: NoSuchElementException) {
                             if (name !in finalMap) {
                                 Exceptions.TYPE_ERROR("No value provided for arg $name").throwKy()
@@ -94,22 +90,18 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                         }
                     }
                     ArgType.POSITIONAL_STAR -> {
-                        val tup =
-                            PyTuple(
-                                argsIt.asSequence().toList()
-                            )
-                        finalMap[name] = tup
-                        argsCount += tup.subobjects.size
+                        finalMap[name] = PyTuple(argsIt.asSequence().toList())
                     }
 
                     // keyword args are NOT allowed for this function
+                    // Also: keyword_star is irrelevant because this doesn't take keyword arguments.
                     ArgType.KEYWORD ->
                         Exceptions.TYPE_ERROR(
                             "This function takes $name as a keyword, " +
-                            "not a positional argument"
+                                "not a positional argument"
                         ).throwKy()
 
-                    // keyword_star is irrelevant because this doesn't take keyword arguments.
+                    else -> error("Unhandled ArgType $type passed.")
                 }
             }
 
@@ -117,8 +109,8 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             if (argsIt.hasNext()) {
                 val remaining = argsIt.asSequence().toList().size
                 Exceptions.TYPE_ERROR(
-                    "Passed too many arguments! Expected ${this.args.size}, " +
-                    "got ${finalMap.size + remaining}"
+                    "Passed too many arguments! Expected ${args.size}, " +
+                        "got ${finalMap.size + remaining}"
                 ).throwKy()
             }
         }
