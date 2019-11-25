@@ -36,7 +36,7 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
     val cachedFalseString =
         PyString("False")
 
-    override fun pyStr(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
-    override fun pyRepr(): PyString = pyStr()
+    override fun getPyStr(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
+    override fun getPyRepr(): PyString = getPyStr()
 
 }

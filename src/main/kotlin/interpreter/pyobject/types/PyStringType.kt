@@ -31,7 +31,7 @@ import green.sailor.kython.interpreter.throwKy
 object PyStringType : PyType("str") {
     override fun newInstance(args: Map<String, PyObject>): PyObject {
         val arg = args["x"]!!
-        return arg.pyStr()
+        return arg.getPyStr()
     }
 
     override val signature: PyCallableSignature by lazy {

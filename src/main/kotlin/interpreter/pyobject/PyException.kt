@@ -65,7 +65,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
             return object : PyExceptionType(name) {
                 override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
                     val args = kwargs["args"] as PyTuple
-                    val strings = args.subobjects.map { it.pyStr() }
+                    val strings = args.subobjects.map { it.getPyStr() }
 
                     return this.interpreterGetExceptionInstance(strings)
                 }
@@ -94,12 +94,12 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         this.exceptionFrames = frames
     }
 
-    override fun pyStr(): PyString {
+    override fun getPyStr(): PyString {
         require(this.type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
         TODO()
     }
 
-    override fun pyRepr(): PyString {
+    override fun getPyRepr(): PyString {
         TODO("not implemented")
     }
 }
