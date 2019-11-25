@@ -46,6 +46,7 @@ object Exceptions {
         "NameError" to NAME_ERROR,
         "TypeError" to TYPE_ERROR,
         "ValueError" to VALUE_ERROR,
+        "IndexError" to INDEX_ERROR,
 
         "RuntimeError" to RUNTIME_ERROR,
         "NotImplementedError" to NOT_IMPLEMENTED_ERROR
