@@ -33,7 +33,6 @@ import java.nio.file.Path
  * Represents the main interpreter object. A number of properties for this object are exposed under the `sys` module.
  * There is only one instance of this; interpreters on threads are ran with a raw StackFrame object on a thread.
  *
- * @param mainFile: The main file to be invoked.
  */
 object KythonInterpreter {
     /** The CPython compiler backend. */
@@ -51,16 +50,12 @@ object KythonInterpreter {
     /**
      * Gets the root frame for this thread.
      */
-    fun getRootFrameForThisThread(): StackFrame {
-        return this.rootFrameLocal.get()
-    }
+    fun getRootFrameForThisThread(): StackFrame = rootFrameLocal.get()
 
     /**
      * Gets the current stack frame for this thread.
      */
-    fun getCurrentFrameForThisThread(): StackFrame {
-        return this.currentStackFrameLocal.get()
-    }
+    fun getCurrentFrameForThisThread(): StackFrame = currentStackFrameLocal.get()
 
     /**
      * The main entry point for the interpreter.
@@ -85,30 +80,26 @@ object KythonInterpreter {
      * @param sourcePath: The source path for the module.
      */
     fun buildModule(moduleFunction: PyUserFunction, sourcePath: Path): KyModule {
-        val module = KyModule(moduleFunction, sourcePath)
-        this.runStackFrame(module.stackFrame, mapOf())
-        return module
+        return KyModule(moduleFunction, sourcePath).also { runStackFrame(it.stackFrame, mapOf()) }
     }
 
     /**
      * Runs a stack frame.
      */
-    fun runStackFrame(
-        frame: StackFrame,
-        args: Map<String, PyObject>
-    ): PyObject {
-        val parent: StackFrame? = this.currentStackFrameLocal.get()
-        if (parent != null) {
-            frame.parentFrame = parent
-            parent.childFrame = frame
+    fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): PyObject {
+        val parent = currentStackFrameLocal.get()
+        parent?.let {
+            frame.parentFrame = it
+            it.childFrame = frame
         }
-        this.currentStackFrameLocal.set(frame)
+
+        currentStackFrameLocal.set(frame)
         val result = frame.runFrame(args)
         frame.parentFrame = null
 
-        if (parent != null) {
-            parent.childFrame = null
-            this.currentStackFrameLocal.set(parent)
+        parent?.let {
+            it.childFrame = null
+            currentStackFrameLocal.set(it)
         }
 
         return result
@@ -118,26 +109,21 @@ object KythonInterpreter {
      * Runs a python thread.
      */
     fun runPythonThread(rootFrame: StackFrame) {
-        this.rootFrameLocal.set(rootFrame)
-
+        rootFrameLocal.set(rootFrame)
         try {
-            val result = this.runStackFrame(rootFrame, mapOf())
+            runStackFrame(rootFrame, mapOf())
         } catch (e: KyError) {
             // throw e  // used for debugging
             // bubbled error, means no user code handled it
-            val error = e.wrapped
-            val errorName = error.type.name
-            System.err.println("\nKython stack (most recent frame last):")
-            for (frame in error.exceptionFrames) {
-                val info = frame.getStackFrameInfo()
-                System.err.println("   " + info.getTracebackString())
+            with(e.wrapped) {
+                System.err.println("\nKython stack (most recent frame last):")
+                exceptionFrames.forEach {
+                    System.err.println("   " + it.getStackFrameInfo().getTracebackString())
+                }
+
+                val errorString = args.subobjects.joinToString(" ") { it.getPyStringSafe().wrappedString }
+                System.err.println("${type.name}: $errorString")
             }
-            val builder = StringBuilder()
-            for (arg in error.args.subobjects) {
-                builder.append(arg.getPyStringSafe().wrappedString)
-                builder.append(" ")
-            }
-            System.err.println("${errorName}: $builder")
         }
     }
 
@@ -148,7 +134,7 @@ object KythonInterpreter {
      */
     fun kickoffThread(frame: StackFrame, child: Boolean = true) {
         try {
-            this.runPythonThread(frame)
+            runPythonThread(frame)
         } catch (e: Throwable) {  // blah blah, bad practice, who cares
 
             System.err.println("Fatal interpreter error!")
@@ -156,18 +142,20 @@ object KythonInterpreter {
             System.err.println("\nKython stack (most recent frame first):")
 
             val stacks = StackFrame.flatten(frame).reversed()
-            for (frame in stacks) {
-                val info = frame.getStackFrameInfo()
-                System.err.println("   " + info.getTracebackString())
-                if (info.hasDisassembly) {
-                    val disassembly = info.getDisassembly()
-                    System.err.println("Disassembly:\n$disassembly")
-                }
-                if (info.hasStack) {
-                    val stack = info.getStack()
-                    System.err.println("Function stack, size: ${stack.size}")
-                    for ((idx, pyo) in stack.iterator().withIndex()) {
-                        System.err.println("    $idx: $pyo")
+            stacks.forEach {
+                with(it.getStackFrameInfo()) {
+                    System.err.println("   " + getTracebackString())
+                    if (hasDisassembly) {
+                        System.err.println("Disassembly:\n${getDisassembly()}")
+                    }
+
+                    if (hasStack) {
+                        getStack().run {
+                            System.err.println("Function stack, size: $size")
+                            forEachIndexed { index, pyObject ->
+                                System.err.println("    $index: $pyObject")
+                            }
+                        }
                     }
                 }
             }
