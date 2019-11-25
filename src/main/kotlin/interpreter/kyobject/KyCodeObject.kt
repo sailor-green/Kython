@@ -122,12 +122,14 @@ class KyCodeObject(original: KycCodeObject) {
      */
     fun parseInstructions(): Array<Instruction> {
         val instructions = mutableListOf<Instruction>()
-        val buf = ByteBuffer.wrap(this.rawBytecode)
+        val buf = ByteBuffer.wrap(rawBytecode)
+
         while (buf.hasRemaining()) {
-            // prevents opcodes >128 from turning into -opcode
-            val opcode = buf.get().toUByte().toInt()
-            val opval = buf.get()
-            instructions.add(Instruction(InstructionOpcode.get(opcode), opval))
+            with(buf.get()) {
+                // prevents opcodes >128 from turning into -opcode
+                val opcode = toUByte().toInt()
+                instructions.add(Instruction(InstructionOpcode.get(opcode), this))
+            }
         }
 
         return instructions.toTypedArray()
@@ -137,27 +139,25 @@ class KyCodeObject(original: KycCodeObject) {
      * Gets a newline separated disassembly for this code object.
      */
     fun getDisassembly(frame: UserCodeStackFrame): String {
-        val builder = StringBuilder()
-        val padSize = ceil(log(this.instructions.size.toDouble(), 10.0)).toInt()
+        val padSize = ceil(log(instructions.size.toDouble(), 10.0)).toInt()
 
-        for ((idx, ins) in this.instructions.withIndex()) {
-            val idxFmt = idx.toString().padStart(padSize, '0')
-            builder.append("    $idxFmt ")
-            builder.append(ins.getDisassembly(frame))
-            // add a nice arrow
-            if (idx == frame.bytecodePointer) {
-                builder.append("  <-- HERE")
+        return buildString {
+            instructions.forEachIndexed { index, instruction ->
+                val idxFmt = index.toString().padStart(padSize, '0')
+                append("    $idxFmt ")
+                append(instruction.getDisassembly(frame))
+                if (index == frame.bytecodePointer) {
+                    append("  <-- HERE")
+                }
+                appendln()
             }
-            builder.append("\n")
         }
-
-        return builder.toString()
     }
 
     /**
      * Gets the line number of code from the instruction index.
      */
     fun getLineNumber(idx: Int): Int {
-        return (this.firstline - 1) + this.lnotab.getLineNumberFromIdx(idx)
+        return (firstline - 1) + lnotab.getLineNumberFromIdx(idx)
     }
 }
