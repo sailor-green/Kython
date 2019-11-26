@@ -33,22 +33,14 @@ abstract class StackFrameInfo {
     /** The filename of this stack frame. */
     abstract val filename: PyString
 
-    /** If this frame has disassembly. */
-    open val hasDisassembly: Boolean = false
+    /** The disassmebly for this frame */
+    open val disassembly: String? = null
 
-    /** If this frame has a stack. */
-    open val hasStack: Boolean = false
-
-    open fun getDisassembly(): String {
-        error("This frame has no valid disassembly (is a builtin?)")
-    }
-
-    open fun getStack(): Deque<PyObject> {
-        error("This frame has no stack (is a builtin?)")
-    }
+    /** The stack for this frame */
+    open val stack: Deque<PyObject>? = null
 
     /** Gets the traceback string for this stack frame, unindented. */
-    abstract fun getTracebackString(): String
+    abstract val tracebackString: String
 
     class UserFrameInfo(val frame: UserCodeStackFrame) : StackFrameInfo() {
         override val name: PyString
@@ -57,30 +49,32 @@ abstract class StackFrameInfo {
         override val filename: PyString
             get() = PyString(frame.function.code.filename)
 
-        override val hasDisassembly: Boolean = true
-        override val hasStack: Boolean = true
+        override val disassembly: String
+            get() {
+                return frame.function.code.getDisassembly(frame)
+            }
 
-        override fun getDisassembly(): String {
-            return this.frame.function.code.getDisassembly(this.frame)
-        }
+        override val stack: Deque<PyObject>
+            get() {
+                return frame.stack
+            }
 
-        override fun getStack(): Deque<PyObject> {
-            return this.frame.stack
-        }
+        override val tracebackString: String
+            get() {
+                val sourceLines = Files.readAllLines(frame.function.module.path)
+                val lineNo = frame.getLineNo()
+                val sourceLine = sourceLines[lineNo].trimIndent()
 
-        override fun getTracebackString(): String {
-            val module = this.frame.function.module
-            val sourceFile = module.path
-            val sourceLines = Files.readAllLines(sourceFile)
-            val lineNo = this.frame.getLineNo()
-            val sourceLine = sourceLines[lineNo].trimIndent()
-
-            return "File ${frame.function.code.filename}, " +
-                    "instruction idx ${frame.bytecodePointer}, " +
-                    "line ${frame.getLineNo()}, " +
-                    "in ${frame.function.code.codename}\n" +
-                    "    $sourceLine"
-        }
+                return with(frame) {
+                    buildString {
+                        append("File ${function.code.filename}, ")
+                        append("instruction idx ${frame.bytecodePointer}, ")
+                        append("line ${getLineNo()}, ")
+                        append("in ${function.code.codename}\n")
+                        append("    $sourceLine")
+                    }
+                }
+            }
     }
 
     class BuiltinFrameInfo(val frame: BuiltinStackFrame) : StackFrameInfo() {
@@ -90,8 +84,9 @@ abstract class StackFrameInfo {
         override val filename: PyString
             get() = PyString("<builtin>")
 
-        override fun getTracebackString(): String {
-            return "File <builtin>, in ${frame.builtinFunction.name}"
-        }
+        override val tracebackString: String
+            get() {
+                return "File <builtin>, in ${frame.builtinFunction.name}"
+            }
     }
 }
