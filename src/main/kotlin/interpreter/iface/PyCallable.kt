@@ -27,9 +27,9 @@ import green.sailor.kython.interpreter.stack.StackFrame
  */
 interface PyCallable {
     /**
-     * Gets a runnable stack frame for this callable.
+     * Create a runnable stack frame for this callable.
      */
-    fun getFrame(): StackFrame
+    fun createFrame(): StackFrame
 
     /**
      * The signature for this function.
@@ -44,6 +44,6 @@ interface PyCallable {
         kwargsTuple: PyTuple? = null
     ): PyObject {
         val finalArgs = signature.getFinalArgs(args, kwargsTuple)
-        return KythonInterpreter.runStackFrame(getFrame(), finalArgs)
+        return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
     }
 }

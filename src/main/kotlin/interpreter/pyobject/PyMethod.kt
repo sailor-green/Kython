@@ -38,23 +38,21 @@ class PyMethod(
         return super.runCallable(realArgs, kwargsTuple)
     }
 
-    override fun getFrame(): StackFrame {
-        return this.function.getFrame()
-    }
+    override fun createFrame(): StackFrame = function.createFrame()
 
-    override val signature: PyCallableSignature = this.function.signature
+    override val signature: PyCallableSignature = function.signature
 
     override fun getPyStr(): PyString {
-        val builder = StringBuilder()
+        val output = buildString {
+            append("<method '")
+            append((function as PyObject).getPyStringSafe().wrappedString)
+            append("' of '")
+            append(instance.getPyStringSafe().wrappedString)
+            append("'>")
+        }
 
-        builder.append("<method '")
-        builder.append((this.function as PyObject).getPyStringSafe().wrappedString)
-        builder.append("' of '")
-        builder.append(this.instance.getPyStringSafe().wrappedString)
-        builder.append("'>")
-
-        return PyString(builder.toString())
+        return PyString(output)
     }
 
-    override fun getPyRepr(): PyString = this.getPyStr()
+    override fun getPyRepr(): PyString = getPyStr()
 }
