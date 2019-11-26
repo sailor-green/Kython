@@ -28,7 +28,10 @@ import green.sailor.kython.interpreter.throwKy
  * Represents the iter(x) built-in function.
  */
 class IterBuiltinFunction : PyBuiltinFunction("iter") {
-    override val signature: PyCallableSignature = PyCallableSignature("obb" to ArgType.POSITIONAL, "sentinel" to ArgType.KEYWORD)
+    override val signature: PyCallableSignature = PyCallableSignature(
+        "obb" to ArgType.POSITIONAL,
+        "sentinel" to ArgType.KEYWORD
+    )
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["obb"] ?: error("Built-in signature mismatch!")
@@ -37,6 +40,6 @@ class IterBuiltinFunction : PyBuiltinFunction("iter") {
         if (iter !is PyCallable) {
             Exceptions.TYPE_ERROR("__iter__ is not callable").throwKy()
         }
-        return iter.runCallable(if(sentinel == null) listOf(obb) else listOf(obb, sentinel))
+        return iter.runCallable(if (sentinel == null) listOf(obb) else listOf(obb, sentinel))
     }
 }
