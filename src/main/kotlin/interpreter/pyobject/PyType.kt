@@ -51,8 +51,8 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
         )
     }
 
-    override fun getFrame(): StackFrame {
-        return this.builtinFunctionWrapper.getFrame()
+    override fun createFrame(): StackFrame {
+        return this.builtinFunctionWrapper.createFrame()
     }
 
     private val _pyString by lazy {
