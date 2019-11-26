@@ -55,14 +55,7 @@ enum class KycType(val c: Char) {
     KY_FILE('K');
 
     companion object {
-        fun get(c: Char): KycType {
-            for (i in KycType.values()) {
-                if (c == i.c) {
-                    return i
-                }
-            }
-            error("Unknown type '$c'")
-        }
+        fun get(c: Char): KycType = values().find { it.c == c } ?: error("Unknown type '$c'")
     }
 }
 

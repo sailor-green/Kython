@@ -25,7 +25,7 @@ import java.nio.file.Path
 /**
  * Object that supports decoding kyc files.
  */
-open class UnKyc(protected val buf: ByteBuffer) {
+open class UnKyc(private val buf: ByteBuffer) {
     companion object {
         /**
          * Parses a kyc file from a Path.
@@ -70,25 +70,25 @@ open class UnKyc(protected val buf: ByteBuffer) {
             // MarshalType.NULL -> MarshalNull
 
             // string types
-            KycType.UNICODE_STRING -> this.readString()
+            KycType.UNICODE_STRING -> readString()
 
             // byte types
-            KycType.BYTESTRING -> this.readByteString()
+            KycType.BYTESTRING -> readByteString()
 
             // number types
-            KycType.INT -> this.readInt()
-            KycType.LONG -> this.readLong()
-            KycType.FLOAT -> this.readFloat()
+            KycType.INT -> readInt()
+            KycType.LONG -> readLong()
+            KycType.FLOAT -> readFloat()
 
             // container types
-            KycType.TUPLE -> this.readTuple()
-            KycType.LIST -> this.readList()
-            KycType.DICT -> this.readDict()
+            KycType.TUPLE -> readTuple()
+            KycType.LIST -> readList()
+            KycType.DICT -> readDict()
 
             // code type
-            KycType.CODE -> this.readCode()
+            KycType.CODE -> readCode()
 
-            KycType.KY_FILE -> this.readKycFile()
+            KycType.KY_FILE -> readKycFile()
 
             else -> error("Unknown kyc type: $type")
         }
@@ -99,30 +99,24 @@ open class UnKyc(protected val buf: ByteBuffer) {
     /**
      * Reads an int from the stream.
      */
-    fun readInt(): KycInt {
-        return KycInt(buf.int)
-    }
+    private fun readInt(): KycInt = KycInt(buf.int)
 
     /**
      * Reads a long from the stream.
      */
-    fun readLong(): KycLong {
-        return KycLong(buf.long)
-    }
+    private fun readLong(): KycLong = KycLong(buf.long)
 
     /**
      * Reads a float from the stream.
      */
-    fun readFloat(): KycFloat {
-        return KycFloat(buf.double)
-    }
+    private fun readFloat(): KycFloat = KycFloat(buf.double)
 
     /**
      * Reads a string from the stream.
      *
      * @param short: If this is a short string (TYPE_SHORT_ASCII).
      */
-    fun readString(): KycUnicodeString {
+    private fun readString(): KycUnicodeString {
         val size = buf.int
 
         val ca = ByteArray(size)
@@ -137,7 +131,7 @@ open class UnKyc(protected val buf: ByteBuffer) {
     /**
      * Reads a byte string from the stream.
      */
-    fun readByteString(): KycString {
+    private fun readByteString(): KycString {
         val size = buf.int
 
         val ca = ByteArray(size)
@@ -154,13 +148,13 @@ open class UnKyc(protected val buf: ByteBuffer) {
      *
      * @param small: If this is a "small" container (TYPE_SMALL_TUPLE).
      */
-    fun getSizedContainer(small: Boolean = false): List<BaseKycType> {
+    private fun getSizedContainer(small: Boolean = false): List<BaseKycType> {
         val size = buf.int
         val arr = arrayOfNulls<BaseKycType>(size)
 
         // loop over and read a new object off
         for (i in 0 until size) {
-            arr[i] = this.readObject()
+            arr[i] = readObject()
         }
 
         // it shouldn't be a problem, but just in case...
@@ -174,28 +168,23 @@ open class UnKyc(protected val buf: ByteBuffer) {
     /**
      * Reads a tuple from the stream.
      */
-    fun readTuple(): KycTuple {
-        val arr = this.getSizedContainer()
-        return KycTuple(arr)
-    }
+    private fun readTuple(): KycTuple = KycTuple(getSizedContainer())
 
     /**
      * Reads a list from the stream.
      */
-    fun readList(): KycList {
-        val arr = this.getSizedContainer()
-        return KycList(arr.toList()) // inefficient, but, oh well.
-    }
+    private fun readList(): KycList =
+        KycList(getSizedContainer().toList()) // inefficient, but, oh well.
 
     /**
      * Reads a dict from the stream.
      */
-    fun readDict(): KycDict {
-        val map = hashMapOf<BaseKycType, BaseKycType>()
-        val size = buf.int
-        for (x in 0 until size) {
-            map[this.readObject()] = this.readObject()
-        }
+    private fun readDict(): KycDict {
+        val map = (0 until buf.int).associateByTo(
+            hashMapOf(),
+            { readObject() },
+            { readObject() }
+        )
 
         return KycDict(map)
     }
@@ -207,25 +196,25 @@ open class UnKyc(protected val buf: ByteBuffer) {
     @Suppress("LocalVariableName")
     fun readCode(): KycCodeObject {
         // simple int values
-        val co_argcount = this.readObject() as KycInt
+        val co_argcount = readObject() as KycInt
         // TODO: co_posonlyargcount
-        val co_posonlyargcount = this.readObject() as KycInt
-        val co_kwonlyargcount = this.readObject() as KycInt
-        val co_nlocals = this.readObject() as KycInt
-        val co_stacksize = this.readObject() as KycInt
-        val co_flags = this.readObject() as KycInt
+        val co_posonlyargcount = readObject() as KycInt
+        val co_kwonlyargcount = readObject() as KycInt
+        val co_nlocals = readObject() as KycInt
+        val co_stacksize = readObject() as KycInt
+        val co_flags = readObject() as KycInt
 
         // more complex values
-        val co_code = this.readObject() as KycString
-        val co_consts = this.readObject().ensureTuple()
-        val co_names = this.readObject().ensureTuple()
-        val co_varnames = this.readObject().ensureTuple()
-        val co_freevars = this.readObject().ensureTuple()
-        val co_cellvars = this.readObject().ensureTuple()
-        val co_filename = this.readObject() as KycUnicodeString
-        val co_name = this.readObject() as KycUnicodeString
-        val co_firstlineno = this.readObject() as KycInt
-        val lnotab = this.readObject() as KycString
+        val co_code = readObject() as KycString
+        val co_consts = readObject().ensureTuple()
+        val co_names = readObject().ensureTuple()
+        val co_varnames = readObject().ensureTuple()
+        val co_freevars = readObject().ensureTuple()
+        val co_cellvars = readObject().ensureTuple()
+        val co_filename = readObject() as KycUnicodeString
+        val co_name = readObject() as KycUnicodeString
+        val co_firstlineno = readObject() as KycInt
+        val lnotab = readObject() as KycString
 
         return KycCodeObject(
             co_argcount, co_posonlyargcount, co_kwonlyargcount, co_nlocals, co_stacksize, co_flags,
@@ -241,10 +230,10 @@ open class UnKyc(protected val buf: ByteBuffer) {
     /**
      * Reads the root Kyc object.
      */
-    fun readKycFile(): KycFile {
-        val hash = (this.readObject() as KycLong).wrapped
-        val comment = this.readObject() as KycUnicodeString
-        val codeObj = this.readObject() as KycCodeObject
+    private fun readKycFile(): KycFile {
+        val hash = (readObject() as KycLong).wrapped
+        val comment = readObject() as KycUnicodeString
+        val codeObj = readObject() as KycCodeObject
         return KycFile(pyHash = hash, comment = comment, code = codeObj)
     }
 }
