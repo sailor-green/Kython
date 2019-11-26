@@ -28,24 +28,25 @@ import java.nio.file.Path
  * Represents the CPython compiler interface.
  */
 class CPythonCompiler(val cpythonPath: String = "python3") {
-    val kycPyPath = Files.createTempDirectory("kython").resolve("kyc.py")
+    private val kycPyPath = Files.createTempDirectory("kython").resolve("kyc.py")
 
     init {
-        Files.copy(this.javaClass.classLoader.getResource("kyc.py").openStream(), kycPyPath)
+        Files.copy(javaClass.classLoader.getResource("kyc.py").openStream(), kycPyPath)
     }
 
     fun compile(path: Path): KyCodeObject {
         val builder = ProcessBuilder()
-        builder.command(listOf(
-            cpythonPath,
-            "-I", // isolate cpython, not using user site or env vars,
-            "-S", // no site.py
-            kycPyPath.toAbsolutePath().toString(),
-            path.toAbsolutePath().toString()
-        ))
+        builder.command(
+            listOf(
+                cpythonPath,
+                "-I", // isolate cpython, not using user site or env vars,
+                "-S", // no site.py
+                kycPyPath.toAbsolutePath().toString(),
+                path.toAbsolutePath().toString()
+            )
+        )
         builder.redirectError(ProcessBuilder.Redirect.INHERIT)
-        val process = builder.start()
-        process.waitFor()
+        val process = builder.start().also { it.waitFor() }
 
         if (process.exitValue() != 0) {
             error("Compiler didn't exit cleanly")

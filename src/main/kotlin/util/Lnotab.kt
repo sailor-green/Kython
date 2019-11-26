@@ -30,8 +30,8 @@ class Lnotab(val bytes: ByteArray) {
         // loosely transliterated from
         // https://github.com/python/cpython/blob/4a2edc34a405150d0b23ecfdcb401e7cf59f4650/Objects/codeobject.c
 
-        val it = this.bytes.iterator()
-        var size = this.bytes.size / 2
+        val it = bytes.iterator()
+        var size = bytes.size / 2
         var line = 0
         var addr = 0
         while (true) {
