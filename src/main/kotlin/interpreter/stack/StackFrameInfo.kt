@@ -62,14 +62,14 @@ abstract class StackFrameInfo {
         override val tracebackString: String
             get() {
                 val sourceLines = Files.readAllLines(frame.function.module.path)
-                val lineNo = frame.getLineNo()
+                val lineNo = frame.lineNo
                 val sourceLine = sourceLines[lineNo].trimIndent()
 
                 return with(frame) {
                     buildString {
                         append("File ${function.code.filename}, ")
                         append("instruction idx ${frame.bytecodePointer}, ")
-                        append("line ${getLineNo()}, ")
+                        append("line $lineNo, ")
                         append("in ${function.code.codename}\n")
                         append("    $sourceLine")
                     }

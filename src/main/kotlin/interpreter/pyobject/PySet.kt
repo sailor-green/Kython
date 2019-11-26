@@ -25,7 +25,7 @@ import green.sailor.kython.interpreter.pyobject.types.PySetType
 class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
 
     override fun getPyStr(): PyString = PyString(
-        this.wrappedSet.joinToString(", ") { it.getPyRepr().wrappedString }
+        wrappedSet.joinToString(", ") { it.getPyRepr().wrappedString }
     )
 
     override fun getPyRepr(): PyString = getPyStr()

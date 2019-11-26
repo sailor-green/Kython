@@ -23,12 +23,10 @@ import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
-import java.lang.IndexOutOfBoundsException
 
 object PyBytesType : PyType("bytes") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val value = kwargs["value"] ?: error("Built-in signature mismatch")
-        when (value) {
+        when (val value = kwargs["value"] ?: error("Built-in signature mismatch")) {
             is PyString -> {
                 return PyBytes(value.wrappedString.toByteArray())
             }
@@ -43,8 +41,10 @@ object PyBytesType : PyType("bytes") {
     }
 
     /** bytes.__getitem__ */
-    val pyBytesIndex = PyBuiltinFunction.wrap("__getitem__",
-            PyCallableSignature("index" to ArgType.POSITIONAL)) {
+    val pyBytesIndex = PyBuiltinFunction.wrap(
+        "__getitem__",
+        PyCallableSignature("index" to ArgType.POSITIONAL)
+    ) {
         val self = it["self"]!!.cast<PyBytes>()
         val index = it["index"]!!.cast<PyInt>()
         // TODO: PySlice check

@@ -31,10 +31,10 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
     }
 
     override fun getPyStr(): PyString {
-        return PyString("(" + this.subobjects.joinToString {
+        return PyString("(" + subobjects.joinToString {
             it.getPyRepr().wrappedString
         } + ")")
     }
 
-    override fun getPyRepr(): PyString = this.getPyStr()
+    override fun getPyRepr(): PyString = getPyStr()
 }

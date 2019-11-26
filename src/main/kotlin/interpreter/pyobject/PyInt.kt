@@ -24,15 +24,15 @@ import green.sailor.kython.interpreter.pyobject.types.PyIntType
  */
 class PyInt(val wrappedInt: Long) : PyObject(PyIntType) {
 
-    override fun getPyStr(): PyString = PyString(this.wrappedInt.toString())
+    override fun getPyStr(): PyString = PyString(wrappedInt.toString())
 
-    override fun getPyRepr(): PyString = this.getPyStr()
+    override fun getPyRepr(): PyString = getPyStr()
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is PyInt) return false
 
-        return this.wrappedInt == other.wrappedInt
+        return wrappedInt == other.wrappedInt
     }
 
     override fun hashCode(): Int {

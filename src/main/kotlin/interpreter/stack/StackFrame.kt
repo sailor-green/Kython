@@ -58,5 +58,5 @@ abstract class StackFrame {
     /**
      * Gets the stack frame information for this stack frame.
      */
-    abstract fun getStackFrameInfo(): StackFrameInfo
+    abstract fun createStackFrameInfo(): StackFrameInfo
 }

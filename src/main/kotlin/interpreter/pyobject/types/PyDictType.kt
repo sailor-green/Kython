@@ -27,8 +27,6 @@ import green.sailor.kython.interpreter.pyobject.PyType
 object PyDictType : PyType("dict") {
     override fun newInstance(args: Map<String, PyObject>): PyObject {
         // another simple passthrough
-        return PyDict.fromAnyMap(
-            args
-        )
+        return PyDict.fromAnyMap(args)
     }
 }
