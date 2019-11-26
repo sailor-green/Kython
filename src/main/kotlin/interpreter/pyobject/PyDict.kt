@@ -31,27 +31,20 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
          * Creates a new PyDict from any map, wrapping primitive types.
          */
         fun fromAnyMap(map: Map<*, *>): PyDict {
-            val newMap = map.map {
-                val key = if (it.key !is PyObject) {
-                    wrapPrimitive(it.key)
-                } else {
-                    it.key as PyObject
-                }
+            val newMap = map.entries.associateByTo(
+                linkedMapOf<PyObject, PyObject>(),
+                {
+                    it.key as? PyObject ?: wrapPrimitive(it.key)
+                }, {
+                    it.value as? PyObject ?: wrapPrimitive(it.value)
+                })
 
-                val value = if (it.value !is PyObject) {
-                    wrapPrimitive(it.value)
-                } else {
-                    (it.value as PyObject)
-                }
-
-                Pair(key, value)
-            }.toMap().toMutableMap()
-            return PyDict(newMap as LinkedHashMap<out PyObject, out PyObject>)
+            return PyDict(newMap)
         }
     }
 
     override fun getPyStr(): PyString {
-        val joined = this.items.entries.joinToString {
+        val joined = items.entries.joinToString {
             it.key.getPyRepr().wrappedString + ": " + it.value.getPyRepr().wrappedString
         }
         return PyString("{$joined}")
@@ -62,7 +55,5 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
     /**
      * Gets an item from the internal dict.
      */
-    fun getItem(key: PyObject): PyObject? {
-        return this.items[key]
-    }
+    fun getItem(key: PyObject): PyObject? = items[key]
 }
