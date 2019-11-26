@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.IterBuiltinFunction
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.iface.PyCallable
@@ -96,6 +97,31 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * Gets the source code line number currently being executed.
      */
     val lineNo: Int get() = function.code.getLineNumber(bytecodePointer)
+
+    /**
+     * Utility function for calling magic methods
+     */
+    fun magicMethod(obj: PyObject, magicName: String, param: PyObject?){
+        val fn = obj.pyGetAttribute(magicName)
+        if (fn !is PyCallable) {
+            Exceptions.TYPE_ERROR("'${obj.type.name}'.$magicName is not callable.").throwKy()
+        }
+        val result = if (param != null) fn.runCallable(listOf(param)) else fn.runCallable(listOf())
+        stack.push(result)
+    }
+
+    fun magicMethod(obj: PyObject, magicName: String) = magicMethod(obj, magicName, null)
+    fun magicMethod(obj: PyObject, magicName: String, param: PyObject, fallback: String) {
+        try {
+            magicMethod(obj, magicName, param)
+        } catch (e: KyError) {
+            try {
+                magicMethod(param, fallback, obj)
+            } catch (_: KyError) {
+                throw e
+            }
+        }
+    }
 
     /**
      * Runs this stack frame, executing the function within.
@@ -194,6 +220,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
 
                     InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
+                    InstructionOpcode.COMPARE_OP -> compareOp(param)
                     else -> error("Unimplemented opcode $opcode")
                 }
             } catch (e: Throwable) {
@@ -291,14 +318,28 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * MAKE_FUNCTION.
      */
     fun makeFunction(arg: Byte) {
+        val flags = arg.toInt()  // To use bitwise and
         val qualifiedName = stack.pop()
         require(qualifiedName is PyString) { "Function qualified name was not string!" }
 
         val code = stack.pop()
         require(code is PyCodeObject) { "Function code was not a code object!" }
 
+
+        if (flags and 8 == 8){
+            val freevarCellsTuple = stack.pop()
+        }
+        if (flags and 4 == 4){
+            val annotationDict = stack.pop()
+        }
+        if (flags and 2 == 2) {
+            val kwOnlyParamDefaultDict = stack.pop()
+        }
+        if (flags and 1 == 1) {
+            val positionalParamDefaultTuple = stack.pop()
+        }
         val function = PyUserFunction(code.wrappedCodeObject)
-        function.module = this.function.module
+        function.module = function.module
         stack.push(function)
         bytecodePointer += 1
     }
@@ -311,11 +352,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         // TODO: Do import
         val fromList = stack.pop()
         val level = stack.pop()
-        val name = this.function.code.names[arg.toInt()]
+        val name = function.code.names[arg.toInt()]
 
         // TODO: Create module and push to stack
         stack.push(PyNone)
-        this.bytecodePointer += 1
+        bytecodePointer += 1
     }
 
     /**
@@ -323,10 +364,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun importFrom(arg: Byte) {
         val module = stack.last
-        val attrName = this.function.code.names[arg.toInt()]
+        val attrName = function.code.names[arg.toInt()]
         val attr = module.pyGetAttribute(attrName)
         stack.push(attr)
-        this.bytecodePointer += 1
+        bytecodePointer += 1
     }
 
     /**
@@ -339,10 +380,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         // TODO: Verify this and change if needed
         module.internalDict.forEach {
             if (!it.key.startsWith("_")) {
-                this.locals[it.key] = it.value
+                locals[it.key] = it.value
             }
         }
-        this.bytecodePointer += 1
+        bytecodePointer += 1
     }
 
     /**
@@ -431,24 +472,76 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * BINARY_* (ADD, etc)
      */
     fun binaryOp(type: BinaryOp, arg: Byte) {
-        when (type) {
-            BinaryOp.ADD -> {
-                // todo: __add__
-                val first = stack.pop() as PyInt
-                val second = stack.pop() as PyInt
-                stack.push(PyInt(first.wrappedInt + second.wrappedInt))
-            }
-            // Kept for future-proofing.
-            else -> TODO("Unsupported binary op $type")
+        val o1 = stack.pop()
+        val o2 = stack.pop()
+        val magic = when (type) {
+            BinaryOp.ADD -> "__add__"
+            BinaryOp.LSHIFT -> "__lshift__"
+            BinaryOp.POWER -> "__pow__"
+            BinaryOp.MULTIPLY -> "__mul__"
+            BinaryOp.MATRIX_MULTIPLY -> "__matmul__"
+            BinaryOp.FLOOR_DIVIDE -> "__floordiv__"
+            BinaryOp.TRUE_DIVIDE -> "__truediv__"
+            BinaryOp.MODULO -> "__mod__"
+            BinaryOp.SUBTRACT -> "__sub__"
+            BinaryOp.SUBSCR -> "__getitem__"
+            BinaryOp.RSHIFT -> "__rshift__"
+            BinaryOp.AND -> "__and__"
+            BinaryOp.XOR -> "__xor__"
+            BinaryOp.OR -> "__or__"
+            else -> error("This should never happen!")
         }
+        magicMethod(o1, magic, o2, "__r"+magic.substring(2))
         bytecodePointer += 1
     }
 
+    /**
+     * INPLACE_*
+     */
     fun inplaceOp(type: BinaryOp, arg: Byte) {
-        // TODO
-        // In-place operations are like binary operations, in that they remove TOS and TOS1,
-        // and push the result back on the stack, but the operation is done in-place when TOS1 supports it,
-        // and the resulting TOS may be (but does not have to be) the original TOS1.
+        val o1 = stack.pop()
+        val o2 = stack.pop()
+        val magic = when (type) {
+            BinaryOp.ADD -> "__iadd__"
+            BinaryOp.LSHIFT -> "__ilshift__"
+            BinaryOp.POWER -> "__ipow__"
+            BinaryOp.MULTIPLY -> "__imul__"
+            BinaryOp.MATRIX_MULTIPLY -> "__imatmul__"
+            BinaryOp.FLOOR_DIVIDE -> "__ifloordiv__"
+            BinaryOp.TRUE_DIVIDE -> "__itruediv__"
+            BinaryOp.MODULO -> "__imod__"
+            BinaryOp.SUBTRACT -> "__isub__"
+            BinaryOp.SUBSCR -> "__igetitem__"
+            BinaryOp.RSHIFT -> "__irshift__"
+            BinaryOp.AND -> "__iand__"
+            BinaryOp.XOR -> "__ixor__"
+            BinaryOp.OR -> "__ior__"
+            BinaryOp.STORE_SUBSCR -> "__setitem__"
+            BinaryOp.DELETE_SUBSCR -> "__delitem__"
+        }
+        magicMethod(o1, magic, o2)
+        bytecodePointer += 1
+    }
+
+    fun compareOp(arg: Byte) {
+        val top = stack.pop()
+        val second = stack.pop()
+        when (arg.toInt()){
+            0 -> magicMethod(top, "__lt__", second, "__ge__")
+            1 -> magicMethod(top,"__le__", second, "__gt__")
+            2 -> magicMethod(top,"__gt__", second, "__le__")
+            3 -> magicMethod(top,"__ge__", second, "__lt__")
+            4 -> magicMethod(top,"__eq__", second, "__eq__")
+            5 -> magicMethod(top,"__ne__", second, "__ne__")
+            6 -> magicMethod(top,"__contains__", second)
+            7 -> {
+                magicMethod(top,"__contains__", second)
+                stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+            }
+            8 -> stack.push(if(top.hashCode() == second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+            9 -> stack.push(if(top.hashCode() != second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+            10 -> TODO("exception match COMPARE_OP")
+        }
     }
 
     // Unary operators
@@ -461,55 +554,39 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val iter = IterBuiltinFunction().callFunction(mapOf("obb" to top))
             stack.push(iter)
         }
-        this.bytecodePointer += 1
+        bytecodePointer += 1
     }
 
     fun getIter(param: Byte) {
         val top = stack.pop()
-        val iter = IterBuiltinFunction().callFunction(mapOf("obb" to top))
-        stack.push(iter)
-        this.bytecodePointer += 1
+        magicMethod(top, "__iter__")
+        bytecodePointer += 1
     }
 
     fun unaryInvert(param: Byte) {
         val top = stack.pop()
-        val f = top.pyGetAttribute("__invert__")
-        if (f !is PyCallable) {
-            Exceptions.TYPE_ERROR("__invert__ is not callable").throwKy()
-        }
-        stack.push(f.runCallable(listOf()))
-        this.bytecodePointer += 1
+        magicMethod(top, "__invert__")
+        bytecodePointer += 1
     }
 
     fun unaryNot(param: Byte) {
         val top = stack.pop()
-        val f = top.pyGetAttribute("__bool__")
-        if (f !is PyCallable) {
-            Exceptions.TYPE_ERROR("__bool__ is not callable").throwKy()
-        }
-        val truthy = f.runCallable(listOf())
+        magicMethod(top, "__bool__")
+        val truthy = stack.pop()  // magicMethod pushes to stack
         stack.push(if (truthy == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
-        this.bytecodePointer += 1
+        bytecodePointer += 1
     }
 
     fun unaryNegative(param: Byte) {
         val top = stack.pop()
-        val f = top.pyGetAttribute("__neg__")
-        if (f !is PyCallable) {
-            Exceptions.TYPE_ERROR("__neg__ is not callable").throwKy()
-        }
-        stack.push(f.runCallable(listOf()))
-        this.bytecodePointer += 1
+        magicMethod(top, "__neg__")
+        bytecodePointer += 1
     }
 
     fun unaryPostive(param: Byte) {
         val top = stack.pop()
-        val f = top.pyGetAttribute("__pos__")
-        if (f !is PyCallable) {
-            Exceptions.TYPE_ERROR("__pos__ is not callable").throwKy()
-        }
-        stack.push(f.runCallable(listOf()))
-        this.bytecodePointer += 1
+        magicMethod(top, "__pos__")
+        bytecodePointer += 1
     }
 
     /**
