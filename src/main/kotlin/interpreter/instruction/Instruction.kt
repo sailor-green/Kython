@@ -27,7 +27,19 @@ data class Instruction(val opcode: InstructionOpcode, val argument: Byte) {
      * Gets the formatted disassembly.
      */
     fun getDisassembly(frame: UserCodeStackFrame): String {
-        // todo: more advanced disassembly
-        return "${opcode.name} $argument"
+        var base = "${opcode.name} $argument "
+        val iArg = argument.toInt()
+        // simple lookups
+        if (opcode.hasConst) {
+            base += "(${frame.function.code.consts[iArg]}) "
+        }
+        if (opcode.hasName) {
+            // maybe make this print the value in the table?
+            base += "(${frame.function.code.names[iArg]})"
+        }
+        if (opcode.hasLocal) {
+            base += "(${frame.function.code.varnames[iArg]})"
+        }
+        return base
     }
 }
