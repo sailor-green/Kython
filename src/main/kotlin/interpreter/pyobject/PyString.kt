@@ -30,7 +30,7 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
     }
 
     override fun getPyStr(): PyString = this
-    override fun getPyRepr(): PyString = PyString("'${this.wrappedString}'")
+    override fun getPyRepr(): PyString = PyString("'$wrappedString'")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -40,7 +40,7 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
             return false
         }
 
-        return this.wrappedString == other.wrappedString
+        return wrappedString == other.wrappedString
     }
 
     override fun hashCode(): Int {

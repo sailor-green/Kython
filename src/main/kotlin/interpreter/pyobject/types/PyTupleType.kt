@@ -27,10 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyType
  * Represents the type of a tuple (the `tuple` builtin).
  */
 object PyTupleType : PyType("tuple") {
-    override fun newInstance(args: Map<String, PyObject>): PyObject {
-        val arg = args["x"]!!
-        return PyTuple(listOf(arg))
-    }
+    override fun newInstance(args: Map<String, PyObject>): PyObject = PyTuple(listOf(args["x"]!!))
 
     override val signature: PyCallableSignature by lazy {
         PyCallableSignature(

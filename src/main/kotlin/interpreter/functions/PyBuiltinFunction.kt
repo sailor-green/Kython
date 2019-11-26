@@ -65,5 +65,5 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
      */
     abstract fun callFunction(kwargs: Map<String, PyObject>): PyObject
 
-    override fun getFrame(): StackFrame = BuiltinStackFrame(this)
+    override fun createFrame(): StackFrame = BuiltinStackFrame(this)
 }

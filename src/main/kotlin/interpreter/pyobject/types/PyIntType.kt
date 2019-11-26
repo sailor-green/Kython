@@ -32,8 +32,7 @@ import green.sailor.kython.interpreter.throwKy
  */
 object PyIntType : PyType("int") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val value = kwargs["value"] ?: error("Built-in signature mismatch")
-        when (value) {
+        when (val value = kwargs["value"] ?: error("Built-in signature mismatch")) {
             is PyInt -> {
                 return value
             }
@@ -44,16 +43,16 @@ object PyIntType : PyType("int") {
                 } catch (e: NumberFormatException) {
                     Exceptions.VALUE_ERROR(
                         "Cannot convert '${value.wrappedString}' to int " +
-                        "with base ${base.wrappedInt}"
+                            "with base ${base.wrappedInt}"
                     ).throwKy()
                 }
             }
             else -> {
                 val intMagic = value.specialMethodLookup("__int__")
                     ?: Exceptions.TYPE_ERROR(
-                            "int() argument must be a string, a bytes-like object, " +
-                                    "or a number, not '${value.type.name}'"
-                        ).throwKy()
+                        "int() argument must be a string, a bytes-like object, " +
+                            "or a number, not '${value.type.name}'"
+                    ).throwKy()
 
                 if (intMagic !is PyCallable) {
                     Exceptions.TYPE_ERROR("__int__ is not callable").throwKy()

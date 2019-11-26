@@ -39,9 +39,9 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         /**
          * Internal method for interpreter Python errors.
          */
-        fun makeWithMessage(message: String): PyException {
+        private fun makeWithMessage(message: String): PyException {
             val args = listOf(PyString(message))
-            return this.interpreterGetExceptionInstance(args)
+            return interpreterGetExceptionInstance(args)
         }
 
         operator fun invoke(message: String) = makeWithMessage(message)
@@ -64,13 +64,13 @@ abstract class PyException(val args: PyTuple) : PyObject() {
                     val args = kwargs["args"] as PyTuple
                     val strings = args.subobjects.map { it.getPyStr() }
 
-                    return this.interpreterGetExceptionInstance(strings)
+                    return interpreterGetExceptionInstance(strings)
                 }
 
                 override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {
                     val instance = object : PyException(PyTuple(args)) {
                         init {
-                            this.parentTypes.addAll(bases)
+                            parentTypes.addAll(bases)
                         }
                     }
                     instance.type = this
@@ -88,11 +88,11 @@ abstract class PyException(val args: PyTuple) : PyObject() {
     init {
         // this builds the traceback by walking down from the root frame to the last frame
         val frames = StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())
-        this.exceptionFrames = frames
+        exceptionFrames = frames
     }
 
     override fun getPyStr(): PyString {
-        require(this.type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
+        require(type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
         TODO()
     }
 

@@ -117,7 +117,7 @@ object KythonInterpreter {
             with(e.wrapped) {
                 System.err.println("\nKython stack (most recent frame last):")
                 exceptionFrames.forEach {
-                    System.err.println("   " + it.getStackFrameInfo().getTracebackString())
+                    System.err.println("   " + it.createStackFrameInfo().tracebackString)
                 }
 
                 val errorString = args.subobjects.joinToString(" ") {
@@ -144,14 +144,12 @@ object KythonInterpreter {
 
             val stacks = StackFrame.flatten(frame).reversed()
             stacks.forEach {
-                with(it.getStackFrameInfo()) {
-                    System.err.println("   " + getTracebackString())
-                    if (hasDisassembly) {
-                        System.err.println("Disassembly:\n${getDisassembly()}")
+                with(it.createStackFrameInfo()) {
+                    System.err.println("   " + tracebackString)
+                    disassembly?.let { dis ->
+                        System.err.println("Disassembly:\n$dis")
                     }
-
-                    if (hasStack) {
-                        val stack = getStack()
+                    stack?.let { stack ->
                         System.err.println("Function stack, size: ${stack.size}")
                         stack.forEachIndexed { index, pyObject ->
                             System.err.println("    $index: $pyObject")
@@ -159,10 +157,10 @@ object KythonInterpreter {
                     }
                 }
             }
-
-            // if (!child) {
-            //    throw e
-            // }
         }
+
+        // if (!child) {
+        //    throw e
+        // }
     }
 }

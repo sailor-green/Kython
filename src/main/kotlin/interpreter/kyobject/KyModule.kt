@@ -30,7 +30,7 @@ import java.nio.file.Path
  */
 class KyModule(val moduleFunction: PyUserFunction, val path: Path) {
     /** The stack frame for this module's function. */
-    val stackFrame = (moduleFunction.getFrame() as UserCodeStackFrame)
+    val stackFrame = moduleFunction.createFrame() as UserCodeStackFrame
 
     /** The mapping of attributes of this module. */
     val attribs = stackFrame.locals

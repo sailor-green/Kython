@@ -76,7 +76,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
         ?: Exceptions.NAME_ERROR("Name $name is not defined").throwKy()
     }
 
-    override fun getFrame(): StackFrame = UserCodeStackFrame(this)
+    override fun createFrame(): StackFrame = UserCodeStackFrame(this)
 
     override fun getPyStr(): PyString = PyString("<user function ${code.codename}>")
 

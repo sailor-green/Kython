@@ -30,11 +30,9 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
         val FALSE = PyBool(false)
     }
 
-    val cachedTrueString =
-        PyString("True")
-    val cachedFalseString =
-        PyString("False")
+    private val cachedTrueString = PyString("True")
+    private val cachedFalseString = PyString("False")
 
-    override fun getPyStr(): PyString = if (this.wrapped) cachedTrueString else cachedFalseString
+    override fun getPyStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun getPyRepr(): PyString = getPyStr()
 }

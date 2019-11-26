@@ -23,7 +23,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
  * Represents a root object instance (i.e. the result of doing `object()`).
  */
 class PyRootObjectInstance : PyObject(PyRootObjectType) {
-    val _cached: PyString
+    private val _cached: PyString
 
     init {
         val ooEnabled = System.getProperty("kython.easteregg.objectobject") == "true"
