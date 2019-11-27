@@ -53,6 +53,16 @@ abstract class PyObject() {
             }
 
         /**
+         * Gets a PyObject from any object.
+         *
+         * If the object is already a PyObject, just returns it. Otherwise, tries to wrap it.
+         */
+        fun get(obb: Any?): PyObject {
+            if (obb is PyObject) return obb
+            return wrapPrimitive(obb)
+        }
+
+        /**
          * The default object dict, containing the base implements of certain magic methods.
          */
         val defaultDict: LinkedHashMap<String, PyObject>

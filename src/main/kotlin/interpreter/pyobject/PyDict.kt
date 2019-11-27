@@ -31,22 +31,13 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
          * Creates a new PyDict from any map, wrapping primitive types.
          */
         fun fromAnyMap(map: Map<*, *>): PyDict {
-            val newMap = map.entries.associate {
-                val key = if (it.key !is PyObject) {
-                    wrapPrimitive(it.key)
-                } else {
-                    it.key as PyObject
-                }
-
-                val value = if (it.value !is PyObject) {
-                    wrapPrimitive(it.value)
-                } else {
-                    (it.value as PyObject)
-                }
-
+            val newMap = LinkedHashMap<PyObject, PyObject>(map.size)
+            map.entries.associateTo(newMap) {
+                val key = PyObject.get(it.key)
+                val value = PyObject.get(it.value)
                 Pair(key, value)
             }
-            return PyDict(newMap as LinkedHashMap<out PyObject, out PyObject>)
+            return PyDict(newMap)
         }
     }
 
