@@ -78,8 +78,6 @@ abstract class StackFrameInfo {
             get() = PyString("<builtin>")
 
         override val tracebackString: String
-            get() {
-                return "File <builtin>, in ${frame.builtinFunction.name}"
-            }
+            get() = "File <builtin>, in ${frame.builtinFunction.name}"
     }
 }
