@@ -81,20 +81,14 @@ tasks.test {
     }
 }
 
-val spotlessLint: Task by tasks.creating {
+tasks.register("spotlessLint"){
     group = "linting"
     description = "Run the spotless linter for Kotlin."
     dependsOn(tasks.spotlessCheck)
 }
 
-val spotlessCorrect: Task by tasks.creating {
+tasks.register("spotlessCorrect"){
     group = "linting"
     description = "Apply a spotless linter correction for Kotlin."
     dependsOn(tasks.spotlessApply)
-}
-
-tasks.register("spotlessCheckAndCorrect") {
-    group = "linting"
-    description = "Check for spotless linter issues and apply fixes."
-    dependsOn(spotlessLint, spotlessCorrect)
 }
