@@ -60,11 +60,8 @@ class KyMagicMethods(val bound: Boolean) {
      */
     fun nameToMagicMethodBound(parent: PyObject, name: String): PyCallable? {
         val meth = nameToMagicMethod(name) ?: return null
-        return if (bound) {
-            (meth as PyObject).pyDescriptorGet(parent, parent.type)
-        } else {
-            (meth as PyObject).pyDescriptorGet(PyNone, parent.type)
-        } as PyCallable
+        val descriptorParent = if (bound) parent else PyNone
+        return (meth as PyObject).pyDescriptorGet(descriptorParent, parent.type) as PyCallable
     }
 
     /**
