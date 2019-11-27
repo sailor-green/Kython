@@ -66,4 +66,22 @@ class KyMagicMethods(val bound: Boolean) {
             (meth as PyObject).pyDescriptorGet(PyNone, parent.type)
         } as PyCallable
     }
+
+    /**
+     * Creates the list of "active" magic methods, i.e. the magic methods that exist on this object.
+     *
+     * This is *only* useful for dir() and the likes. Do *NOT* use this for other purposes;
+     * you should be checking the method you actually want yourself.
+     */
+    @Suppress("UnnecessaryVariable")
+    fun createActiveMagicMethodList(): List<String> {
+        // these will always exist!
+        val initial = listOf(
+            "__getattribute__",
+            "__dir__"
+        )
+
+        // todo: other magic methods that could be set
+        return initial
+    }
 }
