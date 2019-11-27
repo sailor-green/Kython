@@ -125,11 +125,9 @@ class KyCodeObject(original: KycCodeObject) {
         val buf = ByteBuffer.wrap(rawBytecode)
 
         while (buf.hasRemaining()) {
-            with(buf.get()) {
-                // prevents opcodes >128 from turning into -opcode
-                val opcode = toUByte().toInt()
-                instructions.add(Instruction(InstructionOpcode.get(opcode), this))
-            }
+            val opcode = buf.get().toUByte().toInt()
+            val opval = buf.get()
+            instructions.add(Instruction(InstructionOpcode.get(opcode), opval))
         }
 
         return instructions.toTypedArray()
@@ -142,11 +140,11 @@ class KyCodeObject(original: KycCodeObject) {
         val padSize = ceil(log(instructions.size.toDouble(), 10.0)).toInt()
 
         return buildString {
-            instructions.forEachIndexed { index, instruction ->
-                val idxFmt = index.toString().padStart(padSize, '0')
+            instructions.forEachIndexed { idx, instruction ->
+                val idxFmt = idx.toString().padStart(padSize, '0')
                 append("    $idxFmt ")
                 append(instruction.getDisassembly(frame))
-                if (index == frame.bytecodePointer) {
+                if (idx == frame.bytecodePointer) {
                     append("  <-- HERE")
                 }
                 appendln()

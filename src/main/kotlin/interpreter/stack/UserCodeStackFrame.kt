@@ -238,7 +238,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         require(code is PyCodeObject) { "Function code was not a code object!" }
 
         val function = PyUserFunction(code.wrappedCodeObject)
-        function.module = function.module
+        function.module = this.function.module
         stack.push(function)
         bytecodePointer += 1
     }
@@ -336,6 +336,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 val second = stack.pop() as PyInt
                 stack.push(PyInt(first.wrappedInt + second.wrappedInt))
             }
+            // Kept for future-proofing.
+            else -> TODO("Unsupported binary op $type")
         }
         bytecodePointer += 1
     }
