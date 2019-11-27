@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.functions.magic.ObjectDir
@@ -33,7 +32,6 @@ class KyMagicMethods(val bound: Boolean) {
     // list of magic methods and their defaults
     // TODO: This is very sparse right now.
 
-
     // == builtins with defaults == //
     // these will *never* be null.
 
@@ -50,7 +48,7 @@ class KyMagicMethods(val bound: Boolean) {
      * Turns a magic method name into a magic method.
      */
     fun nameToMagicMethod(name: String): PyCallable? {
-        return when(name) {
+        return when (name) {
             "__getattribute__" -> tpGetAttribute
             "__dir__" -> tpDir
             else -> null
@@ -68,5 +66,4 @@ class KyMagicMethods(val bound: Boolean) {
             (meth as PyObject).pyDescriptorGet(PyNone, parent.type)
         } as PyCallable
     }
-
 }

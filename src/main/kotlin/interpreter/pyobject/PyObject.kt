@@ -76,7 +76,7 @@ abstract class PyObject() {
      * The magic slots for this PyObject.
      * Bound should be true on regular instances, and false on types.
      */
-    open val magicSlots = KyMagicMethods(bound=true)
+    open val magicSlots = KyMagicMethods(bound = true)
 
     // exposed attribs
     /** The type of this PyObject. */
