@@ -40,12 +40,11 @@ import green.sailor.kython.interpreter.throwKy
 class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) {
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            return kwargs["code"]?.let {
-                if (it !is PyCodeObject) {
-                    Exceptions.TYPE_ERROR("Arg 'code' is not a code object").throwKy()
-                }
-                PyUserFunction(it.wrappedCodeObject)
-            } ?: error("Built-in signature mismatch")
+            val code = kwargs["code"] ?: error("Built-in signature mismatch")
+            if (code !is PyCodeObject) {
+                Exceptions.TYPE_ERROR("Arg 'code' is not a code object").throwKy()
+            }
+            return PyUserFunction(code.wrappedCodeObject)
         }
 
         override val signature: PyCallableSignature by lazy {
