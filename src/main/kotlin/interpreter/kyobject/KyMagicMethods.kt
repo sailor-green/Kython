@@ -28,6 +28,7 @@ import green.sailor.kython.interpreter.pyobject.PyObject
  *
  * @param bound: If this is on an instance, instead of a type.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class KyMagicMethods(val bound: Boolean) {
     // list of magic methods and their defaults
     // TODO: This is very sparse right now.
@@ -36,11 +37,11 @@ class KyMagicMethods(val bound: Boolean) {
     // these will *never* be null.
 
     // __getattribute__
-    public val tpGetAttribute: PyCallable by lazy {
+    val tpGetAttribute: PyCallable by lazy {
         ObjectGetattribute()
     }
     // __dir__
-    public val tpDir: PyCallable by lazy {
+    val tpDir: PyCallable by lazy {
         ObjectDir()
     }
 
