@@ -29,6 +29,6 @@ import green.sailor.kython.interpreter.pyobject.PyType
 abstract class PyFunction(type: PyType) : PyObject(type), PyCallable {
     // overridden for method binding
     override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
-        return takeIf { parent is PyNone } ?: PyMethod(this, parent)
+        return if (parent is PyNone) this else PyMethod(this, parent)
     }
 }

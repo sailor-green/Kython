@@ -99,24 +99,24 @@ open class UnKyc(private val buf: ByteBuffer) {
     /**
      * Reads an int from the stream.
      */
-    private fun readInt(): KycInt = KycInt(buf.int)
+    fun readInt(): KycInt = KycInt(buf.int)
 
     /**
      * Reads a long from the stream.
      */
-    private fun readLong(): KycLong = KycLong(buf.long)
+    fun readLong(): KycLong = KycLong(buf.long)
 
     /**
      * Reads a float from the stream.
      */
-    private fun readFloat(): KycFloat = KycFloat(buf.double)
+    fun readFloat(): KycFloat = KycFloat(buf.double)
 
     /**
      * Reads a string from the stream.
      *
      * @param short: If this is a short string (TYPE_SHORT_ASCII).
      */
-    private fun readString(): KycUnicodeString {
+    fun readString(): KycUnicodeString {
         val size = buf.int
 
         val ca = ByteArray(size)
@@ -131,7 +131,7 @@ open class UnKyc(private val buf: ByteBuffer) {
     /**
      * Reads a byte string from the stream.
      */
-    private fun readByteString(): KycString {
+    fun readByteString(): KycString {
         val size = buf.int
 
         val ca = ByteArray(size)
@@ -148,7 +148,7 @@ open class UnKyc(private val buf: ByteBuffer) {
      *
      * @param small: If this is a "small" container (TYPE_SMALL_TUPLE).
      */
-    private fun getSizedContainer(small: Boolean = false): List<BaseKycType> {
+    fun getSizedContainer(small: Boolean = false): List<BaseKycType> {
         val size = buf.int
         val arr = arrayOfNulls<BaseKycType>(size)
 
@@ -168,24 +168,22 @@ open class UnKyc(private val buf: ByteBuffer) {
     /**
      * Reads a tuple from the stream.
      */
-    private fun readTuple(): KycTuple = KycTuple(getSizedContainer())
+    fun readTuple(): KycTuple = KycTuple(getSizedContainer())
 
     /**
      * Reads a list from the stream.
      */
-    private fun readList(): KycList =
-        KycList(getSizedContainer().toList()) // inefficient, but, oh well.
+    fun readList(): KycList = KycList(getSizedContainer().toList()) // inefficient, but, oh well.
 
     /**
      * Reads a dict from the stream.
      */
-    private fun readDict(): KycDict {
-        val map = (0 until buf.int).associateByTo(
-            hashMapOf(),
-            { readObject() },
-            { readObject() }
-        )
-
+    fun readDict(): KycDict {
+        val map = hashMapOf<BaseKycType, BaseKycType>()
+        val size = buf.int
+        for (x in 0 until size) {
+            map[this.readObject()] = this.readObject()
+        }
         return KycDict(map)
     }
 
