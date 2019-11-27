@@ -146,7 +146,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     // this is all below the main class because there's a LOT going on here
 
     // i don't see how this can ever error...
-    fun returnValue(arg: Byte): PyObject = stack.pop()
+    fun returnValue(arg: Byte): PyObject {
+        return stack.pop()
+    }
 
     /**
      * LOAD_*
