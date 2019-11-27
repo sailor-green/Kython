@@ -192,12 +192,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * STORE_(NAME|FAST).
      */
     fun store(pool: LoadPool, arg: Byte) {
+        val idx = arg.toInt()
         val toGetName = when (pool) {
             LoadPool.NAME -> function.code.names
             LoadPool.FAST -> function.code.varnames
             else -> error("Can't store items in pool $pool")
         }
-        val name = toGetName[arg.toInt()]
+        val name = toGetName[idx]
         locals[name] = stack.pop()
         bytecodePointer += 1
     }
