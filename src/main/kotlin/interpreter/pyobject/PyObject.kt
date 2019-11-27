@@ -115,8 +115,10 @@ abstract class PyObject() {
      */
     open fun pyDefaultDir(): PyTuple {
         val dirSet = mutableSetOf<String>().also { set ->
-            set.addAll(this.type.internalDict.keys)
+            set.addAll(magicSlots.createActiveMagicMethodList())
+            set.addAll(type.internalDict.keys)
             set.addAll(parentTypes.flatMap { it.internalDict.keys })
+            set.addAll(internalDict.keys)
         }
 
         // NB: CPython sorts dir() output for whatever dumb reason.
