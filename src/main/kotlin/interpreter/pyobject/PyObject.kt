@@ -110,6 +110,21 @@ abstract class PyObject() {
         return this
     }
 
+    /**
+     * Implements the "default" dir behaviour, listing all attributes of this object.
+     */
+    open fun pyDefaultDir(): PyTuple {
+        val dirSet = mutableSetOf<String>().also { set ->
+            set.addAll(this.type.internalDict.keys)
+            set.addAll(parentTypes.flatMap { it.internalDict.keys })
+        }
+
+        // NB: CPython sorts dir() output for whatever dumb reason.
+        // We do too!
+        val sorted = dirSet.toList().sorted()
+        return PyTuple(sorted.map { s -> PyString(s) })
+    }
+
     // `object.X` implementations
     /**
      * Delegate for `LOAD_ATTR` on any object.
@@ -124,19 +139,8 @@ abstract class PyObject() {
         }
 
         val getAttribute = magicSlots.tpGetAttribute as PyFunction
-        val fn = if (magicSlots.bound) {
-            getAttribute.pyDescriptorGet(this, type)
-        } else {
-            getAttribute.pyDescriptorGet(PyNone, type)
-        } as PyCallable
-        return fn.runCallable(listOf(PyString(name)))
-    }
-
-    /**
-     *
-     */
-    open fun pyDir(): PyTuple {
-        TODO()
+        val bound = getAttribute.pyDescriptorGet(this, type) as PyCallable
+        return bound.runCallable(listOf(PyString(name)))
     }
 
     // == Descriptors ==

@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyMethod
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.throwKy
 
@@ -36,6 +37,8 @@ class DirBuiltinFunction : PyBuiltinFunction("dir") {
         if (dir !is PyCallable) {
             Exceptions.TYPE_ERROR("__dir__ is not callable").throwKy()
         }
-        return dir.runCallable(listOf(obb))
+
+        val args = if (dir is PyMethod) listOf() else listOf(obb)
+        return dir.runCallable(args)
     }
 }

@@ -20,8 +20,6 @@ package green.sailor.kython.interpreter.functions.magic
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyTuple
 
 /**
  * Represents the default `__dir__` on objects.
@@ -32,6 +30,6 @@ class ObjectDir : PyBuiltinFunction("<object.__dir__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["self"] ?: error("Built-in signature mismatch!")
         val keys = obb.internalDict.keys
-        return PyTuple(keys.map { PyString(it) })
+        return obb.pyDefaultDir()
     }
 }
