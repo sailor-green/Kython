@@ -25,8 +25,8 @@ import green.sailor.kython.interpreter.pyobject.PyType
  * Represents the type of a dict.
  */
 object PyDictType : PyType("dict") {
-    override fun newInstance(args: Map<String, PyObject>): PyObject {
+    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         // another simple passthrough
-        return PyDict.fromAnyMap(args)
+        return PyDict.fromAnyMap(kwargs)
     }
 }

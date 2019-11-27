@@ -26,7 +26,7 @@ import green.sailor.kython.interpreter.pyobject.PyType
  * Represents the type of None (types.NoneType).
  */
 object PyNoneType : PyType("NoneType") {
-    override fun newInstance(args: Map<String, PyObject>): PyObject {
+    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         return PyNone
     }
 

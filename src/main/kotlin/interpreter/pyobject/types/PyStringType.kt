@@ -28,8 +28,8 @@ import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 
 object PyStringType : PyType("str") {
-    override fun newInstance(args: Map<String, PyObject>): PyObject {
-        val arg = args["x"]!!
+    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+        val arg = kwargs["x"]!!
         return arg.getPyStr()
     }
 
