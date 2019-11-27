@@ -32,7 +32,8 @@ import green.sailor.kython.interpreter.throwKy
  */
 object PyIntType : PyType("int") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        when (val value = kwargs["value"] ?: error("Built-in signature mismatch")) {
+        val value = kwargs["value"] ?: error("Built-in signature mismatch")
+        when (value) {
             is PyInt -> {
                 return value
             }

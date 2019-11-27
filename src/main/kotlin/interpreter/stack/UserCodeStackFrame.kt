@@ -78,10 +78,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * Gets the source code line number currently being executed.
      */
-    val lineNo: Int
-        get() {
-            return function.code.getLineNumber(bytecodePointer)
-        }
+    val lineNo: Int get() = function.code.getLineNumber(bytecodePointer)
 
     /**
      * Runs this stack frame, executing the function within.
