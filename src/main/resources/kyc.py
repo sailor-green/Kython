@@ -36,6 +36,7 @@ def _compile_int(i: int) -> bytes:
     """
     Compiles an int into bytes.
     """
+    # TODO: OverflowError
     return b"i" + i.to_bytes(length=4, byteorder="little", signed=True)
 
 
@@ -100,6 +101,19 @@ def _compile_nonetype() -> bytes:
     return b"N"
 
 
+def _compile_bool(v: bool) -> bytes:
+    return [b"-", b"+"][v]
+
+
+def _compile_float(v: float) -> bytes:
+    """
+    Compiles a float.
+    """
+    # temporary!
+    import struct
+    return b"f" + struct.pack("<d", v)
+
+
 def _compile_code_object(obb: types.CodeType) -> bytes:
     """
     Compiles a code object into bytes.
@@ -143,6 +157,10 @@ def _compile_object(i: Any) -> bytes:
         return _compile_list(i)
     elif isinstance(i, dict):
         return _compile_dict(i)
+    elif isinstance(i, bool):
+        return _compile_bool(i)
+    elif isinstance(i, float):
+        return _compile_float(i)
     elif hasattr(i, "co_code"):
         return _compile_code_object(i)
     elif i is None:
@@ -185,7 +203,7 @@ def compile_kyc(
     #  - kyc type marker: 'K'
     #  - Long type marker: 'L'
     #  - Long: Hash of source code file
-    #  - Unicode string type marker: 'S'
+    #  - Unicode string type marker: 's'
     #  - String: File comment
     #  - Code object type ('c')
     #  - Code object: The module object
