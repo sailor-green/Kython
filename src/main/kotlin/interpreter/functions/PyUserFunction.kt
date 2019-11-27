@@ -71,8 +71,9 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
      * Gets a global from the globals for this function.
      */
     fun getGlobal(name: String): PyObject {
-        return module.attribs[name] ?: Builtins.BUILTINS_MAP[name]
-        ?: Exceptions.NAME_ERROR("Name $name is not defined").throwKy()
+        return module.attribs[name]
+            ?: Builtins.BUILTINS_MAP[name]
+            ?: Exceptions.NAME_ERROR("Name $name is not defined").throwKy()
     }
 
     override fun createFrame(): StackFrame = UserCodeStackFrame(this)
