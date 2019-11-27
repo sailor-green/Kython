@@ -128,20 +128,10 @@ object KycNone : BaseKycType() {
     override fun wrap(): PyNone = PyNone
 }
 
-/** An encoded null. */
-object KycNull : BaseKycType() {
-    override fun toString(): String {
-        return "<Kycled null>"
-    }
-
-    // Unsure about this one.
-    override fun wrap(): PyNone = PyNone
-}
-
 /** An encoded ellipsis. */
 object KycEllipsis : BaseKycType() {
     override fun toString(): String {
-        return "<Kycled ...>"
+        return "<Kyc encoded ...>"
     }
 
     override fun wrap(): PyObject = TODO()
@@ -149,7 +139,7 @@ object KycEllipsis : BaseKycType() {
 
 /** An encoded float. */
 class KycFloat(override val wrapped: Double) : BaseKycType() {
-    override fun wrap(): PyObject = TODO()
+    override fun wrap(): PyObject = PyFloat(wrapped)
 }
 
 /** An encoded list. */

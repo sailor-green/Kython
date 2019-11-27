@@ -45,6 +45,7 @@ object Builtins {
     val TYPE = PyRootType
     val INT_TYPE = PyIntType
     val STRING_TYPE = PyStringType
+    val FLOAT_TYPE = PyFloatType
     val NONE = PyNone
     val NONE_TYPE = PyNoneType
     val TUPLE_TYPE = PyTupleType
@@ -63,6 +64,7 @@ object Builtins {
         "object" to OBJECT,
         "type" to TYPE,
         "int" to INT_TYPE,
+        "float" to FLOAT_TYPE,
         "str" to STRING_TYPE,
         "tuple" to TUPLE_TYPE,
         "dict" to DICT_TYPE,
