@@ -46,10 +46,12 @@ dependencies {
 
 spotless {
     kotlin {
-        ktlint().userData(mapOf(
-            "disabled_rules" to "no-wildcard-imports",
-            "max_line_length" to "100"
-        ))
+        ktlint().userData(
+            mapOf(
+                "disabled_rules" to "no-wildcard-imports",
+                "max_line_length" to "100"
+            )
+        )
         @Suppress("INACCESSIBLE_TYPE")  // this works fine?
         licenseHeaderFile("gradle/LICENCE-HEADER")
     }
@@ -77,4 +79,22 @@ tasks.test {
     testLogging {
         events("passed", "skipped", "failed")
     }
+}
+
+val spotlessLint: Task by tasks.creating {
+    group = "linting"
+    description = "Run the spotless linter for Kotlin."
+    dependsOn(tasks.spotlessCheck)
+}
+
+val spotlessCorrect: Task by tasks.creating {
+    group = "linting"
+    description = "Apply a spotless linter correction for Kotlin."
+    dependsOn(tasks.spotlessApply)
+}
+
+tasks.register("spotlessCheckAndCorrect") {
+    group = "linting"
+    description = "Check for spotless linter issues and apply fixes."
+    dependsOn(spotlessLint, spotlessCorrect)
 }

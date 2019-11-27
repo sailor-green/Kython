@@ -32,12 +32,8 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
          */
         fun fromAnyMap(map: Map<*, *>): PyDict {
             val newMap = map.entries.associateByTo(
-                linkedMapOf<PyObject, PyObject>(),
-                {
-                    it.key as? PyObject ?: wrapPrimitive(it.key)
-                }, {
-                    it.value as? PyObject ?: wrapPrimitive(it.value)
-                })
+                linkedMapOf(), { get(it.key) }, { get(it.value) }
+            )
 
             return PyDict(newMap)
         }
