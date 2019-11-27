@@ -46,18 +46,11 @@ abstract class StackFrameInfo {
         override val name: PyString
             get() = PyString(frame.function.code.codename)
 
-        override val filename: PyString
-            get() = PyString(frame.function.code.filename)
+        override val filename: PyString get() = PyString(frame.function.code.filename)
 
-        override val disassembly: String
-            get() {
-                return frame.function.code.getDisassembly(frame)
-            }
+        override val disassembly: String get() = frame.function.code.getDisassembly(frame)
 
-        override val stack: Deque<PyObject>
-            get() {
-                return frame.stack
-            }
+        override val stack: Deque<PyObject> get() = frame.stack
 
         override val tracebackString: String
             get() {
