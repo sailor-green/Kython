@@ -20,7 +20,6 @@ package green.sailor.kython.interpreter.functions.magic
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -29,7 +28,7 @@ import green.sailor.kython.interpreter.throwKy
 /**
  * Represents the default object __getattribute__.
  */
-object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
+class ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"]!!
         val name = kwargs["name"]!!
@@ -49,14 +48,6 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         // effectively corresponds to x.attr.__get__(None, type(x))
         if (attrName in self.type.internalDict) {
             return self.type.internalDict[attrName]!!.pyDescriptorGet(self, self.type)
-        }
-
-        // try and load `__getattr__`
-        self.specialMethodLookup("__getattr__")?.let {
-            if (it !is PyCallable) {
-                Exceptions.TYPE_ERROR("__getattr__ is not a callable").throwKy()
-            }
-            return it.runCallable(listOf(name))
         }
 
         Exceptions.NAME_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()

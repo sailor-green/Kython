@@ -17,8 +17,6 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.functions.magic.ObjectDir
-import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
@@ -35,14 +33,11 @@ object PyRootObjectType : PyType("object") {
         return PyRootObjectInstance()
     }
 
+    override var type = this as PyType  // no clue why this needs casting
+
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY
 
     // prevents errors
     override val parentTypes: MutableList<PyType> = mutableListOf(this)
 
-    override val initialDict: Map<String, PyObject> =
-        mutableMapOf(
-            "__getattribute__" to ObjectGetattribute,
-            "__dir__" to ObjectDir
-        )
 }

@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -49,15 +48,11 @@ object PyIntType : PyType("int") {
                 }
             }
             else -> {
-                val intMagic = value.specialMethodLookup("__int__")
+                val intMagic = value.magicSlots.nameToMagicMethodBound(value, "__int__")
                     ?: Exceptions.TYPE_ERROR(
                         "int() argument must be a string, a bytes-like object, " +
                             "or a number, not '${value.type.name}'"
                     ).throwKy()
-
-                if (intMagic !is PyCallable) {
-                    Exceptions.TYPE_ERROR("__int__ is not callable").throwKy()
-                }
 
                 // type(value).__int__(value)
                 return intMagic.runCallable(listOf(value))
