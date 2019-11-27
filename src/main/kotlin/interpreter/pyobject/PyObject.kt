@@ -135,10 +135,7 @@ abstract class PyObject() {
      */
     open fun pyGetAttribute(name: String): PyObject {
         // try and find a magic method
-        val magicMethod = magicSlots.nameToMagicMethodBound(this, name)
-        if (magicMethod != null) {
-            return magicMethod as PyObject
-        }
+        magicSlots.nameToMagicMethodBound(this, name)?.let { return it as PyObject }
 
         val getAttribute = magicSlots.tpGetAttribute as PyFunction
         val bound = getAttribute.pyDescriptorGet(this, type) as PyCallable
@@ -195,5 +192,8 @@ abstract class PyObject() {
      * The internal [`__dict__`][PyDict] of this object, wrapped. This corresponds to `__dict__`.
      */
     val pyDict: PyDict
-        get() = PyDict(internalDict.mapKeys { PyString(it.key) }.toMutableMap() as LinkedHashMap)
+        get() {
+            val mapTo = LinkedHashMap<PyString, PyObject>(internalDict.size)
+            return PyDict(internalDict.mapKeysTo(mapTo) { PyString(it.key) })
+        }
 }
