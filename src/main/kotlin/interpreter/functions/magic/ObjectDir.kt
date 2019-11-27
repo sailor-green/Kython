@@ -26,7 +26,7 @@ import green.sailor.kython.interpreter.pyobject.PyTuple
 /**
  * Represents the default `__dir__` on objects.
  */
-object ObjectDir : PyBuiltinFunction("<object.__dir__>") {
+class ObjectDir : PyBuiltinFunction("<object.__dir__>") {
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {

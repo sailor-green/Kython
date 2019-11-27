@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.kyobject.KyMagicMethods
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -50,6 +51,8 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
             "kwargs" to ArgType.KEYWORD_STAR
         )
     }
+
+    override val magicSlots: KyMagicMethods = KyMagicMethods(bound = false)
 
     override fun createFrame(): StackFrame = builtinFunctionWrapper.createFrame()
 

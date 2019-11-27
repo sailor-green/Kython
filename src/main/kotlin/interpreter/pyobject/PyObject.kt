@@ -18,9 +18,9 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.KyError
-import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
+import green.sailor.kython.interpreter.functions.PyFunction
 import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.kyobject.KyMagicMethods
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.throwKy
@@ -70,7 +70,15 @@ abstract class PyObject() {
         this.type = type
     }
 
-    // attribs
+    // internal attribs
+
+    /**
+     * The magic slots for this PyObject.
+     * Bound should be true on regular instances, and false on types.
+     */
+    open val magicSlots = KyMagicMethods(bound=true)
+
+    // exposed attribs
     /** The type of this PyObject. */
     open var type: PyType = PyRootType
 
@@ -109,31 +117,26 @@ abstract class PyObject() {
      * @param name: The name of the attribute to get.
      */
     open fun pyGetAttribute(name: String): PyObject {
-        // this will delegate to `__getattribute__`,
-
-        // try and run __getattribute__
-        val getAttribute = try {
-            ObjectGetattribute.runCallable(
-                listOf(PyString("__getattribute__"), this)
-            )
-        } catch (e: KyError) {
-            ObjectGetattribute.pyDescriptorGet(this, type)
+        // try and find a magic method
+        val magicMethod = magicSlots.nameToMagicMethodBound(this, name)
+        if (magicMethod != null) {
+            return magicMethod as PyObject
         }
 
-        if (getAttribute !is PyCallable) {
-            Exceptions.TYPE_ERROR("__getattribute__ is not callable").throwKy()
-        }
-
-        return getAttribute.runCallable(listOf(PyString(name)))
+        val getAttribute = magicSlots.tpGetAttribute as PyFunction
+        val fn = if (magicSlots.bound) {
+            getAttribute.pyDescriptorGet(this, type)
+        } else {
+            getAttribute.pyDescriptorGet(PyNone, type)
+        } as PyCallable
+        return fn.runCallable(listOf(PyString(name)))
     }
 
     /**
-     * Performs special method lookup.
      *
-     * @return A [PyObject]? for the special method found, or null if it wasn't found.
      */
-    open fun specialMethodLookup(name: String): PyObject? {
-        return type.internalDict[name]?.pyDescriptorGet(this, type)
+    open fun pyDir(): PyTuple {
+        TODO()
     }
 
     // == Descriptors ==
@@ -186,11 +189,5 @@ abstract class PyObject() {
      * The internal [`__dict__`][PyDict] of this object, wrapped. This corresponds to `__dict__`.
      */
     val pyDict: PyDict
-        get() {
-            return PyDict(internalDict.mapKeys {
-                PyString(
-                    it.key
-                )
-            }.toMutableMap() as LinkedHashMap)
-        }
+        get() = PyDict(internalDict.mapKeys { PyString(it.key) }.toMutableMap() as LinkedHashMap)
 }
