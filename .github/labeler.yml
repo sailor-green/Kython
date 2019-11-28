@@ -2,7 +2,7 @@
   - build.gradle.kts
   - gradlew.bat
   - gradlew
-  - gradle-properties
+  - gradle.properties
   - gradle/*
 "area: repo":
   - ./*
