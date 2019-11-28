@@ -1,17 +1,17 @@
-"c: gradle":
+"area: gradle":
   - build.gradle.kts
   - gradlew.bat
   - gradlew
   - gradle-properties
   - gradle/*
-"c: repo":
+"area: repo":
   - ./*
 # PRs about instructions or the StackFrame.
-"c: bytecode":
+"area: bytecode":
   # Double ** because I'm lazy.
   - src/**/UserCodeStackFrame.kt
   - src/**/instruction/*
 # PRs about the interpreter
-"c: builtins":
+"area: builtins":
   - src/**/interpreter/pyobject/*
   - src/**/interpreter/pyobject/**/*
