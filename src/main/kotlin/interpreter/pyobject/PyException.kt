@@ -53,7 +53,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
 
         override var type: PyType
             get() = PyRootType
-            set(value) = error("Cannot set the type of this object")
+            set(_) = error("Cannot set the type of this object")
     }
 
     companion object {
@@ -82,7 +82,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
 
                         override var type: PyType
                             get() = innerClassType
-                            set(value) {}
+                            set(_) {}
                     }
                     return instance
                 }

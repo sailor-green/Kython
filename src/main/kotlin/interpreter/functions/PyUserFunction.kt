@@ -84,7 +84,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
 
     override var type: PyType
         get() = PyUserFunctionType
-        set(value) = error("Cannot set the type of this object")
+        set(_) = error("Cannot set the type of this object")
 
     /**
      * Generates a [PyCallableSignature] for this function.

@@ -35,7 +35,7 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
 
     override var type: PyType
         get() = PyBytesType
-        set(value) = error("Cannot change the type of this object")
+        set(_) = error("Cannot change the type of this object")
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

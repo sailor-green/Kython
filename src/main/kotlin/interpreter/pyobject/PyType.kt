@@ -68,5 +68,5 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
 
     override var type: PyType
         get() = PyRootType
-        set(value) = error("Cannot set the type of this object")
+        set(_) = error("Cannot set the type of this object")
 }
