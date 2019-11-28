@@ -1,0 +1,17 @@
+gradle:
+  - build.gradle.kts
+  - gradlew.bat
+  - gradlew
+  - gradle-properties
+  - gradle/*
+"c: repo":
+  - ./*
+# PRs about instructions or the StackFrame.
+"c: bytecode":
+  # Double ** because I'm lazy.
+  - src/**/UserCodeStackFrame.kt
+  - src/**/instruction/*
+# PRs about the interpreter
+"c: builtins":
+  - src/**/interpreter/pyobject/*
+  - src/**/interpreter/pyobject/**/*
