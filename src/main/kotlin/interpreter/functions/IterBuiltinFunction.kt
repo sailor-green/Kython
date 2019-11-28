@@ -40,6 +40,6 @@ class IterBuiltinFunction : PyBuiltinFunction("iter") {
         if (iter !is PyCallable) {
             Exceptions.TYPE_ERROR("__iter__ is not callable").throwKy()
         }
-        return iter.runCallable(if (sentinel == null) listOf(obb) else listOf(obb, sentinel))
+        return iter.runCallable(if (sentinel == null) listOf() else listOf(sentinel))
     }
 }

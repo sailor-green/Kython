@@ -64,12 +64,26 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             DELETE_SUBSCR
         }
 
+        enum class UnaryOp {
+            POSITIVE,
+            NEGATIVE,
+            INVERT,
+            NOT
+        }
+
         enum class BuildType {
             TUPLE,
             DICT,
             LIST,
             SET,
             STRING,
+        }
+
+        object FunctionFlags {
+            val POSITIONAL_DEFAULT = 1
+            val KEYWORD_DEFAULT = 2
+            val ANNOTATIONS = 4
+            val FREEVARS = 8
         }
     }
 
@@ -100,7 +114,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * Utility function for calling magic methods
      */
-    fun magicMethod(obj: PyObject, magicName: String, param: PyObject?) {
+    @JvmOverloads
+    fun magicMethod(obj: PyObject, magicName: String, param: PyObject? = null) {
         val fn = obj.pyGetAttribute(magicName)
         if (fn !is PyCallable) {
             Exceptions.TYPE_ERROR("'${obj.type.name}'.$magicName is not callable.").throwKy()
@@ -109,7 +124,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         stack.push(result)
     }
 
-    fun magicMethod(obj: PyObject, magicName: String) = magicMethod(obj, magicName, null)
     fun magicMethod(obj: PyObject, magicName: String, param: PyObject, fallback: String) {
         try {
             magicMethod(obj, magicName, param)
@@ -217,14 +231,16 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.DUP_TOP_TWO -> dupTopTwo(param)
 
                     // Unary operations
-                    InstructionOpcode.UNARY_POSITIVE -> unaryPostive(param)
-                    InstructionOpcode.UNARY_NEGATIVE -> unaryNegative(param)
-                    InstructionOpcode.UNARY_NOT -> unaryNot(param)
-                    InstructionOpcode.UNARY_INVERT -> unaryInvert(param)
+                    InstructionOpcode.UNARY_POSITIVE -> unaryOp(UnaryOp.POSITIVE, param)
+                    InstructionOpcode.UNARY_NEGATIVE -> unaryOp(UnaryOp.NEGATIVE, param)
+                    InstructionOpcode.UNARY_NOT -> unaryOp(UnaryOp.NOT, param)
+                    InstructionOpcode.UNARY_INVERT -> unaryOp(UnaryOp.INVERT, param)
+
                     InstructionOpcode.GET_ITER -> getIter(param)
                     InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
 
                     InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
+
                     InstructionOpcode.COMPARE_OP -> compareOp(param)
                     else -> error("Unimplemented opcode $opcode")
                 }
@@ -330,16 +346,16 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
         val code = stack.pop()
         require(code is PyCodeObject) { "Function code was not a code object!" }
-        if (flags and 8 == 8) {
+        if (flags and FunctionFlags.FREEVARS != 0) {
             val freevarCellsTuple = stack.pop()
         }
-        if (flags and 4 == 4) {
+        if (flags and FunctionFlags.ANNOTATIONS != 0) {
             val annotationDict = stack.pop()
         }
-        if (flags and 2 == 2) {
+        if (flags and FunctionFlags.KEYWORD_DEFAULT != 0) {
             val kwOnlyParamDefaultDict = stack.pop()
         }
-        if (flags and 1 == 1) {
+        if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
             val positionalParamDefaultTuple = stack.pop()
         }
         val function = PyUserFunction(code.wrappedCodeObject)
@@ -353,14 +369,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * IMPORT_NAME
      */
     fun importName(arg: Byte) {
-        // TODO: Do import
-        val fromList = stack.pop()
-        val level = stack.pop()
-        val name = function.code.names[arg.toInt()]
-
-        // TODO: Create module and push to stack
-        stack.push(PyNone)
-        bytecodePointer += 1
+        TODO("Implement IMPORT_NAME")
     }
 
     /**
@@ -380,9 +389,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     fun importStar(arg: Byte) {
         val module = stack.pop()
 
-        // Assuming internalDict is __dir__
-        // TODO: Verify this and change if needed
-        module.internalDict.forEach {
+        module.pyDefaultDir().internalDict.forEach {
             if (!it.key.startsWith("_")) {
                 locals[it.key] = it.value
             }
@@ -495,6 +502,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             BinaryOp.OR -> "__or__"
             else -> error("This should never happen!")
         }
+        // Use __r to transform __add__ to __radd__, which is the inverse.
+        // If this does not exist (e.g. on getitem) it will be ignored.
         magicMethod(o1, magic, o2, "__r" + magic.substring(2))
         bytecodePointer += 1
     }
@@ -545,20 +554,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             8 -> stack.push(if (top.hashCode() == second.hashCode()) PyBool.TRUE else PyBool.FALSE)
             9 -> stack.push(if (top.hashCode() != second.hashCode()) PyBool.TRUE else PyBool.FALSE)
             10 -> TODO("exception match COMPARE_OP")
+            else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
         }
     }
 
     // Unary operators
     fun getYieldIter(param: Byte) {
-        val top = stack.pop()
-        // TODO: Generator/Coroutine check
-        if (false) {
-            stack.push(top)
-        } else {
-            val iter = IterBuiltinFunction().callFunction(mapOf("obb" to top))
-            stack.push(iter)
-        }
-        bytecodePointer += 1
+        TODO("Implement GET_YIELD_ITER")
     }
 
     fun getIter(param: Byte) {
@@ -567,29 +569,24 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         bytecodePointer += 1
     }
 
-    fun unaryInvert(param: Byte) {
+    fun unaryOp(type: UnaryOp, param: Byte){
         val top = stack.pop()
-        magicMethod(top, "__invert__")
-        bytecodePointer += 1
-    }
-
-    fun unaryNot(param: Byte) {
-        val top = stack.pop()
-        magicMethod(top, "__bool__")
-        val truthy = stack.pop() // magicMethod pushes to stack
-        stack.push(if (truthy == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
-        bytecodePointer += 1
-    }
-
-    fun unaryNegative(param: Byte) {
-        val top = stack.pop()
-        magicMethod(top, "__neg__")
-        bytecodePointer += 1
-    }
-
-    fun unaryPostive(param: Byte) {
-        val top = stack.pop()
-        magicMethod(top, "__pos__")
+        when (type) {
+            UnaryOp.INVERT -> {
+                magicMethod(top, "__invert__")
+            }
+            UnaryOp.NOT -> {
+                magicMethod(top, "__bool__")
+                val truthy = stack.pop() // magicMethod pushes to stack
+                stack.push(if (truthy == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+            }
+            UnaryOp.NEGATIVE -> {
+                magicMethod(top, "__neg__")
+            }
+            UnaryOp.POSITIVE -> {
+                magicMethod(top, "__pos__")
+            }
+        }
         bytecodePointer += 1
     }
 
