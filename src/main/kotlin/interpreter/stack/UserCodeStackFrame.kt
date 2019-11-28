@@ -329,10 +329,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
         val code = stack.pop()
         require(code is PyCodeObject) { "Function code was not a code object!" }
-        if (flags and 8 == 8){
+        if (flags and 8 == 8) {
             val freevarCellsTuple = stack.pop()
         }
-        if (flags and 4 == 4){
+        if (flags and 4 == 4) {
             val annotationDict = stack.pop()
         }
         if (flags and 2 == 2) {
@@ -494,7 +494,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             BinaryOp.OR -> "__or__"
             else -> error("This should never happen!")
         }
-        magicMethod(o1, magic, o2, "__r"+magic.substring(2))
+        magicMethod(o1, magic, o2, "__r" + magic.substring(2))
         bytecodePointer += 1
     }
 
