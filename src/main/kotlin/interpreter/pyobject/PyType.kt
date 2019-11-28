@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
@@ -68,5 +69,5 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
 
     override var type: PyType
         get() = PyRootType
-        set(_) = error("Cannot set the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 }

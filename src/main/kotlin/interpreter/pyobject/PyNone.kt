@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyNoneType
 
 /**
@@ -33,5 +34,5 @@ object PyNone : PyObject() {
 
     override var type: PyType
         get() = PyNoneType
-        set(_) = error("Cannot change the type of this value")
+        set(_) = Exceptions.invalidClassSet(this)
 }

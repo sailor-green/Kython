@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyBoolType
 
 /**
@@ -35,7 +36,7 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
 
     override var type: PyType
         get() = PyBoolType
-        set(_) = error("Cannot change the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 
     override fun getPyStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun getPyRepr(): PyString = getPyStr()

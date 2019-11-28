@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyIntType
 
 /**
@@ -41,5 +42,5 @@ class PyInt(val wrappedInt: Long) : PyObject() {
 
     override var type: PyType
         get() = PyIntType
-        set(_) = error("Cannot set the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 }

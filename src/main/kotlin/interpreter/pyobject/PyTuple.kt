@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 
 /**
@@ -40,5 +41,5 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
 
     override var type: PyType
         get() = PyTupleType
-        set(_) = error("Cannot set the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 }

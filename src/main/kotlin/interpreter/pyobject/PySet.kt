@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PySetType
 
 /**
@@ -32,5 +33,5 @@ class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
 
     override var type: PyType
         get() = PySetType
-        set(_) = error("Cannot set the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 }

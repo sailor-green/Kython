@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -53,7 +54,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
 
         override var type: PyType
             get() = PyRootType
-            set(_) = error("Cannot set the type of this object")
+            set(_) = Exceptions.invalidClassSet(this)
     }
 
     companion object {
