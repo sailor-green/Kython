@@ -31,5 +31,5 @@ class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
 
     override var type: PyType
         get() = TODO("not implemented")
-        set(value) {}
+        set(_) {}
 }

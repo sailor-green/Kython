@@ -40,5 +40,5 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
 
     override var type: PyType
         get() = PyTupleType
-        set(value) = error("Cannot set the type of this object")
+        set(_) = error("Cannot set the type of this object")
 }
