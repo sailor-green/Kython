@@ -1,4 +1,4 @@
-gradle:
+"c: gradle":
   - build.gradle.kts
   - gradlew.bat
   - gradlew
