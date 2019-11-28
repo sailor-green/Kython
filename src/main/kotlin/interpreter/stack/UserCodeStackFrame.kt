@@ -161,13 +161,15 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
 
                     // binary ops
-<<<<<<< HEAD
                     InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
                     InstructionOpcode.BINARY_POWER -> binaryOp(BinaryOp.POWER, param)
                     InstructionOpcode.BINARY_MULTIPLY -> binaryOp(BinaryOp.MULTIPLY, param)
-                    InstructionOpcode.BINARY_MATRIX_MULTIPLY -> binaryOp(BinaryOp.MATRIX_MULTIPLY, param)
-                    InstructionOpcode.BINARY_FLOOR_DIVIDE -> binaryOp(BinaryOp.FLOOR_DIVIDE, param)
-                    InstructionOpcode.BINARY_TRUE_DIVIDE -> binaryOp(BinaryOp.TRUE_DIVIDE, param)
+                    InstructionOpcode.BINARY_MATRIX_MULTIPLY ->
+                        binaryOp(BinaryOp.MATRIX_MULTIPLY, param)
+                    InstructionOpcode.BINARY_FLOOR_DIVIDE ->
+                        binaryOp(BinaryOp.FLOOR_DIVIDE, param)
+                    InstructionOpcode.BINARY_TRUE_DIVIDE ->
+                        binaryOp(BinaryOp.TRUE_DIVIDE, param)
                     InstructionOpcode.BINARY_MODULO -> binaryOp(BinaryOp.MODULO, param)
                     InstructionOpcode.BINARY_SUBTRACT -> binaryOp(BinaryOp.SUBTRACT, param)
                     InstructionOpcode.BINARY_SUBSCR -> binaryOp(BinaryOp.SUBSCR, param)
@@ -181,9 +183,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.INPLACE_ADD -> inplaceOp(BinaryOp.ADD, param)
                     InstructionOpcode.INPLACE_POWER -> inplaceOp(BinaryOp.POWER, param)
                     InstructionOpcode.INPLACE_MULTIPLY -> inplaceOp(BinaryOp.MULTIPLY, param)
-                    InstructionOpcode.INPLACE_MATRIX_MULTIPLY -> inplaceOp(BinaryOp.MATRIX_MULTIPLY, param)
-                    InstructionOpcode.INPLACE_FLOOR_DIVIDE -> inplaceOp(BinaryOp.FLOOR_DIVIDE, param)
-                    InstructionOpcode.INPLACE_TRUE_DIVIDE -> inplaceOp(BinaryOp.TRUE_DIVIDE, param)
+                    InstructionOpcode.INPLACE_MATRIX_MULTIPLY ->
+                        inplaceOp(BinaryOp.MATRIX_MULTIPLY, param)
+                    InstructionOpcode.INPLACE_FLOOR_DIVIDE ->
+                        inplaceOp(BinaryOp.FLOOR_DIVIDE, param)
+                    InstructionOpcode.INPLACE_TRUE_DIVIDE ->
+                        inplaceOp(BinaryOp.TRUE_DIVIDE, param)
                     InstructionOpcode.INPLACE_MODULO -> inplaceOp(BinaryOp.MODULO, param)
                     InstructionOpcode.INPLACE_SUBTRACT -> inplaceOp(BinaryOp.SUBTRACT, param)
                     InstructionOpcode.INPLACE_LSHIFT -> inplaceOp(BinaryOp.LSHIFT, param)
@@ -193,45 +198,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.INPLACE_OR -> inplaceOp(BinaryOp.OR, param)
                     InstructionOpcode.STORE_SUBSCR -> inplaceOp(BinaryOp.STORE_SUBSCR, param)
                     InstructionOpcode.DELETE_SUBSCR -> inplaceOp(BinaryOp.DELETE_SUBSCR, param)
-=======
-                    InstructionOpcode.BINARY_ADD -> this.binaryOp(BinaryOp.ADD, param)
-                    InstructionOpcode.BINARY_POWER -> this.binaryOp(BinaryOp.POWER, param)
-                    InstructionOpcode.BINARY_MULTIPLY -> this.binaryOp(BinaryOp.MULTIPLY, param)
-                    InstructionOpcode.BINARY_MATRIX_MULTIPLY ->
-                        this.binaryOp(BinaryOp.MATRIX_MULTIPLY, param)
-                    InstructionOpcode.BINARY_FLOOR_DIVIDE ->
-                        this.binaryOp(BinaryOp.FLOOR_DIVIDE, param)
-                    InstructionOpcode.BINARY_TRUE_DIVIDE ->
-                        this.binaryOp(BinaryOp.TRUE_DIVIDE, param)
-                    InstructionOpcode.BINARY_MODULO -> this.binaryOp(BinaryOp.MODULO, param)
-                    InstructionOpcode.BINARY_SUBTRACT -> this.binaryOp(BinaryOp.SUBTRACT, param)
-                    InstructionOpcode.BINARY_SUBSCR -> this.binaryOp(BinaryOp.SUBSCR, param)
-                    InstructionOpcode.BINARY_LSHIFT -> this.binaryOp(BinaryOp.LSHIFT, param)
-                    InstructionOpcode.BINARY_RSHIFT -> this.binaryOp(BinaryOp.RSHIFT, param)
-                    InstructionOpcode.BINARY_AND -> this.binaryOp(BinaryOp.AND, param)
-                    InstructionOpcode.BINARY_XOR -> this.binaryOp(BinaryOp.XOR, param)
-                    InstructionOpcode.BINARY_OR -> this.binaryOp(BinaryOp.OR, param)
-
-                    // inplace binary ops
-                    InstructionOpcode.INPLACE_ADD -> this.inplaceOp(BinaryOp.ADD, param)
-                    InstructionOpcode.INPLACE_POWER -> this.inplaceOp(BinaryOp.POWER, param)
-                    InstructionOpcode.INPLACE_MULTIPLY -> this.inplaceOp(BinaryOp.MULTIPLY, param)
-                    InstructionOpcode.INPLACE_MATRIX_MULTIPLY ->
-                        this.inplaceOp(BinaryOp.MATRIX_MULTIPLY, param)
-                    InstructionOpcode.INPLACE_FLOOR_DIVIDE ->
-                        this.inplaceOp(BinaryOp.FLOOR_DIVIDE, param)
-                    InstructionOpcode.INPLACE_TRUE_DIVIDE ->
-                        this.inplaceOp(BinaryOp.TRUE_DIVIDE, param)
-                    InstructionOpcode.INPLACE_MODULO -> this.inplaceOp(BinaryOp.MODULO, param)
-                    InstructionOpcode.INPLACE_SUBTRACT -> this.inplaceOp(BinaryOp.SUBTRACT, param)
-                    InstructionOpcode.INPLACE_LSHIFT -> this.inplaceOp(BinaryOp.LSHIFT, param)
-                    InstructionOpcode.INPLACE_RSHIFT -> this.inplaceOp(BinaryOp.RSHIFT, param)
-                    InstructionOpcode.INPLACE_AND -> this.inplaceOp(BinaryOp.AND, param)
-                    InstructionOpcode.INPLACE_XOR -> this.inplaceOp(BinaryOp.XOR, param)
-                    InstructionOpcode.INPLACE_OR -> this.inplaceOp(BinaryOp.OR, param)
-                    InstructionOpcode.STORE_SUBSCR -> this.inplaceOp(BinaryOp.STORE_SUBSCR, param)
-                    InstructionOpcode.DELETE_SUBSCR -> this.inplaceOp(BinaryOp.DELETE_SUBSCR, param)
->>>>>>> Lint code
 
                     // fundamentally the same thing.
                     InstructionOpcode.CALL_METHOD -> callFunction(param)
@@ -357,33 +323,17 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * MAKE_FUNCTION.
      */
     fun makeFunction(arg: Byte) {
-<<<<<<< HEAD
         val flags = arg.toInt()  // To use bitwise and
         val qualifiedName = stack.pop()
-=======
-        val flags = arg.toInt() // To use bitwise and
-
-        val qualifiedName = this.stack.pop()
->>>>>>> Lint code
         require(qualifiedName is PyString) { "Function qualified name was not string!" }
 
         val code = stack.pop()
         require(code is PyCodeObject) { "Function code was not a code object!" }
-
-<<<<<<< HEAD
-
         if (flags and 8 == 8){
             val freevarCellsTuple = stack.pop()
         }
         if (flags and 4 == 4){
             val annotationDict = stack.pop()
-=======
-        if (flags and 8 == 8) {
-            val freevarCellsTuple = this.stack.pop()
-        }
-        if (flags and 4 == 4) {
-            val annotationDict = this.stack.pop()
->>>>>>> Lint code
         }
         if (flags and 2 == 2) {
             val kwOnlyParamDefaultDict = stack.pop()
