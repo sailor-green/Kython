@@ -1,0 +1,27 @@
+name: Gradle Lint
+
+on:
+  push:
+    branches:
+      - master
+      - "3.*"
+
+  pull_request: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Java LTS
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11.0.x
+
+    - name: Make sure gradle is executablee
+      run: chmod +x ./gradlew
+
+    - name: Run spotlessCheck
+      run: ./gradlew spotlessCheck

@@ -1,0 +1,54 @@
+name: Gradle Build - Test - Dist
+
+on:
+  push:
+    branches:
+      - master
+      - "3.*"
+
+  pull_request: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # needs updates as appropriate
+        java: [11.0.x, 13]
+
+      # prevents different java version tests failing
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Java ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    - name: Install CPython 3.8
+      run: |
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt update
+        sudo apt install python3-pip python3.8 python3.8-venv python3.8-dev
+        sudo rm -f /usr/bin/python3
+        sudo ln -sv /usr/bin/python3.8 /usr/bin/python3
+
+    - name: Make sure gradle is executable
+      run: chmod +x ./gradlew
+
+    - name: Run gradle dependencies
+      run: ./gradlew dependencies
+
+    - name: Run tests
+      run: ./gradlew test
+
+    - name: Build distribution
+      run: ./gradlew distZip
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: Distributions
+        path: build/distributions
