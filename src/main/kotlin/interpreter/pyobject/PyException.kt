@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -49,6 +50,10 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         fun typeSubclassOf(name: String): PyExceptionType {
             return makeExceptionType(name, listOf(this))
         }
+
+        override var type: PyType
+            get() = PyRootType
+            set(value) = error("Cannot set the type of this object")
     }
 
     companion object {
@@ -68,12 +73,17 @@ abstract class PyException(val args: PyTuple) : PyObject() {
                 }
 
                 override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {
+                    // used to capture the outer this
+                    val innerClassType = this
                     val instance = object : PyException(PyTuple(args)) {
                         init {
                             parentTypes.addAll(bases)
                         }
+
+                        override var type: PyType
+                            get() = innerClassType
+                            set(value) {}
                     }
-                    instance.type = this
                     return instance
                 }
             }

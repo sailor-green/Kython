@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
  */
-class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
+class PyTuple(val subobjects: List<PyObject>) : PyObject() {
     companion object {
         /**
          * Represents the empty tuple.
@@ -37,4 +37,8 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
     }
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = PyTupleType
+        set(value) = error("Cannot set the type of this object")
 }

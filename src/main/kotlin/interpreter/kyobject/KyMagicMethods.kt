@@ -37,13 +37,9 @@ class KyMagicMethods(val bound: Boolean) {
     // these will *never* be null.
 
     // __getattribute__
-    val tpGetAttribute: PyCallable by lazy {
-        ObjectGetattribute()
-    }
+    val tpGetAttribute: PyCallable = ObjectGetattribute
     // __dir__
-    val tpDir: PyCallable by lazy {
-        ObjectDir()
-    }
+    val tpDir: PyCallable = ObjectDir
 
     /**
      * Turns a magic method name into a magic method.

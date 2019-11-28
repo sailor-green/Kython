@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyStringType
 /**
  * Represents a Python string. This wraps a regular JVM string.
  */
-class PyString(val wrappedString: String) : PyObject(PyStringType) {
+class PyString(val wrappedString: String) : PyObject() {
     companion object {
         // some common strings
         val UNPRINTABLE =
@@ -46,4 +46,8 @@ class PyString(val wrappedString: String) : PyObject(PyStringType) {
     override fun hashCode(): Int {
         return wrappedString.hashCode()
     }
+
+    override var type: PyType
+        get() = PyStringType
+        set(_) = error("Cannot get the type of this value")
 }

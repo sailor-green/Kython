@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyDictType
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(PyDictType) {
+class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() {
     companion object {
         /** Represents the empty dict. */
         val EMPTY = PyDict(linkedMapOf())
@@ -47,6 +47,10 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject(Py
     }
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = PyDictType
+        set(_) = error("Cannot change the type of this object")
 
     /**
      * Gets an item from the internal dict.
