@@ -323,7 +323,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * MAKE_FUNCTION.
      */
     fun makeFunction(arg: Byte) {
-        val flags = arg.toInt()  // To use bitwise and
+        // toInt to use bitwise `and`
+        val flags = arg.toInt()
         val qualifiedName = stack.pop()
         require(qualifiedName is PyString) { "Function qualified name was not string!" }
 
