@@ -69,5 +69,5 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction() {
 
     override var type: PyType
         get() = PyBuiltinFunctionType
-        set(_) = error("Cannot set the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 }

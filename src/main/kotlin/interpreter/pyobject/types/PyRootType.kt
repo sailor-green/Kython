@@ -42,5 +42,5 @@ object PyRootType : PyType("type") {
 
     override var type: PyType
         get() = this
-        set(_) = error("Cannot set the type of this function")
+        set(_) = Exceptions.invalidClassSet(this)
 }

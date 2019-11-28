@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.types.PyMethodType
@@ -58,5 +59,5 @@ class PyMethod(
 
     override var type: PyType
         get() = PyMethodType
-        set(_) = error("Cannot change the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 }

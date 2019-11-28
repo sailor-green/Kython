@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyDictType
 
 /**
@@ -50,7 +51,7 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
 
     override var type: PyType
         get() = PyDictType
-        set(_) = error("Cannot change the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 
     /**
      * Gets an item from the internal dict.

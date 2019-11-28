@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 
 /**
@@ -36,5 +37,5 @@ class PyRootObjectInstance : PyObject() {
 
     override var type: PyType
         get() = PyRootObjectType
-        set(_) = error("Cannot change the type of this builtin")
+        set(_) = Exceptions.invalidClassSet(this)
 }

@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyBytesType
 
 /**
@@ -35,7 +36,7 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
 
     override var type: PyType
         get() = PyBytesType
-        set(_) = error("Cannot change the type of this object")
+        set(_) = Exceptions.invalidClassSet(this)
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

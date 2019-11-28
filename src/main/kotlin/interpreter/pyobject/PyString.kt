@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
 
 /**
@@ -49,5 +50,5 @@ class PyString(val wrappedString: String) : PyObject() {
 
     override var type: PyType
         get() = PyStringType
-        set(_) = error("Cannot get the type of this value")
+        set(_) = Exceptions.invalidClassSet(this)
 }
