@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyBytesType
 /**
  * Represents a Python bytes object. This wraps a regular JVM ByteArray.
  */
-class PyBytes(val wrapped: ByteArray) : PyObject(PyBytesType) {
+class PyBytes(val wrapped: ByteArray) : PyObject() {
     override fun getPyStr(): PyString = getPyRepr()
 
     override fun getPyRepr(): PyString {
@@ -32,6 +32,10 @@ class PyBytes(val wrapped: ByteArray) : PyObject(PyBytesType) {
         })
         return PyString("b${inner.getPyRepr().wrappedString}")
     }
+
+    override var type: PyType
+        get() = PyBytesType
+        set(value) = error("Cannot change the type of this object")
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

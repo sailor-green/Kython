@@ -28,4 +28,8 @@ class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
     }
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = TODO("not implemented")
+        set(value) {}
 }

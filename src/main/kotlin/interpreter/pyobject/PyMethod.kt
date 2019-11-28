@@ -28,7 +28,7 @@ import green.sailor.kython.interpreter.stack.StackFrame
 class PyMethod(
     val function: PyCallable,
     val instance: PyObject
-) : PyObject(PyMethodType), PyCallable {
+) : PyObject(), PyCallable {
 
     override fun runCallable(
         args: List<PyObject>,
@@ -55,4 +55,8 @@ class PyMethod(
     }
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = PyMethodType
+        set(_) = error("Cannot change the type of this object")
 }

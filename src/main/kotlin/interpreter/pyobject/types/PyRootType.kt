@@ -40,5 +40,7 @@ object PyRootType : PyType("type") {
             .throwKy()
     }
 
-    override var type: PyType = PyRootType
+    override var type: PyType
+        get() = this
+        set(_) = error("Cannot set the type of this function")
 }

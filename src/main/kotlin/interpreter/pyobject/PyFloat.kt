@@ -23,11 +23,15 @@ import green.sailor.kython.interpreter.pyobject.types.PyFloatType
  * Represents a Python float. This wraps a kotlin Double (CPython wraps a C double,
  * so we're consistent there).
  */
-class PyFloat(val wrapped: Double) : PyObject(PyFloatType) {
+class PyFloat(val wrapped: Double) : PyObject() {
     private val _floatStr by lazy {
         PyString(wrapped.toString())
     }
 
     override fun getPyStr(): PyString = _floatStr
     override fun getPyRepr(): PyString = _floatStr
+
+    override var type: PyType
+        get() = PyFloatType
+        set(_) = error("Cannot set the type for this object")
 }

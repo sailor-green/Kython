@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.functions.PyFunction
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.kyobject.KyMagicMethods
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
-import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.throwKy
 
 // initialdict:
@@ -34,7 +33,7 @@ import green.sailor.kython.interpreter.throwKy
 /**
  * Represents a Python object. Examples include an int, strings, et cetera, or user-defined objects.
  */
-abstract class PyObject() {
+abstract class PyObject {
     companion object {
         /**
          * Wraps a primitive type into a PyObject.
@@ -66,10 +65,6 @@ abstract class PyObject() {
             get() = linkedMapOf()
     }
 
-    constructor(type: PyType) : this() {
-        this.type = type
-    }
-
     // internal attribs
 
     /**
@@ -80,7 +75,7 @@ abstract class PyObject() {
 
     // exposed attribs
     /** The type of this PyObject. */
-    open var type: PyType = PyRootType
+    abstract var type: PyType
 
     /** The parent types of this PyObject. Exposed as `__bases__`. */
     open val parentTypes = mutableListOf<PyType>(PyRootObjectType)
