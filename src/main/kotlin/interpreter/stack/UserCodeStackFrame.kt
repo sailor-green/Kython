@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
-import green.sailor.kython.interpreter.functions.IterBuiltinFunction
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
@@ -84,6 +83,20 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val KEYWORD_DEFAULT = 2
             val ANNOTATIONS = 4
             val FREEVARS = 8
+        }
+
+        object CompareOp {
+            val LESS = 0
+            val LESS_EQUAL = 1
+            val GREATER = 2
+            val GREATER_EQUAL = 3
+            val EQUAL = 4
+            val NOT_EQUAL = 5
+            val CONTAINS = 6
+            val NOT_CONTAINS = 7
+            val IS = 8
+            val IS_NOT = 9
+            val EXCEPTION_MATCH = 10
         }
     }
 
@@ -536,40 +549,56 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         bytecodePointer += 1
     }
 
+    /**
+     * COMPARE_OP
+     */
     fun compareOp(arg: Byte) {
         val top = stack.pop()
         val second = stack.pop()
-        when (arg.toInt()) {
-            0 -> magicMethod(top, "__lt__", second, "__ge__")
-            1 -> magicMethod(top, "__le__", second, "__gt__")
-            2 -> magicMethod(top, "__gt__", second, "__le__")
-            3 -> magicMethod(top, "__ge__", second, "__lt__")
-            4 -> magicMethod(top, "__eq__", second, "__eq__")
-            5 -> magicMethod(top, "__ne__", second, "__ne__")
-            6 -> magicMethod(top, "__contains__", second)
-            7 -> {
-                magicMethod(top, "__contains__", second)
-                stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+        with(CompareOp) {
+            when (arg.toInt()) {
+                LESS -> magicMethod(top, "__lt__", second, "__ge__")
+                LESS_EQUAL -> magicMethod(top, "__le__", second, "__gt__")
+                GREATER -> magicMethod(top, "__gt__", second, "__le__")
+                GREATER_EQUAL -> magicMethod(top, "__ge__", second, "__lt__")
+                EQUAL -> magicMethod(top, "__eq__", second, "__eq__")
+                NOT_EQUAL -> magicMethod(top, "__ne__", second, "__ne__")
+                CONTAINS -> magicMethod(top, "__contains__", second)
+                NOT_CONTAINS -> {
+                    magicMethod(top, "__contains__", second)
+                    stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+                }
+                IS -> stack.push(
+                    if (top.hashCode() == second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+                IS_NOT -> stack.push(
+                    if (top.hashCode() != second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+                EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
+                else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
             }
-            8 -> stack.push(if (top.hashCode() == second.hashCode()) PyBool.TRUE else PyBool.FALSE)
-            9 -> stack.push(if (top.hashCode() != second.hashCode()) PyBool.TRUE else PyBool.FALSE)
-            10 -> TODO("exception match COMPARE_OP")
-            else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
         }
     }
 
     // Unary operators
+    /**
+     * GET_YIELD_ITER
+     */
     fun getYieldIter(param: Byte) {
         TODO("Implement GET_YIELD_ITER")
     }
 
+    /**
+     * GET_ITER
+     */
     fun getIter(param: Byte) {
         val top = stack.pop()
         magicMethod(top, "__iter__")
         bytecodePointer += 1
     }
 
-    fun unaryOp(type: UnaryOp, param: Byte){
+    /**
+     * UNARY_*
+     */
+    fun unaryOp(type: UnaryOp, param: Byte) {
         val top = stack.pop()
         when (type) {
             UnaryOp.INVERT -> {
