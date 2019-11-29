@@ -569,10 +569,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     magicMethod(top, "__contains__", second)
                     stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
                 }
-                IS -> stack.push(
-                    if (top.hashCode() == second.hashCode()) PyBool.TRUE else PyBool.FALSE)
-                IS_NOT -> stack.push(
-                    if (top.hashCode() != second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+                IS -> stack.push(if (top === second) PyBool.TRUE else PyBool.FALSE)
+                IS_NOT -> stack.push(if (top !== second) PyBool.TRUE else PyBool.FALSE)
                 EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
                 else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
             }
