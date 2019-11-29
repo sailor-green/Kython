@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
@@ -45,6 +46,28 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
         enum class BinaryOp {
             ADD,
+            POWER,
+            MULTIPLY,
+            MATRIX_MULTIPLY,
+            FLOOR_DIVIDE,
+            TRUE_DIVIDE,
+            MODULO,
+            SUBTRACT,
+            SUBSCR,
+            LSHIFT,
+            RSHIFT,
+            AND,
+            XOR,
+            OR,
+            STORE_SUBSCR,
+            DELETE_SUBSCR
+        }
+
+        enum class UnaryOp {
+            POSITIVE,
+            NEGATIVE,
+            INVERT,
+            NOT
         }
 
         enum class BuildType {
@@ -53,6 +76,27 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             LIST,
             SET,
             STRING,
+        }
+
+        object FunctionFlags {
+            const val POSITIONAL_DEFAULT = 1
+            const val KEYWORD_DEFAULT = 2
+            const val ANNOTATIONS = 4
+            const val FREEVARS = 8
+        }
+
+        object CompareOp {
+            const val LESS = 0
+            const val LESS_EQUAL = 1
+            const val GREATER = 2
+            const val GREATER_EQUAL = 3
+            const val EQUAL = 4
+            const val NOT_EQUAL = 5
+            const val CONTAINS = 6
+            const val NOT_CONTAINS = 7
+            const val IS = 8
+            const val IS_NOT = 9
+            const val EXCEPTION_MATCH = 10
         }
     }
 
@@ -81,6 +125,31 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     val lineNo: Int get() = function.code.getLineNumber(bytecodePointer)
 
     /**
+     * Utility function for calling magic methods
+     */
+    @JvmOverloads
+    fun magicMethod(obj: PyObject, magicName: String, param: PyObject? = null) {
+        val fn = obj.pyGetAttribute(magicName)
+        if (fn !is PyCallable) {
+            Exceptions.TYPE_ERROR("'${obj.type.name}'.$magicName is not callable.").throwKy()
+        }
+        val result = if (param != null) fn.runCallable(listOf(param)) else fn.runCallable(listOf())
+        stack.push(result)
+    }
+
+    fun magicMethod(obj: PyObject, magicName: String, param: PyObject, fallback: String) {
+        try {
+            magicMethod(obj, magicName, param)
+        } catch (e: KyError) {
+            try {
+                magicMethod(param, fallback, obj)
+            } catch (_: KyError) {
+                throw e
+            }
+        }
+    }
+
+    /**
      * Runs this stack frame, executing the function within.
      */
     override fun runFrame(kwargs: Map<String, PyObject>): PyObject {
@@ -98,6 +167,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             }
 
             // switch on opcode
+            // Reference: https://docs.python.org/3/library/dis.html#python-bytecode-instructions
             try {
                 when (nextInstruction.opcode) {
                     // load ops
@@ -119,10 +189,51 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                     // binary ops
                     InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
+                    InstructionOpcode.BINARY_POWER -> binaryOp(BinaryOp.POWER, param)
+                    InstructionOpcode.BINARY_MULTIPLY -> binaryOp(BinaryOp.MULTIPLY, param)
+                    InstructionOpcode.BINARY_MATRIX_MULTIPLY ->
+                        binaryOp(BinaryOp.MATRIX_MULTIPLY, param)
+                    InstructionOpcode.BINARY_FLOOR_DIVIDE ->
+                        binaryOp(BinaryOp.FLOOR_DIVIDE, param)
+                    InstructionOpcode.BINARY_TRUE_DIVIDE ->
+                        binaryOp(BinaryOp.TRUE_DIVIDE, param)
+                    InstructionOpcode.BINARY_MODULO -> binaryOp(BinaryOp.MODULO, param)
+                    InstructionOpcode.BINARY_SUBTRACT -> binaryOp(BinaryOp.SUBTRACT, param)
+                    InstructionOpcode.BINARY_SUBSCR -> binaryOp(BinaryOp.SUBSCR, param)
+                    InstructionOpcode.BINARY_LSHIFT -> binaryOp(BinaryOp.LSHIFT, param)
+                    InstructionOpcode.BINARY_RSHIFT -> binaryOp(BinaryOp.RSHIFT, param)
+                    InstructionOpcode.BINARY_AND -> binaryOp(BinaryOp.AND, param)
+                    InstructionOpcode.BINARY_XOR -> binaryOp(BinaryOp.XOR, param)
+                    InstructionOpcode.BINARY_OR -> binaryOp(BinaryOp.OR, param)
+
+                    // inplace binary ops
+                    InstructionOpcode.INPLACE_ADD -> inplaceOp(BinaryOp.ADD, param)
+                    InstructionOpcode.INPLACE_POWER -> inplaceOp(BinaryOp.POWER, param)
+                    InstructionOpcode.INPLACE_MULTIPLY -> inplaceOp(BinaryOp.MULTIPLY, param)
+                    InstructionOpcode.INPLACE_MATRIX_MULTIPLY ->
+                        inplaceOp(BinaryOp.MATRIX_MULTIPLY, param)
+                    InstructionOpcode.INPLACE_FLOOR_DIVIDE ->
+                        inplaceOp(BinaryOp.FLOOR_DIVIDE, param)
+                    InstructionOpcode.INPLACE_TRUE_DIVIDE ->
+                        inplaceOp(BinaryOp.TRUE_DIVIDE, param)
+                    InstructionOpcode.INPLACE_MODULO -> inplaceOp(BinaryOp.MODULO, param)
+                    InstructionOpcode.INPLACE_SUBTRACT -> inplaceOp(BinaryOp.SUBTRACT, param)
+                    InstructionOpcode.INPLACE_LSHIFT -> inplaceOp(BinaryOp.LSHIFT, param)
+                    InstructionOpcode.INPLACE_RSHIFT -> inplaceOp(BinaryOp.RSHIFT, param)
+                    InstructionOpcode.INPLACE_AND -> inplaceOp(BinaryOp.AND, param)
+                    InstructionOpcode.INPLACE_XOR -> inplaceOp(BinaryOp.XOR, param)
+                    InstructionOpcode.INPLACE_OR -> inplaceOp(BinaryOp.OR, param)
+                    InstructionOpcode.STORE_SUBSCR -> inplaceOp(BinaryOp.STORE_SUBSCR, param)
+                    InstructionOpcode.DELETE_SUBSCR -> inplaceOp(BinaryOp.DELETE_SUBSCR, param)
 
                     // fundamentally the same thing.
                     InstructionOpcode.CALL_METHOD -> callFunction(param)
                     InstructionOpcode.CALL_FUNCTION -> callFunction(param)
+
+                    // import ops
+                    InstructionOpcode.IMPORT_NAME -> importName(param)
+                    InstructionOpcode.IMPORT_FROM -> importFrom(param)
+                    InstructionOpcode.IMPORT_STAR -> importStar(param)
 
                     // stack ops
                     InstructionOpcode.POP_TOP -> popTop(param)
@@ -132,8 +243,18 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.DUP_TOP -> dupTop(param)
                     InstructionOpcode.DUP_TOP_TWO -> dupTopTwo(param)
 
+                    // Unary operations
+                    InstructionOpcode.UNARY_POSITIVE -> unaryOp(UnaryOp.POSITIVE, param)
+                    InstructionOpcode.UNARY_NEGATIVE -> unaryOp(UnaryOp.NEGATIVE, param)
+                    InstructionOpcode.UNARY_NOT -> unaryOp(UnaryOp.NOT, param)
+                    InstructionOpcode.UNARY_INVERT -> unaryOp(UnaryOp.INVERT, param)
+
+                    InstructionOpcode.GET_ITER -> getIter(param)
+                    InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
+
                     InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
 
+                    InstructionOpcode.COMPARE_OP -> compareOp(param)
                     else -> error("Unimplemented opcode $opcode")
                 }
             } catch (e: Throwable) {
@@ -231,15 +352,61 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * MAKE_FUNCTION.
      */
     fun makeFunction(arg: Byte) {
+        // toInt to use bitwise `and`
+        val flags = arg.toInt()
         val qualifiedName = stack.pop()
         require(qualifiedName is PyString) { "Function qualified name was not string!" }
 
         val code = stack.pop()
         require(code is PyCodeObject) { "Function code was not a code object!" }
-
+        if (flags and FunctionFlags.FREEVARS != 0) {
+            val freevarCellsTuple = stack.pop()
+        }
+        if (flags and FunctionFlags.ANNOTATIONS != 0) {
+            val annotationDict = stack.pop()
+        }
+        if (flags and FunctionFlags.KEYWORD_DEFAULT != 0) {
+            val kwOnlyParamDefaultDict = stack.pop()
+        }
+        if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
+            val positionalParamDefaultTuple = stack.pop()
+        }
         val function = PyUserFunction(code.wrappedCodeObject)
-        function.module = this.function.module
+        function.module = function.module
         stack.push(function)
+        bytecodePointer += 1
+    }
+
+    // Imports
+    /**
+     * IMPORT_NAME
+     */
+    fun importName(arg: Byte) {
+        TODO("Implement IMPORT_NAME")
+    }
+
+    /**
+     * IMPORT_FROM
+     */
+    fun importFrom(arg: Byte) {
+        val module = stack.last
+        val attrName = function.code.names[arg.toInt()]
+        val attr = module.pyGetAttribute(attrName)
+        stack.push(attr)
+        bytecodePointer += 1
+    }
+
+    /**
+     * IMPORT_STAR
+     */
+    fun importStar(arg: Byte) {
+        val module = stack.pop()
+
+        module.pyDefaultDir().internalDict.forEach {
+            if (!it.key.startsWith("_")) {
+                locals[it.key] = it.value
+            }
+        }
         bytecodePointer += 1
     }
 
@@ -329,15 +496,125 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * BINARY_* (ADD, etc)
      */
     fun binaryOp(type: BinaryOp, arg: Byte) {
-        when (type) {
-            BinaryOp.ADD -> {
-                // todo: __add__
-                val first = stack.pop() as PyInt
-                val second = stack.pop() as PyInt
-                stack.push(PyInt(first.wrappedInt + second.wrappedInt))
+        val o1 = stack.pop()
+        val o2 = stack.pop()
+        val magic = when (type) {
+            BinaryOp.ADD -> "__add__"
+            BinaryOp.LSHIFT -> "__lshift__"
+            BinaryOp.POWER -> "__pow__"
+            BinaryOp.MULTIPLY -> "__mul__"
+            BinaryOp.MATRIX_MULTIPLY -> "__matmul__"
+            BinaryOp.FLOOR_DIVIDE -> "__floordiv__"
+            BinaryOp.TRUE_DIVIDE -> "__truediv__"
+            BinaryOp.MODULO -> "__mod__"
+            BinaryOp.SUBTRACT -> "__sub__"
+            BinaryOp.SUBSCR -> "__getitem__"
+            BinaryOp.RSHIFT -> "__rshift__"
+            BinaryOp.AND -> "__and__"
+            BinaryOp.XOR -> "__xor__"
+            BinaryOp.OR -> "__or__"
+            else -> error("This should never happen!")
+        }
+        // Use __r to transform __add__ to __radd__, which is the inverse.
+        // If this does not exist (e.g. on getitem) it will be ignored.
+        magicMethod(o1, magic, o2, "__r" + magic.substring(2))
+        bytecodePointer += 1
+    }
+
+    /**
+     * INPLACE_*
+     */
+    fun inplaceOp(type: BinaryOp, arg: Byte) {
+        val o1 = stack.pop()
+        val o2 = stack.pop()
+        val magic = when (type) {
+            BinaryOp.ADD -> "__iadd__"
+            BinaryOp.LSHIFT -> "__ilshift__"
+            BinaryOp.POWER -> "__ipow__"
+            BinaryOp.MULTIPLY -> "__imul__"
+            BinaryOp.MATRIX_MULTIPLY -> "__imatmul__"
+            BinaryOp.FLOOR_DIVIDE -> "__ifloordiv__"
+            BinaryOp.TRUE_DIVIDE -> "__itruediv__"
+            BinaryOp.MODULO -> "__imod__"
+            BinaryOp.SUBTRACT -> "__isub__"
+            BinaryOp.SUBSCR -> "__igetitem__"
+            BinaryOp.RSHIFT -> "__irshift__"
+            BinaryOp.AND -> "__iand__"
+            BinaryOp.XOR -> "__ixor__"
+            BinaryOp.OR -> "__ior__"
+            BinaryOp.STORE_SUBSCR -> "__setitem__"
+            BinaryOp.DELETE_SUBSCR -> "__delitem__"
+        }
+        magicMethod(o1, magic, o2)
+        bytecodePointer += 1
+    }
+
+    /**
+     * COMPARE_OP
+     */
+    fun compareOp(arg: Byte) {
+        val top = stack.pop()
+        val second = stack.pop()
+        with(CompareOp) {
+            when (arg.toInt()) {
+                LESS -> magicMethod(top, "__lt__", second, "__ge__")
+                LESS_EQUAL -> magicMethod(top, "__le__", second, "__gt__")
+                GREATER -> magicMethod(top, "__gt__", second, "__le__")
+                GREATER_EQUAL -> magicMethod(top, "__ge__", second, "__lt__")
+                EQUAL -> magicMethod(top, "__eq__", second, "__eq__")
+                NOT_EQUAL -> magicMethod(top, "__ne__", second, "__ne__")
+                CONTAINS -> magicMethod(top, "__contains__", second)
+                NOT_CONTAINS -> {
+                    magicMethod(top, "__contains__", second)
+                    stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+                }
+                IS -> stack.push(
+                    if (top.hashCode() == second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+                IS_NOT -> stack.push(
+                    if (top.hashCode() != second.hashCode()) PyBool.TRUE else PyBool.FALSE)
+                EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
+                else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
             }
-            // Kept for future-proofing.
-            else -> TODO("Unsupported binary op $type")
+        }
+    }
+
+    // Unary operators
+    /**
+     * GET_YIELD_ITER
+     */
+    fun getYieldIter(param: Byte) {
+        TODO("Implement GET_YIELD_ITER")
+    }
+
+    /**
+     * GET_ITER
+     */
+    fun getIter(param: Byte) {
+        val top = stack.pop()
+        magicMethod(top, "__iter__")
+        bytecodePointer += 1
+    }
+
+    /**
+     * UNARY_*
+     */
+    fun unaryOp(type: UnaryOp, param: Byte) {
+        val top = stack.pop()
+        when (type) {
+            UnaryOp.INVERT -> {
+                magicMethod(top, "__invert__")
+            }
+            UnaryOp.NOT -> {
+                magicMethod(top, "__bool__")
+                val truthy = stack.pop() // magicMethod pushes to stack
+                stack.push(if (truthy == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+            }
+            UnaryOp.NEGATIVE -> {
+                magicMethod(top, "__neg__")
+            }
+            UnaryOp.POSITIVE -> {
+                magicMethod(top, "__pos__")
+            }
         }
         bytecodePointer += 1
     }
