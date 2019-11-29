@@ -17,12 +17,13 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
  */
-class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
+class PyTuple(val subobjects: List<PyObject>) : PyObject() {
     companion object {
         /**
          * Represents the empty tuple.
@@ -37,4 +38,8 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject(PyTupleType) {
     }
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = PyTupleType
+        set(_) = Exceptions.invalidClassSet(this)
 }

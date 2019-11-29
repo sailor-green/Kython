@@ -17,12 +17,13 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyNoneType
 
 /**
  * Represents the Python None.
  */
-object PyNone : PyObject(PyNoneType) {
+object PyNone : PyObject() {
 
     private val noneString =
         PyString("None")
@@ -30,4 +31,8 @@ object PyNone : PyObject(PyNoneType) {
     override fun getPyStr(): PyString = noneString
 
     override fun getPyRepr(): PyString = noneString
+
+    override var type: PyType
+        get() = PyNoneType
+        set(_) = Exceptions.invalidClassSet(this)
 }

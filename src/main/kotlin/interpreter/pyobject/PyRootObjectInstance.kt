@@ -17,12 +17,13 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 
 /**
  * Represents a root object instance (i.e. the result of doing `object()`).
  */
-class PyRootObjectInstance : PyObject(PyRootObjectType) {
+class PyRootObjectInstance : PyObject() {
     private val _cached: PyString
 
     init {
@@ -32,6 +33,9 @@ class PyRootObjectInstance : PyObject(PyRootObjectType) {
     }
 
     override fun getPyRepr(): PyString = getPyStr()
-
     override fun getPyStr(): PyString = _cached
+
+    override var type: PyType
+        get() = PyRootObjectType
+        set(_) = Exceptions.invalidClassSet(this)
 }

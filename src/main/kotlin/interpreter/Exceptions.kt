@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.pyobject.PyException
+import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**
  * A nice list of exceptions.
@@ -51,4 +52,8 @@ object Exceptions {
         "RuntimeError" to RUNTIME_ERROR,
         "NotImplementedError" to NOT_IMPLEMENTED_ERROR
     )
+
+    // helpers for common errors from builtins
+    fun invalidClassSet(parent: PyObject): Nothing =
+        TYPE_ERROR("Cannot set __class__ on object of type ${parent.type.name}").throwKy()
 }

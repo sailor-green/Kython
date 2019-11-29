@@ -17,12 +17,13 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyBoolType
 
 /**
  * Represents a Python boolean.
  */
-class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
+class PyBool private constructor(val wrapped: Boolean) : PyObject() {
     companion object {
         // The TRUE instance of this.
         val TRUE = PyBool(true)
@@ -32,6 +33,10 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject(PyBoolType) {
 
     private val cachedTrueString = PyString("True")
     private val cachedFalseString = PyString("False")
+
+    override var type: PyType
+        get() = PyBoolType
+        set(_) = Exceptions.invalidClassSet(this)
 
     override fun getPyStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun getPyRepr(): PyString = getPyStr()

@@ -17,11 +17,13 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.kyobject.KyMagicMethods
+import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -64,4 +66,8 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     override fun getPyStr(): PyString = _pyString
 
     override fun getPyRepr(): PyString = _pyString
+
+    override var type: PyType
+        get() = PyRootType
+        set(_) = Exceptions.invalidClassSet(this)
 }

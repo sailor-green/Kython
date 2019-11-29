@@ -37,7 +37,7 @@ import green.sailor.kython.interpreter.throwKy
  *
  * @param codeObject: The marshalled code object to transform into a real code object.
  */
-class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) {
+class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
@@ -81,6 +81,10 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction(PyUserFunctionType) 
     override fun getPyStr(): PyString = PyString("<user function ${code.codename}>")
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = PyUserFunctionType
+        set(_) = Exceptions.invalidClassSet(this)
 
     /**
      * Generates a [PyCallableSignature] for this function.

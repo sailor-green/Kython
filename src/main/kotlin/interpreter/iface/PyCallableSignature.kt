@@ -101,7 +101,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                                 "not a positional argument"
                         ).throwKy()
 
-                    else -> error("Unhandled ArgType $type passed.")
+                    ArgType.KEYWORD_STAR -> {}
                 }
             }
 

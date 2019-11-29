@@ -29,7 +29,7 @@ import green.sailor.kython.interpreter.throwKy
 /**
  * Represents a built-in function, such as print().
  */
-abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctionType) {
+abstract class PyBuiltinFunction(val name: String) : PyFunction() {
     companion object {
 
         /**
@@ -66,4 +66,8 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction(PyBuiltinFunctio
     abstract fun callFunction(kwargs: Map<String, PyObject>): PyObject
 
     override fun createFrame(): StackFrame = BuiltinStackFrame(this)
+
+    override var type: PyType
+        get() = PyBuiltinFunctionType
+        set(_) = Exceptions.invalidClassSet(this)
 }

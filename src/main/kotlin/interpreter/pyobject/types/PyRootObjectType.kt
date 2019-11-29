@@ -33,8 +33,6 @@ object PyRootObjectType : PyType("object") {
         return PyRootObjectInstance()
     }
 
-    override var type = this as PyType // no clue why this needs casting
-
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY
 
     // prevents errors

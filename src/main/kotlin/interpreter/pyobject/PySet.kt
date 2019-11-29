@@ -17,16 +17,21 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PySetType
 
 /**
  * Represents an ordered Python set.
  */
-class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject(PySetType) {
+class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
 
     override fun getPyStr(): PyString = PyString(
-        wrappedSet.joinToString(", ") { it.getPyRepr().wrappedString }
+        "{" + wrappedSet.joinToString(", ") { it.getPyRepr().wrappedString } + "}"
     )
 
     override fun getPyRepr(): PyString = getPyStr()
+
+    override var type: PyType
+        get() = PySetType
+        set(_) = Exceptions.invalidClassSet(this)
 }
