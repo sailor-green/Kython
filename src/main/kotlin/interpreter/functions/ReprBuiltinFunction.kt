@@ -15,24 +15,21 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.types.PyFloatType
+package green.sailor.kython.interpreter.functions
+
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**
- * Represents a Python float. This wraps a kotlin Double (CPython wraps a C double,
- * so we're consistent there).
+ * Represents the repr() builtin.
  */
-class PyFloat(val wrapped: Double) : PyObject() {
-    private val _floatStr by lazy {
-        PyString(wrapped.toString())
+class ReprBuiltinFunction : PyBuiltinFunction("repr") {
+    override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
+        val obb = kwargs["obb"] ?: error("Built-in signature mismatch")
+        return obb.pyGetRepr()
     }
 
-    override fun kyDefaultStr(): PyString = _floatStr
-    override fun kyDefaultRepr(): PyString = _floatStr
-
-    override var type: PyType
-        get() = PyFloatType
-        set(_) = Exceptions.invalidClassSet(this)
+    override val signature: PyCallableSignature = PyCallableSignature("obb" to ArgType.POSITIONAL)
 }

@@ -19,6 +19,8 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyFunction
+import green.sailor.kython.interpreter.functions.magic.ObjectRepr
+import green.sailor.kython.interpreter.functions.magic.ObjectStr
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.kyobject.KyMagicMethods
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
@@ -106,9 +108,21 @@ abstract class PyObject {
     }
 
     /**
+     * Binds a method to this PyObject if needed.
+     */
+    open fun bindMagicMethod(meth: PyCallable): PyCallable {
+        val parent = if (magicSlots.bound) this else PyNone
+        return (meth as PyObject).pyDescriptorGet(parent, type) as PyCallable
+    }
+
+    // ==== MAGIC METHODS: DEFAULTS ====
+    // These all represent "default" implementations for magic methods, if there's none specified 
+    // on the magic method listing.
+
+    /**
      * Implements the "default" dir behaviour, listing all attributes of this object.
      */
-    open fun pyDefaultDir(): PyTuple {
+    open fun kyDefaultDir(): PyTuple {
         val dirSet = mutableSetOf<String>().also { set ->
             set.addAll(magicSlots.createActiveMagicMethodList())
             set.addAll(type.internalDict.keys)
@@ -122,7 +136,23 @@ abstract class PyObject {
         return PyTuple(sorted.map { s -> PyString(s) })
     }
 
-    // `object.X` implementations
+    /**
+     * Implements the default `__str__` for this method.
+     */
+    abstract fun kyDefaultStr(): PyString
+
+    /**
+     * Implements the default `__repr__` for this method.
+     */
+    abstract fun kyDefaultRepr(): PyString
+
+
+    // ==== MAGIC METHODS: INTERFACES ====
+    // All these functions are delegates to the real magic methods.
+    // This is shorter than using ``someObb.magicSlots.tpMethod.runCallable(...)``
+    // They also implement default implementations.
+
+    // __getattribute__
     /**
      * Delegate for `LOAD_ATTR` on any object.
      *
@@ -135,6 +165,35 @@ abstract class PyObject {
         val getAttribute = magicSlots.tpGetAttribute as PyFunction
         val bound = getAttribute.pyDescriptorGet(this, type) as PyCallable
         return bound.runCallable(listOf(PyString(name)))
+    }
+
+    // == Strings ==
+    open fun pyGetStr(): PyString {
+        val strFn = magicSlots.tpStr
+        // we don't call default __str__
+        if ((strFn === ObjectStr && !magicSlots.bound) || strFn == null) {
+            return kyDefaultStr()
+        }
+
+        val result = bindMagicMethod(strFn).runCallable(listOf())
+        if (result !is PyString) {
+            TODO("error")
+        }
+        return result
+    }
+
+    open fun pyGetRepr(): PyString {
+        val strFn = magicSlots.tpRepr
+        // we don't call default __str__
+        if ((strFn === ObjectRepr && !magicSlots.bound) || strFn == null) {
+            return kyDefaultStr()
+        }
+
+        val result = bindMagicMethod(strFn).runCallable(listOf())
+        if (result !is PyString) {
+            TODO("error")
+        }
+        return result
     }
 
     // == Descriptors ==
@@ -161,22 +220,11 @@ abstract class PyObject {
         TODO()
     }
 
-    // == str() / repr() ==
-    /**
-     * Returns the [string representation][PyString] of str(). This corresponds to the `__str__` method.
-     */
-    abstract fun getPyStr(): PyString
-
-    /**
-     * Returns the [string representation][PyString] of repr(). This corresponds to the `__repr__` method.
-     */
-    abstract fun getPyRepr(): PyString
-
     /**
      * Gets the string of this object, safely. Used for exceptions, et al.
      */
     fun getPyStringSafe(): PyString = try {
-        getPyStr()
+        kyDefaultStr()
     } catch (e: Throwable) {
         PyString.UNPRINTABLE
     }

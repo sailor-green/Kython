@@ -29,6 +29,7 @@ import green.sailor.kython.interpreter.pyobject.types.*
 @Suppress("MemberVisibilityCanBePrivate")
 object Builtins {
     val PRINT = PrintBuiltinFunction()
+    val REPR = ReprBuiltinFunction()
     val LOCALS = LocalsBuiltinFunction()
     val DIR = DirBuiltinFunction()
     val ITER = IterBuiltinFunction()
@@ -54,6 +55,7 @@ object Builtins {
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
         "print" to PRINT,
+        "repr" to REPR,
         "locals" to LOCALS,
         "dir" to DIR,
         "iter" to ITER,

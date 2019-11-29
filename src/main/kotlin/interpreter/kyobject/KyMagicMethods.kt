@@ -19,6 +19,8 @@ package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.functions.magic.ObjectDir
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
+import green.sailor.kython.interpreter.functions.magic.ObjectRepr
+import green.sailor.kython.interpreter.functions.magic.ObjectStr
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -34,12 +36,20 @@ class KyMagicMethods(val bound: Boolean) {
     // TODO: This is very sparse right now.
 
     // == builtins with defaults == //
-    // these will *never* be null.
 
     // __getattribute__
-    val tpGetAttribute: PyCallable = ObjectGetattribute
+    var tpGetAttribute: PyCallable = ObjectGetattribute
     // __dir__
-    val tpDir: PyCallable = ObjectDir
+    var tpDir: PyCallable = ObjectDir
+
+    // __str__
+    var tpStr: PyCallable? = ObjectStr
+
+    // __repr__
+    val tpRepr: PyCallable? = ObjectRepr
+
+    // == builtins without defaults == //
+    // these can be null.
 
     /**
      * Turns a magic method name into a magic method.
@@ -48,6 +58,8 @@ class KyMagicMethods(val bound: Boolean) {
         return when (name) {
             "__getattribute__" -> tpGetAttribute
             "__dir__" -> tpDir
+            "__str__" -> tpStr
+            "__repr__" -> tpRepr
             else -> null
         }
     }
