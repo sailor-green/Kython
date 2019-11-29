@@ -146,7 +146,6 @@ abstract class PyObject {
      */
     abstract fun kyDefaultRepr(): PyString
 
-
     // ==== MAGIC METHODS: INTERFACES ====
     // All these functions are delegates to the real magic methods.
     // This is shorter than using ``someObb.magicSlots.tpMethod.runCallable(...)``
