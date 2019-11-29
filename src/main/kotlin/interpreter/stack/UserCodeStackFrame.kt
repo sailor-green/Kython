@@ -79,24 +79,24 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         }
 
         object FunctionFlags {
-            val POSITIONAL_DEFAULT = 1
-            val KEYWORD_DEFAULT = 2
-            val ANNOTATIONS = 4
-            val FREEVARS = 8
+            const val POSITIONAL_DEFAULT = 1
+            const val KEYWORD_DEFAULT = 2
+            const val ANNOTATIONS = 4
+            const val FREEVARS = 8
         }
 
         object CompareOp {
-            val LESS = 0
-            val LESS_EQUAL = 1
-            val GREATER = 2
-            val GREATER_EQUAL = 3
-            val EQUAL = 4
-            val NOT_EQUAL = 5
-            val CONTAINS = 6
-            val NOT_CONTAINS = 7
-            val IS = 8
-            val IS_NOT = 9
-            val EXCEPTION_MATCH = 10
+            const val LESS = 0
+            const val LESS_EQUAL = 1
+            const val GREATER = 2
+            const val GREATER_EQUAL = 3
+            const val EQUAL = 4
+            const val NOT_EQUAL = 5
+            const val CONTAINS = 6
+            const val NOT_CONTAINS = 7
+            const val IS = 8
+            const val IS_NOT = 9
+            const val EXCEPTION_MATCH = 10
         }
     }
 
