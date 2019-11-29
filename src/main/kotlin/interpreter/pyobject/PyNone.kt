@@ -28,9 +28,9 @@ object PyNone : PyObject() {
     private val noneString =
         PyString("None")
 
-    override fun getPyStr(): PyString = noneString
+    override fun kyDefaultStr(): PyString = noneString
 
-    override fun getPyRepr(): PyString = noneString
+    override fun kyDefaultRepr(): PyString = noneString
 
     override var type: PyType
         get() = PyNoneType

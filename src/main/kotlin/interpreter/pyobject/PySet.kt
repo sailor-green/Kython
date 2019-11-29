@@ -25,11 +25,11 @@ import green.sailor.kython.interpreter.pyobject.types.PySetType
  */
 class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
 
-    override fun getPyStr(): PyString = PyString(
-        "{" + wrappedSet.joinToString(", ") { it.getPyRepr().wrappedString } + "}"
+    override fun kyDefaultStr(): PyString = PyString(
+        "{" + wrappedSet.joinToString(", ") { it.pyGetRepr().wrappedString } + "}"
     )
 
-    override fun getPyRepr(): PyString = getPyStr()
+    override fun kyDefaultRepr(): PyString = kyDefaultStr()
 
     override var type: PyType
         get() = PySetType

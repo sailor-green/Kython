@@ -40,14 +40,14 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
         }
     }
 
-    override fun getPyStr(): PyString {
+    override fun kyDefaultStr(): PyString {
         val joined = items.entries.joinToString {
-            it.key.getPyRepr().wrappedString + ": " + it.value.getPyRepr().wrappedString
+            it.key.pyGetRepr().wrappedString + ": " + it.value.pyGetRepr().wrappedString
         }
         return PyString("{$joined}")
     }
 
-    override fun getPyRepr(): PyString = getPyStr()
+    override fun kyDefaultRepr(): PyString = kyDefaultStr()
 
     override var type: PyType
         get() = PyDictType

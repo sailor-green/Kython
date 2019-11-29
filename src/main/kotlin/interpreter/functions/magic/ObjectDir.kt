@@ -29,6 +29,6 @@ object ObjectDir : PyBuiltinFunction("<object.__dir__>") {
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["self"] ?: error("Built-in signature mismatch!")
-        return obb.pyDefaultDir()
+        return obb.kyDefaultDir()
     }
 }

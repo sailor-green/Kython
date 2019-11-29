@@ -38,6 +38,6 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
         get() = PyBoolType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun getPyStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
-    override fun getPyRepr(): PyString = getPyStr()
+    override fun kyDefaultStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
+    override fun kyDefaultRepr(): PyString = kyDefaultStr()
 }

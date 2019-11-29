@@ -402,7 +402,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     fun importStar(arg: Byte) {
         val module = stack.pop()
 
-        module.pyDefaultDir().internalDict.forEach {
+        // TODO: Use the real __dir__
+        module.kyDefaultDir().internalDict.forEach {
             if (!it.key.startsWith("_")) {
                 locals[it.key] = it.value
             }

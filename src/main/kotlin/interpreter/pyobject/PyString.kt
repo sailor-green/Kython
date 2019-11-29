@@ -30,8 +30,8 @@ class PyString(val wrappedString: String) : PyObject() {
             PyString("<unprintable>")
     }
 
-    override fun getPyStr(): PyString = this
-    override fun getPyRepr(): PyString = PyString("'$wrappedString'")
+    override fun kyDefaultStr(): PyString = this
+    override fun kyDefaultRepr(): PyString = PyString("'$wrappedString'")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
