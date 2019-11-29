@@ -88,10 +88,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         object CompareOp {
             const val LESS = 0
             const val LESS_EQUAL = 1
-            const val GREATER = 2
-            const val GREATER_EQUAL = 3
-            const val EQUAL = 4
-            const val NOT_EQUAL = 5
+            const val EQUAL = 2
+            const val NOT_EQUAL = 3
+            const val GREATER = 4
+            const val GREATER_EQUAL = 5
             const val CONTAINS = 6
             const val NOT_CONTAINS = 7
             const val IS = 8
