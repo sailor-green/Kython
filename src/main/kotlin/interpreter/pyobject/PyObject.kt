@@ -176,7 +176,7 @@ abstract class PyObject {
 
         val result = bindMagicMethod(strFn).runCallable(listOf())
         if (result !is PyString) {
-            TODO("error")
+            Exceptions.TYPE_ERROR("__str__ did not return a string").throwKy()
         }
         return result
     }
@@ -190,7 +190,7 @@ abstract class PyObject {
 
         val result = bindMagicMethod(strFn).runCallable(listOf())
         if (result !is PyString) {
-            TODO("error")
+            Exceptions.TYPE_ERROR("__repr__ did not return a string").throwKy()
         }
         return result
     }
