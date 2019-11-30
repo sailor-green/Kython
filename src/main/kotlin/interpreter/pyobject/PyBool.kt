@@ -29,6 +29,8 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
         val TRUE = PyBool(true)
         // The FALSE instance of this.
         val FALSE = PyBool(false)
+
+        fun get(b: Boolean) = if (b) TRUE else FALSE
     }
 
     private val cachedTrueString = PyString("True")
