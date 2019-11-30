@@ -20,7 +20,9 @@ package green.sailor.kython.interpreter
 import green.sailor.kython.interpreter.functions.*
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyNone
+import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.types.*
 
 /**
@@ -47,6 +49,8 @@ object Builtins {
     val FLOAT_TYPE = PyFloatType
     val NONE = PyNone
     val NONE_TYPE = PyNoneType
+    val NOT_IMPLEMENTED = PyNotImplemented
+    val NOT_IMPLEMENTED_TYPE = PyNotImplemented.PyNotImplementedType
     val TUPLE_TYPE = PyTupleType
     val DICT_TYPE = PyDictType
     val BOOL_TYPE = PyBoolType
@@ -73,6 +77,9 @@ object Builtins {
         "bytes" to BYTES_TYPE,
 
         // specials
-        "None" to NONE
+        "None" to NONE,
+        "True" to PyBool.TRUE,
+        "False" to PyBool.FALSE,
+        "NotImplemented" to PyNotImplemented
     ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
 }
