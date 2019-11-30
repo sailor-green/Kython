@@ -59,7 +59,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     override fun createFrame(): StackFrame = builtinFunctionWrapper.createFrame()
 
     private val _pyString by lazy {
-        PyString("<class $name>")
+        PyString("<class '$name'>")
     }
 
     // default impls
