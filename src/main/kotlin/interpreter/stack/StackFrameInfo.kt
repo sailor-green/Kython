@@ -62,7 +62,7 @@ abstract class StackFrameInfo {
                     buildString {
                         append("File ${function.code.filename}, ")
                         append("instruction idx ${frame.bytecodePointer}, ")
-                        append("line $lineNo, ")
+                        append("line ${lineNo + 1}, ")
                         append("in ${function.code.codename}\n")
                         append("    $sourceLine")
                     }

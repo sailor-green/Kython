@@ -145,7 +145,7 @@ object KythonInterpreter {
             val stacks = StackFrame.flatten(frame).reversed()
             stacks.forEach {
                 with(it.createStackFrameInfo()) {
-                    System.err.println("   " + tracebackString)
+                    System.err.println("   $tracebackString")
                     disassembly?.let { dis ->
                         System.err.println("Disassembly:\n$dis")
                     }
