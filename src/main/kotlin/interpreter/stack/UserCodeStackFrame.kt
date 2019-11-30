@@ -20,7 +20,6 @@ package green.sailor.kython.interpreter.stack
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.PyUserFunction
-import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
@@ -130,10 +129,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     @JvmOverloads
     fun magicMethod(obj: PyObject, magicName: String, param: PyObject? = null) {
         val fn = obj.pyGetAttribute(magicName)
-        if (fn !is PyCallable) {
+        if (!fn.kyIsCallable()) {
             Exceptions.TYPE_ERROR("'${obj.type.name}'.$magicName is not callable.").throwKy()
         }
-        val result = if (param != null) fn.runCallable(listOf(param)) else fn.runCallable(listOf())
+        val result = if (param != null) fn.pyCall(listOf(param)) else fn.pyCall(listOf())
         stack.push(result)
     }
 
@@ -338,12 +337,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         }
 
         val fn = stack.pop()
-        if (fn !is PyCallable) {
-            // todo
+        if (!fn.kyIsCallable()) {
             Exceptions.TYPE_ERROR("'${fn.type.name}' is not callable").throwKy()
         }
 
-        val result = fn.runCallable(toCallWith)
+        val result = fn.pyCall(toCallWith)
         stack.push(result)
         bytecodePointer += 1
     }

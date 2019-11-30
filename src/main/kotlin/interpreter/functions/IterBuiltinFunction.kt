@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.throwKy
@@ -37,9 +36,9 @@ class IterBuiltinFunction : PyBuiltinFunction("iter") {
         val obb = kwargs["obb"] ?: error("Built-in signature mismatch!")
         val sentinel = kwargs["sentinel"]
         val iter = obb.pyGetAttribute("__iter__")
-        if (iter !is PyCallable) {
+        if (!iter.kyIsCallable()) {
             Exceptions.TYPE_ERROR("__iter__ is not callable").throwKy()
         }
-        return iter.runCallable(if (sentinel == null) listOf() else listOf(sentinel))
+        return iter.pyCall(if (sentinel == null) listOf() else listOf(sentinel))
     }
 }

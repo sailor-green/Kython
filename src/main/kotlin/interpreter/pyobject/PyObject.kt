@@ -110,9 +110,19 @@ abstract class PyObject {
     /**
      * Binds a method to this PyObject if needed.
      */
-    open fun bindMagicMethod(meth: PyCallable): PyCallable {
+    open fun bindMagicMethod(meth: PyObject): PyObject {
         val parent = if (magicSlots.bound) this else PyNone
-        return (meth as PyObject).pyDescriptorGet(parent, type) as PyCallable
+        return meth.pyDescriptorGet(parent, type)
+    }
+
+    /**
+     * Checks if this type is callable. This will check for [PyCallable], or a valid `__call__`.
+     */
+    open fun kyIsCallable(): Boolean {
+        if (this is PyCallable) {
+            return true
+        }
+        return magicSlots.tpCall != null
     }
 
     // ==== MAGIC METHODS: DEFAULTS ====
@@ -159,11 +169,26 @@ abstract class PyObject {
      */
     open fun pyGetAttribute(name: String): PyObject {
         // try and find a magic method
-        magicSlots.nameToMagicMethodBound(this, name)?.let { return it as PyObject }
+        magicSlots.nameToMagicMethodBound(this, name)?.let { return it }
 
         val getAttribute = magicSlots.tpGetAttribute as PyFunction
         val bound = getAttribute.pyDescriptorGet(this, type) as PyCallable
         return bound.runCallable(listOf(PyString(name)))
+    }
+
+    // == __call__
+    open fun pyCall(
+        args: List<PyObject> = listOf(),
+        kwargs: Map<String, PyObject> = mapOf()
+    ): PyObject {
+        if (this is PyCallable) {
+            return runCallable(args)
+        }
+        val magicCall = magicSlots.nameToMagicMethodBound(this, "__call__")
+        if (magicCall == null || !magicCall.kyIsCallable()) {
+            Exceptions.TYPE_ERROR("This object is not callable").throwKy()
+        }
+        return magicCall.pyCall(args = args, kwargs = kwargs)
     }
 
     // == Strings ==
@@ -174,7 +199,7 @@ abstract class PyObject {
             return kyDefaultStr()
         }
 
-        val result = bindMagicMethod(strFn).runCallable(listOf())
+        val result = bindMagicMethod(strFn).pyCall(listOf())
         if (result !is PyString) {
             Exceptions.TYPE_ERROR("__str__ did not return a string").throwKy()
         }
@@ -188,7 +213,7 @@ abstract class PyObject {
             return kyDefaultStr()
         }
 
-        val result = bindMagicMethod(strFn).runCallable(listOf())
+        val result = bindMagicMethod(strFn).pyCall(listOf())
         if (result !is PyString) {
             Exceptions.TYPE_ERROR("__repr__ did not return a string").throwKy()
         }

@@ -34,11 +34,12 @@ object PyMethodType : PyType("method") {
         val function = kwargs["function"] ?: error("Built-in signature mismatch")
         val instance = kwargs["instance"] ?: error("Built-in signature mismatch")
 
-        if (function !is PyCallable) {
+        if (!function.kyIsCallable()) {
             Exceptions.TYPE_ERROR("Method first param must be a callable").throwKy()
         }
 
-        return PyMethod(function, instance)
+        // TODO
+        return PyMethod(function as PyCallable, instance)
     }
 
     override val signature: PyCallableSignature by lazy {

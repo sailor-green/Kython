@@ -55,7 +55,7 @@ object PyIntType : PyType("int") {
                     ).throwKy()
 
                 // type(value).__int__(value)
-                return intMagic.runCallable(listOf(value))
+                return intMagic.pyCall(listOf(value))
             }
         }
     }

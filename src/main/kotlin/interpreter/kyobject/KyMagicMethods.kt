@@ -21,7 +21,6 @@ import green.sailor.kython.interpreter.functions.magic.ObjectDir
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.functions.magic.ObjectRepr
 import green.sailor.kython.interpreter.functions.magic.ObjectStr
-import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 
@@ -38,28 +37,30 @@ class KyMagicMethods(val bound: Boolean) {
     // == builtins with defaults == //
 
     // __getattribute__
-    var tpGetAttribute: PyCallable = ObjectGetattribute
+    var tpGetAttribute: PyObject = ObjectGetattribute
     // __dir__
-    var tpDir: PyCallable = ObjectDir
+    var tpDir: PyObject = ObjectDir
 
     // __str__
-    var tpStr: PyCallable? = ObjectStr
+    var tpStr: PyObject? = ObjectStr
 
     // __repr__
-    val tpRepr: PyCallable? = ObjectRepr
+    val tpRepr: PyObject? = ObjectRepr
 
     // == builtins without defaults == //
     // these can be null.
+    var tpCall: PyObject? = null
 
     /**
      * Turns a magic method name into a magic method.
      */
-    fun nameToMagicMethod(name: String): PyCallable? {
+    fun nameToMagicMethod(name: String): PyObject? {
         return when (name) {
             "__getattribute__" -> tpGetAttribute
             "__dir__" -> tpDir
             "__str__" -> tpStr
             "__repr__" -> tpRepr
+            "__call__" -> tpCall
             else -> null
         }
     }
@@ -67,10 +68,10 @@ class KyMagicMethods(val bound: Boolean) {
     /**
      * Binds a magic method into a function, if binding is enabled.
      */
-    fun nameToMagicMethodBound(parent: PyObject, name: String): PyCallable? {
+    fun nameToMagicMethodBound(parent: PyObject, name: String): PyObject? {
         val meth = nameToMagicMethod(name) ?: return null
         val descriptorParent = if (bound) parent else PyNone
-        return (meth as PyObject).pyDescriptorGet(descriptorParent, parent.type) as PyCallable
+        return meth.pyDescriptorGet(descriptorParent, parent.type)
     }
 
     /**
@@ -82,10 +83,16 @@ class KyMagicMethods(val bound: Boolean) {
     @Suppress("UnnecessaryVariable")
     fun createActiveMagicMethodList(): List<String> {
         // these will always exist!
-        val initial = listOf(
+        val initial = mutableListOf(
             "__getattribute__",
-            "__dir__"
+            "__dir__",
+            "__str__",
+            "__repr__"
         )
+
+        if (tpCall != null) {
+            initial.add("__call__")
+        }
 
         // todo: other magic methods that could be set
         return initial
