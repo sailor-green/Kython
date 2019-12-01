@@ -10,11 +10,12 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.run_on }}
     strategy:
       matrix:
         # needs updates as appropriate
         java: [11.0.x, 13]
+        run_on: [windows-latest, ubuntu-latest, macos-latest]
 
 
       # prevents different java version tests failing
