@@ -19,7 +19,7 @@
 // gradle sucks!!!!!
 
 plugins {
-    kotlin("jvm") version "1.3.60"
+    kotlin("jvm") version "1.3.61"
     id("application")
     id("com.diffplug.gradle.spotless") version "3.26.0"
     id("jacoco")
