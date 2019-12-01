@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import java.nio.file.Path
 
 /**
  * Represents a Kython module. This is the internal working; this is exposed separately as a
@@ -28,7 +27,7 @@ import java.nio.file.Path
  * @param moduleFunction: The [PyUserFunction] that this module is built from.
  * @param path: The source code path this module is from.
  */
-class KyModule(val moduleFunction: PyUserFunction, val path: Path) {
+class KyModule(val moduleFunction: PyUserFunction, val filename: String) {
     /** The stack frame for this module's function. */
     val stackFrame = moduleFunction.createFrame() as UserCodeStackFrame
 

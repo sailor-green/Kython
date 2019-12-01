@@ -18,6 +18,7 @@
 package green.sailor.kython.util
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
+import green.sailor.kython.kyc.KycFile
 import green.sailor.kython.kyc.UnKyc
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -34,17 +35,15 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
         Files.copy(javaClass.classLoader.getResource("kyc.py").openStream(), kycPyPath)
     }
 
-    fun compile(path: Path): KyCodeObject {
+    fun executeCompiler(args: List<String>): KycFile {
         val builder = ProcessBuilder()
         builder.command(
             listOf(
                 cpythonPath,
                 "-I", // isolate cpython, not using user site or env vars,
                 "-S", // no site.py
-                kycPyPath.toAbsolutePath().toString(),
-                "--path",
-                path.toAbsolutePath().toString()
-            )
+                kycPyPath.toAbsolutePath().toString()
+            ) + args
         )
         builder.redirectError(ProcessBuilder.Redirect.INHERIT)
         val process = builder.start().also { it.waitFor() }
@@ -58,6 +57,22 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
         val ba = hex.chunked(2).map { it.toUpperCase().toInt(16).toByte() }.toByteArray()
         val buf = ByteBuffer.wrap(ba)
         buf.order(ByteOrder.LITTLE_ENDIAN)
-        return KyCodeObject(UnKyc.parseKycFile(buf).code)
+        return UnKyc.parseKycFile(buf)
+    }
+
+    /**
+     * Compiles from a path.
+     */
+    fun compile(path: Path): KyCodeObject {
+        val args = listOf("--path", path.toAbsolutePath().toString())
+        return KyCodeObject(executeCompiler(args).code)
+    }
+
+    /**
+     * Compiles from a string.
+     */
+    fun compile(data: String): KyCodeObject {
+        val args = listOf("--code", data)
+        return KyCodeObject(executeCompiler(args).code)
     }
 }

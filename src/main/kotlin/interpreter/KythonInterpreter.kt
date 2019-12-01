@@ -57,18 +57,29 @@ object KythonInterpreter {
     fun getCurrentFrameForThisThread(): StackFrame = currentStackFrameLocal.get()
 
     /**
-     * The main entry point for the interpreter.
+     * Runs Python code from a file.
      */
     fun runPythonFromPath(path: Path) {
-        val fn = this.cpyInterface.compile(path)
+        val fn = cpyInterface.compile(path)
 
-        // todo: make this work properly
         val rootFunction = PyUserFunction(fn)
-        val module = KyModule(rootFunction, path)
-        this.modules["__main__"] = module
+        val module = KyModule(rootFunction, path.toString())
+        modules["__main__"] = module
 
-        // todo: wrap this
-        this.kickoffThread(module.stackFrame, child = false)
+        kickoffThread(module.stackFrame, child = false)
+    }
+
+    /**
+     * Runs Python code from a string. Used for `-c` invocation.
+     */
+    fun runPythonFromString(s: String) {
+        val fn = cpyInterface.compile(s)
+
+        val rootFunction = PyUserFunction(fn)
+        val module = KyModule(rootFunction, "<code>")
+        modules["__main__"] = module
+
+        kickoffThread(module.stackFrame, child = false)
     }
 
     /**
@@ -79,7 +90,8 @@ object KythonInterpreter {
      * @param sourcePath: The source path for the module.
      */
     fun buildModule(moduleFunction: PyUserFunction, sourcePath: Path): KyModule {
-        return KyModule(moduleFunction, sourcePath).also { runStackFrame(it.stackFrame, mapOf()) }
+        return KyModule(moduleFunction, sourcePath.toString())
+            .also { runStackFrame(it.stackFrame, mapOf()) }
     }
 
     /**
@@ -105,12 +117,23 @@ object KythonInterpreter {
     }
 
     /**
-     * Runs a python thread.
+     * Runs the root frame of a thread.
      */
-    fun runPythonThread(rootFrame: StackFrame) {
-        rootFrameLocal.set(rootFrame)
+    fun runRootFrame(frame: StackFrame): PyObject {
+        rootFrameLocal.set(frame)
+        val result = runStackFrame(frame, mapOf())
+        rootFrameLocal.remove()
+        return result
+    }
+
+    /**
+     * Wraps a root frame to handle otherwise unhandled KyErrors. Use [kickoffThread] instead if
+     * you're invoking the interpreter normally, and [runRootFrame] if you want to just invoke the
+     * interpreter.
+     */
+    fun wrapKythonThread(rootFrame: StackFrame) {
         try {
-            runStackFrame(rootFrame, mapOf())
+            runRootFrame(rootFrame)
         } catch (e: KyError) {
             // throw e  // used for debugging
             // bubbled error, means no user code handled it
@@ -135,7 +158,7 @@ object KythonInterpreter {
      */
     fun kickoffThread(frame: StackFrame, child: Boolean = true) {
         try {
-            runPythonThread(frame)
+            wrapKythonThread(frame)
         } catch (e: Throwable) { // blah blah, bad practice, who cares
 
             System.err.println("Fatal interpreter error!")
