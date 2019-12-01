@@ -19,6 +19,7 @@ package green.sailor.kython.test
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyString
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -27,6 +28,6 @@ class TestInterpreter {
     fun `Test basic assignment`() {
         val result = KythonInterpreter.testExec("result = \"Hello, world!\"")
         assertTrue(result is PyString)
-        assertTrue((result as PyString).wrappedString == "Hello, world!")
+        assertEquals((result as PyString).wrappedString, "Hello, world!")
     }
 }
