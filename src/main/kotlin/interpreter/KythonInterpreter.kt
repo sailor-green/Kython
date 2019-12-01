@@ -59,7 +59,7 @@ object KythonInterpreter {
     /**
      * The main entry point for the interpreter.
      */
-    fun runPython(path: Path) {
+    fun runPythonFromPath(path: Path) {
         val fn = this.cpyInterface.compile(path)
 
         // todo: make this work properly

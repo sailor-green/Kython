@@ -42,6 +42,7 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
                 "-I", // isolate cpython, not using user site or env vars,
                 "-S", // no site.py
                 kycPyPath.toAbsolutePath().toString(),
+                "--path",
                 path.toAbsolutePath().toString()
             )
         )
@@ -53,6 +54,7 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
         }
 
         val hex = process.inputStream.bufferedReader().readLine()
+            ?: error("Compiler returned nothing")
         val ba = hex.chunked(2).map { it.toUpperCase().toInt(16).toByte() }.toByteArray()
         val buf = ByteBuffer.wrap(ba)
         buf.order(ByteOrder.LITTLE_ENDIAN)
