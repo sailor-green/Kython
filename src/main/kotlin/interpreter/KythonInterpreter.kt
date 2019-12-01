@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.util.CPythonCompiler
+import java.nio.file.Files
 import java.nio.file.Path
 
 // todo: config params?
@@ -63,7 +64,7 @@ object KythonInterpreter {
         val fn = cpyInterface.compile(path)
 
         val rootFunction = PyUserFunction(fn)
-        val module = KyModule(rootFunction, path.toString())
+        val module = KyModule(rootFunction, path.toString(), Files.readAllLines(path))
         modules["__main__"] = module
 
         kickoffThread(module.stackFrame, child = false)
@@ -76,7 +77,7 @@ object KythonInterpreter {
         val fn = cpyInterface.compile(s)
 
         val rootFunction = PyUserFunction(fn)
-        val module = KyModule(rootFunction, "<code>")
+        val module = KyModule(rootFunction, "<code>", s.split(System.lineSeparator()))
         modules["__main__"] = module
 
         kickoffThread(module.stackFrame, child = false)
@@ -90,7 +91,7 @@ object KythonInterpreter {
      * @param sourcePath: The source path for the module.
      */
     fun buildModule(moduleFunction: PyUserFunction, sourcePath: Path): KyModule {
-        return KyModule(moduleFunction, sourcePath.toString())
+        return KyModule(moduleFunction, sourcePath.toString(), Files.readAllLines(sourcePath))
             .also { runStackFrame(it.stackFrame, mapOf()) }
     }
 

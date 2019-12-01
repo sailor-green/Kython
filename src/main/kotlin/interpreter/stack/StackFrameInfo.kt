@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
-import java.nio.file.Files
 import java.util.*
 
 /**
@@ -54,7 +53,7 @@ abstract class StackFrameInfo {
 
         override val tracebackString: String
             get() {
-                val sourceLines = Files.readAllLines(frame.function.module.path)
+                val sourceLines = frame.function.module.sourceLines
                 val lineNo = frame.lineNo
                 val sourceLine = sourceLines[lineNo].trimIndent()
 

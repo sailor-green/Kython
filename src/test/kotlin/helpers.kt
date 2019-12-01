@@ -15,29 +15,29 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package green.sailor.kython.interpreter.kyobject
+package green.sailor.kython.test
 
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**
- * Represents a Kython module. This is the internal working; this is exposed separately as a
- * PyObject to Python code.
+ * Helper used for test executions.
  *
- * @param moduleFunction: The [PyUserFunction] that this module is built from.
- * @param filename: The source code filename for this module, exposed as ` __file__`.
- * @param sourceLines: The source lines for this module.
+ * @param code: The code to run.
+ * @param args: Any locals that need to be in the function being ran.
  */
-class KyModule(val moduleFunction: PyUserFunction,
-               val filename: String,
-               val sourceLines: List<String>) {
-    /** The stack frame for this module's function. */
-    val stackFrame = moduleFunction.createFrame() as UserCodeStackFrame
-
-    /** The mapping of attributes of this module. */
-    val attribs = stackFrame.locals
-
-    init {
-        moduleFunction.module = this
+fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf()): PyObject {
+    val compiled = cpyInterface.compile(code)
+    val fn = PyUserFunction(compiled)
+    val frame = fn.createFrame()
+    if (frame !is UserCodeStackFrame) {
+        error("Frame isn't a user code frame, not sure what happened")
     }
+
+    // these functions won't return anything, they're exec()
+    // instead a `result` should be assigned to
+    runStackFrame(frame, args)
+    return frame.locals["result"] ?: error("No result assigned!")
 }
