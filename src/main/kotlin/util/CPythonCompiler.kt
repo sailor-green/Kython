@@ -22,14 +22,17 @@ import green.sailor.kython.kyc.KycFile
 import green.sailor.kython.kyc.UnKyc
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 
 /**
  * Represents the CPython compiler interface.
  */
-class CPythonCompiler() {
-    val cpythonExe = if (System.getProperty("os.name").startsWith("Windows")) {
+class CPythonCompiler {
+    private val isWindows = System.getProperty("os.name").startsWith("Windows")
+
+    val cpythonExe = if (isWindows) {
         "python.exe"
     } else {
         "python3.8"
@@ -78,7 +81,18 @@ class CPythonCompiler() {
      * Compiles from a string.
      */
     fun compile(data: String): KyCodeObject {
-        val args = listOf("--code", data)
-        return KyCodeObject(executeCompiler(args).code)
+        return if (!isWindows) {
+            val args = listOf("--code", data)
+            KyCodeObject(executeCompiler(args).code)
+        } else {
+            // windows requires a... different approach
+            val tmp = Files.createTempFile("kyc-windows-sucks", ".py")
+            Files.write(tmp, data.toByteArray(Charset.defaultCharset()))
+            val args = listOf("--path", tmp.toAbsolutePath().toString())
+            val result = KyCodeObject(executeCompiler(args).code)
+            Files.deleteIfExists(tmp)
+            result
+        }
     }
+
 }
