@@ -279,12 +279,12 @@ def main(mode: int):
         daemonise()
 
     elif mode == 1:
-        filename = sys.argv[2]
+        filename = " ".join(sys.argv[2:])
         output = compile_kyc_file(filename)
         print(output.hex())
 
     elif mode == 2:
-        code = sys.argv[2]
+        code = " ".join(sys.argv[2:])
         output = compile_kyc_code(code)
         print(output.hex())
 
