@@ -58,11 +58,11 @@ jobs:
       uses: actions/upload-artifact@v1
       if: always()
       with:
-        name: Reports
+        name: Reports - ${{ matrix.java }}-${{ matrix.run_on }}
         path: build/reports
 
     - name: Upload build files
       uses: actions/upload-artifact@v1
       with:
-        name: Distributions
+        name: Distributions - ${{ matrix.java }}-${{ matrix.run_on }}
         path: build/distributions
