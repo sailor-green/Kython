@@ -41,7 +41,7 @@ jobs:
       run: ./gradlew dependencies
 
     - name: Run tests
-      run: ./gradlew test
+      run: ./gradlew build test jacocoTestReport
 
     - name: Upload coverage
       uses: codecov/codecov-action@v1
