@@ -28,7 +28,13 @@ import java.nio.file.Path
 /**
  * Represents the CPython compiler interface.
  */
-class CPythonCompiler(val cpythonPath: String = "python3") {
+class CPythonCompiler() {
+    val cpythonExe = if (System.getProperty("os.name").startsWith("Windows")) {
+        "python.exe"
+    } else {
+        "python3.8"
+    }
+
     private val kycPyPath = Files.createTempDirectory("kython").resolve("kyc.py")
 
     init {
@@ -39,7 +45,7 @@ class CPythonCompiler(val cpythonPath: String = "python3") {
         val builder = ProcessBuilder()
         builder.command(
             listOf(
-                cpythonPath,
+                cpythonExe,
                 "-I", // isolate cpython, not using user site or env vars,
                 "-S", // no site.py
                 kycPyPath.toAbsolutePath().toString()

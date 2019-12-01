@@ -36,7 +36,7 @@ import java.nio.file.Path
  */
 object KythonInterpreter {
     /** The CPython compiler backend. */
-    val cpyInterface = CPythonCompiler("/usr/bin/python3")
+    val cpyInterface = CPythonCompiler()
 
     /** The root frame thread local storage for each thread. */
     val rootFrameLocal = ThreadLocal<StackFrame>()
