@@ -54,7 +54,14 @@ jobs:
     - name: Build distribution
       run: ./gradlew distZip
 
-    - name: Upload artifacts
+    - name: Upload reports
+      uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: Reports
+        path: build/reports
+
+    - name: Upload build files
       uses: actions/upload-artifact@v1
       with:
         name: Distributions
