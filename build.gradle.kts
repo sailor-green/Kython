@@ -19,20 +19,16 @@
 // gradle sucks!!!!!
 
 plugins {
-    kotlin("jvm") version "1.3.60"
+    kotlin("jvm") version "1.3.61"
     id("application")
-    // kotlin("kapt") version "1.3.50"
     id("com.diffplug.gradle.spotless") version "3.26.0"
+    id("jacoco")
 }
 
 group = "green.sailor"
 version = "3.8"
 
 repositories {
-    maven {
-        setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
-    }
-
     mavenCentral()
 }
 
@@ -78,6 +74,13 @@ tasks.test {
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
+    }
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = false
     }
 }
 

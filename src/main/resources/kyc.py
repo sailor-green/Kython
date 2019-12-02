@@ -111,6 +111,7 @@ def _compile_float(v: float) -> bytes:
     """
     # temporary!
     import struct
+
     return b"f" + struct.pack("<d", v)
 
 
@@ -125,18 +126,16 @@ def _compile_code_object(obb: types.CodeType) -> bytes:
         _compile_int(obb.co_nlocals),
         _compile_int(obb.co_stacksize),
         _compile_int(obb.co_flags),
-
         _compile_bytestring(obb.co_code),
         _compile_tuple(obb.co_consts),
         _compile_tuple(obb.co_names),
         _compile_tuple(obb.co_varnames),
         _compile_tuple(obb.co_freevars),
         _compile_tuple(obb.co_cellvars),
-
         _compile_unicode_string(obb.co_filename),
         _compile_unicode_string(obb.co_name),
         _compile_int(obb.co_firstlineno),
-        _compile_bytestring(obb.co_lnotab)
+        _compile_bytestring(obb.co_lnotab),
     ]
     return b"c" + b"".join(items)
 
@@ -169,9 +168,7 @@ def _compile_object(i: Any) -> bytes:
     raise ValueError(f"Unknown type {type(i)}")
 
 
-def compile_kyc(
-    path: str, ending: str = ".py", *, full_pathname: bool = False
-) -> bytes:
+def compile_kyc_file(path: str, ending: str = ".py", *, full_pathname: bool = False):
     """
     Compiles a file to kyc.
 
@@ -193,7 +190,16 @@ def compile_kyc(
         compiled_filename = path
     else:
         compiled_filename = last
-    compiled = compile(file_data, compiled_filename, "exec")
+
+    compiled = compile(file_data, compiled_filename, "exec", dont_inherit=True)
+    data = compile_kyc(compiled)
+    with open(first + path_sep + kyc_name, "wb") as f:
+        f.write(data)
+
+    return data
+
+
+def compile_kyc(compiled: types.CodeType) -> bytes:
     code_object = _compile_code_object(compiled)
 
     # Items:
@@ -218,11 +224,12 @@ def compile_kyc(
     ]
 
     b = b"".join(items)
-
-    with open(first + path_sep + kyc_name, "wb") as f:
-        f.write(b)
-
     return b
+
+
+def compile_kyc_code(code: str):
+    compiled = compile(code, "<exec>", "exec", dont_inherit=True)
+    return compile_kyc(compiled)
 
 
 def daemonise():
@@ -267,18 +274,25 @@ def daemonise():
             print(f"u")
 
 
-def main(daemon: bool):
-    if daemon:
+def main(mode: int):
+    if mode == 0:
         daemonise()
 
-    else:
-        filename = sys.argv[1]
-        output = compile_kyc(filename)
+    elif mode == 1:
+        filename = " ".join(sys.argv[2:])
+        output = compile_kyc_file(filename)
+        print(output.hex())
+
+    elif mode == 2:
+        code = " ".join(sys.argv[2:])
+        output = compile_kyc_code(code)
         print(output.hex())
 
 
 if __name__ == "__main__":
     if sys.argv[1] == "--daemon":
-        main(True)
-    else:
-        main(False)
+        main(0)
+    elif sys.argv[1] == "--path":
+        main(1)
+    elif sys.argv[1] == "--code":
+        main(2)

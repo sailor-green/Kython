@@ -10,11 +10,13 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.run_on }}
     strategy:
       matrix:
         # needs updates as appropriate
         java: [11.0.x, 13]
+        run_on: [windows-latest, ubuntu-latest, macos-latest]
+
 
       # prevents different java version tests failing
       fail-fast: false
@@ -28,12 +30,10 @@ jobs:
         java-version: ${{ matrix.java }}
 
     - name: Install CPython 3.8
-      run: |
-        sudo add-apt-repository ppa:deadsnakes/ppa
-        sudo apt update
-        sudo apt install python3-pip python3.8 python3.8-venv python3.8-dev
-        sudo rm -f /usr/bin/python3
-        sudo ln -sv /usr/bin/python3.8 /usr/bin/python3
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8.0
+        architecture: x64
 
     - name: Make sure gradle is executable
       run: chmod +x ./gradlew
@@ -42,13 +42,27 @@ jobs:
       run: ./gradlew dependencies
 
     - name: Run tests
-      run: ./gradlew test
+      run: ./gradlew build test jacocoTestReport
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: build/reports/jacoco/test/jacocoTestReport.xml
+        name: kython-java-${{ matrix.java }}
 
     - name: Build distribution
       run: ./gradlew distZip
 
-    - name: Upload artifacts
+    - name: Upload reports
+      uses: actions/upload-artifact@v1
+      if: always()
+      with:
+        name: Reports - ${{ matrix.java }}-${{ matrix.run_on }}
+        path: build/reports
+
+    - name: Upload build files
       uses: actions/upload-artifact@v1
       with:
-        name: Distributions
+        name: Distributions - ${{ matrix.java }}-${{ matrix.run_on }}
         path: build/distributions

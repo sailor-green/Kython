@@ -15,19 +15,19 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package green.sailor.kython
+package green.sailor.kython.test
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import java.nio.file.Paths
+import green.sailor.kython.interpreter.pyobject.PyString
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-/**
- * Main initialiser for Kython.
- */
-object MakeUp {
-    @JvmStatic
-    fun main(args: Array<String>) {
-
-        val file = args[0]
-        KythonInterpreter.runPythonFromPath(Paths.get(file).toAbsolutePath())
+class TestInterpreter {
+    @Test
+    fun `Test basic assignment`() {
+        val result = KythonInterpreter.testExec("result = \"Hello, world!\"")
+        assertTrue(result is PyString)
+        assertEquals((result as PyString).wrappedString, "Hello, world!")
     }
 }
