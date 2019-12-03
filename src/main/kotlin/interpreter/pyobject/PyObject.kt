@@ -157,7 +157,11 @@ abstract class PyObject {
     /**
      * Implements the default `__eq__` for this method.
      */
-    open fun kyDefaultEquals(other: PyObject): PyBool {
+    open fun kyDefaultEquals(other: PyObject): PyObject {
+        // todo: this probably needs to be a more correct check...
+        if (type != other.type) {
+            return PyNotImplemented
+        }
         return PyBool.get(this == other)
     }
 
