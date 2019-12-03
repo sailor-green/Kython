@@ -29,7 +29,8 @@ data class Instruction(val opcode: InstructionOpcode, val argument: Byte) {
     fun getDisassembly(frame: UserCodeStackFrame): String {
         var base = "${opcode.name} $argument "
         val iArg = argument.toInt()
-        // simple lookups
+
+        // look up a value in the three lists
         if (opcode.hasConst) {
             base += "(${frame.function.code.consts[iArg]}) "
         }
@@ -39,6 +40,18 @@ data class Instruction(val opcode: InstructionOpcode, val argument: Byte) {
         }
         if (opcode.hasLocal) {
             base += "(${frame.function.code.varnames[iArg]})"
+        }
+
+        // add a real idx field
+        if (opcode.hasAbsJump) {
+            val realIdx = argument.toUByte().toInt() / 2
+            base += "(instruction: $realIdx)"
+        }
+        if (opcode.hasRelJump) {
+            val realAmount = argument.toInt() / 2
+            val ourPos = frame.function.code.instructions.indexOf(this)
+            val realIdx = ourPos + realAmount + 1
+            base += "(instruction: $realIdx)"
         }
         return base
     }

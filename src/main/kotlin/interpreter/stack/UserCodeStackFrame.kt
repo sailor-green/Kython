@@ -242,6 +242,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.DUP_TOP -> dupTop(param)
                     InstructionOpcode.DUP_TOP_TWO -> dupTopTwo(param)
 
+                    // jump ops
+                    InstructionOpcode.JUMP_ABSOLUTE -> jumpAbsolute(param)
+                    InstructionOpcode.JUMP_FORWARD -> jumpForward(param)
+                    InstructionOpcode.POP_JUMP_IF_FALSE -> popJumpIf(param, false)
+                    InstructionOpcode.POP_JUMP_IF_TRUE -> popJumpIf(param, true)
+
                     // Unary operations
                     InstructionOpcode.UNARY_POSITIVE -> unaryOp(UnaryOp.POSITIVE, param)
                     InstructionOpcode.UNARY_NEGATIVE -> unaryOp(UnaryOp.NEGATIVE, param)
@@ -489,6 +495,36 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         }
 
         bytecodePointer += 1
+    }
+
+    /**
+     * JUMP_ABSOLUTE
+     */
+    fun jumpAbsolute(arg: Byte) {
+        // goes through unsigned so this is never set negative.
+        bytecodePointer = arg.toUByte().toInt() / 2
+    }
+
+    /**
+     * JUMP_FORWARD
+     */
+    fun jumpForward(arg: Byte) {
+        bytecodePointer += 1
+        bytecodePointer += arg.toInt() / 2
+    }
+
+    /**
+     * POP_JUMP_IF_X
+     */
+    fun popJumpIf(arg: Byte, compare: Boolean) {
+        val tos = stack.pop()
+        // TODO: `__bool__`
+        if ((tos as PyBool).wrapped == compare) {
+            bytecodePointer = arg.toInt() / 2
+        } else {
+            // move onto the next instruction
+            bytecodePointer += 1
+        }
     }
 
     /**
