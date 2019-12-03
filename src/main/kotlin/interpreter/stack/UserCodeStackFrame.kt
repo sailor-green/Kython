@@ -370,7 +370,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val positionalParamDefaultTuple = stack.pop()
         }
         val function = PyUserFunction(code.wrappedCodeObject)
-        function.module = function.module
+        function.module = this.function.module
         stack.push(function)
         bytecodePointer += 1
     }
