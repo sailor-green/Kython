@@ -19,8 +19,6 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyFunction
-import green.sailor.kython.interpreter.functions.magic.ObjectRepr
-import green.sailor.kython.interpreter.functions.magic.ObjectStr
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.kyobject.KyMagicMethods
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
@@ -156,6 +154,14 @@ abstract class PyObject {
      */
     abstract fun kyDefaultRepr(): PyString
 
+    /**
+     * Implements the default `__eq__` for this method.
+     */
+    open fun kyDefaultEquals(other: PyObject): PyBool {
+        // default === is identity check, needs to be overridden for subclasses
+        return PyBool.get(this === other)
+    }
+
     // ==== MAGIC METHODS: INTERFACES ====
     // All these functions are delegates to the real magic methods.
     // This is shorter than using ``someObb.magicSlots.tpMethod.runCallable(...)``
@@ -193,11 +199,10 @@ abstract class PyObject {
 
     // == Strings ==
     open fun pyGetStr(): PyString {
-        val strFn = magicSlots.tpStr
-        // we don't call default __str__
-        if ((strFn === ObjectStr && !magicSlots.bound) || strFn == null) {
-            return kyDefaultStr()
-        }
+        // default str/repr calls our default implementation
+        // so it's safe to call the builtin.
+        // at some point, may wish to change this...
+        val strFn = magicSlots.tpStr ?: return kyDefaultStr()
 
         val result = bindMagicMethod(strFn).pyCall(listOf())
         if (result !is PyString) {
@@ -207,15 +212,32 @@ abstract class PyObject {
     }
 
     open fun pyGetRepr(): PyString {
-        val strFn = magicSlots.tpRepr
-        // we don't call default __str__
-        if ((strFn === ObjectRepr && !magicSlots.bound) || strFn == null) {
-            return kyDefaultStr()
-        }
+        val strFn = magicSlots.tpRepr ?: return kyDefaultStr()
 
         val result = bindMagicMethod(strFn).pyCall(listOf())
         if (result !is PyString) {
             Exceptions.TYPE_ERROR("__repr__ did not return a string").throwKy()
+        }
+        return result
+    }
+
+    // == Comparison operators ==
+    // Note: These return PyObject because, well, `__eq__` can return anything.
+    // NotImplemented is translated directly into False.
+    // reverse signals to the other type that it's being asked to compare reversely
+    // i.e. a == b failed for a, so now b needs to run __eq__
+    // and if reverse is true, that type will NOT try and call reversely and create an
+    // infinite loop.
+
+    open fun pyEquals(other: PyObject, reverse: Boolean = false): PyObject {
+        val eqFn = magicSlots.tpCmpEq ?: return kyDefaultEquals(other)
+        val result = bindMagicMethod(eqFn).pyCall(listOf(other))
+        if (result === PyNotImplemented) {
+            return if (reverse) {
+                PyBool.FALSE
+            } else {
+                other.pyEquals(this, reverse = true)
+            }
         }
         return result
     }

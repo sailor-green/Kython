@@ -560,7 +560,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 LESS_EQUAL -> magicMethod(top, "__le__", second, "__gt__")
                 GREATER -> magicMethod(top, "__gt__", second, "__le__")
                 GREATER_EQUAL -> magicMethod(top, "__ge__", second, "__lt__")
-                EQUAL -> magicMethod(top, "__eq__", second, "__eq__")
+                EQUAL -> stack.push(top.pyEquals(second))
                 NOT_EQUAL -> magicMethod(top, "__ne__", second, "__ne__")
                 CONTAINS -> magicMethod(top, "__contains__", second)
                 NOT_CONTAINS -> {
@@ -573,6 +573,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
             }
         }
+        bytecodePointer += 1
     }
 
     // Unary operators

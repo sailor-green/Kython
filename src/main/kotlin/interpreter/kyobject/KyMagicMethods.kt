@@ -17,10 +17,7 @@
  */
 package green.sailor.kython.interpreter.kyobject
 
-import green.sailor.kython.interpreter.functions.magic.ObjectDir
-import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
-import green.sailor.kython.interpreter.functions.magic.ObjectRepr
-import green.sailor.kython.interpreter.functions.magic.ObjectStr
+import green.sailor.kython.interpreter.functions.magic.*
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 
@@ -46,6 +43,9 @@ class KyMagicMethods(val bound: Boolean) {
 
     // __repr__
     val tpRepr: PyObject? = ObjectRepr
+
+    // __eq__
+    val tpCmpEq: PyObject? = ObjectEq
 
     // == builtins without defaults == //
     // these can be null.
