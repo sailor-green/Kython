@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.test.cmp
 
 import green.sailor.kython.interpreter.KythonInterpreter

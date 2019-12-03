@@ -59,7 +59,7 @@ fun assertTrue(result: PyObject) {
 /**
  * Asserts that this PyObject is falsey.
  */
-fun assertFalse(result: PyObject): Unit {
+fun assertFalse(result: PyObject) {
     if (result is PyBool) {
         return Assertions.assertFalse(result.wrapped)
     }
