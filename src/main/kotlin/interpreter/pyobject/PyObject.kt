@@ -155,6 +155,13 @@ abstract class PyObject {
     abstract fun kyDefaultRepr(): PyString
 
     /**
+     * Implements the default `__bool__` for this method.
+     */
+    open fun kyDefaultBool(): PyBool {
+        return PyBool.TRUE
+    }
+
+    /**
      * Implements the default `__eq__` for this method.
      */
     open fun kyDefaultEquals(other: PyObject): PyObject {
@@ -200,7 +207,19 @@ abstract class PyObject {
         return magicCall.pyCall(args = args, kwargs = kwargs)
     }
 
-    // == Strings ==
+    // == Conversion ==
+    // __bool__
+    open fun pyToBool(): PyBool {
+        // no __bool__ means we are truthy.
+        val boolFn = magicSlots.tpBool ?: return PyBool.TRUE
+        val result = bindMagicMethod(boolFn).pyCall(listOf())
+        if (result !is PyBool) {
+            Exceptions.TYPE_ERROR("__bool__ did not return a bool").throwKy()
+        }
+        return result
+    }
+
+    // __str__
     open fun pyGetStr(): PyString {
         // default str/repr calls our default implementation
         // so it's safe to call the builtin.
@@ -214,6 +233,7 @@ abstract class PyObject {
         return result
     }
 
+    // __repr__
     open fun pyGetRepr(): PyString {
         val strFn = magicSlots.tpRepr
 
@@ -232,6 +252,7 @@ abstract class PyObject {
     // and if reverse is true, that type will NOT try and call reversely and create an
     // infinite loop.
 
+    // __eq__
     open fun pyEquals(other: PyObject, reverse: Boolean = false): PyObject {
         val eqFn = magicSlots.tpCmpEq
         val result = bindMagicMethod(eqFn).pyCall(listOf(other))

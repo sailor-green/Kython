@@ -518,8 +518,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun popJumpIf(arg: Byte, compare: Boolean) {
         val tos = stack.pop()
-        // TODO: `__bool__`
-        if ((tos as PyBool).wrapped == compare) {
+        if (tos.pyToBool().wrapped == compare) {
             bytecodePointer = arg.toInt() / 2
         } else {
             // move onto the next instruction

@@ -37,19 +37,22 @@ class KyMagicMethods(val bound: Boolean) {
     var tpGetAttribute: PyObject = ObjectGetattribute
     // __dir__
     var tpDir: PyObject = ObjectDir
-
     // __str__
     var tpStr: PyObject = ObjectStr
-
     // __repr__
-    val tpRepr: PyObject = ObjectRepr
-
+    var tpRepr: PyObject = ObjectRepr
     // __eq__
-    val tpCmpEq: PyObject = ObjectEq
+    var tpCmpEq: PyObject = ObjectEq
 
     // == builtins without defaults == //
     // these can be null.
+
+    // __call__
     var tpCall: PyObject? = null
+    // __bool__
+    var tpBool: PyObject? = null
+    // __int__
+    var tpInt: PyObject? = null
 
     /**
      * Turns a magic method name into a magic method.
@@ -62,6 +65,7 @@ class KyMagicMethods(val bound: Boolean) {
             "__repr__" -> tpRepr
             "__eq__" -> tpCmpEq
             "__call__" -> tpCall
+            "__bool__" -> tpBool
             else -> null
         }
     }
@@ -94,6 +98,12 @@ class KyMagicMethods(val bound: Boolean) {
 
         if (tpCall != null) {
             initial.add("__call__")
+        }
+        if (tpBool != null) {
+            initial.add("__bool__")
+        }
+        if (tpInt != null) {
+            initial.add("__int__")
         }
 
         // todo: other magic methods that could be set
