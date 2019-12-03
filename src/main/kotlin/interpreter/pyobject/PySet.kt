@@ -30,6 +30,7 @@ class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
     )
 
     override fun kyDefaultRepr(): PyString = kyDefaultStr()
+    override fun kyDefaultBool(): PyBool = PyBool.get(wrappedSet.isNotEmpty())
 
     override var type: PyType
         get() = PySetType

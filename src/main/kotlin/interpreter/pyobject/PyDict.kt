@@ -49,6 +49,8 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
 
     override fun kyDefaultRepr(): PyString = kyDefaultStr()
 
+    override fun kyDefaultBool(): PyBool = PyBool.get(items.isNotEmpty())
+
     override var type: PyType
         get() = PyDictType
         set(_) = Exceptions.invalidClassSet(this)

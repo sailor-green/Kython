@@ -34,6 +34,8 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
         return PyString("b${inner.pyGetRepr().wrappedString}")
     }
 
+    override fun kyDefaultBool(): PyBool = PyBool.get(wrapped.isNotEmpty())
+
     override var type: PyType
         get() = PyBytesType
         set(_) = Exceptions.invalidClassSet(this)

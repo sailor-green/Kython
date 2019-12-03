@@ -32,6 +32,9 @@ class PyFloat(val wrapped: Double) : PyObject() {
     override fun kyDefaultStr(): PyString = _floatStr
     override fun kyDefaultRepr(): PyString = _floatStr
 
+    // NaN is truthy?
+    override fun kyDefaultBool(): PyBool = PyBool.get(wrapped != 0.0)
+
     override var type: PyType
         get() = PyFloatType
         set(_) = Exceptions.invalidClassSet(this)

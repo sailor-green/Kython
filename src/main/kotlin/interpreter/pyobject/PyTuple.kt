@@ -38,6 +38,7 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
     }
 
     override fun kyDefaultRepr(): PyString = kyDefaultStr()
+    override fun kyDefaultBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
 
     override var type: PyType
         get() = PyTupleType

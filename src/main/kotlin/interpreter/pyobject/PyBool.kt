@@ -42,4 +42,5 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
 
     override fun kyDefaultStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun kyDefaultRepr(): PyString = kyDefaultStr()
+    override fun kyDefaultBool(): PyBool = this
 }

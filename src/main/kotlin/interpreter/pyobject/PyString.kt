@@ -32,6 +32,7 @@ class PyString(val wrappedString: String) : PyObject() {
 
     override fun kyDefaultStr(): PyString = this
     override fun kyDefaultRepr(): PyString = PyString("'$wrappedString'")
+    override fun kyDefaultBool(): PyBool = PyBool.get(wrappedString.isNotEmpty())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

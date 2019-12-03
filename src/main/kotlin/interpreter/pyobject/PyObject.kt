@@ -211,7 +211,7 @@ abstract class PyObject {
     // __bool__
     open fun pyToBool(): PyBool {
         // no __bool__ means we are truthy.
-        val boolFn = magicSlots.tpBool ?: return PyBool.TRUE
+        val boolFn = magicSlots.tpBool ?: return kyDefaultBool()
         val result = bindMagicMethod(boolFn).pyCall(listOf())
         if (result !is PyBool) {
             Exceptions.TYPE_ERROR("__bool__ did not return a bool").throwKy()
