@@ -30,6 +30,10 @@ import green.sailor.kython.interpreter.throwKy
 object PyStringType : PyType("str") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val arg = kwargs["x"]!!
+        if (arg is PyString) {
+            return arg
+        }
+
         return if (arg is PyType) {
             arg.kyDefaultStr()
         } else {
