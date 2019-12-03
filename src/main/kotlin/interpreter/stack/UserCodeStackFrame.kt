@@ -257,6 +257,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.GET_ITER -> getIter(param)
                     InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
 
+                    InstructionOpcode.NOP -> Unit
+
                     InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
 
                     InstructionOpcode.COMPARE_OP -> compareOp(param)
