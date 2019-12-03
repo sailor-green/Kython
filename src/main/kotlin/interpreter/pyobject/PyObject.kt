@@ -158,8 +158,7 @@ abstract class PyObject {
      * Implements the default `__eq__` for this method.
      */
     open fun kyDefaultEquals(other: PyObject): PyBool {
-        // default === is identity check, needs to be overridden for subclasses
-        return PyBool.get(this === other)
+        return PyBool.get(this == other)
     }
 
     // ==== MAGIC METHODS: INTERFACES ====
