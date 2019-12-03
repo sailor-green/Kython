@@ -39,13 +39,13 @@ class KyMagicMethods(val bound: Boolean) {
     var tpDir: PyObject = ObjectDir
 
     // __str__
-    var tpStr: PyObject? = ObjectStr
+    var tpStr: PyObject = ObjectStr
 
     // __repr__
-    val tpRepr: PyObject? = ObjectRepr
+    val tpRepr: PyObject = ObjectRepr
 
     // __eq__
-    val tpCmpEq: PyObject? = ObjectEq
+    val tpCmpEq: PyObject = ObjectEq
 
     // == builtins without defaults == //
     // these can be null.
@@ -60,6 +60,7 @@ class KyMagicMethods(val bound: Boolean) {
             "__dir__" -> tpDir
             "__str__" -> tpStr
             "__repr__" -> tpRepr
+            "__eq__" -> tpCmpEq
             "__call__" -> tpCall
             else -> null
         }
@@ -87,6 +88,7 @@ class KyMagicMethods(val bound: Boolean) {
             "__getattribute__",
             "__dir__",
             "__str__",
+            "__eq__",
             "__repr__"
         )
 

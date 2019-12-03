@@ -202,7 +202,7 @@ abstract class PyObject {
         // default str/repr calls our default implementation
         // so it's safe to call the builtin.
         // at some point, may wish to change this...
-        val strFn = magicSlots.tpStr ?: return kyDefaultStr()
+        val strFn = magicSlots.tpStr
 
         val result = bindMagicMethod(strFn).pyCall(listOf())
         if (result !is PyString) {
@@ -212,7 +212,7 @@ abstract class PyObject {
     }
 
     open fun pyGetRepr(): PyString {
-        val strFn = magicSlots.tpRepr ?: return kyDefaultStr()
+        val strFn = magicSlots.tpRepr
 
         val result = bindMagicMethod(strFn).pyCall(listOf())
         if (result !is PyString) {
@@ -230,7 +230,7 @@ abstract class PyObject {
     // infinite loop.
 
     open fun pyEquals(other: PyObject, reverse: Boolean = false): PyObject {
-        val eqFn = magicSlots.tpCmpEq ?: return kyDefaultEquals(other)
+        val eqFn = magicSlots.tpCmpEq
         val result = bindMagicMethod(eqFn).pyCall(listOf(other))
         if (result === PyNotImplemented) {
             return if (reverse) {
