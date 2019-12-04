@@ -24,8 +24,13 @@ import java.nio.file.Paths
  * Main initialiser for Kython.
  */
 object MakeUp {
+    @JvmStatic val debugMode = System.getProperty("kython.interpreter.debug") == "true"
+
     @JvmStatic
     fun main(args: Array<String>) {
+        if (debugMode) {
+            System.err.println("Running Kython in debug mode!")
+        }
 
         val file = args[0]
         KythonInterpreter.runPythonFromPath(Paths.get(file).toAbsolutePath())

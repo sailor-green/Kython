@@ -19,6 +19,7 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.MakeUp
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -136,7 +137,9 @@ object KythonInterpreter {
         try {
             runRootFrame(rootFrame)
         } catch (e: KyError) {
-            // throw e  // used for debugging
+            if (MakeUp.debugMode) {
+                throw e
+            }
             // bubbled error, means no user code handled it
             with(e.wrapped) {
                 System.err.println("\nKython stack (most recent frame last):")
