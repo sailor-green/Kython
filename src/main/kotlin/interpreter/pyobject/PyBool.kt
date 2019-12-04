@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyBoolType
 /**
  * Represents a Python boolean.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class PyBool private constructor(val wrapped: Boolean) : PyObject() {
     companion object {
         // The TRUE instance of this.
@@ -43,4 +44,10 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
     override fun kyDefaultStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun kyDefaultRepr(): PyString = kyDefaultStr()
     override fun kyDefaultBool(): PyBool = this
+
+    /**
+     * Inverts this PyBool.
+     */
+    fun invert(): PyBool = if (wrapped) FALSE else TRUE
+    operator fun not() = invert()
 }

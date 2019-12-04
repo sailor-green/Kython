@@ -640,9 +640,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 magicMethod(top, "__invert__")
             }
             UnaryOp.NOT -> {
-                magicMethod(top, "__bool__")
-                val truthy = stack.pop() // magicMethod pushes to stack
-                stack.push(if (truthy == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+                val result = top.pyToBool()
+                stack.push(!result)
             }
             UnaryOp.NEGATIVE -> {
                 magicMethod(top, "__neg__")
