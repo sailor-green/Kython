@@ -144,7 +144,9 @@ def _compile_object(i: Any) -> bytes:
     """
     Compiles any object into bytes.
     """
-    if isinstance(i, int):
+    if isinstance(i, bool):
+        return _compile_bool(i)
+    elif isinstance(i, int):
         return _compile_int(i)
     elif isinstance(i, bytes):
         return _compile_bytestring(i)
@@ -156,8 +158,6 @@ def _compile_object(i: Any) -> bytes:
         return _compile_list(i)
     elif isinstance(i, dict):
         return _compile_dict(i)
-    elif isinstance(i, bool):
-        return _compile_bool(i)
     elif isinstance(i, float):
         return _compile_float(i)
     elif hasattr(i, "co_code"):
@@ -279,12 +279,12 @@ def main(mode: int):
         daemonise()
 
     elif mode == 1:
-        filename = " ".join(sys.argv[2:])
+        filename = sys.argv[2]
         output = compile_kyc_file(filename)
         print(output.hex())
 
     elif mode == 2:
-        code = " ".join(sys.argv[2:])
+        code = sys.argv[2]
         output = compile_kyc_code(code)
         print(output.hex())
 
