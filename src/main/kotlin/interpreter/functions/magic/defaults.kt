@@ -72,12 +72,3 @@ object ObjectEq : PyBuiltinFunction("<object __eq__>") {
 
     override val signature: PyCallableSignature = cmpSig
 }
-
-object ObjectBool : PyBuiltinFunction("<object __bool__>") {
-    override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-        val self = kwargs["self"] ?: error("Built-in signature mismatch!")
-        return self.kyDefaultBool()
-    }
-
-    override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD
-}
