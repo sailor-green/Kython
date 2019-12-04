@@ -28,6 +28,9 @@ import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents a python type (i.e. a class).
+ *
+ * PyType is a different "class" of object in Python, that doesn't obey the standard laws of
+ * methods. As such, we directly handle certain magic methods.
  */
 abstract class PyType(val name: String) : PyObject(), PyCallable {
     /**
@@ -70,4 +73,18 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     override var type: PyType
         get() = PyRootType
         set(_) = Exceptions.invalidClassSet(this)
+
+    override fun pyToBool(): PyBool {
+        return PyBool.TRUE
+    }
+
+    override fun pyGetStr(): PyString = kyDefaultStr()
+    override fun pyGetRepr(): PyString = kyDefaultRepr()
+
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyType) {
+            return PyBool.FALSE
+        }
+        return PyBool.get(this === other)
+    }
 }
