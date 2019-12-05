@@ -34,7 +34,7 @@ class PyRootObjectInstance : PyObject() {
 
     override fun pyGetRepr(): PyString = pyGetStr()
     override fun pyGetStr(): PyString = _cached
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
+    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
 
     override var type: PyType
         get() = PyRootObjectType

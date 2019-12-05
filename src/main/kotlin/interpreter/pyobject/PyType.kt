@@ -75,7 +75,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
         return PyBool.TRUE
     }
 
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyType) {
             return PyBool.FALSE
         }

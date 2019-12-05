@@ -44,7 +44,7 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
     override fun pyGetStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun pyGetRepr(): PyString = pyGetStr()
     override fun pyToBool(): PyBool = this
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = get(this === other)
+    override fun pyEquals(other: PyObject): PyObject = get(this === other)
 
     /**
      * Inverts this PyBool.

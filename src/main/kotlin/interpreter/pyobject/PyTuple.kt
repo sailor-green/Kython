@@ -39,7 +39,7 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
 
     override fun pyGetRepr(): PyString = pyGetStr()
     override fun pyToBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyTuple) {
             return PyNotImplemented
         }

@@ -31,7 +31,7 @@ class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
 
     override fun pyGetRepr(): PyString = pyGetStr()
     override fun pyToBool(): PyBool = PyBool.get(wrappedSet.isNotEmpty())
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PySet) {
             return PyNotImplemented
         }

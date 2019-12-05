@@ -184,15 +184,11 @@ abstract class PyObject {
     abstract fun pyGetRepr(): PyString
 
     // == Comparison operators ==
-    // Note: These return PyObject because, well, `__eq__` can return anything.
-    // NotImplemented is translated directly into False.
-    // reverse signals to the other type that it's being asked to compare reversely
-    // i.e. a == b failed for a, so now b needs to run __eq__
-    // and if reverse is true, that type will NOT try and call reversely and create an
-    // infinite loop.
 
-    // __eq__
-    abstract fun pyEquals(other: PyObject, reverse: Boolean = false): PyObject
+    /**
+     * Implements some_object == other_object.
+     */
+    abstract fun pyEquals(other: PyObject): PyObject
 
     // == Descriptors ==
 

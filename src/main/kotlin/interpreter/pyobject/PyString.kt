@@ -33,7 +33,7 @@ class PyString(val wrappedString: String) : PyObject() {
     override fun pyGetStr(): PyString = this
     override fun pyGetRepr(): PyString = PyString("'$wrappedString'")
     override fun pyToBool(): PyBool = PyBool.get(wrappedString.isNotEmpty())
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyString) {
             return PyNotImplemented
         }

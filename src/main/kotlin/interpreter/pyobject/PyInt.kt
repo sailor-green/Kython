@@ -27,7 +27,7 @@ class PyInt(val wrappedInt: Long) : PyObject() {
     // default impls
     override fun pyGetStr(): PyString = PyString(wrappedInt.toString())
     override fun pyGetRepr(): PyString = pyGetStr()
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyInt) {
             return PyNotImplemented
         }

@@ -32,5 +32,5 @@ abstract class PyFunction : PyObject(), PyCallable {
         return if (parent is PyNone) this else PyMethod(this, parent)
     }
 
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
+    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
 }

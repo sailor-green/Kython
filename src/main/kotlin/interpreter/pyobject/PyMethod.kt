@@ -55,7 +55,7 @@ class PyMethod(
         return PyString(output)
     }
     override fun pyGetRepr(): PyString = pyGetStr()
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyMethod) {
             return PyNotImplemented
         }

@@ -35,7 +35,7 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
     }
 
     override fun pyToBool(): PyBool = PyBool.get(wrapped.isNotEmpty())
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+    override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyBytes) {
             return PyNotImplemented
         }

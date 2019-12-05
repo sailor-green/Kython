@@ -98,7 +98,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         exceptionFrames = frames
     }
 
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
+    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
 
     override fun pyGetStr(): PyString {
         require(type is PyExceptionType) { "Type of exception was not PyExceptionType!" }

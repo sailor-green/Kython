@@ -29,7 +29,7 @@ class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
 
     override fun pyGetRepr(): PyString = pyGetStr()
 
-    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
+    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
 
     override var type: PyType
         get() = TODO("not implemented")
