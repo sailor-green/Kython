@@ -17,6 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 
@@ -25,6 +27,11 @@ import green.sailor.kython.interpreter.pyobject.PyType
  */
 object PyBoolType : PyType("bool") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        TODO("not implemented")
+        val value = kwargs["value"] ?: error("Built-in signature mismatch")
+        return value.pyToBool()
     }
+
+    override val signature: PyCallableSignature = PyCallableSignature(
+        "value" to ArgType.POSITIONAL
+    )
 }
