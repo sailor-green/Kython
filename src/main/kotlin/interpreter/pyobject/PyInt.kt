@@ -28,10 +28,17 @@ open class PyInt(val wrappedInt: Long) : PyObject() {
     override fun pyGetStr(): PyString = PyString(wrappedInt.toString())
     override fun pyGetRepr(): PyString = pyGetStr()
     override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyInt) {
-            return PyNotImplemented
-        }
+        if (other !is PyInt) return PyNotImplemented
         return PyBool.get(other.wrappedInt == wrappedInt)
+    }
+    override fun pyGreater(other: PyObject): PyObject {
+        if (other !is PyInt) return PyNotImplemented
+        return PyBool.get(other.wrappedInt > wrappedInt)
+    }
+
+    override fun pyLesser(other: PyObject): PyObject {
+        if (other !is PyInt) return PyNotImplemented
+        return PyBool.get(other.wrappedInt < wrappedInt)
     }
 
     override fun pyToBool(): PyBool = PyBool.get(wrappedInt != 0L)

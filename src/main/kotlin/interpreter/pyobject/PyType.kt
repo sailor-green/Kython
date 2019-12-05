@@ -81,4 +81,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
         }
         return PyBool.get(this === other)
     }
+
+    override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
+    override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 }

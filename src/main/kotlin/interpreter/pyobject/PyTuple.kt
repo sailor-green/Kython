@@ -40,11 +40,11 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
     override fun pyGetRepr(): PyString = pyGetStr()
     override fun pyToBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
     override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyTuple) {
-            return PyNotImplemented
-        }
+        if (other !is PyTuple) return PyNotImplemented
         return PyBool.get(subobjects == other.subobjects)
     }
+    override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
+    override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 
     override var type: PyType
         get() = PyTupleType

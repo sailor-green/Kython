@@ -62,6 +62,9 @@ class PyMethod(
         return PyBool.get(function == other.function && instance == other.instance)
     }
 
+    override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
+    override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
+
     override var type: PyType
         get() = PyMethodType
         set(_) = Exceptions.invalidClassSet(this)

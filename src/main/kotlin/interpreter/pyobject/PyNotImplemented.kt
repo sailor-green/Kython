@@ -34,6 +34,8 @@ object PyNotImplemented : PyObject() {
     override fun pyGetRepr(): PyString = _string
     override fun pyGetStr(): PyString = _string
     override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
+    override fun pyGreater(other: PyObject): PyObject = this
+    override fun pyLesser(other: PyObject): PyObject = this
     override fun pyToBool(): PyBool = PyBool.TRUE
 
     override var type: PyType

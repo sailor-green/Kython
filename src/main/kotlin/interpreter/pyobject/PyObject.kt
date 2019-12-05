@@ -204,6 +204,28 @@ abstract class PyObject {
         }
     }
 
+    // __gt__
+    /**
+     * Implements some_object > other_object.
+     */
+    abstract fun pyGreater(other: PyObject): PyObject
+
+    // __lt__
+    /**
+     * Implements some_object < other_object.
+     */
+    abstract fun pyLesser(other: PyObject): PyObject
+
+    // __ge__
+    open fun pyGreaterEquals(other: PyObject): PyObject {
+        TODO()
+    }
+
+    // __le__
+    open fun pyLesserEquals(other: PyObject): PyObject {
+        TODO()
+    }
+
     // == Descriptors ==
 
     /**

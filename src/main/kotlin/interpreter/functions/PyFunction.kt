@@ -18,10 +18,7 @@
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.pyobject.PyBool
-import green.sailor.kython.interpreter.pyobject.PyMethod
-import green.sailor.kython.interpreter.pyobject.PyNone
-import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.*
 
 /**
  * Represents a Python function instance.
@@ -33,4 +30,6 @@ abstract class PyFunction : PyObject(), PyCallable {
     }
 
     override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
+    override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
+    override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 }

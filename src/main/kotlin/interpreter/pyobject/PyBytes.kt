@@ -36,10 +36,22 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
 
     override fun pyToBool(): PyBool = PyBool.get(wrapped.isNotEmpty())
     override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyBytes) {
-            return PyNotImplemented
-        }
+        if (other !is PyBytes) return PyNotImplemented
         return PyBool.get(wrapped.contentEquals(other.wrapped))
+    }
+
+    override fun pyGreater(other: PyObject): PyObject {
+        if (other !is PyBytes) return PyNotImplemented
+        val iterator = other.wrapped.iterator()
+        val isGt = wrapped.any { it > iterator.next() }
+        return PyBool.get(isGt)
+    }
+
+    override fun pyLesser(other: PyObject): PyObject {
+        if (other !is PyBytes) return PyNotImplemented
+        val iterator = other.wrapped.iterator()
+        val isLt = wrapped.any { it < iterator.next() }
+        return PyBool.get(isLt)
     }
 
     override var type: PyType

@@ -39,6 +39,14 @@ class PyString(val wrappedString: String) : PyObject() {
         }
         return PyBool.get(wrappedString == other.wrappedString)
     }
+    override fun pyGreater(other: PyObject): PyObject {
+        if (other !is PyString) return PyNotImplemented
+        return PyBool.get(wrappedString > other.wrappedString)
+    }
+    override fun pyLesser(other: PyObject): PyObject {
+        if (other !is PyString) return PyNotImplemented
+        return PyBool.get(wrappedString < other.wrappedString)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

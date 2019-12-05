@@ -36,10 +36,16 @@ class PyFloat(val wrapped: Double) : PyObject() {
     override fun pyToBool(): PyBool = PyBool.get(wrapped != 0.0)
 
     override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyFloat) {
-            return PyNotImplemented
-        }
+        if (other !is PyFloat) return PyNotImplemented
         return PyBool.get(wrapped == other.wrapped)
+    }
+    override fun pyGreater(other: PyObject): PyObject {
+        if (other !is PyFloat) return PyNotImplemented
+        return PyBool.get(wrapped > other.wrapped)
+    }
+    override fun pyLesser(other: PyObject): PyObject {
+        if (other !is PyFloat) return PyNotImplemented
+        return PyBool.get(wrapped < other.wrapped)
     }
 
     override var type: PyType

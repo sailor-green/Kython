@@ -54,6 +54,8 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
         }
         return PyBool.get(items == other.items)
     }
+    override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
+    override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
     override var type: PyType
         get() = PyDictType

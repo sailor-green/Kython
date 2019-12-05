@@ -38,6 +38,9 @@ class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
         return PyBool.get(wrappedSet == other.wrappedSet)
     }
 
+    override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
+    override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
+
     override var type: PyType
         get() = PySetType
         set(_) = Exceptions.invalidClassSet(this)

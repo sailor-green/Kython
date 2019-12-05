@@ -592,15 +592,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      *
      * @param cbFirst: The first operation to call.
      * @param cbSecond: If cbFirst returned PyNotImplemented, the fallback operation.
+     * @param shouldError: If this should error, for example in the case of lt/gt.
      */
     private fun implCompareOp(
         cbFirst: (PyObject, PyObject) -> PyObject,
-        cbSecond: ((PyObject, PyObject) -> PyObject)? = null
+        cbSecond: ((PyObject, PyObject) -> PyObject)? = null,
+        shouldError: Boolean = false
     ): PyBool {
-        // if no second callback is provided, we usee one that simply swaps the argument
-        // eg if obb1.pyEquals(obb2) is PyNotImplemented, we run obb2.pyEquals(obb1) instead.
-
-        val realSecond = cbSecond ?: { tos, tos1 -> cbFirst(tos1, tos) }
+        val realSecond = cbSecond ?: cbFirst
         val tos = stack.pop()
         val tos1 = stack.pop()
 
@@ -616,7 +615,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             return second as? PyBool ?: error("bool() returned non-bool")
         }
 
-        return PyBool.FALSE
+        if (!shouldError) {
+            return PyBool.FALSE
+        } else {
+            Exceptions.TYPE_ERROR(
+                "Operation not supported between " +
+                "'${first.type.name}' and ${second.type.name}"
+            ).throwKy()
+        }
     }
 
     private fun implCompareOp(cbFirst: (PyObject, PyObject) -> PyObject): PyBool =
@@ -628,10 +634,34 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     fun compareOp(arg: Byte) {
         with(CompareOp) {
             when (arg.toInt()) {
-                /*LESS -> magicMethod(top, "__lt__", second, "__ge__")
-                LESS_EQUAL -> magicMethod(top, "__le__", second, "__gt__")
-                GREATER -> magicMethod(top, "__gt__", second, "__le__")
-                GREATER_EQUAL -> magicMethod(top, "__ge__", second, "__lt__")*/
+                LESS -> {
+                    stack.push(implCompareOp(
+                        { tos, tos1 -> tos.pyLesser(tos1) },
+                        { tos, tos1 -> tos.pyGreaterEquals(tos1) },
+                        shouldError = true
+                    ))
+                }
+                LESS_EQUAL -> {
+                    stack.push(implCompareOp(
+                        { tos, tos1 -> tos.pyLesserEquals(tos1) },
+                        { tos, tos1 -> tos.pyGreater(tos1) },
+                        shouldError = true
+                    ))
+                }
+                GREATER -> {
+                    stack.push(implCompareOp(
+                        { tos, tos1 -> tos.pyGreater(tos1) },
+                        { tos, tos1 -> tos.pyLesserEquals(tos1) },
+                        shouldError = true
+                    ))
+                }
+                GREATER_EQUAL -> {
+                    stack.push(implCompareOp(
+                        { tos, tos1 -> tos.pyGreaterEquals(tos1) },
+                        { tos, tos1 -> tos.pyLesser(tos1) },
+                        shouldError = true
+                    ))
+                }
                 EQUAL -> {
                     stack.push(implCompareOp { tos, tos1 -> tos.pyEquals(tos1) })
                 }
