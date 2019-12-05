@@ -532,14 +532,37 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
+     * Implements binary operator actions.
+     *
+     * The first callback passed should invoke the appropriate function on TOS and TOS1, and return the
+     * [PyObject] from that function. The second callback
+     */
+    fun implBinaryOp(cb: (PyObject, PyObject) -> PyObject,
+                     cb2: (PyObject, PyObject) -> PyObject): PyObject {
+        val tos = stack.pop()
+        val tos1 = stack.pop()
+        val first = cb(tos, tos1)
+        if (first != PyNotImplemented) {
+            return first
+        }
+
+        val second = cb2(tos1, tos)
+        if (second != PyNotImplemented) {
+            return second
+        }
+
+        typeError("Operation not supported between ${tos.type.name} and ${tos1.type.name}")
+    }
+
+    /**
      * BINARY_* (ADD, etc)
      */
     fun binaryOp(type: BinaryOp, arg: Byte) {
-        val o1 = stack.pop()
-        val o2 = stack.pop()
-        val magic = when (type) {
-            BinaryOp.ADD -> "__add__"
-            BinaryOp.LSHIFT -> "__lshift__"
+        when (type) {
+            BinaryOp.ADD -> implBinaryOp(
+                { a, b -> a.pyAdd(b) }, { a, b -> a.pyAdd(b, reverse = true) }
+            )
+            /*BinaryOp.LSHIFT -> "__lshift__"
             BinaryOp.POWER -> "__pow__"
             BinaryOp.MULTIPLY -> "__mul__"
             BinaryOp.MATRIX_MULTIPLY -> "__matmul__"
@@ -551,12 +574,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             BinaryOp.RSHIFT -> "__rshift__"
             BinaryOp.AND -> "__and__"
             BinaryOp.XOR -> "__xor__"
-            BinaryOp.OR -> "__or__"
+            BinaryOp.OR -> "__or__"*/
             else -> error("This should never happen!")
         }
-        // Use __r to transform __add__ to __radd__, which is the inverse.
-        // If this does not exist (e.g. on getitem) it will be ignored.
-        magicMethod(o1, magic, o2, "__r" + magic.substring(2))
         bytecodePointer += 1
     }
 
