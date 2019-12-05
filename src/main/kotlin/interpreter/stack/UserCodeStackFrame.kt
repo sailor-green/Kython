@@ -15,6 +15,8 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
+@file:Suppress("SpellCheckingInspection", "unused")
+
 package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.Exceptions
