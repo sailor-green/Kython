@@ -152,6 +152,12 @@ abstract class PyObject {
      */
     open fun pyToBool(): PyBool = PyBool.TRUE
 
+    // __int__
+    /**
+     * Implements int(some_object).
+     */
+    open fun pyToInt(): PyInt = typeError("Cannot convert '${type.name}' to int")
+
     // __str__
     /**
      * Implements str(some_object).

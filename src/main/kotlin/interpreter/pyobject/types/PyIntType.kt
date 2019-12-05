@@ -54,8 +54,7 @@ object PyIntType : PyType("int") {
                 }
             }
             else -> {
-                TODO()
-                // return value.pyToInt()
+                return value.pyToInt()
             }
         }
     }
