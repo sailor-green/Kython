@@ -635,8 +635,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 EQUAL -> {
                     stack.push(implCompareOp { tos, tos1 -> tos.pyEquals(tos1) })
                 }
-                /*NOT_EQUAL -> magicMethod(top, "__ne__", second, "__ne__")
-                CONTAINS -> magicMethod(top, "__contains__", second)
+                NOT_EQUAL -> {
+                    stack.push(implCompareOp { tos, tos1 -> tos.pyNotEquals(tos1) })
+                }
+                /*CONTAINS -> magicMethod(top, "__contains__", second)
                 NOT_CONTAINS -> {
                     magicMethod(top, "__contains__", second)
                     stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)

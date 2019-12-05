@@ -185,10 +185,24 @@ abstract class PyObject {
 
     // == Comparison operators ==
 
+    // __eq__
     /**
      * Implements some_object == other_object.
      */
     abstract fun pyEquals(other: PyObject): PyObject
+    
+    // __neq__
+    /**
+     * Implements some_object != other_object.
+     */
+    open fun pyNotEquals(other: PyObject): PyObject {
+        val equals = pyEquals(other)
+        return if (equals == PyNotImplemented) {
+            PyNotImplemented
+        } else {
+            (equals as? PyBool)?.invert() ?: error("bool returned non-bool")
+        }
+    }
 
     // == Descriptors ==
 
