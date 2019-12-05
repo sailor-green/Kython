@@ -27,9 +27,6 @@ import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents a python type (i.e. a class).
- *
- * PyType is a different "class" of object in Python, that doesn't obey the standard laws of
- * methods. As such, we directly handle certain magic methods.
  */
 abstract class PyType(val name: String) : PyObject(), PyCallable {
     /**
@@ -41,6 +38,9 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     val builtinFunctionWrapper by lazy {
         PyBuiltinFunction.wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
     }
+
+    /** A list of parent classes for this PyType. */
+    val bases = mutableListOf<PyType>()
 
     /**
      * Makes a new instance of this builtin.

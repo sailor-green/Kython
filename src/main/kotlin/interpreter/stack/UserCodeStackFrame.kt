@@ -412,7 +412,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val module = stack.pop()
 
         // TODO: Use the real __dir__
-        module.kyDefaultDir().internalDict.forEach {
+        module.pyDir().internalDict.forEach {
             if (!it.key.startsWith("_")) {
                 locals[it.key] = it.value
             }

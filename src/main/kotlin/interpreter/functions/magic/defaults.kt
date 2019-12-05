@@ -33,7 +33,7 @@ private val cmpSig = PyCallableSignature(
 object ObjectDir : PyBuiltinFunction("<object.__dir__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in signature mismatch!")
-        return self.kyDefaultDir()
+        return self.pyDir()
     }
 
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD
@@ -67,7 +67,7 @@ object ObjectEq : PyBuiltinFunction("<object __eq__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
         val other = kwargs["other"] ?: error("Built-in signature mismatch!")
-        return self.kyDefaultEquals(other)
+        return self.pyEquals(other)
     }
 
     override val signature: PyCallableSignature = cmpSig

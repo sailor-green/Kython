@@ -101,14 +101,12 @@ abstract class PyObject {
         return false
     }
 
-    // ==== MAGIC METHODS: DEFAULTS ====
-    // These all represent "default" implementations for magic methods, if there's none specified 
-    // on the magic method listing.
+    // ==== MAGIC METHODS: INTERFACES ====
 
     /**
-     * Implements the "default" dir behaviour, listing all attributes of this object.
+     * Implements dir(some_object).
      */
-    open fun kyDefaultDir(): PyTuple {
+    open fun pyDir(): PyTuple {
         val dirSet = mutableSetOf<String>().also { set ->
             // set.addAll(magicSlots.createActiveMagicMethodList())
             set.addAll(type.internalDict.keys)
@@ -122,21 +120,6 @@ abstract class PyObject {
         return PyTuple(sorted.map { s -> PyString(s) })
     }
 
-    /**
-     * Implements the default `__eq__` for this method.
-     */
-    open fun kyDefaultEquals(other: PyObject): PyObject {
-        // todo: this probably needs to be a more correct check...
-        if (type != other.type) {
-            return PyNotImplemented
-        }
-        return PyBool.get(this == other)
-    }
-
-    // ==== MAGIC METHODS: INTERFACES ====
-    // All these functions are delegates to the real magic methods.
-    // This is shorter than using ``someObb.magicSlots.tpMethod.runCallable(...)``
-    // They also implement default implementations.
 
     // __getattribute__
     /**

@@ -19,9 +19,7 @@ package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyMethod
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents the dir(x) built-in function.
@@ -31,12 +29,6 @@ class DirBuiltinFunction : PyBuiltinFunction("dir") {
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["obb"] ?: error("Built-in signature mismatch!")
-        val dir = obb.pyGetAttribute("__dir__")
-        if (!dir.kyIsCallable()) {
-            typeError("__dir__ is not callable")
-        }
-
-        val args = if (dir is PyMethod) listOf() else listOf(obb)
-        return dir.pyCall(args)
+        return obb.pyDir()
     }
 }
