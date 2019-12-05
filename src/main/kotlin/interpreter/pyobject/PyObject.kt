@@ -110,7 +110,7 @@ abstract class PyObject {
         val dirSet = mutableSetOf<String>().also { set ->
             // set.addAll(magicSlots.createActiveMagicMethodList())
             set.addAll(type.internalDict.keys)
-            // set.addAll(parentTypes.flatMap { it.internalDict.keys })
+            set.addAll(type.bases.flatMap { it.internalDict.keys })
             set.addAll(internalDict.keys)
         }
 
