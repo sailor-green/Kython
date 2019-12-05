@@ -120,7 +120,6 @@ abstract class PyObject {
         return PyTuple(sorted.map { s -> PyString(s) })
     }
 
-
     // __getattribute__
     /**
      * Delegate for `LOAD_ATTR` on any object.
