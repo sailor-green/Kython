@@ -36,5 +36,5 @@ object PyRootObjectType : PyType("object") {
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY
 
     // prevents errors
-    override val parentTypes: MutableList<PyType> = mutableListOf(this)
+    // override val parentTypes: MutableList<PyType> = mutableListOf(this)
 }

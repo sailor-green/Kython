@@ -18,10 +18,8 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.functions.PyFunction
+import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.kyobject.KyMagicMethods
-import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.throwKy
 
 // initialdict:
@@ -65,20 +63,9 @@ abstract class PyObject {
             get() = linkedMapOf()
     }
 
-    // internal attribs
-
-    /**
-     * The magic slots for this PyObject.
-     * Bound should be true on regular instances, and false on types.
-     */
-    open val magicSlots = KyMagicMethods(bound = true)
-
     // exposed attribs
     /** The type of this PyObject. */
     abstract var type: PyType
-
-    /** The parent types of this PyObject. Exposed as `__bases__`. */
-    open val parentTypes = mutableListOf<PyType>(PyRootObjectType)
 
     /**
      * The initial dict for this PyObject. Copied into internalDict upon instantiating.
@@ -106,21 +93,13 @@ abstract class PyObject {
     }
 
     /**
-     * Binds a method to this PyObject if needed.
-     */
-    open fun bindMagicMethod(meth: PyObject): PyObject {
-        val parent = if (magicSlots.bound) this else PyNone
-        return meth.pyDescriptorGet(parent, type)
-    }
-
-    /**
      * Checks if this type is callable. This will check for [PyCallable], or a valid `__call__`.
      */
     open fun kyIsCallable(): Boolean {
         if (this is PyCallable) {
             return true
         }
-        return magicSlots.tpCall != null
+        return false
     }
 
     // ==== MAGIC METHODS: DEFAULTS ====
@@ -132,9 +111,9 @@ abstract class PyObject {
      */
     open fun kyDefaultDir(): PyTuple {
         val dirSet = mutableSetOf<String>().also { set ->
-            set.addAll(magicSlots.createActiveMagicMethodList())
+            // set.addAll(magicSlots.createActiveMagicMethodList())
             set.addAll(type.internalDict.keys)
-            set.addAll(parentTypes.flatMap { it.internalDict.keys })
+            // set.addAll(parentTypes.flatMap { it.internalDict.keys })
             set.addAll(internalDict.keys)
         }
 
@@ -142,23 +121,6 @@ abstract class PyObject {
         // We do too!
         val sorted = dirSet.toList().sorted()
         return PyTuple(sorted.map { s -> PyString(s) })
-    }
-
-    /**
-     * Implements the default `__str__` for this method.
-     */
-    abstract fun kyDefaultStr(): PyString
-
-    /**
-     * Implements the default `__repr__` for this method.
-     */
-    abstract fun kyDefaultRepr(): PyString
-
-    /**
-     * Implements the default `__bool__` for this method.
-     */
-    open fun kyDefaultBool(): PyBool {
-        return PyBool.TRUE
     }
 
     /**
@@ -184,15 +146,14 @@ abstract class PyObject {
      * @param name: The name of the attribute to get.
      */
     open fun pyGetAttribute(name: String): PyObject {
-        // try and find a magic method
-        magicSlots.nameToMagicMethodBound(this, name)?.let { return it }
-
-        val getAttribute = magicSlots.tpGetAttribute as PyFunction
-        val bound = getAttribute.pyDescriptorGet(this, type) as PyCallable
-        return bound.runCallable(listOf(PyString(name)))
+        return ObjectGetattribute.pyCall(listOf(PyString(name), this))
     }
 
     // == __call__
+
+    /**
+     * Implements some_object().
+     */
     open fun pyCall(
         args: List<PyObject> = listOf(),
         kwargs: Map<String, PyObject> = mapOf()
@@ -200,49 +161,27 @@ abstract class PyObject {
         if (this is PyCallable) {
             return runCallable(args)
         }
-        val magicCall = magicSlots.nameToMagicMethodBound(this, "__call__")
-        if (magicCall == null || !magicCall.kyIsCallable()) {
-            Exceptions.TYPE_ERROR("This object is not callable").throwKy()
-        }
-        return magicCall.pyCall(args = args, kwargs = kwargs)
+        Exceptions.TYPE_ERROR("This object is not callable").throwKy()
     }
 
     // == Conversion ==
     // __bool__
-    open fun pyToBool(): PyBool {
-        // no __bool__ means we are truthy.
-        val boolFn = magicSlots.tpBool ?: return kyDefaultBool()
-        val result = bindMagicMethod(boolFn).pyCall(listOf())
-        if (result !is PyBool) {
-            Exceptions.TYPE_ERROR("__bool__ did not return a bool").throwKy()
-        }
-        return result
-    }
+    /**
+     * Implements bool(some_object).
+     */
+    open fun pyToBool(): PyBool = PyBool.TRUE
 
     // __str__
-    open fun pyGetStr(): PyString {
-        // default str/repr calls our default implementation
-        // so it's safe to call the builtin.
-        // at some point, may wish to change this...
-        val strFn = magicSlots.tpStr
-
-        val result = bindMagicMethod(strFn).pyCall(listOf())
-        if (result !is PyString) {
-            Exceptions.TYPE_ERROR("__str__ did not return a string").throwKy()
-        }
-        return result
-    }
+    /**
+     * Implements str(some_object).
+     */
+    abstract fun pyGetStr(): PyString
 
     // __repr__
-    open fun pyGetRepr(): PyString {
-        val strFn = magicSlots.tpRepr
-
-        val result = bindMagicMethod(strFn).pyCall(listOf())
-        if (result !is PyString) {
-            Exceptions.TYPE_ERROR("__repr__ did not return a string").throwKy()
-        }
-        return result
-    }
+    /**
+     * Implements repr(some_object).
+     */
+    abstract fun pyGetRepr(): PyString
 
     // == Comparison operators ==
     // Note: These return PyObject because, well, `__eq__` can return anything.
@@ -253,18 +192,7 @@ abstract class PyObject {
     // infinite loop.
 
     // __eq__
-    open fun pyEquals(other: PyObject, reverse: Boolean = false): PyObject {
-        val eqFn = magicSlots.tpCmpEq
-        val result = bindMagicMethod(eqFn).pyCall(listOf(other))
-        if (result === PyNotImplemented) {
-            return if (reverse) {
-                PyBool.FALSE
-            } else {
-                other.pyEquals(this, reverse = true)
-            }
-        }
-        return result
-    }
+    abstract fun pyEquals(other: PyObject, reverse: Boolean = false): PyObject
 
     // == Descriptors ==
 
@@ -294,7 +222,7 @@ abstract class PyObject {
      * Gets the string of this object, safely. Used for exceptions, et al.
      */
     fun getPyStringSafe(): PyString = try {
-        kyDefaultStr()
+        pyGetStr()
     } catch (e: Throwable) {
         PyString.UNPRINTABLE
     }

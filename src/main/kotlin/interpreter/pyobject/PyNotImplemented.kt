@@ -31,8 +31,10 @@ object PyNotImplemented : PyObject() {
 
     private val _string = PyString("NotImplemented")
 
-    override fun kyDefaultRepr(): PyString = _string
-    override fun kyDefaultStr(): PyString = _string
+    override fun pyGetRepr(): PyString = _string
+    override fun pyGetStr(): PyString = _string
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
+    override fun pyToBool(): PyBool = PyBool.TRUE
 
     override var type: PyType
         get() = PyNotImplementedType

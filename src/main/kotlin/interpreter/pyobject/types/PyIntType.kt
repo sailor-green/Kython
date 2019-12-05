@@ -48,14 +48,8 @@ object PyIntType : PyType("int") {
                 }
             }
             else -> {
-                val intMagic = value.magicSlots.nameToMagicMethodBound(value, "__int__")
-                    ?: Exceptions.TYPE_ERROR(
-                        "int() argument must be a string, a bytes-like object, " +
-                            "or a number, not '${value.type.name}'"
-                    ).throwKy()
-
-                // type(value).__int__(value)
-                return intMagic.pyCall(listOf(value))
+                TODO()
+                // return value.pyToInt()
             }
         }
     }

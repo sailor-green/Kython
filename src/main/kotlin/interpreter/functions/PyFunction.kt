@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyMethod
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -30,4 +31,6 @@ abstract class PyFunction : PyObject(), PyCallable {
     override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
         return if (parent is PyNone) this else PyMethod(this, parent)
     }
+
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
 }

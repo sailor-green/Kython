@@ -24,9 +24,9 @@ import green.sailor.kython.interpreter.pyobject.types.PyBytesType
  * Represents a Python bytes object. This wraps a regular JVM ByteArray.
  */
 class PyBytes(val wrapped: ByteArray) : PyObject() {
-    override fun kyDefaultStr(): PyString = kyDefaultRepr()
+    override fun pyGetStr(): PyString = pyGetRepr()
 
-    override fun kyDefaultRepr(): PyString {
+    override fun pyGetRepr(): PyString {
         val inner = PyString(wrapped.joinToString("") {
             if (it in 32..126) it.toChar().toString()
             else "\\x" + it.toUByte().toString(16).padStart(2, '0')
@@ -34,7 +34,13 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
         return PyString("b${inner.pyGetRepr().wrappedString}")
     }
 
-    override fun kyDefaultBool(): PyBool = PyBool.get(wrapped.isNotEmpty())
+    override fun pyToBool(): PyBool = PyBool.get(wrapped.isNotEmpty())
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyBytes) {
+            return PyNotImplemented
+        }
+        return PyBool.get(wrapped.contentEquals(other.wrapped))
+    }
 
     override var type: PyType
         get() = PyBytesType

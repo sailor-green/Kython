@@ -41,9 +41,10 @@ class PyBool private constructor(val wrapped: Boolean) : PyObject() {
         get() = PyBoolType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun kyDefaultStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
-    override fun kyDefaultRepr(): PyString = kyDefaultStr()
-    override fun kyDefaultBool(): PyBool = this
+    override fun pyGetStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
+    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyToBool(): PyBool = this
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = get(this === other)
 
     /**
      * Inverts this PyBool.

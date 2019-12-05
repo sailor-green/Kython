@@ -77,10 +77,6 @@ abstract class PyException(val args: PyTuple) : PyObject() {
                     // used to capture the outer this
                     val innerClassType = this
                     val instance = object : PyException(PyTuple(args)) {
-                        init {
-                            parentTypes.addAll(bases)
-                        }
-
                         override var type: PyType
                             get() = innerClassType
                             set(_) {}
@@ -102,12 +98,14 @@ abstract class PyException(val args: PyTuple) : PyObject() {
         exceptionFrames = frames
     }
 
-    override fun kyDefaultStr(): PyString {
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
+
+    override fun pyGetStr(): PyString {
         require(type is PyExceptionType) { "Type of exception was not PyExceptionType!" }
         TODO()
     }
 
-    override fun kyDefaultRepr(): PyString {
+    override fun pyGetRepr(): PyString {
         TODO("not implemented")
     }
 }

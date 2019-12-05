@@ -32,8 +32,9 @@ class PyRootObjectInstance : PyObject() {
         _cached = if (ooEnabled) PyString("[object Object]") else PyString("<object object>")
     }
 
-    override fun kyDefaultRepr(): PyString = kyDefaultStr()
-    override fun kyDefaultStr(): PyString = _cached
+    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyGetStr(): PyString = _cached
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject = PyBool.get(this === other)
 
     override var type: PyType
         get() = PyRootObjectType

@@ -45,7 +45,7 @@ object ObjectDir : PyBuiltinFunction("<object.__dir__>") {
 object ObjectRepr : PyBuiltinFunction("<object __repr__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
-        return self.kyDefaultRepr()
+        return self.pyGetRepr()
     }
 
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD
@@ -57,7 +57,7 @@ object ObjectRepr : PyBuiltinFunction("<object __repr__>") {
 object ObjectStr : PyBuiltinFunction("<object __str__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
-        return self.kyDefaultStr()
+        return self.pyGetStr()
     }
 
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD

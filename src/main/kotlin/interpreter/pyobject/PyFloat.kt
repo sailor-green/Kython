@@ -29,11 +29,18 @@ class PyFloat(val wrapped: Double) : PyObject() {
         PyString(wrapped.toString())
     }
 
-    override fun kyDefaultStr(): PyString = _floatStr
-    override fun kyDefaultRepr(): PyString = _floatStr
+    override fun pyGetStr(): PyString = _floatStr
+    override fun pyGetRepr(): PyString = _floatStr
 
     // NaN is truthy?
-    override fun kyDefaultBool(): PyBool = PyBool.get(wrapped != 0.0)
+    override fun pyToBool(): PyBool = PyBool.get(wrapped != 0.0)
+
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyFloat) {
+            return PyNotImplemented
+        }
+        return PyBool.get(wrapped == other.wrapped)
+    }
 
     override var type: PyType
         get() = PyFloatType

@@ -31,14 +31,20 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
         val EMPTY = PyTuple(listOf())
     }
 
-    override fun kyDefaultStr(): PyString {
+    override fun pyGetStr(): PyString {
         return PyString("(" + subobjects.joinToString {
             it.pyGetRepr().wrappedString
         } + ")")
     }
 
-    override fun kyDefaultRepr(): PyString = kyDefaultStr()
-    override fun kyDefaultBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
+    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyToBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyTuple) {
+            return PyNotImplemented
+        }
+        return PyBool.get(subobjects == other.subobjects)
+    }
 
     override var type: PyType
         get() = PyTupleType

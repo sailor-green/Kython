@@ -24,12 +24,17 @@ import green.sailor.kython.interpreter.pyobject.types.PyIntType
  * Represents a Python int type. This internally wraps a long,
  */
 class PyInt(val wrappedInt: Long) : PyObject() {
-
     // default impls
-    override fun kyDefaultStr(): PyString = PyString(wrappedInt.toString())
-    override fun kyDefaultRepr(): PyString = kyDefaultStr()
+    override fun pyGetStr(): PyString = PyString(wrappedInt.toString())
+    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyEquals(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyInt) {
+            return PyNotImplemented
+        }
+        return PyBool.get(other.wrappedInt == wrappedInt)
+    }
 
-    override fun kyDefaultBool(): PyBool = PyBool.get(wrappedInt != 0L)
+    override fun pyToBool(): PyBool = PyBool.get(wrappedInt != 0L)
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
