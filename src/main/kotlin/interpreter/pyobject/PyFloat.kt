@@ -59,6 +59,12 @@ class PyFloat(val wrapped: Double) : PyObject() {
         return PyFloat(-wrapped)
     }
 
+    override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
+        if (other is PyInt) return PyFloat(other.wrappedInt.toDouble() + wrapped)
+        if (other is PyFloat) return PyFloat(other.wrapped + wrapped)
+        return PyNotImplemented
+    }
+
     override var type: PyType
         get() = PyFloatType
         set(_) = Exceptions.invalidClassSet(this)
