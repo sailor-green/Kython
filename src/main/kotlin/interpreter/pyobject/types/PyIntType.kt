@@ -20,10 +20,7 @@ package green.sailor.kython.interpreter.pyobject.types
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyInt
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
 
 /**
@@ -33,6 +30,16 @@ object PyIntType : PyType("int") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val value = kwargs["value"] ?: error("Built-in signature mismatch")
         when (value) {
+            // MUST COME FIRST
+            // cpython: int(True) == 1, type(int(True)) == int
+            //
+            // since PyBool *is* a PyInt, normally, this would pass through to the PyInt and return
+            // the value directly.
+            // but instead, we explicitly check for it, then re-wrap it.
+            // i would like to not have to re-wrap it, but im not sure how that would work...
+            is PyBool -> {
+                return PyInt(value.wrappedInt)
+            }
             is PyInt -> {
                 return value
             }
