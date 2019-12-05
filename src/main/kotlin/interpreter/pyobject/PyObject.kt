@@ -190,7 +190,7 @@ abstract class PyObject {
      * Implements some_object == other_object.
      */
     abstract fun pyEquals(other: PyObject): PyObject
-    
+
     // __neq__
     /**
      * Implements some_object != other_object.

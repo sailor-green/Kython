@@ -24,12 +24,12 @@ import green.sailor.kython.interpreter.pyobject.types.PyBoolType
  * Represents a Python boolean.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class PyBool private constructor(val wrapped: Boolean) : PyObject() {
+class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(intValue) {
     companion object {
         // The TRUE instance of this.
-        val TRUE = PyBool(true)
+        val TRUE = PyBool(true, 1L)
         // The FALSE instance of this.
-        val FALSE = PyBool(false)
+        val FALSE = PyBool(false, 1L)
 
         fun get(b: Boolean) = if (b) TRUE else FALSE
     }

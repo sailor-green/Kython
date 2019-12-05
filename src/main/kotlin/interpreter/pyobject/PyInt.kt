@@ -23,7 +23,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyIntType
 /**
  * Represents a Python int type. This internally wraps a long,
  */
-class PyInt(val wrappedInt: Long) : PyObject() {
+open class PyInt(val wrappedInt: Long) : PyObject() {
     // default impls
     override fun pyGetStr(): PyString = PyString(wrappedInt.toString())
     override fun pyGetRepr(): PyString = pyGetStr()
