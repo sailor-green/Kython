@@ -17,10 +17,9 @@
  */
 package green.sailor.kython.interpreter.iface
 
-import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a callable signature. This is created for every function instance (including built-in functions) and is
@@ -85,7 +84,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                             finalMap[name] = arg
                         } catch (e: NoSuchElementException) {
                             if (name !in finalMap) {
-                                Exceptions.TYPE_ERROR("No value provided for arg $name").throwKy()
+                                typeError("No value provided for arg $name")
                             }
                         }
                     }
@@ -96,10 +95,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                     // keyword args are NOT allowed for this function
                     // Also: keyword_star is irrelevant because this doesn't take keyword arguments.
                     ArgType.KEYWORD ->
-                        Exceptions.TYPE_ERROR(
+                        typeError(
                             "This function takes $name as a keyword, " +
-                                "not a positional argument"
-                        ).throwKy()
+                            "not a positional argument"
+                        )
 
                     ArgType.KEYWORD_STAR -> {}
                 }
@@ -108,10 +107,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // make sure too many args weren't passed
             if (argsIt.hasNext()) {
                 val remaining = argsIt.asSequence().toList().size
-                Exceptions.TYPE_ERROR(
+                typeError(
                     "Passed too many arguments! Expected ${args.size}, " +
-                        "got ${finalMap.size + remaining}"
-                ).throwKy()
+                    "got ${finalMap.size + remaining}"
+                )
             }
         }
 

@@ -17,10 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
 
 // initialdict:
@@ -88,7 +86,7 @@ abstract class PyObject {
      */
     inline fun <reified T : PyObject> cast(): T {
         if (this !is T) {
-            Exceptions.TYPE_ERROR("Invalid type: ${type.name}").throwKy()
+            typeError("Invalid type: ${type.name}")
         }
         return this
     }
@@ -162,7 +160,7 @@ abstract class PyObject {
         if (this is PyCallable) {
             return runCallable(args)
         }
-        Exceptions.TYPE_ERROR("This object is not callable").throwKy()
+        typeError("This object is not callable")
     }
 
     // == Conversion ==

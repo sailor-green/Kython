@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 import java.util.*
 
 /**
@@ -348,7 +349,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
         val fn = stack.pop()
         if (!fn.kyIsCallable()) {
-            Exceptions.TYPE_ERROR("'${fn.type.name}' is not callable").throwKy()
+            typeError("'${fn.type.name}' is not callable")
         }
 
         val result = fn.pyCall(toCallWith)
@@ -618,10 +619,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         if (!shouldError) {
             return PyBool.FALSE
         } else {
-            Exceptions.TYPE_ERROR(
+            typeError(
                 "Operation not supported between " +
                 "'${first.type.name}' and ${second.type.name}"
-            ).throwKy()
+            )
         }
     }
 

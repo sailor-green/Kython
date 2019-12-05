@@ -55,7 +55,7 @@ object Exceptions {
 
     // helpers for common errors from builtins
     fun invalidClassSet(parent: PyObject): Nothing =
-        TYPE_ERROR("Cannot set __class__ on object of type ${parent.type.name}").throwKy()
+        typeError("Cannot set __class__ on object of type ${parent.type.name}")
 }
 
 /**

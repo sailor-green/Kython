@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents the default object __getattribute__.
@@ -33,8 +34,7 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         val self = kwargs["self"]!!
         val name = kwargs["name"]!!
         if (name !is PyString) {
-            Exceptions.TYPE_ERROR("Attribute name must be type str, not ${name.type.name}")
-                .throwKy()
+            typeError("Attribute name must be type str, not ${name.type.name}")
         }
         val attrName = name.wrappedString
 

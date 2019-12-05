@@ -17,14 +17,13 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyMethod
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents the type of a method (types.MethodType).
@@ -35,7 +34,7 @@ object PyMethodType : PyType("method") {
         val instance = kwargs["instance"] ?: error("Built-in signature mismatch")
 
         if (!function.kyIsCallable()) {
-            Exceptions.TYPE_ERROR("Method first param must be a callable").throwKy()
+            typeError("Method first param must be a callable")
         }
 
         // TODO

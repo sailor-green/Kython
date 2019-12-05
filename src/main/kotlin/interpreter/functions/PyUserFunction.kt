@@ -31,6 +31,7 @@ import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a Python function object.
@@ -42,7 +43,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
             if (code !is PyCodeObject) {
-                Exceptions.TYPE_ERROR("Arg 'code' is not a code object").throwKy()
+                typeError("Arg 'code' is not a code object")
             }
             return PyUserFunction(code.wrappedCodeObject)
         }

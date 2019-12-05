@@ -17,11 +17,10 @@
  */
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents the iter(x) built-in function.
@@ -37,7 +36,7 @@ class IterBuiltinFunction : PyBuiltinFunction("iter") {
         val sentinel = kwargs["sentinel"]
         val iter = obb.pyGetAttribute("__iter__")
         if (!iter.kyIsCallable()) {
-            Exceptions.TYPE_ERROR("__iter__ is not callable").throwKy()
+            typeError("__iter__ is not callable")
         }
         return iter.pyCall(if (sentinel == null) listOf() else listOf(sentinel))
     }
