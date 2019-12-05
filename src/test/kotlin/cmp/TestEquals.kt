@@ -19,6 +19,8 @@ package green.sailor.kython.test.cmp
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.test.assertFalse
+import green.sailor.kython.test.assertTrue
 import green.sailor.kython.test.testExec
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -45,9 +47,35 @@ class TestEquals {
         // and two new PyString will be created to wrap them
         // so this is a required test
         val result = KythonInterpreter.testExec("""
-        result = "abc".upper() == "ABC"
+            result = "abc".upper() == "ABC"
         """.trimIndent())
         assertTrue(result is PyBool)
         assertTrue((result as PyBool).wrapped)
+    }
+
+    @Test
+    fun `Test equals of tuple`() {
+        // this should trick the compiler/interpreter into creatiing two tuple instances
+        val result = KythonInterpreter.testExec("""
+            x = tuple((1,))
+            y = tuple((1,))
+            result = x == y
+        """.trimIndent())
+        assertTrue(result)
+
+        val result2 = KythonInterpreter.testExec("""
+            x = (1,)
+            y = (2,)
+            result = x == y
+        """.trimIndent())
+        assertFalse(result2)
+    }
+
+    @Test
+    fun `Test invalid equals`() {
+        val result = KythonInterpreter.testExec("""
+            result = object() == object()
+        """.trimIndent())
+        assertFalse(result)
     }
 }

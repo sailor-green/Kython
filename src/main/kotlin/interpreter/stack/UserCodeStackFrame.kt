@@ -586,26 +586,69 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
+     * Implements comparison operator behaviour, handling PyNotImplemented as appropriately.
+     *
+     * @param cbFirst: The first operation to call.
+     * @param cbSecond: If cbFirst returned PyNotImplemented, the fallback operation.
+     */
+    private fun implCompareOp(
+        cbFirst: (PyObject, PyObject) -> PyObject,
+        cbSecond: ((PyObject, PyObject) -> PyObject)? = null
+    ): PyBool {
+        // if no second callback is provided, we usee one that simply swaps the argument
+        // eg if obb1.pyEquals(obb2) is PyNotImplemented, we run obb2.pyEquals(obb1) instead.
+
+        val realSecond = cbSecond ?: { tos, tos1 -> cbFirst(tos1, tos) }
+        val tos = stack.pop()
+        val tos1 = stack.pop()
+
+        // try obb1.__magic__(obb2)
+        val first = cbFirst(tos, tos1)
+        if (first !is PyNotImplemented) {
+            return first as? PyBool ?: error("bool() returned non-bool")
+        }
+
+        // try obb2.__magic__(obb1)
+        val second = realSecond(tos1, tos)
+        if (second !is PyNotImplemented) {
+            return second as? PyBool ?: error("bool() returned non-bool")
+        }
+
+        return PyBool.FALSE
+    }
+
+    private fun implCompareOp(cbFirst: (PyObject, PyObject) -> PyObject): PyBool =
+        implCompareOp(cbFirst, null)
+
+    /**
      * COMPARE_OP
      */
     fun compareOp(arg: Byte) {
-        val top = stack.pop()
-        val second = stack.pop()
         with(CompareOp) {
             when (arg.toInt()) {
-                LESS -> magicMethod(top, "__lt__", second, "__ge__")
+                /*LESS -> magicMethod(top, "__lt__", second, "__ge__")
                 LESS_EQUAL -> magicMethod(top, "__le__", second, "__gt__")
                 GREATER -> magicMethod(top, "__gt__", second, "__le__")
-                GREATER_EQUAL -> magicMethod(top, "__ge__", second, "__lt__")
-                EQUAL -> stack.push(top.pyEquals(second))
-                NOT_EQUAL -> magicMethod(top, "__ne__", second, "__ne__")
+                GREATER_EQUAL -> magicMethod(top, "__ge__", second, "__lt__")*/
+                EQUAL -> {
+                    stack.push(implCompareOp { tos, tos1 -> tos.pyEquals(tos1) })
+                }
+                /*NOT_EQUAL -> magicMethod(top, "__ne__", second, "__ne__")
                 CONTAINS -> magicMethod(top, "__contains__", second)
                 NOT_CONTAINS -> {
                     magicMethod(top, "__contains__", second)
                     stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+                }*/
+                IS -> {
+                    val top = stack.pop()
+                    val second = stack.pop()
+                    stack.push(if (top === second) PyBool.TRUE else PyBool.FALSE)
                 }
-                IS -> stack.push(if (top === second) PyBool.TRUE else PyBool.FALSE)
-                IS_NOT -> stack.push(if (top !== second) PyBool.TRUE else PyBool.FALSE)
+                IS_NOT -> {
+                    val top = stack.pop()
+                    val second = stack.pop()
+                    stack.push(if (top !== second) PyBool.TRUE else PyBool.FALSE)
+                }
                 EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
                 else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
             }
