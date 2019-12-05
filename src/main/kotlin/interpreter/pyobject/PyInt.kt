@@ -59,6 +59,8 @@ open class PyInt(val wrappedInt: Long) : PyObject() {
     }
 
     override fun pyToBool(): PyBool = PyBool.get(wrappedInt != 0L)
+    override fun pyToInt(): PyInt = this
+    override fun pyToFloat(): PyFloat = PyFloat(wrappedInt.toDouble())
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

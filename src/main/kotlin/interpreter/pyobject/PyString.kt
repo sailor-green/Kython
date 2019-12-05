@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
+import green.sailor.kython.interpreter.valueError
 
 /**
  * Represents a Python string. This wraps a regular JVM string.
@@ -33,6 +34,17 @@ class PyString(val wrappedString: String) : PyObject() {
     override fun pyGetStr(): PyString = this
     override fun pyGetRepr(): PyString = PyString("'$wrappedString'")
     override fun pyToBool(): PyBool = PyBool.get(wrappedString.isNotEmpty())
+    override fun pyToInt(): PyInt = try {
+        PyInt(wrappedString.toLong())
+    } catch (e: NumberFormatException) {
+        valueError("Cannot convert '$wrappedString' to int")
+    }
+    override fun pyToFloat(): PyFloat = try {
+        PyFloat(wrappedString.toDouble())
+    } catch (e: NumberFormatException) {
+        valueError("Cannot convert '$wrappedString' to float")
+    }
+
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyString) {
             return PyNotImplemented

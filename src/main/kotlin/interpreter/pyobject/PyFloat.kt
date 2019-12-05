@@ -35,6 +35,8 @@ class PyFloat(val wrapped: Double) : PyObject() {
 
     // NaN is truthy?
     override fun pyToBool(): PyBool = PyBool.get(wrapped != 0.0)
+    override fun pyToInt(): PyInt = PyInt(wrapped.toLong())
+    override fun pyToFloat(): PyFloat = this
 
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyFloat) return PyNotImplemented

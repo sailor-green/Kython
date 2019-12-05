@@ -17,6 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 
@@ -25,6 +27,11 @@ import green.sailor.kython.interpreter.pyobject.PyType
  */
 object PyFloatType : PyType("float") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        TODO("Not implemented")
+        val obb = kwargs["x"] ?: error("Built-in signature mismatch!")
+        return obb.pyToFloat()
     }
+
+    override val signature: PyCallableSignature = PyCallableSignature(
+        "x" to ArgType.POSITIONAL
+    )
 }
