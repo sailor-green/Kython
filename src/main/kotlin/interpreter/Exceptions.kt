@@ -57,3 +57,13 @@ object Exceptions {
     fun invalidClassSet(parent: PyObject): Nothing =
         TYPE_ERROR("Cannot set __class__ on object of type ${parent.type.name}").throwKy()
 }
+
+/**
+ * Causes a new TypeError.
+ */
+fun typeError(message: String): Nothing = Exceptions.TYPE_ERROR(message).throwKy()
+
+/**
+ * Causes a new ValueErrror.
+ */
+fun valueError(message: String): Nothing = Exceptions.VALUE_ERROR(message).throwKy()

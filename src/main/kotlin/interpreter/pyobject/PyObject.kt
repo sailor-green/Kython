@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 // initialdict:
 // take PyString as an example
@@ -225,6 +226,22 @@ abstract class PyObject {
     open fun pyLesserEquals(other: PyObject): PyObject {
         TODO()
     }
+
+    // == Unary operators == //
+    /**
+     * Implements ~some_object.
+     */
+    open fun pyInvert(): PyObject = typeError("'${type.name}' does not support unary inversion")
+
+    /**
+     * Implements -some_object.
+     */
+    open fun pyNegative(): PyObject = typeError("'${type.name}' does not support unary negative")
+
+    /**
+     * Implements +some_object.
+     */
+    open fun pyPositive(): PyObject = typeError("'${type.name}' does not support unary positive")
 
     // == Descriptors ==
 

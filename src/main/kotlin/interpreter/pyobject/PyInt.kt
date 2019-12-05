@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyIntType
+import kotlin.math.abs
 
 /**
  * Represents a Python int type. This internally wraps a long,
@@ -27,6 +28,7 @@ open class PyInt(val wrappedInt: Long) : PyObject() {
     // default impls
     override fun pyGetStr(): PyString = PyString(wrappedInt.toString())
     override fun pyGetRepr(): PyString = pyGetStr()
+
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyInt) return PyNotImplemented
         return PyBool.get(other.wrappedInt == wrappedInt)
@@ -35,10 +37,19 @@ open class PyInt(val wrappedInt: Long) : PyObject() {
         if (other !is PyInt) return PyNotImplemented
         return PyBool.get(other.wrappedInt > wrappedInt)
     }
-
     override fun pyLesser(other: PyObject): PyObject {
         if (other !is PyInt) return PyNotImplemented
         return PyBool.get(other.wrappedInt < wrappedInt)
+    }
+
+    override fun pyPositive(): PyObject {
+        if (wrappedInt > 0L) return this
+        return PyInt(abs(wrappedInt))
+    }
+
+    override fun pyNegative(): PyObject {
+        if (wrappedInt < 0L) return this
+        return PyInt(-wrappedInt)
     }
 
     override fun pyToBool(): PyBool = PyBool.get(wrappedInt != 0L)

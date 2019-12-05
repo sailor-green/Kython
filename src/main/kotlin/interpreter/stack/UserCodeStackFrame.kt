@@ -714,17 +714,17 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val top = stack.pop()
         when (type) {
             UnaryOp.INVERT -> {
-                magicMethod(top, "__invert__")
+                stack.push(top.pyInvert())
             }
             UnaryOp.NOT -> {
                 val result = top.pyToBool()
                 stack.push(!result)
             }
             UnaryOp.NEGATIVE -> {
-                magicMethod(top, "__neg__")
+                stack.push(top.pyNegative())
             }
             UnaryOp.POSITIVE -> {
-                magicMethod(top, "__pos__")
+                stack.push(top.pyPositive())
             }
         }
         bytecodePointer += 1

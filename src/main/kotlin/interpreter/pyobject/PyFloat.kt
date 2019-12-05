@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyFloatType
+import kotlin.math.abs
 
 /**
  * Represents a Python float. This wraps a kotlin Double (CPython wraps a C double,
@@ -46,6 +47,16 @@ class PyFloat(val wrapped: Double) : PyObject() {
     override fun pyLesser(other: PyObject): PyObject {
         if (other !is PyFloat) return PyNotImplemented
         return PyBool.get(wrapped < other.wrapped)
+    }
+
+    override fun pyPositive(): PyObject {
+        if (wrapped > 0.0) return this
+        return PyFloat(abs(wrapped))
+    }
+
+    override fun pyNegative(): PyObject {
+        if (wrapped < 0.0) return this
+        return PyFloat(-wrapped)
     }
 
     override var type: PyType
