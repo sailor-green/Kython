@@ -17,11 +17,10 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.valueError
 
 /**
  * Represents the type of an int.
@@ -48,10 +47,10 @@ object PyIntType : PyType("int") {
                 try {
                     return PyInt(value.wrappedString.toInt(base.wrappedInt.toInt()).toLong())
                 } catch (e: NumberFormatException) {
-                    Exceptions.VALUE_ERROR(
+                    valueError(
                         "Cannot convert '${value.wrappedString}' to int " +
-                            "with base ${base.wrappedInt}"
-                    ).throwKy()
+                        "with base ${base.wrappedInt}"
+                    )
                 }
             }
             else -> {
