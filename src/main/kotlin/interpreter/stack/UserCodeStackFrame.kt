@@ -537,8 +537,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * The first callback passed should invoke the appropriate function on TOS and TOS1, and return the
      * [PyObject] from that function. The second callback
      */
-    fun implBinaryOp(cb: (PyObject, PyObject) -> PyObject,
-                     cb2: (PyObject, PyObject) -> PyObject): PyObject {
+    fun implBinaryOp(
+        cb: (PyObject, PyObject) -> PyObject,
+        cb2: (PyObject, PyObject) -> PyObject
+    ): PyObject {
         val tos = stack.pop()
         val tos1 = stack.pop()
         val first = cb(tos, tos1)
@@ -558,7 +560,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * BINARY_* (ADD, etc)
      */
     fun binaryOp(type: BinaryOp, arg: Byte) {
-        when (type) {
+        val toPush = when (type) {
             BinaryOp.ADD -> implBinaryOp(
                 { a, b -> a.pyAdd(b) }, { a, b -> a.pyAdd(b, reverse = true) }
             )
@@ -577,6 +579,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             BinaryOp.OR -> "__or__"*/
             else -> error("This should never happen!")
         }
+        stack.push(toPush)
         bytecodePointer += 1
     }
 
