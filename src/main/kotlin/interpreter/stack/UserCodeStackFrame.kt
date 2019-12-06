@@ -728,19 +728,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     fun unaryOp(type: UnaryOp, param: Byte) {
         val top = stack.pop()
         when (type) {
-            UnaryOp.INVERT -> {
-                stack.push(top.pyInvert())
-            }
-            UnaryOp.NOT -> {
-                val result = top.pyToBool()
-                stack.push(!result)
-            }
-            UnaryOp.NEGATIVE -> {
-                stack.push(top.pyNegative())
-            }
-            UnaryOp.POSITIVE -> {
-                stack.push(top.pyPositive())
-            }
+            UnaryOp.INVERT -> stack.push(top.pyInvert())
+            UnaryOp.NOT -> stack.push(!top.pyToBool())
+            UnaryOp.NEGATIVE -> stack.push(top.pyNegative())
+            UnaryOp.POSITIVE -> stack.push(top.pyPositive())
         }
         bytecodePointer += 1
     }
