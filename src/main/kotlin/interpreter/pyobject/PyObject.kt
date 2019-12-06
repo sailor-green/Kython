@@ -242,10 +242,35 @@ abstract class PyObject {
      */
     open fun pyAdd(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
+    // __sub__
     /**
      * Implements some_object - other_object.
      */
     open fun pySub(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+
+    // __mul__
+    /**
+     * Implements some_object * other_object.
+     */
+    open fun pyMul(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+
+    // __matmul__
+    /**
+     * Implements some_object @ other_object.
+     */
+    open fun pyMatMul(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+
+    // __truediv__
+    /**
+     * Implements some_object / other_object.
+     */
+    open fun pyDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+
+    // __floordiv__
+    /**
+     * Implements some_object // other_object.
+     */
+    open fun pyFloorDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // == Descriptors == //
 
