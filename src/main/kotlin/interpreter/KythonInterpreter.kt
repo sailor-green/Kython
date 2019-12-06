@@ -23,6 +23,7 @@ import green.sailor.kython.MakeUp
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.util.CPythonCompiler
 import java.nio.file.Files
@@ -66,6 +67,7 @@ object KythonInterpreter {
 
         val rootFunction = PyUserFunction(fn)
         val module = KyModule(rootFunction, path.toString(), Files.readAllLines(path))
+        module.attribs["__name__"] = PyString("__main__")
         modules["__main__"] = module
 
         kickoffThread(module.stackFrame, child = false)

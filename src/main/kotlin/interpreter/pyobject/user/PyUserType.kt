@@ -32,6 +32,10 @@ class PyUserType(name: String, bases: List<PyType>, dict: Map<String, PyObject>)
 
     // <type>.__call__(*args, **kwargs)
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        TODO()
+        // effectively, object.__new__
+        // TODO: `__new__`
+        val newObject = PyUserObject(this)
+        newObject.pyInit(kwargs)
+        return newObject
     }
 }

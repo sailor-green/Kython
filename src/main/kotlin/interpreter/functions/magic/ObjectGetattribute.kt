@@ -50,7 +50,7 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
             return self.type.internalDict[attrName]!!.pyDescriptorGet(self, self.type)
         }
 
-        Exceptions.NAME_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
+        Exceptions.ATTRIBUTE_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
     }
 
     override val signature: PyCallableSignature by lazy {

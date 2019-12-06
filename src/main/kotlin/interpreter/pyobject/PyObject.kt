@@ -73,7 +73,7 @@ abstract class PyObject {
     open val initialDict: Map<String, PyObject> = mapOf()
 
     /** The `__dict__` of this PyObject. */
-    internal open val internalDict by lazy {
+    open val internalDict by lazy {
         defaultDict.apply {
             // then copy the "initial" dictionary
             putAll(initialDict)
