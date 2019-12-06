@@ -158,10 +158,17 @@ abstract class PyObject {
      */
     open fun pyToInt(): PyInt = typeError("Cannot convert '${type.name}' to int")
 
+    // __float__
     /**
      * Implements float(some_object).
      */
     open fun pyToFloat(): PyFloat = typeError("Cannot convert '${type.name}' to float")
+
+    // __bytes__
+    /**
+     * Implements bytes(some_object).
+     */
+    open fun pyToBytes(): PyBytes = typeError("Cannot convert '${type.name}' to bytes")
 
     // __str__
     /**

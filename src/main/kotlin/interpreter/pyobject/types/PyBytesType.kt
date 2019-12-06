@@ -21,18 +21,16 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyBytes
+import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 
 object PyBytesType : PyType("bytes") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val value = kwargs["value"] ?: error("Built-in signature mismatch")
-        when (value) {
-            is PyString -> {
-                return PyBytes(value.wrappedString.toByteArray())
-            }
-            else -> error("Not yet supported")
-        }
+        return value.pyToBytes()
     }
 
     override val signature: PyCallableSignature by lazy {
