@@ -571,13 +571,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 { a, b -> a.pyMul(b) }, { a, b -> a.pyMul(b, reverse = true) }
             )
             BinaryOp.MATRIX_MULTIPLY -> implBinaryOp(
-                { a, b -> a.pyMatMul(b) }, { a, b -> a.pyMatMul(b, reverse = true)}
+                { a, b -> a.pyMatMul(b) }, { a, b -> a.pyMatMul(b, reverse = true) }
             )
             BinaryOp.TRUE_DIVIDE -> implBinaryOp(
                 { a, b -> a.pyDiv(b) }, { a, b -> a.pyDiv(b, reverse = true) }
             )
             BinaryOp.FLOOR_DIVIDE -> implBinaryOp(
-                { a, b -> a.pyFloorDiv(b) }, { a, b -> a.pyFloorDiv(b, reverse = true)}
+                { a, b -> a.pyFloorDiv(b) }, { a, b -> a.pyFloorDiv(b, reverse = true) }
             )
             /*BinaryOp.LSHIFT -> "__lshift__"
             BinaryOp.POWER -> "__pow__"
