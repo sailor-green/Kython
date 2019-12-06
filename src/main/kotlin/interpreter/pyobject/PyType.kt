@@ -40,7 +40,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     }
 
     /** A list of parent classes for this PyType. */
-    val bases = mutableListOf<PyType>()
+    open val bases = mutableListOf<PyType>()
 
     /**
      * Makes a new instance of this builtin.

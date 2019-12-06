@@ -21,6 +21,7 @@ package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
+import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
@@ -264,7 +265,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                     InstructionOpcode.NOP -> Unit
 
+                    // meta
                     InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
+                    InstructionOpcode.LOAD_BUILD_CLASS -> loadBuildClass(param)
 
                     InstructionOpcode.COMPARE_OP -> compareOp(param)
                     else -> error("Unimplemented opcode $opcode")
@@ -385,6 +388,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val function = PyUserFunction(code.wrappedCodeObject)
         function.module = this.function.module
         stack.push(function)
+        bytecodePointer += 1
+    }
+
+    /**
+     * Loads __build_class__ onto the stack.
+     */
+    fun loadBuildClass(arg: Byte) {
+        stack.push(BuildClassFunction)
         bytecodePointer += 1
     }
 
