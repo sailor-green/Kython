@@ -70,6 +70,16 @@ class PyFloat(val wrapped: Double) : PyObject() {
         if (other is PyFloat) return PyFloat(wrapped - other.wrapped)
         return PyNotImplemented
     }
+    override fun pyMul(other: PyObject, reverse: Boolean): PyObject {
+        if (other is PyInt) return PyFloat(wrapped * other.wrappedInt)
+        if (other is PyFloat) return PyFloat(wrapped * other.wrapped)
+        return PyNotImplemented
+    }
+    override fun pyDiv(other: PyObject, reverse: Boolean): PyObject { // non-floor div
+        if (other is PyInt) return PyFloat(wrapped / other.wrappedInt.toDouble())
+        if (other is PyFloat) return PyFloat(wrapped / other.wrapped)
+        return PyNotImplemented
+    }
 
     override var type: PyType
         get() = PyFloatType
