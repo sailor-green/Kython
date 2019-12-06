@@ -72,8 +72,10 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod0(name: String, fallba
 /**
  * Helper function for calling a magic method with one arg (e.g. __eq__).
  */
-inline fun <reified T : PyObject> PyUserObject.magicMethod1(other: PyObject,
-    name: String, fallback: (PyObject) -> T
+inline fun <reified T : PyObject> PyUserObject.magicMethod1(
+    other: PyObject,
+    name: String,
+    fallback: (PyObject) -> T
 ): T {
     val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
     return if (meth != null && meth !is DefaultBuiltinFunction) {
