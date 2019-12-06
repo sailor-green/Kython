@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.iface
 
+import green.sailor.kython.interpreter.pyobject.PyDict
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.typeError
@@ -102,14 +103,14 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                     }
 
                     // keyword args are NOT allowed for this function
-                    // Also: keyword_star is irrelevant because this doesn't take keyword arguments.
                     ArgType.KEYWORD ->
                         typeError(
                             "This function takes $name as a keyword, " +
                             "not a positional argument"
                         )
 
-                    ArgType.KEYWORD_STAR -> {}
+                    // keyword stars are just given an empty dict
+                    ArgType.KEYWORD_STAR -> finalMap[name] = PyDict(linkedMapOf())
                 }
             }
 
