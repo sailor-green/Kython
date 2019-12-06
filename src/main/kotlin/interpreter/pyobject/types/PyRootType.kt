@@ -18,26 +18,35 @@
 package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyTuple
-import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.user.PyUserType
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents the root type. If the type of a PyObject is not set, this will be used.
  */
 object PyRootType : PyType("type") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        // one-arg form
         val args = kwargs["args"]!!.cast<PyTuple>()
 
-        if (args.subobjects.size == 1) {
-            return args.subobjects.first().type
+        return when (args.subobjects.size) {
+            1 -> {
+                args.subobjects.first().type
+            }
+            3 -> {
+                val name = args.subobjects[0].cast<PyString>()
+                // validate bases
+                val bases = args.subobjects[1].cast<PyTuple>().subobjects.map {
+                    it as? PyType ?: typeError("Base is not a type")
+                }
+                val body = args.subobjects[2].cast<PyDict>()
+                PyUserType(name.wrappedString, bases, body.internalDict)
+            }
+            else -> {
+                typeError("type() takes 1 or 3 arguments")
+            }
         }
 
-        // TODO: Three arg type version
-        Exceptions.NOT_IMPLEMENTED_ERROR("Three-arg form of type not impl'd yet")
-            .throwKy()
     }
 
     override var type: PyType

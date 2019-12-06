@@ -91,6 +91,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
      * Generates a [PyCallableSignature] for this function.
      */
     fun generateSignature(): PyCallableSignature {
+        println(code.argCount)
         // ref: inspect._signature_from_function
         // varnames starting format: args, args with defaults, *args, kwonly, **kwargs
 
