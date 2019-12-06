@@ -64,6 +64,10 @@ class PyString(val wrappedString: String) : PyObject() {
         if (other is PyString) return PyString(wrappedString + other.wrappedString)
         return PyNotImplemented
     }
+    override fun pyMul(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyInt) return PyNotImplemented
+        return PyString(wrappedString.repeat(other.wrappedInt.toInt()))
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
