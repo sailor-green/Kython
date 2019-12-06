@@ -659,61 +659,49 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * COMPARE_OP
      */
     fun compareOp(arg: Byte) {
-        with(CompareOp) {
-            when (arg.toInt()) {
-                LESS -> {
-                    stack.push(implCompareOp(
-                        { tos, tos1 -> tos.pyLesser(tos1) },
-                        { tos, tos1 -> tos.pyGreaterEquals(tos1) },
-                        shouldError = true
-                    ))
-                }
-                LESS_EQUAL -> {
-                    stack.push(implCompareOp(
-                        { tos, tos1 -> tos.pyLesserEquals(tos1) },
-                        { tos, tos1 -> tos.pyGreater(tos1) },
-                        shouldError = true
-                    ))
-                }
-                GREATER -> {
-                    stack.push(implCompareOp(
-                        { tos, tos1 -> tos.pyGreater(tos1) },
-                        { tos, tos1 -> tos.pyLesserEquals(tos1) },
-                        shouldError = true
-                    ))
-                }
-                GREATER_EQUAL -> {
-                    stack.push(implCompareOp(
-                        { tos, tos1 -> tos.pyGreaterEquals(tos1) },
-                        { tos, tos1 -> tos.pyLesser(tos1) },
-                        shouldError = true
-                    ))
-                }
-                EQUAL -> {
-                    stack.push(implCompareOp { tos, tos1 -> tos.pyEquals(tos1) })
-                }
-                NOT_EQUAL -> {
-                    stack.push(implCompareOp { tos, tos1 -> tos.pyNotEquals(tos1) })
-                }
-                /*CONTAINS -> magicMethod(top, "__contains__", second)
-                NOT_CONTAINS -> {
-                    magicMethod(top, "__contains__", second)
-                    stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
-                }*/
-                IS -> {
-                    val top = stack.pop()
-                    val second = stack.pop()
-                    stack.push(if (top === second) PyBool.TRUE else PyBool.FALSE)
-                }
-                IS_NOT -> {
-                    val top = stack.pop()
-                    val second = stack.pop()
-                    stack.push(if (top !== second) PyBool.TRUE else PyBool.FALSE)
-                }
-                EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
-                else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
+        val toPush = with(CompareOp) { when (arg.toInt()) {
+            LESS -> implCompareOp(
+                { tos, tos1 -> tos.pyLesser(tos1) },
+                { tos, tos1 -> tos.pyGreaterEquals(tos1) },
+                shouldError = true
+            )
+            LESS_EQUAL -> implCompareOp(
+                { tos, tos1 -> tos.pyLesserEquals(tos1) },
+                { tos, tos1 -> tos.pyGreater(tos1) },
+                shouldError = true
+            )
+            GREATER -> implCompareOp(
+                { tos, tos1 -> tos.pyGreater(tos1) },
+                { tos, tos1 -> tos.pyLesserEquals(tos1) },
+                shouldError = true
+            )
+            GREATER_EQUAL -> implCompareOp(
+                { tos, tos1 -> tos.pyGreaterEquals(tos1) },
+                { tos, tos1 -> tos.pyLesser(tos1) },
+                shouldError = true
+            )
+            EQUAL -> implCompareOp { tos, tos1 -> tos.pyEquals(tos1) }
+            NOT_EQUAL -> implCompareOp { tos, tos1 -> tos.pyNotEquals(tos1) }
+            /*CONTAINS -> magicMethod(top, "__contains__", second)
+            NOT_CONTAINS -> {
+                magicMethod(top, "__contains__", second)
+                stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
+            }*/
+            IS -> {
+                val top = stack.pop()
+                val second = stack.pop()
+                if (top === second) PyBool.TRUE else PyBool.FALSE
             }
-        }
+            IS_NOT -> {
+                val top = stack.pop()
+                val second = stack.pop()
+                if (top !== second) PyBool.TRUE else PyBool.FALSE
+            }
+            EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
+            else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
+        } }
+        stack.push(toPush)
+
         bytecodePointer += 1
     }
 
