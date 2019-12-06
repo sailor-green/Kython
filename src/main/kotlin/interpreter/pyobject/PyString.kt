@@ -60,6 +60,11 @@ class PyString(val wrappedString: String) : PyObject() {
         return PyBool.get(wrappedString < other.wrappedString)
     }
 
+    override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
+        if (other is PyString) return PyString(wrappedString + other.wrappedString)
+        return PyNotImplemented
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
