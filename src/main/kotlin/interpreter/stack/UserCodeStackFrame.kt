@@ -257,7 +257,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     InstructionOpcode.UNARY_NOT -> unaryOp(UnaryOp.NOT, param)
                     InstructionOpcode.UNARY_INVERT -> unaryOp(UnaryOp.INVERT, param)
 
+                    // iteration
                     InstructionOpcode.GET_ITER -> getIter(param)
+                    InstructionOpcode.FOR_ITER -> forIter(param)
                     InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
 
                     InstructionOpcode.NOP -> Unit
@@ -725,8 +727,32 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun getIter(param: Byte) {
         val top = stack.pop()
-        magicMethod(top, "__iter__")
+        val iter = top.pyIter()
+        stack.push(iter)
         bytecodePointer += 1
+    }
+
+    /**
+     * FOR_ITER
+     */
+    fun forIter(param: Byte) {
+        // we only peek off the top in order to get the iterator, to save allocations
+        // since it's gonna be pushed back on immediately in the case the iterator has items
+        val iterator = stack.peek()
+        bytecodePointer += try {
+            val next = iterator.pyNext()
+            stack.push(next)
+
+            // next instruction
+            1
+        } catch (e: KyError) {
+            if (e.wrapped.type == Exceptions.STOP_ITERATION) {
+                // jump past the for
+                (param.toInt() / 2) + 1
+            } else {
+                throw e
+            }
+        }
     }
 
     /**

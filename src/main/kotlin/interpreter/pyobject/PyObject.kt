@@ -207,13 +207,13 @@ abstract class PyObject {
     /**
      * Implements some_object > other_object.
      */
-    abstract fun pyGreater(other: PyObject): PyObject
+    open fun pyGreater(other: PyObject): PyObject = PyNotImplemented
 
     // __lt__
     /**
      * Implements some_object < other_object.
      */
-    abstract fun pyLesser(other: PyObject): PyObject
+    open fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
     // __ge__
     open fun pyGreaterEquals(other: PyObject): PyObject {
@@ -278,6 +278,18 @@ abstract class PyObject {
      * Implements some_object // other_object.
      */
     open fun pyFloorDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+
+    // == Iterators/iterables ==
+    // __iter__
+    /**
+     * Implements iter(some_object).
+     */
+    open fun pyIter(): PyObject = typeError("'${type.name}' object is not iterable")
+
+    /**
+     * Implements next(some_object).
+     */
+    open fun pyNext(): PyObject = typeError("'${type.name}' object is not an iterator")
 
     // == Descriptors == //
 

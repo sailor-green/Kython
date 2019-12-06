@@ -30,6 +30,8 @@ object Exceptions {
     // Root of all other exceptions
     val EXCEPTION = BASE_EXCEPTION.typeSubclassOf("Exception")
 
+    val STOP_ITERATION = EXCEPTION.typeSubclassOf("StopIteration")
+
     // main errors
     val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
     val TYPE_ERROR = EXCEPTION.typeSubclassOf("TypeError")
