@@ -42,6 +42,15 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         )
     }
 
+    override fun toString(): String {
+        return buildString {
+            append("PyCallableSignature size=${args.size} ")
+            for ((name, arg) in args) {
+                append("$name=$arg")
+            }
+        }
+    }
+
     /** The default values for keyword arguments. */
     val defaults = mutableMapOf<String, PyObject>()
 
