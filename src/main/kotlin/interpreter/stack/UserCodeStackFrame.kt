@@ -296,7 +296,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             LoadPool.CONST -> function.code.consts[idx]
             LoadPool.FAST -> {
                 val name = function.code.varnames[idx]
-                locals[name]!!
+                locals[name] ?: error("Tried to load uninitialised varname $name")
             }
             LoadPool.NAME -> {
                 // sometimes a global...
