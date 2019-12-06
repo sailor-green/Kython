@@ -28,9 +28,15 @@ private val cmpSig = PyCallableSignature(
 )
 
 /**
+ * Superclass for all "default" builtins - used to signify if an object method will just call the
+ * PyObject method.
+ */
+abstract class DefaultBuiltinFunction(name: String) : PyBuiltinFunction(name)
+
+/**
  * Represents the default `__dir__` on objects.
  */
-object ObjectDir : PyBuiltinFunction("<object.__dir__>") {
+object ObjectDir : DefaultBuiltinFunction("<object.__dir__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in signature mismatch!")
         return self.pyDir()
@@ -42,7 +48,7 @@ object ObjectDir : PyBuiltinFunction("<object.__dir__>") {
 /**
  * Represents the default object __repr__.
  */
-object ObjectRepr : PyBuiltinFunction("<object __repr__>") {
+object ObjectRepr : DefaultBuiltinFunction("<object __repr__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
         return self.pyGetRepr()
@@ -54,7 +60,7 @@ object ObjectRepr : PyBuiltinFunction("<object __repr__>") {
 /**
  * Represents the default object str.
  */
-object ObjectStr : PyBuiltinFunction("<object __str__>") {
+object ObjectStr : DefaultBuiltinFunction("<object __str__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
         return self.pyGetStr()
@@ -63,7 +69,7 @@ object ObjectStr : PyBuiltinFunction("<object __str__>") {
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD
 }
 
-object ObjectEq : PyBuiltinFunction("<object __eq__>") {
+object ObjectEq : DefaultBuiltinFunction("<object __eq__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
         val other = kwargs["other"] ?: error("Built-in signature mismatch!")

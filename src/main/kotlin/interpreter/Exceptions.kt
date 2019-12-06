@@ -33,6 +33,7 @@ object Exceptions {
     val STOP_ITERATION = EXCEPTION.typeSubclassOf("StopIteration")
 
     // main errors
+    val ATTRIBUTE_ERROR = EXCEPTION.typeSubclassOf("AttributeError")
     val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
     val TYPE_ERROR = EXCEPTION.typeSubclassOf("TypeError")
     val VALUE_ERROR = EXCEPTION.typeSubclassOf("ValueError")
@@ -46,6 +47,9 @@ object Exceptions {
         "BaseException" to EXCEPTION,
         "Exception" to EXCEPTION,
 
+        "StopIteration" to STOP_ITERATION,
+
+        "AttributeError" to ATTRIBUTE_ERROR,
         "NameError" to NAME_ERROR,
         "TypeError" to TYPE_ERROR,
         "ValueError" to VALUE_ERROR,
