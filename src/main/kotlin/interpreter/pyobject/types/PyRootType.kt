@@ -46,7 +46,6 @@ object PyRootType : PyType("type") {
                 typeError("type() takes 1 or 3 arguments")
             }
         }
-
     }
 
     override var type: PyType
