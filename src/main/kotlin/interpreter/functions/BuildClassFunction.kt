@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyDict
@@ -24,6 +25,7 @@ import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
+import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**
  * Represents the `__build_class__` builtin, used to create new classes.
@@ -39,6 +41,12 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
         val bodyDict = PyDict(linkedMapOf())
         if (clsFn.code.argCount > 0) {
             clsFn.pyCall(listOf(bodyDict))
+        } else {
+            // if you pass a builtin to `__build_class__`, you deserve this error
+            val frame = clsFn.createFrame() as UserCodeStackFrame
+            val args = clsFn.signature.getFinalArgs(listOf())
+            KythonInterpreter.runStackFrame(frame, args)
+            bodyDict.internalDict.putAll(frame.locals)
         }
 
         // figure out the metaclass
