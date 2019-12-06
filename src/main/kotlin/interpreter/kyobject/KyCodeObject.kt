@@ -115,7 +115,7 @@ class KyCodeObject(original: KycCodeObject) {
     val lnotab = Lnotab(original.lnotab.wrapped)
 
     // special properties
-    val instructions by lazy { this.parseInstructions() }
+    val instructions = parseInstructions()
 
     /**
      * Parses the instructions of this code object.

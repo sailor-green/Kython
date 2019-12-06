@@ -235,10 +235,17 @@ abstract class PyObject {
     open fun pyPositive(): PyObject = typeError("'${type.name}' does not support unary positive")
 
     // == Binary operators == //
+
+    // __add__
     /**
      * Implements some_object + other_object.
      */
     open fun pyAdd(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+
+    /**
+     * Implements some_object - other_object.
+     */
+    open fun pySub(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // == Descriptors == //
 

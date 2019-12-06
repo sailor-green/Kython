@@ -55,15 +55,19 @@ class PyFloat(val wrapped: Double) : PyObject() {
         if (wrapped > 0.0) return this
         return PyFloat(abs(wrapped))
     }
-
     override fun pyNegative(): PyObject {
         if (wrapped < 0.0) return this
         return PyFloat(-wrapped)
     }
 
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
-        if (other is PyInt) return PyFloat(other.wrappedInt.toDouble() + wrapped)
-        if (other is PyFloat) return PyFloat(other.wrapped + wrapped)
+        if (other is PyInt) return PyFloat(wrapped + other.wrappedInt.toDouble())
+        if (other is PyFloat) return PyFloat(wrapped + other.wrapped)
+        return PyNotImplemented
+    }
+    override fun pySub(other: PyObject, reverse: Boolean): PyObject {
+        if (other is PyInt) return PyFloat(wrapped - other.wrappedInt.toDouble())
+        if (other is PyFloat) return PyFloat(wrapped - other.wrapped)
         return PyNotImplemented
     }
 

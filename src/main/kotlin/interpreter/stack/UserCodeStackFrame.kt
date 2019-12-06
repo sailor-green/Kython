@@ -543,12 +543,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     ): PyObject {
         val tos = stack.pop()
         val tos1 = stack.pop()
-        val first = cb(tos, tos1)
+        val first = cb(tos1, tos)
         if (first != PyNotImplemented) {
             return first
         }
 
-        val second = cb2(tos1, tos)
+        val second = cb2(tos, tos1)
         if (second != PyNotImplemented) {
             return second
         }
@@ -563,6 +563,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val toPush = when (type) {
             BinaryOp.ADD -> implBinaryOp(
                 { a, b -> a.pyAdd(b) }, { a, b -> a.pyAdd(b, reverse = true) }
+            )
+            BinaryOp.SUBTRACT -> implBinaryOp(
+                { a, b -> a.pySub(b) }, { a, b -> a.pySub(b, reverse = true) }
             )
             /*BinaryOp.LSHIFT -> "__lshift__"
             BinaryOp.POWER -> "__pow__"

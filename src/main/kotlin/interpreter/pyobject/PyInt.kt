@@ -57,6 +57,11 @@ open class PyInt(val wrappedInt: Long) : PyObject() {
         if (other is PyFloat) return PyFloat(wrappedInt.toDouble() + other.wrapped)
         return PyNotImplemented
     }
+    override fun pySub(other: PyObject, reverse: Boolean): PyObject {
+        if (other is PyInt) return PyInt(wrappedInt - other.wrappedInt)
+        if (other is PyFloat) return PyFloat(wrappedInt.toDouble() - other.wrapped)
+        return PyNotImplemented
+    }
 
     override fun pyToBool(): PyBool = PyBool.get(wrappedInt != 0L)
     override fun pyToInt(): PyInt = this
