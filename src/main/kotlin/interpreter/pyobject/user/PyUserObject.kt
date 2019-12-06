@@ -20,9 +20,7 @@ package green.sailor.kython.interpreter.pyobject.user
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.functions.magic.DefaultBuiltinFunction
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.typeError
 
 /**
@@ -43,8 +41,9 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         }
     }
 
-    override fun pyEquals(other: PyObject): PyObject {
-        TODO("not implemented")
+    override fun pyEquals(other: PyObject): PyObject = magicMethod1(other, "__eq__") {
+        // TODO: isinstance
+        if (type == other.type) PyBool.get(this === other) else PyNotImplemented
     }
 
     override fun pyGetRepr(): PyString = magicMethod0("__repr__") {
@@ -67,5 +66,20 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod0(name: String, fallba
         meth.pyCall(listOf()).cast()
     } else {
         fallback()
+    }
+}
+
+/**
+ * Helper function for calling a magic method with one arg (e.g. __eq__).
+ */
+inline fun <reified T : PyObject> PyUserObject.magicMethod1(other: PyObject,
+    name: String, fallback: (PyObject) -> T
+): T {
+    val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
+    return if (meth != null && meth !is DefaultBuiltinFunction) {
+        // this should be bound!!
+        meth.pyCall(listOf(other)).cast()
+    } else {
+        fallback(other)
     }
 }
