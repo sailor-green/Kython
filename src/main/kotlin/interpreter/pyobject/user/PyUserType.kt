@@ -17,6 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.user
 
+import green.sailor.kython.interpreter.iface.PyCallable
+import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 
@@ -29,6 +31,19 @@ class PyUserType(name: String, bases: List<PyType>, dict: Map<String, PyObject>)
 
     /** __dict__ */
     override val initialDict: Map<String, PyObject> = dict
+
+    // figure out signature
+    override val signature = run {
+        val initMethod = initialDict["__init__"]
+        if (initMethod != null && initMethod is PyCallable) {
+            val initSig = initMethod.signature
+            // chop off the first arg, the self arg
+            val items = initSig.args.drop(1).toTypedArray()
+            PyCallableSignature(*items)
+        } else {
+            PyCallableSignature()
+        }
+    }
 
     // <type>.__call__(*args, **kwargs)
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {

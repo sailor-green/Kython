@@ -37,14 +37,39 @@ open class PyUserObject(type: PyUserType) : PyObject() {
             if (it !is PyUserFunction) {
                 typeError("__init__ was not a function")
             }
+            val selfName = it.code.varnames.firstOrNull()
+                ?: typeError("__init__ must take null")
+            (kwargs as MutableMap)[selfName] = this
+
             KythonInterpreter.runStackFrame(it.createFrame(), kwargs)
         }
     }
+
+    override fun kyIsCallable(): Boolean {
+        return "__call__" in type.internalDict
+    }
+
+    override fun pyCall(args: List<PyObject>, kwargs: Map<String, PyObject>): PyObject {
+        return type.internalDict["__call__"]?.pyDescriptorGet(this, type)?.pyCall(args, kwargs)
+            ?: super.pyCall(args, kwargs)
+    }
+
+    // magicMethodX wrappers
 
     override fun pyEquals(other: PyObject): PyObject = magicMethod1(other, "__eq__") {
         // TODO: isinstance
         if (type == other.type) PyBool.get(this === other) else PyNotImplemented
     }
+    override fun pyNotEquals(other: PyObject): PyObject = magicMethod1(other, "__neq__") {
+        super.pyNotEquals(it)
+    }
+    override fun pyLesser(other: PyObject): PyObject =
+        magicMethod1(other, "__lt__") { PyNotImplemented }
+    override fun pyGreater(other: PyObject): PyObject =
+        magicMethod1(other, "__gt__") { PyNotImplemented }
+
+    override fun pyIter(): PyObject = magicMethod0("__iter__") { super.pyIter() }
+    override fun pyNext(): PyObject = magicMethod0("__next__") { super.pyNext() }
 
     override fun pyGetRepr(): PyString = magicMethod0("__repr__") {
         PyString("<${type.name} object>")
@@ -53,6 +78,7 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     override fun pyGetStr(): PyString = magicMethod0("__str__") {
         PyString("<${type.name} object>")
     }
+
 }
 
 /**
