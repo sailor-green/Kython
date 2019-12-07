@@ -21,8 +21,10 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
 
@@ -44,10 +46,11 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         }
 
         // try and find it on the MRO
-        val mro = self.type.mro
+        val mro = if (self is PyType) self.mro else self.type.mro
+        val descriptorSelf = if (self is PyType) PyNone else self
         mro.mapNotNull {
             it.internalDict[attrName]
-        }.firstOrNull()?.let { return it.pyDescriptorGet(self, self.type) }
+        }.firstOrNull()?.let { return it.pyDescriptorGet(descriptorSelf, self.type) }
 
         // can't find it
         Exceptions.ATTRIBUTE_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
