@@ -50,7 +50,6 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
             return self.type.internalDict[attrName]!!.pyDescriptorGet(self, self.type)
         }
 
-
         Exceptions.ATTRIBUTE_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
     }
 
