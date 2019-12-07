@@ -20,17 +20,21 @@ package green.sailor.kython.interpreter.pyobject.user
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a Python user type, i.e. one created from type(name, bases, dict).
  */
-class PyUserType(name: String, bases: List<PyType>, dict: Map<String, PyObject>) : PyType(name) {
+class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, PyObject>) :
+    PyType(name) {
     /** __bases__ */
     override val bases = bases.toMutableList()
 
     /** __dict__ */
-    override val initialDict: Map<String, PyObject> = dict
+    override val initialDict: Map<String, PyObject> = dict.apply {
+        put("__mro__", PyTuple(mro))
+    }
 
     // figure out signature
     override val signature = run {

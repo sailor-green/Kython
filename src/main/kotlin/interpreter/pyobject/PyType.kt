@@ -52,7 +52,6 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
         parents
     }
 
-
     /**
      * Gets the method resolution order parents of this object.
      */
@@ -98,7 +97,6 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
 
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
-
 
     override var type: PyType
         get() = PyRootType
