@@ -49,6 +49,7 @@ class PyUserType(name: String, bases: List<PyType>, dict: Map<String, PyObject>)
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         // effectively, object.__new__
         // TODO: `__new__`
+        println("my mro is $mro")
         val newObject = PyUserObject(this)
         newObject.pyInit(kwargs)
         return newObject

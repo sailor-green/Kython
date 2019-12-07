@@ -42,6 +42,29 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     /** A list of parent classes for this PyType. */
     open val bases = mutableListOf<PyType>()
 
+    /** The method resolution order of this PyType. */
+    open val mro: List<PyType> by lazy {
+        // mro always begins with our own type, so we add it first
+        val parents = mutableListOf(this)
+        // then search recursively for all of our base types parents
+        parents.addAll(getMroParents())
+
+        parents
+    }
+
+
+    /**
+     * Gets the method resolution order parents of this object.
+     */
+    open fun getMroParents(): List<PyType> {
+        val mro = mutableListOf<PyType>()
+        for (base in bases) {
+            mro.add(base)
+            mro.addAll(base.getMroParents())
+        }
+        return mro
+    }
+
     /**
      * Makes a new instance of this builtin.
      *
@@ -64,12 +87,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
 
     // default impls
     override fun pyToStr(): PyString = _pyString
-
     override fun pyGetRepr(): PyString = _pyString
-
-    override var type: PyType
-        get() = PyRootType
-        set(_) = Exceptions.invalidClassSet(this)
 
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyType) {
@@ -80,4 +98,9 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
 
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
+
+
+    override var type: PyType
+        get() = PyRootType
+        set(_) = Exceptions.invalidClassSet(this)
 }
