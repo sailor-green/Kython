@@ -63,7 +63,7 @@ object ObjectRepr : DefaultBuiltinFunction("<object __repr__>") {
 object ObjectStr : DefaultBuiltinFunction("<object __str__>") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in-signature mismatch!")
-        return self.pyGetStr()
+        return self.pyToStr()
     }
 
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY_METHOD

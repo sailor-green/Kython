@@ -32,8 +32,8 @@ class PyRootObjectInstance : PyObject() {
         _cached = if (ooEnabled) PyString("[object Object]") else PyString("<object object>")
     }
 
-    override fun pyGetRepr(): PyString = pyGetStr()
-    override fun pyGetStr(): PyString = _cached
+    override fun pyGetRepr(): PyString = pyToStr()
+    override fun pyToStr(): PyString = _cached
     override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented

@@ -79,9 +79,9 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
 
     override fun createFrame(): StackFrame = UserCodeStackFrame(this)
 
-    override fun pyGetStr(): PyString = PyString("<user function ${code.codename}>")
+    override fun pyToStr(): PyString = PyString("<user function ${code.codename}>")
 
-    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyGetRepr(): PyString = pyToStr()
 
     override var type: PyType
         get() = PyUserFunctionType

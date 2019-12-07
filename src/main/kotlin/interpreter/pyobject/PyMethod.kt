@@ -43,7 +43,7 @@ class PyMethod(
 
     override val signature: PyCallableSignature = function.signature
 
-    override fun pyGetStr(): PyString {
+    override fun pyToStr(): PyString {
         val output = buildString {
             append("<method '")
             append((function as PyObject).getPyStringSafe().wrappedString)
@@ -54,7 +54,7 @@ class PyMethod(
 
         return PyString(output)
     }
-    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyGetRepr(): PyString = pyToStr()
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyMethod) {
             return PyNotImplemented

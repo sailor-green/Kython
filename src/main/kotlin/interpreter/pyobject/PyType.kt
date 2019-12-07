@@ -63,7 +63,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     }
 
     // default impls
-    override fun pyGetStr(): PyString = _pyString
+    override fun pyToStr(): PyString = _pyString
 
     override fun pyGetRepr(): PyString = _pyString
 

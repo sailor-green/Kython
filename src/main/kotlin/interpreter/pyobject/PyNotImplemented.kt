@@ -32,7 +32,7 @@ object PyNotImplemented : PyObject() {
     private val _string = PyString("NotImplemented")
 
     override fun pyGetRepr(): PyString = _string
-    override fun pyGetStr(): PyString = _string
+    override fun pyToStr(): PyString = _string
     override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
     override fun pyGreater(other: PyObject): PyObject = this
     override fun pyLesser(other: PyObject): PyObject = this

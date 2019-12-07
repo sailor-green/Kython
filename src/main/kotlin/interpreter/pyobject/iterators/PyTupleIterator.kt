@@ -34,7 +34,7 @@ class PyTupleIterator(val wrappedTuple: PyTuple) : PyObject() {
 
     override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
     override fun pyGetRepr(): PyString = PyString("<tuple_iterator>")
-    override fun pyGetStr(): PyString = pyGetRepr()
+    override fun pyToStr(): PyString = pyGetRepr()
 
     override fun pyNext(): PyObject {
         if (it.hasNext()) {

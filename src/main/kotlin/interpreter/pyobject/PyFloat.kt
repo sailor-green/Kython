@@ -30,7 +30,7 @@ class PyFloat(val wrapped: Double) : PyObject() {
         PyString(wrapped.toString())
     }
 
-    override fun pyGetStr(): PyString = _floatStr
+    override fun pyToStr(): PyString = _floatStr
     override fun pyGetRepr(): PyString = _floatStr
 
     // NaN is truthy?

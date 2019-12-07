@@ -75,7 +75,7 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         PyString("<${type.name} object>")
     }
 
-    override fun pyGetStr(): PyString = magicMethod0("__str__") {
+    override fun pyToStr(): PyString = magicMethod0("__str__") {
         PyString("<${type.name} object>")
     }
 }

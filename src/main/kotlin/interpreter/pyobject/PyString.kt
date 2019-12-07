@@ -31,7 +31,7 @@ class PyString(val wrappedString: String) : PyObject() {
             PyString("<unprintable>")
     }
 
-    override fun pyGetStr(): PyString = this
+    override fun pyToStr(): PyString = this
     override fun pyGetRepr(): PyString = PyString("'$wrappedString'")
     override fun pyToBool(): PyBool = PyBool.get(wrappedString.isNotEmpty())
     override fun pyToInt(): PyInt = try {

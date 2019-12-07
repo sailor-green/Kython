@@ -174,7 +174,7 @@ abstract class PyObject {
     /**
      * Implements str(some_object).
      */
-    abstract fun pyGetStr(): PyString
+    abstract fun pyToStr(): PyString
 
     // __repr__
     /**
@@ -319,7 +319,7 @@ abstract class PyObject {
      * Gets the string of this object, safely. Used for exceptions, et al.
      */
     fun getPyStringSafe(): PyString = try {
-        pyGetStr()
+        pyToStr()
     } catch (e: Throwable) {
         PyString.UNPRINTABLE
     }

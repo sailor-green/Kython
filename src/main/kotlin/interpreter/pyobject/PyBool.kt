@@ -41,8 +41,8 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
         get() = PyBoolType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun pyGetStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
-    override fun pyGetRepr(): PyString = pyGetStr()
+    override fun pyToStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
+    override fun pyGetRepr(): PyString = pyToStr()
     override fun pyToBool(): PyBool = this
     override fun pyEquals(other: PyObject): PyObject = get(this === other)
 

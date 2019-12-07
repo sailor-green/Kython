@@ -34,9 +34,9 @@ object PyStringType : PyType("str") {
         }
 
         return if (arg is PyType) {
-            arg.pyGetStr()
+            arg.pyToStr()
         } else {
-            arg.pyGetStr()
+            arg.pyToStr()
         }
     }
 
