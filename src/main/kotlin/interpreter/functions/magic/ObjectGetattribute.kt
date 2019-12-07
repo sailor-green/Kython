@@ -39,17 +39,17 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
         val attrName = name.wrappedString
 
         // try and find the object on the dict
-        // effectively corresponds to x.attr.__get__(x, type(x)
         if (attrName in self.internalDict) {
             return self.internalDict[attrName]!!
         }
 
-        // if it's in the class dict...
-        // effectively corresponds to x.attr.__get__(None, type(x))
-        if (attrName in self.type.internalDict) {
-            return self.type.internalDict[attrName]!!.pyDescriptorGet(self, self.type)
-        }
+        // try and find it on the MRO
+        val mro = self.type.mro
+        mro.mapNotNull {
+            it.internalDict[attrName]
+        }.firstOrNull()?.let { return it.pyDescriptorGet(self, self.type) }
 
+        // can't find it
         Exceptions.ATTRIBUTE_ERROR("Object ${self.type.name} has no attribute $attrName").throwKy()
     }
 

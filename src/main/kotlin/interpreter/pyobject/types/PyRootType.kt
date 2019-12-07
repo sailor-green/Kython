@@ -39,9 +39,12 @@ object PyRootType : PyType("type") {
                 val bases = args.subobjects[1].cast<PyTuple>().subobjects.map {
                     it as? PyType ?: typeError("Base is not a type")
                 }
-                val body = args.subobjects[2].cast<PyDict>().items.mapKeys {
+
+                val bodyPyDict = args.subobjects[2].cast<PyDict>()
+                val body = bodyPyDict.items.mapKeys {
                     it.key.cast<PyString>().wrappedString
                 } as LinkedHashMap
+
                 PyUserType(name.wrappedString, bases, body)
             }
             else -> {

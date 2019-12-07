@@ -38,7 +38,8 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
 
         // TODO: __prepare__
         // build the class body dict
-        val bodyDict = PyDict(linkedMapOf())
+        val items = linkedMapOf<PyObject, PyObject>()
+        val bodyDict = PyDict(items)
         if (clsFn.code.argCount > 0) {
             clsFn.pyCall(listOf(bodyDict))
         } else {
@@ -46,7 +47,7 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
             val frame = clsFn.createFrame() as UserCodeStackFrame
             val args = clsFn.signature.getFinalArgs(listOf())
             KythonInterpreter.runStackFrame(frame, args)
-            bodyDict.internalDict.putAll(frame.locals)
+            items.putAll(frame.locals.mapKeys { PyString(it.key) })
         }
 
         // figure out the metaclass
