@@ -19,31 +19,28 @@ package green.sailor.kython.interpreter.pyobject.iterators
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
 
 /**
- * Represents a tuple iterator.
+ * Represents a built-in iterator over a Kotlin iterator.
  */
-class PyTupleIterator(val wrappedTuple: PyTuple) : PyObject() {
-    object PyTupleIteratorType : PyType("tuple_iterator") {
+class PyBuiltinIterator(val kotlinIterator: Iterator<PyObject>) : PyObject() {
+    object PyGenericIteratorType : PyType("builtin_iterator") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
-            typeError("Cannot create tuple_iterator instances")
+            typeError("Cannot create new instances of builtin_iterator")
     }
 
     override var type: PyType
-        get() = PyTupleIteratorType
+        get() = PyGenericIteratorType
         set(_) = Exceptions.invalidClassSet(this)
 
-    /** The tuple iterator we're actually iterating over. */
-    val it = wrappedTuple.subobjects.iterator()
-
     override fun pyNext(): PyObject {
-        if (it.hasNext()) {
-            return it.next()
+        try {
+            return kotlinIterator.next()
+        } catch (e: NoSuchElementException) {
+            Exceptions.STOP_ITERATION("").throwKy()
         }
-        Exceptions.STOP_ITERATION("").throwKy()
     }
 }

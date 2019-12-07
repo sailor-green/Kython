@@ -18,7 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.iterators.PyTupleIterator
+import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 
 /**
@@ -47,7 +47,7 @@ class PyTuple(val subobjects: List<PyObject>) : PyObject() {
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 
-    override fun pyIter(): PyObject = PyTupleIterator(this)
+    override fun pyIter(): PyObject = PyBuiltinIterator(subobjects.listIterator())
 
     override var type: PyType
         get() = PyTupleType
