@@ -72,11 +72,11 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     override fun pyNext(): PyObject = magicMethod0("__next__") { super.pyNext() }
 
     override fun pyGetRepr(): PyString = magicMethod0("__repr__") {
-        PyString("<${type.name} object>")
+        super.pyGetRepr()
     }
 
     override fun pyToStr(): PyString = magicMethod0("__str__") {
-        PyString("<${type.name} object>")
+        super.pyToStr()
     }
 }
 

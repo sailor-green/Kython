@@ -71,10 +71,6 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
         get() = PyRootType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun pyToBool(): PyBool {
-        return PyBool.TRUE
-    }
-
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyType) {
             return PyBool.FALSE

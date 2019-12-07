@@ -85,7 +85,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // if no kwargs (i.e. call_function), we just nicely iterate over the signature args and
             // match them with the function call args
             val argsIt = args.asReversed().iterator()
-            for ((name, type) in this.args) {
+            loop@for ((name, type) in this.args) {
                 when (type) {
                     ArgType.POSITIONAL -> {
                         // raises a java error if the iterator is empty
@@ -103,11 +103,23 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                     }
 
                     // keyword args are NOT allowed for this function
-                    ArgType.KEYWORD ->
+                    ArgType.KEYWORD -> {
+                        // this is just for the better error message
+                        if (name in finalMap) {
+                            continue@loop // default
+                        }
+                        try {
+                            val arg = argsIt.next()
+                        } catch (e: NoSuchElementException) {
+                            if (name !in finalMap) {
+                                typeError("No value provided for arg $name")
+                            }
+                        }
                         typeError(
                             "This function takes $name as a keyword, " +
-                            "not a positional argument"
+                                "not a positional argument"
                         )
+                    }
 
                     // keyword stars are just given an empty dict
                     ArgType.KEYWORD_STAR -> finalMap[name] = PyDict(linkedMapOf())

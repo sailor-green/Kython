@@ -18,23 +18,27 @@
 package green.sailor.kython.interpreter.pyobject.iterators
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a tuple iterator.
  */
 class PyTupleIterator(val wrappedTuple: PyTuple) : PyObject() {
+    object PyTupleIteratorType : PyType("tuple_iterator") {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
+            typeError("Cannot create tuple_iterator instances")
+    }
+
     override var type: PyType
-        get() = TODO()
+        get() = PyTupleIteratorType
         set(_) = Exceptions.invalidClassSet(this)
 
     /** The tuple iterator we're actually iterating over. */
     val it = wrappedTuple.subobjects.iterator()
-
-    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
-    override fun pyGetRepr(): PyString = PyString("<tuple_iterator>")
-    override fun pyToStr(): PyString = pyGetRepr()
 
     override fun pyNext(): PyObject {
         if (it.hasNext()) {

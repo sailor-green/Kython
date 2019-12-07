@@ -24,20 +24,6 @@ import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
  * Represents a root object instance (i.e. the result of doing `object()`).
  */
 class PyRootObjectInstance : PyObject() {
-    private val _cached: PyString
-
-    init {
-        val ooEnabled = System.getProperty("kython.easteregg.objectobject") == "true"
-
-        _cached = if (ooEnabled) PyString("[object Object]") else PyString("<object object>")
-    }
-
-    override fun pyGetRepr(): PyString = pyToStr()
-    override fun pyToStr(): PyString = _cached
-    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
-    override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
-    override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
-
     override var type: PyType
         get() = PyRootObjectType
         set(_) = Exceptions.invalidClassSet(this)

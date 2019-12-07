@@ -23,16 +23,6 @@ import green.sailor.kython.interpreter.kyobject.KyCodeObject
  * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.
  */
 class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
-    override fun pyToStr(): PyString {
-        return PyString("<code object ${wrappedCodeObject.codename}>")
-    }
-
-    override fun pyGetRepr(): PyString = pyToStr()
-
-    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
-    override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
-    override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
-
     override var type: PyType
         get() = TODO("not implemented")
         set(_) {}

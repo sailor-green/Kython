@@ -174,13 +174,17 @@ abstract class PyObject {
     /**
      * Implements str(some_object).
      */
-    abstract fun pyToStr(): PyString
+    open fun pyToStr(): PyString {
+        val hashCode = System.identityHashCode(this).toString(16)
+
+        return PyString("<object '${type.name}' at 0x$hashCode>")
+    }
 
     // __repr__
     /**
      * Implements repr(some_object).
      */
-    abstract fun pyGetRepr(): PyString
+    open fun pyGetRepr(): PyString = pyToStr()
 
     // == Comparison operators ==
 
@@ -188,7 +192,7 @@ abstract class PyObject {
     /**
      * Implements some_object == other_object.
      */
-    abstract fun pyEquals(other: PyObject): PyObject
+    open fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
 
     // __neq__
     /**
