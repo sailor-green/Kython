@@ -122,11 +122,10 @@ abstract class PyObject {
 
     // __getattribute__
     /**
-     * Delegate for `LOAD_ATTR` on any object.
-     *
-     * @param name: The name of the attribute to get.
+     * Implements some_object.some_attribute.
      */
     open fun pyGetAttribute(name: String): PyObject {
+        // TODO: No
         return ObjectGetattribute.pyCall(listOf(PyString(name), this))
     }
 
