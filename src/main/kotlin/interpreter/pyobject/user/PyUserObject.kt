@@ -117,7 +117,6 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     override fun pyToInt(): PyInt = magicMethod0("__int__") { super.pyToInt() }
     override fun pyToBytes(): PyBytes = magicMethod0("__bytes__") { super.pyToBytes() }
     override fun pyToFloat(): PyFloat = magicMethod0("__float__") { super.pyToFloat() }
-
 }
 
 /**
