@@ -38,17 +38,25 @@ class PyFloat(val wrapped: Double) : PyObject() {
     override fun pyToInt(): PyInt = PyInt(wrapped.toLong())
     override fun pyToFloat(): PyFloat = this
 
-    override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyFloat) return PyNotImplemented
-        return PyBool.get(wrapped == other.wrapped)
-    }
     override fun pyGreater(other: PyObject): PyObject {
-        if (other !is PyFloat) return PyNotImplemented
-        return PyBool.get(wrapped > other.wrapped)
+        if (other is PyInt) return PyBool.get(wrapped > other.wrappedInt)
+        if (other is PyFloat) return PyBool.get(wrapped > other.wrapped)
+        return PyNotImplemented
     }
     override fun pyLesser(other: PyObject): PyObject {
-        if (other !is PyFloat) return PyNotImplemented
-        return PyBool.get(wrapped < other.wrapped)
+        if (other is PyInt) return PyBool.get(wrapped < other.wrappedInt)
+        if (other is PyFloat) return PyBool.get(wrapped < other.wrapped)
+        return PyNotImplemented
+    }
+    override fun pyGreaterEquals(other: PyObject): PyObject {
+        if (other is PyInt) return PyBool.get(wrapped < other.wrappedInt)
+        if (other is PyFloat) return PyBool.get(wrapped < other.wrapped)
+        return PyNotImplemented
+    }
+    override fun pyLesserEquals(other: PyObject): PyObject {
+        if (other is PyInt) return PyBool.get(wrapped < other.wrappedInt)
+        if (other is PyFloat) return PyBool.get(wrapped < other.wrapped)
+        return PyNotImplemented
     }
 
     override fun pyPositive(): PyObject {
