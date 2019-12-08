@@ -17,7 +17,11 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.interpreter.iface.ArgType
+import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.iterate
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PySet
 import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
@@ -25,6 +29,13 @@ import green.sailor.kython.interpreter.pyobject.PyType
  */
 object PySetType : PyType("set") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        TODO("not implemented")
+        val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
+        val items = iterator.iterate()
+        val set = linkedSetOf<PyObject>().apply { addAll(items) }
+        return PySet(set)
     }
+
+    override val signature: PyCallableSignature = PyCallableSignature(
+        "x" to ArgType.POSITIONAL
+    )
 }
