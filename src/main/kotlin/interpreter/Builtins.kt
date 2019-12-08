@@ -56,6 +56,7 @@ object Builtins {
     val DICT_TYPE = PyDictType
     val BOOL_TYPE = PyBoolType
     val BYTES_TYPE = PyBytesType
+    val LIST_TYPE = PyListType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
@@ -74,6 +75,7 @@ object Builtins {
         "float" to FLOAT_TYPE,
         "str" to STRING_TYPE,
         "tuple" to TUPLE_TYPE,
+        "list" to LIST_TYPE,
         "dict" to DICT_TYPE,
         "bool" to BOOL_TYPE,
         "bytes" to BYTES_TYPE,

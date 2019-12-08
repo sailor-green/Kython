@@ -144,7 +144,7 @@ class KycFloat(override val wrapped: Double) : BaseKycType() {
 
 /** An encoded list. */
 class KycList(override val wrapped: List<BaseKycType>) : BaseKycType() {
-    override fun wrap(): PyObject = TODO()
+    override fun wrap(): PyObject = PyList(wrapped.map { it.wrap() })
 }
 
 /** An encoded tuple. */

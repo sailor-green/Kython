@@ -18,50 +18,25 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.types.PyTupleType
+import green.sailor.kython.interpreter.pyobject.types.PyListType
 
-/**
- * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
- */
-@Suppress("MemberVisibilityCanBePrivate")
-class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subobjects) {
-    companion object {
-        /**
-         * Represents the empty tuple.
-         */
-        val EMPTY = PyTuple(listOf())
-
-        /**
-         * Gets
-         */
-        fun get(subobjects: List<PyObject>): PyTuple {
-            if (subobjects.isEmpty()) {
-                return EMPTY
-            }
-
-            return PyTuple(subobjects)
-        }
-    }
-
+class PyList(subobjects: List<PyObject>) : PyContainer(subobjects) {
     override fun pyToStr(): PyString {
-        if (subobjects.size == 1) {
-            return PyString("(${subobjects.first().pyGetRepr()},)")
-        }
-
-        return PyString("(" + subobjects.joinToString {
+        return PyString("[" + subobjects.joinToString {
             it.pyGetRepr().wrappedString
-        } + ")")
+        } + "]")
     }
 
     override fun pyGetRepr(): PyString = pyToStr()
+
     override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyTuple) return PyNotImplemented
+        if (other !is PyList) return PyNotImplemented
         return PyBool.get(subobjects == other.subobjects)
     }
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 
     override var type: PyType
-        get() = PyTupleType
+        get() = PyListType
         set(_) = Exceptions.invalidClassSet(this)
 }
