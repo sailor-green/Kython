@@ -42,7 +42,12 @@ fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf
 
     // these functions won't return anything, they're exec()
     // instead a `result` should be assigned to
-    runStackFrame(frame, args)
+    rootFrameLocal.set(frame)
+    try {
+        runStackFrame(frame, args)
+    } finally {
+        rootFrameLocal.remove()
+    }
     return frame.locals["result"] ?: error("No result assigned!")
 }
 
