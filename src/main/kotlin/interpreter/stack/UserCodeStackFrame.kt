@@ -793,7 +793,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 val concatString = (0 until count)
                     .map { (stack.pop() as PyString).wrappedString }
                     .reversed()
-                    .reduce { acc, s -> acc + s }
+                    .joinToString(separator = "")
                 PyString(concatString)
             }
             BuildType.SET -> {
