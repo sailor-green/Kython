@@ -202,14 +202,16 @@ abstract class PyObject {
     open fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
     // __ge__
-    open fun pyGreaterEquals(other: PyObject): PyObject {
-        TODO()
-    }
+    /**
+     * Implements some_object >= other_object.
+     */
+    open fun pyGreaterEquals(other: PyObject): PyObject = PyNotImplemented
 
     // __le__
-    open fun pyLesserEquals(other: PyObject): PyObject {
-        TODO()
-    }
+    /**
+     * Implements some_object <= other_object.
+     */
+    open fun pyLesserEquals(other: PyObject): PyObject = PyNotImplemented
 
     // == Unary operators == //
     /**

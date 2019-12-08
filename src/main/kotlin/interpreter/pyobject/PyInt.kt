@@ -41,6 +41,14 @@ open class PyInt(val wrappedInt: Long) : PyObject() {
         if (other !is PyInt) return PyNotImplemented
         return PyBool.get(other.wrappedInt < wrappedInt)
     }
+    override fun pyGreaterEquals(other: PyObject): PyObject {
+        if (other !is PyInt) return PyNotImplemented
+        return PyBool.get(other.wrappedInt >= wrappedInt)
+    }
+    override fun pyLesserEquals(other: PyObject): PyObject {
+        if (other !is PyInt) return PyNotImplemented
+        return PyBool.get(other.wrappedInt <= wrappedInt)
+    }
 
     override fun pyPositive(): PyObject {
         if (wrappedInt > 0L) return this
