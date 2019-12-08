@@ -31,7 +31,7 @@ object PyTupleType : PyType("tuple") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
         val items = iterator.iterate()
-        return PyTuple(items)
+        return PyTuple.get(items)
     }
 
     override val signature: PyCallableSignature by lazy {

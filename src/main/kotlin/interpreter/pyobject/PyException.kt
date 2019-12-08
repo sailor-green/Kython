@@ -76,7 +76,7 @@ abstract class PyException(val args: PyTuple) : PyObject() {
                 override fun interpreterGetExceptionInstance(args: List<PyString>): PyException {
                     // used to capture the outer this
                     val innerClassType = this
-                    val instance = object : PyException(PyTuple(args)) {
+                    val instance = object : PyException(PyTuple.get(args)) {
                         override var type: PyType
                             get() = innerClassType
                             set(_) {}

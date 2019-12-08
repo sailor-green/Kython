@@ -24,12 +24,24 @@ import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
  */
-class PyTuple(val subobjects: List<PyObject>) : PyObject() {
+@Suppress("MemberVisibilityCanBePrivate")
+class PyTuple private constructor(val subobjects: List<PyObject>) : PyObject() {
     companion object {
         /**
          * Represents the empty tuple.
          */
         val EMPTY = PyTuple(listOf())
+
+        /**
+         * Gets
+         */
+        fun get(subobjects: List<PyObject>): PyTuple {
+            if (subobjects.isEmpty()) {
+                return EMPTY
+            }
+
+            return PyTuple(subobjects)
+        }
     }
 
     override fun pyToStr(): PyString {

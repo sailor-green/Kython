@@ -787,7 +787,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val count = arg.toInt()
         val built = when (type) {
             BuildType.TUPLE -> {
-                PyTuple((0 until count).map { stack.pop() }.reversed())
+                PyTuple.get((0 until count).map { stack.pop() }.reversed())
             }
             BuildType.STRING -> {
                 val concatString = (0 until count)

@@ -117,7 +117,7 @@ abstract class PyObject {
         // NB: CPython sorts dir() output for whatever dumb reason.
         // We do too!
         val sorted = dirSet.toList().sorted()
-        return PyTuple(sorted.map { s -> PyString(s) })
+        return PyTuple.get(sorted.map { s -> PyString(s) })
     }
 
     // __getattribute__

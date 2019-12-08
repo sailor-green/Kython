@@ -99,7 +99,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                         }
                     }
                     ArgType.POSITIONAL_STAR -> {
-                        finalMap[name] = PyTuple(argsIt.asSequence().toList())
+                        finalMap[name] = PyTuple.get(argsIt.asSequence().toList())
                     }
 
                     // keyword args are NOT allowed for this function

@@ -149,7 +149,7 @@ class KycList(override val wrapped: List<BaseKycType>) : BaseKycType() {
 
 /** An encoded tuple. */
 class KycTuple(override val wrapped: List<BaseKycType>) : BaseKycType() {
-    override fun wrap(): PyTuple = PyTuple(wrapped.map { it.wrap() })
+    override fun wrap(): PyTuple = PyTuple.get(wrapped.map { it.wrap() })
 }
 
 /** An encoded dict. */

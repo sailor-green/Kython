@@ -33,7 +33,7 @@ class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, 
 
     /** __dict__ */
     override val initialDict: Map<String, PyObject> = dict.apply {
-        put("__mro__", PyTuple(mro))
+        put("__mro__", PyTuple.get(mro))
     }
 
     // figure out signature
