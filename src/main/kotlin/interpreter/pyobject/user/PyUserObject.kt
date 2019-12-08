@@ -71,13 +71,9 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     override fun pyIter(): PyObject = magicMethod0("__iter__") { super.pyIter() }
     override fun pyNext(): PyObject = magicMethod0("__next__") { super.pyNext() }
 
-    override fun pyGetRepr(): PyString = magicMethod0("__repr__") {
-        super.pyGetRepr()
-    }
+    override fun pyGetRepr(): PyString = magicMethod0("__repr__") { super.pyGetRepr() }
 
-    override fun pyToStr(): PyString = magicMethod0("__str__") {
-        super.pyToStr()
-    }
+    override fun pyToStr(): PyString = magicMethod0("__str__") { super.pyToStr() }
 }
 
 /**

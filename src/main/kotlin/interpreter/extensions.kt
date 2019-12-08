@@ -15,26 +15,26 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package green.sailor.kython.interpreter.pyobject
-
-import green.sailor.kython.interpreter.Exceptions
 
 /**
- * Represents the NotImplemented builtin.
+ * Common file for extension methods.
  */
-object PyNotImplemented : PyObject() {
-    object PyNotImplementedType : PyType("NotImplementedType") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            return PyNotImplemented
+package green.sailor.kython.interpreter
+
+import green.sailor.kython.interpreter.pyobject.PyObject
+
+/**
+ * Helper function to iterate over an iterator.
+ */
+fun PyObject.iterate(): List<PyObject> {
+    val items = mutableListOf<PyObject>()
+    while (true) {
+        try {
+            items.add(pyNext())
+        } catch (e: KyError) {
+            if (e.wrapped.type == Exceptions.STOP_ITERATION) break
+            throw e
         }
     }
-
-    private val _string = PyString("NotImplemented")
-
-    override fun pyGetRepr(): PyString = _string
-    override fun pyToStr(): PyString = _string
-
-    override var type: PyType
-        get() = PyNotImplementedType
-        set(_) = Exceptions.invalidClassSet(this)
+    return items
 }
