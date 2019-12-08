@@ -45,6 +45,10 @@ class PyTuple private constructor(val subobjects: List<PyObject>) : PyObject() {
     }
 
     override fun pyToStr(): PyString {
+        if (subobjects.size == 1) {
+            return PyString("(${subobjects.first().pyGetRepr()},)")
+        }
+
         return PyString("(" + subobjects.joinToString {
             it.pyGetRepr().wrappedString
         } + ")")
