@@ -56,6 +56,14 @@ open class PyUserObject(type: PyUserType) : PyObject() {
 
     // magicMethodX wrappers
 
+    override fun pyGetAttribute(name: String): PyObject =
+        magicMethod1(PyString(name), "__getattribute__") {
+            super.pyGetAttribute(name)
+        }
+
+    override fun pyDir(): PyTuple = magicMethod0("__dir__") { super.pyDir() }
+
+    // == comparison == //
     override fun pyEquals(other: PyObject): PyObject = magicMethod1(other, "__eq__") {
         // TODO: isinstance
         if (type == other.type) PyBool.get(this === other) else PyNotImplemented
@@ -68,6 +76,12 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     override fun pyGreater(other: PyObject): PyObject =
         magicMethod1(other, "__gt__") { PyNotImplemented }
 
+    // == unary //
+    override fun pyNegative(): PyObject = magicMethod0("__neg__") { PyNotImplemented }
+    override fun pyPositive(): PyObject = magicMethod0("__pos__") { PyNotImplemented }
+    override fun pyInvert(): PyObject = magicMethod0("__invert__") { PyNotImplemented }
+
+    // == mathematical == //
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject =
         if (reverse) magicMethod1(other, "__add__") { PyNotImplemented }
         else magicMethod1(other, "__radd__") { PyNotImplemented }
@@ -92,11 +106,18 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         if (reverse) magicMethod1(other, "__floordiv__") { PyNotImplemented }
         else magicMethod1(other, "__rfloordiv__") { PyNotImplemented }
 
+    // == iterables == //
     override fun pyIter(): PyObject = magicMethod0("__iter__") { super.pyIter() }
     override fun pyNext(): PyObject = magicMethod0("__next__") { super.pyNext() }
 
+    // == conversion == //
     override fun pyGetRepr(): PyString = magicMethod0("__repr__") { super.pyGetRepr() }
     override fun pyToStr(): PyString = magicMethod0("__str__") { super.pyToStr() }
+    override fun pyToBool(): PyBool = magicMethod0("__bool__") { PyBool.TRUE }
+    override fun pyToInt(): PyInt = magicMethod0("__int__") { super.pyToInt() }
+    override fun pyToBytes(): PyBytes = magicMethod0("__bytes__") { super.pyToBytes() }
+    override fun pyToFloat(): PyFloat = magicMethod0("__float__") { super.pyToFloat() }
+
 }
 
 /**
