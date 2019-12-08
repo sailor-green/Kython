@@ -15,10 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-/**
- * Common file for extension methods.
- */
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.pyobject.PyObject
