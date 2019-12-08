@@ -68,11 +68,34 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     override fun pyGreater(other: PyObject): PyObject =
         magicMethod1(other, "__gt__") { PyNotImplemented }
 
+    override fun pyAdd(other: PyObject, reverse: Boolean): PyObject =
+        if (reverse) magicMethod1(other, "__add__") { PyNotImplemented }
+        else magicMethod1(other, "__radd__") { PyNotImplemented }
+
+    override fun pySub(other: PyObject, reverse: Boolean): PyObject =
+        if (reverse) magicMethod1(other, "__sub__") { PyNotImplemented }
+        else magicMethod1(other, "__rsub__") { PyNotImplemented }
+
+    override fun pyMul(other: PyObject, reverse: Boolean): PyObject =
+        if (reverse) magicMethod1(other, "__mul__") { PyNotImplemented }
+        else magicMethod1(other, "__rmul__") { PyNotImplemented }
+
+    override fun pyMatMul(other: PyObject, reverse: Boolean): PyObject =
+        if (reverse) magicMethod1(other, "__matmul__") { PyNotImplemented }
+        else magicMethod1(other, "__rmatmul__") { PyNotImplemented }
+
+    override fun pyDiv(other: PyObject, reverse: Boolean): PyObject =
+        if (reverse) magicMethod1(other, "__truediv__") { PyNotImplemented }
+        else magicMethod1(other, "__rtruediv__") { PyNotImplemented }
+
+    override fun pyFloorDiv(other: PyObject, reverse: Boolean): PyObject =
+        if (reverse) magicMethod1(other, "__floordiv__") { PyNotImplemented }
+        else magicMethod1(other, "__rfloordiv__") { PyNotImplemented }
+
     override fun pyIter(): PyObject = magicMethod0("__iter__") { super.pyIter() }
     override fun pyNext(): PyObject = magicMethod0("__next__") { super.pyNext() }
 
     override fun pyGetRepr(): PyString = magicMethod0("__repr__") { super.pyGetRepr() }
-
     override fun pyToStr(): PyString = magicMethod0("__str__") { super.pyToStr() }
 }
 
