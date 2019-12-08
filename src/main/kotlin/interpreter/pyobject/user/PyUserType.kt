@@ -32,13 +32,13 @@ class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, 
     override val bases = bases.toMutableList()
 
     /** __dict__ */
-    override val initialDict: Map<String, PyObject> = dict.apply {
+    override val internalDict: LinkedHashMap<String, PyObject> = dict.apply {
         put("__mro__", PyTuple.get(mro))
     }
 
     // figure out signature
     override val signature = run {
-        val initMethod = initialDict["__init__"]
+        val initMethod = internalDict["__init__"]
         if (initMethod != null && initMethod is PyCallable) {
             val initSig = initMethod.signature
             // chop off the first arg, the self arg

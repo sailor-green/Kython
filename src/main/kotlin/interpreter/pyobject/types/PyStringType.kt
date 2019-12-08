@@ -63,13 +63,12 @@ object PyStringType : PyType("str") {
         }
     }
 
-    override val initialDict: Map<String, PyObject> by lazy {
-        mapOf(
+    override val internalDict: LinkedHashMap<String, PyObject> =
+        linkedMapOf(
             // magic method impls
             "__int__" to pyStrInt,
 
             // regular method impls
             "upper" to pyUpper
         )
-    }
 }

@@ -54,31 +54,14 @@ abstract class PyObject {
          * If the object is already a PyObject, just returns it. Otherwise, tries to wrap it.
          */
         fun get(obb: Any?) = obb as? PyObject ?: wrapPrimitive(obb)
-
-        /**
-         * The default object dict, containing the base implements of certain magic methods.
-         */
-        val defaultDict: LinkedHashMap<String, PyObject>
-            get() = linkedMapOf()
     }
 
     // exposed attribs
     /** The type of this PyObject. */
     abstract var type: PyType
 
-    /**
-     * The initial dict for this PyObject. Copied into internalDict upon instantiating.
-     * Built-in methods should be defined on the type object's copy of this.
-     */
-    open val initialDict: Map<String, PyObject> = mapOf()
-
     /** The `__dict__` of this PyObject. */
-    open val internalDict by lazy {
-        defaultDict.apply {
-            // then copy the "initial" dictionary
-            putAll(initialDict)
-        }
-    }
+    open val internalDict = linkedMapOf<String, PyObject>()
 
     // helper functions
     /**
