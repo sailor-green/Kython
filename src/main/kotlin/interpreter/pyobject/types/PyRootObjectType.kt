@@ -17,6 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
+import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
 import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
@@ -37,4 +39,9 @@ object PyRootObjectType : PyType("object") {
 
     // prevents errors
     // override val parentTypes: MutableList<PyType> = mutableListOf(this)
+
+    override val internalDict: LinkedHashMap<String, PyObject> = linkedMapOf(
+        "__getattribute__" to ObjectGetattribute,
+        "__setattr__" to ObjectSetattribute
+    )
 }

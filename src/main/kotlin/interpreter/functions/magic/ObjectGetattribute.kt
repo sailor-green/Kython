@@ -18,26 +18,20 @@
 package green.sailor.kython.interpreter.functions.magic
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyNone
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
-import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents the default object __getattribute__.
  */
-object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
+object ObjectGetattribute : PyBuiltinFunction("object.__getattribute__") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"]!!
-        val name = kwargs["name"]!!
-        if (name !is PyString) {
-            typeError("Attribute name must be type str, not ${name.type.name}")
-        }
+        val name = kwargs["name"]?.cast<PyString>() ?: error("Built-in signature mismatch!")
         val attrName = name.wrappedString
 
         // try and find the object on the dict
@@ -61,5 +55,11 @@ object ObjectGetattribute : PyBuiltinFunction("<object.__getattribute__>") {
             "self" to ArgType.POSITIONAL,
             "name" to ArgType.POSITIONAL
         )
+    }
+
+    // identical, but elides a bunch of stack frames.
+    override fun runCallable(args: List<PyObject>, kwargsTuple: PyTuple?): PyObject {
+        val finalArgs = signature.getFinalArgs(args, kwargsTuple)
+        return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
     }
 }
