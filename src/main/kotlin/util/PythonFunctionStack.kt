@@ -83,5 +83,4 @@ class PythonFunctionStack(val maxSize: Int) : Collection<PyObject> {
             return backingArray[position - 1] ?: error("Iterator reached end")
         }
     }
-
 }
