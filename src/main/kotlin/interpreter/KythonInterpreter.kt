@@ -172,19 +172,27 @@ object KythonInterpreter {
             System.err.println("\nKython stack (most recent frame first):")
 
             val stacks = StackFrame.flatten(frame).reversed()
-            stacks.forEach {
+            stacks.forEachIndexed { idx, it ->
+                System.err.println("Frame $idx:")
                 with(it.createStackFrameInfo()) {
                     System.err.println("   $tracebackString")
                     disassembly?.let { dis ->
-                        System.err.println("Disassembly:\n$dis")
+                        System.err.println("\nDisassembly:\n$dis")
                     }
                     stack?.let { stack ->
-                        System.err.println("Function stack, size: ${stack.size}")
-                        stack.forEachIndexed { index, pyObject ->
-                            System.err.println("    $index: $pyObject")
+                        val size = stack.size
+                        if (size != 0) {
+                            System.err.println("Function stack, size: ${stack.size}")
+                            stack.forEachIndexed { index, pyObject ->
+                                System.err.println("    $index: $pyObject")
+                            }
+                        } else {
+                            System.err.println("Function stack is empty")
                         }
                     }
                 }
+                // newline
+                System.err.println()
             }
         }
 

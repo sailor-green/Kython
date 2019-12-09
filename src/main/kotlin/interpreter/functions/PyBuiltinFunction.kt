@@ -46,6 +46,8 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction() {
                 }
 
                 override val signature: PyCallableSignature = signature
+
+                override val kotlinClassName: String = fn.javaClass.name.split(".").last()
             }
         }
     }
@@ -55,6 +57,8 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction() {
             typeError("Cannot create builtin instances")
         }
     }
+
+    open val kotlinClassName: String = javaClass.name.split(".").last()
 
     override fun pyToStr(): PyString = PyString("<built-in function $name>")
     override fun pyGetRepr(): PyString = pyToStr()

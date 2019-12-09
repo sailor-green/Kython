@@ -29,4 +29,6 @@ class BuiltinStackFrame(val builtinFunction: PyBuiltinFunction) : StackFrame() {
 
     override fun createStackFrameInfo(): StackFrameInfo.BuiltinFrameInfo =
         StackFrameInfo.BuiltinFrameInfo(this)
+
+    val kotlinFunctionClassName = builtinFunction.kotlinClassName
 }
