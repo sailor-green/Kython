@@ -35,7 +35,6 @@ abstract class PyFunction : PyObject(), PyCallable {
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
-
     // identical, but elides a bunch of stack frames.
     override fun runCallable(args: List<PyObject>, kwargsTuple: PyTuple?): PyObject {
         val finalArgs = ObjectGetattribute.signature.getFinalArgs(args, kwargsTuple)
