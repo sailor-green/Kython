@@ -187,6 +187,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 // build ops
                 InstructionOpcode.BUILD_TUPLE -> buildSimple(BuildType.TUPLE, param)
+                InstructionOpcode.BUILD_LIST -> buildSimple(BuildType.LIST, param)
                 InstructionOpcode.BUILD_STRING -> buildSimple(BuildType.STRING, param)
                 InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
 
@@ -796,6 +797,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val built = when (type) {
             BuildType.TUPLE -> {
                 PyTuple.get((0 until count).map { stack.pop() }.reversed())
+            }
+            BuildType.LIST -> {
+                PyList((0 until count).map { stack.pop() }.reversed())
             }
             BuildType.STRING -> {
                 val concatString = (0 until count)
