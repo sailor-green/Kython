@@ -47,7 +47,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         return buildString {
             append("PyCallableSignature size=${args.size} ")
             for ((name, arg) in args) {
-                append("$name=$arg")
+                append("$name=$arg ")
             }
         }
     }
