@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.util.PythonFunctionStack
 import java.util.*
 
 /**
@@ -113,7 +114,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * The inner stack for this stack frame.
      */
-    val stack = ArrayDeque<PyObject>(function.code.stackSize)
+    val stack = PythonFunctionStack(function.code.stackSize)
 
     /** The local variables for this frame. */
     val locals = mutableMapOf<String, PyObject>()
@@ -758,7 +759,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     fun forIter(param: Byte) {
         // we only peek off the top in order to get the iterator, to save allocations
         // since it's gonna be pushed back on immediately in the case the iterator has items
-        val iterator = stack.peek()
+        val iterator = stack.first
         bytecodePointer += try {
             val next = iterator.pyNext()
             stack.push(next)
@@ -768,6 +769,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         } catch (e: KyError) {
             if (e.wrapped.type == Exceptions.STOP_ITERATION) {
                 // jump past the for
+                stack.pop()
                 (param.toInt() / 2) + 1
             } else {
                 throw e

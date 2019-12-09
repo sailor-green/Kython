@@ -17,9 +17,8 @@
  */
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
-import java.util.*
+import green.sailor.kython.util.PythonFunctionStack
 
 /**
  * Represents stack frame information for a specific stack frame.
@@ -36,7 +35,7 @@ abstract class StackFrameInfo {
     open val disassembly: String? = null
 
     /** The stack for this frame */
-    open val stack: Deque<PyObject>? = null
+    open val stack: PythonFunctionStack? = null
 
     /** Gets the traceback string for this stack frame, unindented. */
     abstract val tracebackString: String
@@ -49,7 +48,7 @@ abstract class StackFrameInfo {
 
         override val disassembly: String get() = frame.function.code.getDisassembly(frame)
 
-        override val stack: Deque<PyObject> get() = frame.stack
+        override val stack get() = frame.stack
 
         override val tracebackString: String
             get() {
