@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
+import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.typeError
 
@@ -110,6 +111,13 @@ abstract class PyObject {
     open fun pyGetAttribute(name: String): PyObject {
         // TODO: No
         return ObjectGetattribute.pyCall(listOf(PyString(name), this))
+    }
+
+    /**
+     * Implements some_object.some_attribute = other_object.
+     */
+    open fun pySetAttribute(name: String, value: PyObject): PyObject {
+        return ObjectSetattribute.pyCall(listOf(value, PyString(name), this))
     }
 
     // == __call__

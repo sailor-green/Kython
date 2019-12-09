@@ -171,109 +171,106 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
             // switch on opcode
             // Reference: https://docs.python.org/3/library/dis.html#python-bytecode-instructions
-            try {
-                when (nextInstruction.opcode) {
-                    // load ops
-                    InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
-                    InstructionOpcode.LOAD_NAME -> load(LoadPool.NAME, param)
-                    InstructionOpcode.LOAD_CONST -> load(LoadPool.CONST, param)
-                    InstructionOpcode.LOAD_GLOBAL -> load(LoadPool.GLOBAL, param)
-                    InstructionOpcode.LOAD_ATTR -> load(LoadPool.ATTR, param)
-                    InstructionOpcode.LOAD_METHOD -> load(LoadPool.METHOD, param)
+            when (nextInstruction.opcode) {
+                // load ops
+                InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
+                InstructionOpcode.LOAD_NAME -> load(LoadPool.NAME, param)
+                InstructionOpcode.LOAD_CONST -> load(LoadPool.CONST, param)
+                InstructionOpcode.LOAD_GLOBAL -> load(LoadPool.GLOBAL, param)
+                InstructionOpcode.LOAD_ATTR -> load(LoadPool.ATTR, param)
+                InstructionOpcode.LOAD_METHOD -> load(LoadPool.METHOD, param)
 
-                    // store ops
-                    InstructionOpcode.STORE_NAME -> store(LoadPool.NAME, param)
-                    InstructionOpcode.STORE_FAST -> store(LoadPool.FAST, param)
+                // store ops
+                InstructionOpcode.STORE_NAME -> store(LoadPool.NAME, param)
+                InstructionOpcode.STORE_FAST -> store(LoadPool.FAST, param)
+                InstructionOpcode.STORE_ATTR -> storeAttr(param)
 
-                    // build ops
-                    InstructionOpcode.BUILD_TUPLE -> buildSimple(BuildType.TUPLE, param)
-                    InstructionOpcode.BUILD_STRING -> buildSimple(BuildType.STRING, param)
-                    InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
+                // build ops
+                InstructionOpcode.BUILD_TUPLE -> buildSimple(BuildType.TUPLE, param)
+                InstructionOpcode.BUILD_STRING -> buildSimple(BuildType.STRING, param)
+                InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
 
-                    // binary ops
-                    InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
-                    InstructionOpcode.BINARY_POWER -> binaryOp(BinaryOp.POWER, param)
-                    InstructionOpcode.BINARY_MULTIPLY -> binaryOp(BinaryOp.MULTIPLY, param)
-                    InstructionOpcode.BINARY_MATRIX_MULTIPLY ->
-                        binaryOp(BinaryOp.MATRIX_MULTIPLY, param)
-                    InstructionOpcode.BINARY_FLOOR_DIVIDE ->
-                        binaryOp(BinaryOp.FLOOR_DIVIDE, param)
-                    InstructionOpcode.BINARY_TRUE_DIVIDE ->
-                        binaryOp(BinaryOp.TRUE_DIVIDE, param)
-                    InstructionOpcode.BINARY_MODULO -> binaryOp(BinaryOp.MODULO, param)
-                    InstructionOpcode.BINARY_SUBTRACT -> binaryOp(BinaryOp.SUBTRACT, param)
-                    InstructionOpcode.BINARY_SUBSCR -> binaryOp(BinaryOp.SUBSCR, param)
-                    InstructionOpcode.BINARY_LSHIFT -> binaryOp(BinaryOp.LSHIFT, param)
-                    InstructionOpcode.BINARY_RSHIFT -> binaryOp(BinaryOp.RSHIFT, param)
-                    InstructionOpcode.BINARY_AND -> binaryOp(BinaryOp.AND, param)
-                    InstructionOpcode.BINARY_XOR -> binaryOp(BinaryOp.XOR, param)
-                    InstructionOpcode.BINARY_OR -> binaryOp(BinaryOp.OR, param)
+                // binary ops
+                InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
+                InstructionOpcode.BINARY_POWER -> binaryOp(BinaryOp.POWER, param)
+                InstructionOpcode.BINARY_MULTIPLY -> binaryOp(BinaryOp.MULTIPLY, param)
+                InstructionOpcode.BINARY_MATRIX_MULTIPLY ->
+                    binaryOp(BinaryOp.MATRIX_MULTIPLY, param)
+                InstructionOpcode.BINARY_FLOOR_DIVIDE ->
+                    binaryOp(BinaryOp.FLOOR_DIVIDE, param)
+                InstructionOpcode.BINARY_TRUE_DIVIDE ->
+                    binaryOp(BinaryOp.TRUE_DIVIDE, param)
+                InstructionOpcode.BINARY_MODULO -> binaryOp(BinaryOp.MODULO, param)
+                InstructionOpcode.BINARY_SUBTRACT -> binaryOp(BinaryOp.SUBTRACT, param)
+                InstructionOpcode.BINARY_SUBSCR -> binaryOp(BinaryOp.SUBSCR, param)
+                InstructionOpcode.BINARY_LSHIFT -> binaryOp(BinaryOp.LSHIFT, param)
+                InstructionOpcode.BINARY_RSHIFT -> binaryOp(BinaryOp.RSHIFT, param)
+                InstructionOpcode.BINARY_AND -> binaryOp(BinaryOp.AND, param)
+                InstructionOpcode.BINARY_XOR -> binaryOp(BinaryOp.XOR, param)
+                InstructionOpcode.BINARY_OR -> binaryOp(BinaryOp.OR, param)
 
-                    // inplace binary ops
-                    InstructionOpcode.INPLACE_ADD -> inplaceOp(BinaryOp.ADD, param)
-                    InstructionOpcode.INPLACE_POWER -> inplaceOp(BinaryOp.POWER, param)
-                    InstructionOpcode.INPLACE_MULTIPLY -> inplaceOp(BinaryOp.MULTIPLY, param)
-                    InstructionOpcode.INPLACE_MATRIX_MULTIPLY ->
-                        inplaceOp(BinaryOp.MATRIX_MULTIPLY, param)
-                    InstructionOpcode.INPLACE_FLOOR_DIVIDE ->
-                        inplaceOp(BinaryOp.FLOOR_DIVIDE, param)
-                    InstructionOpcode.INPLACE_TRUE_DIVIDE ->
-                        inplaceOp(BinaryOp.TRUE_DIVIDE, param)
-                    InstructionOpcode.INPLACE_MODULO -> inplaceOp(BinaryOp.MODULO, param)
-                    InstructionOpcode.INPLACE_SUBTRACT -> inplaceOp(BinaryOp.SUBTRACT, param)
-                    InstructionOpcode.INPLACE_LSHIFT -> inplaceOp(BinaryOp.LSHIFT, param)
-                    InstructionOpcode.INPLACE_RSHIFT -> inplaceOp(BinaryOp.RSHIFT, param)
-                    InstructionOpcode.INPLACE_AND -> inplaceOp(BinaryOp.AND, param)
-                    InstructionOpcode.INPLACE_XOR -> inplaceOp(BinaryOp.XOR, param)
-                    InstructionOpcode.INPLACE_OR -> inplaceOp(BinaryOp.OR, param)
-                    InstructionOpcode.STORE_SUBSCR -> inplaceOp(BinaryOp.STORE_SUBSCR, param)
-                    InstructionOpcode.DELETE_SUBSCR -> inplaceOp(BinaryOp.DELETE_SUBSCR, param)
+                // inplace binary ops
+                InstructionOpcode.INPLACE_ADD -> inplaceOp(BinaryOp.ADD, param)
+                InstructionOpcode.INPLACE_POWER -> inplaceOp(BinaryOp.POWER, param)
+                InstructionOpcode.INPLACE_MULTIPLY -> inplaceOp(BinaryOp.MULTIPLY, param)
+                InstructionOpcode.INPLACE_MATRIX_MULTIPLY ->
+                    inplaceOp(BinaryOp.MATRIX_MULTIPLY, param)
+                InstructionOpcode.INPLACE_FLOOR_DIVIDE ->
+                    inplaceOp(BinaryOp.FLOOR_DIVIDE, param)
+                InstructionOpcode.INPLACE_TRUE_DIVIDE ->
+                    inplaceOp(BinaryOp.TRUE_DIVIDE, param)
+                InstructionOpcode.INPLACE_MODULO -> inplaceOp(BinaryOp.MODULO, param)
+                InstructionOpcode.INPLACE_SUBTRACT -> inplaceOp(BinaryOp.SUBTRACT, param)
+                InstructionOpcode.INPLACE_LSHIFT -> inplaceOp(BinaryOp.LSHIFT, param)
+                InstructionOpcode.INPLACE_RSHIFT -> inplaceOp(BinaryOp.RSHIFT, param)
+                InstructionOpcode.INPLACE_AND -> inplaceOp(BinaryOp.AND, param)
+                InstructionOpcode.INPLACE_XOR -> inplaceOp(BinaryOp.XOR, param)
+                InstructionOpcode.INPLACE_OR -> inplaceOp(BinaryOp.OR, param)
+                InstructionOpcode.STORE_SUBSCR -> inplaceOp(BinaryOp.STORE_SUBSCR, param)
+                InstructionOpcode.DELETE_SUBSCR -> inplaceOp(BinaryOp.DELETE_SUBSCR, param)
 
-                    // fundamentally the same thing.
-                    InstructionOpcode.CALL_METHOD -> callFunction(param)
-                    InstructionOpcode.CALL_FUNCTION -> callFunction(param)
+                // fundamentally the same thing.
+                InstructionOpcode.CALL_METHOD -> callFunction(param)
+                InstructionOpcode.CALL_FUNCTION -> callFunction(param)
 
-                    // import ops
-                    InstructionOpcode.IMPORT_NAME -> importName(param)
-                    InstructionOpcode.IMPORT_FROM -> importFrom(param)
-                    InstructionOpcode.IMPORT_STAR -> importStar(param)
+                // import ops
+                InstructionOpcode.IMPORT_NAME -> importName(param)
+                InstructionOpcode.IMPORT_FROM -> importFrom(param)
+                InstructionOpcode.IMPORT_STAR -> importStar(param)
 
-                    // stack ops
-                    InstructionOpcode.POP_TOP -> popTop(param)
-                    InstructionOpcode.ROT_TWO -> rotTwo(param)
-                    InstructionOpcode.ROT_THREE -> rotThree(param)
-                    InstructionOpcode.ROT_FOUR -> rotFour(param)
-                    InstructionOpcode.DUP_TOP -> dupTop(param)
-                    InstructionOpcode.DUP_TOP_TWO -> dupTopTwo(param)
+                // stack ops
+                InstructionOpcode.POP_TOP -> popTop(param)
+                InstructionOpcode.ROT_TWO -> rotTwo(param)
+                InstructionOpcode.ROT_THREE -> rotThree(param)
+                InstructionOpcode.ROT_FOUR -> rotFour(param)
+                InstructionOpcode.DUP_TOP -> dupTop(param)
+                InstructionOpcode.DUP_TOP_TWO -> dupTopTwo(param)
 
-                    // jump ops
-                    InstructionOpcode.JUMP_ABSOLUTE -> jumpAbsolute(param)
-                    InstructionOpcode.JUMP_FORWARD -> jumpForward(param)
-                    InstructionOpcode.POP_JUMP_IF_FALSE -> popJumpIf(param, false)
-                    InstructionOpcode.POP_JUMP_IF_TRUE -> popJumpIf(param, true)
+                // jump ops
+                InstructionOpcode.JUMP_ABSOLUTE -> jumpAbsolute(param)
+                InstructionOpcode.JUMP_FORWARD -> jumpForward(param)
+                InstructionOpcode.POP_JUMP_IF_FALSE -> popJumpIf(param, false)
+                InstructionOpcode.POP_JUMP_IF_TRUE -> popJumpIf(param, true)
 
-                    // Unary operations
-                    InstructionOpcode.UNARY_POSITIVE -> unaryOp(UnaryOp.POSITIVE, param)
-                    InstructionOpcode.UNARY_NEGATIVE -> unaryOp(UnaryOp.NEGATIVE, param)
-                    InstructionOpcode.UNARY_NOT -> unaryOp(UnaryOp.NOT, param)
-                    InstructionOpcode.UNARY_INVERT -> unaryOp(UnaryOp.INVERT, param)
+                // Unary operations
+                InstructionOpcode.UNARY_POSITIVE -> unaryOp(UnaryOp.POSITIVE, param)
+                InstructionOpcode.UNARY_NEGATIVE -> unaryOp(UnaryOp.NEGATIVE, param)
+                InstructionOpcode.UNARY_NOT -> unaryOp(UnaryOp.NOT, param)
+                InstructionOpcode.UNARY_INVERT -> unaryOp(UnaryOp.INVERT, param)
 
-                    // iteration
-                    InstructionOpcode.GET_ITER -> getIter(param)
-                    InstructionOpcode.FOR_ITER -> forIter(param)
-                    InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
+                // iteration
+                InstructionOpcode.GET_ITER -> getIter(param)
+                InstructionOpcode.FOR_ITER -> forIter(param)
+                InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
 
-                    InstructionOpcode.NOP -> Unit
+                InstructionOpcode.NOP -> Unit
 
-                    // meta
-                    InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
-                    InstructionOpcode.LOAD_BUILD_CLASS -> loadBuildClass(param)
+                // meta
+                InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
+                InstructionOpcode.LOAD_BUILD_CLASS -> loadBuildClass(param)
 
-                    InstructionOpcode.COMPARE_OP -> compareOp(param)
-                    else -> error("Unimplemented opcode $opcode")
-                }
-            } catch (e: Throwable) {
-                throw e
+                InstructionOpcode.COMPARE_OP -> compareOp(param)
+                else -> error("Unimplemented opcode $opcode")
             }
         }
     }
@@ -338,6 +335,17 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         }
         val name = toGetName[idx]
         locals[name] = stack.pop()
+        bytecodePointer += 1
+    }
+
+    /**
+     * STORE_ATTR.
+     */
+    fun storeAttr(arg: Byte) {
+        val name = function.code.names[arg.toInt()]
+        val toStoreOn = stack.pop()
+        val toStore = stack.pop()
+        toStoreOn.pySetAttribute(name, toStore)
         bytecodePointer += 1
     }
 

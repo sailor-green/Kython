@@ -58,13 +58,13 @@ abstract class PyBuiltinFunction(val name: String) : PyFunction() {
 
     override fun pyToStr(): PyString = PyString("<built-in function $name>")
     override fun pyGetRepr(): PyString = pyToStr()
+    override fun createFrame(): StackFrame = BuiltinStackFrame(this)
 
     /**
      * Called when the function is called from within a stack frame.
      */
     abstract fun callFunction(kwargs: Map<String, PyObject>): PyObject
 
-    override fun createFrame(): StackFrame = BuiltinStackFrame(this)
 
     override var type: PyType
         get() = PyBuiltinFunctionType

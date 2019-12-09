@@ -18,11 +18,13 @@
 package green.sailor.kython.interpreter.functions.magic
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyNone
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.throwKy
 
 /**
@@ -55,11 +57,5 @@ object ObjectGetattribute : PyBuiltinFunction("object.__getattribute__") {
             "self" to ArgType.POSITIONAL,
             "name" to ArgType.POSITIONAL
         )
-    }
-
-    // identical, but elides a bunch of stack frames.
-    override fun runCallable(args: List<PyObject>, kwargsTuple: PyTuple?): PyObject {
-        val finalArgs = signature.getFinalArgs(args, kwargsTuple)
-        return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
     }
 }
