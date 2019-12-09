@@ -18,7 +18,6 @@
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.pyobject.*
 
@@ -37,7 +36,7 @@ abstract class PyFunction : PyObject(), PyCallable {
 
     // identical, but elides a bunch of stack frames.
     override fun runCallable(args: List<PyObject>, kwargsTuple: PyTuple?): PyObject {
-        val finalArgs = ObjectGetattribute.signature.getFinalArgs(args, kwargsTuple)
-        return KythonInterpreter.runStackFrame(ObjectGetattribute.createFrame(), finalArgs)
+        val finalArgs = signature.getFinalArgs(args, kwargsTuple)
+        return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
     }
 }
