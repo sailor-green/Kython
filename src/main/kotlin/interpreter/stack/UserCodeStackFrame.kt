@@ -192,6 +192,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             try { when (nextInstruction.opcode) {
                 // block ops
                 InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
+                InstructionOpcode.BEGIN_FINALLY -> beginFinally(param)
+                InstructionOpcode.END_FINALLY -> endFinally(param)
+                InstructionOpcode.POP_EXCEPT -> popExcept(param)
+                InstructionOpcode.POP_BLOCK -> popBlock(param)
 
                 // load ops
                 InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
@@ -303,7 +307,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 // if yes block, jump to where the finally says we should jump
                 // traceback, excval, exctype
-                stack.push(PyRootObjectInstance())  // TODO
+                stack.push(PyRootObjectInstance()) // TODO
                 stack.push(e.wrapped)
                 stack.push(e.wrapped.type)
                 val tobs = blockStack.peek()
@@ -319,12 +323,63 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         return stack.pop()
     }
 
+    // try-except-finally-else handling
+    // holy shit this is so pointlessly complex in 3.8
+    // 3.9 fixes this all, can't wait
     /**
      * SETUP_FINALLY
      */
     fun setupFinally(opval: Byte) {
         val delta = opval.toUByte().toInt()
         blockStack.push(FinallyBlock(delta))
+        bytecodePointer += 1
+    }
+
+    /**
+     * BEGIN_FINALLY
+     */
+    fun beginFinally(opval: Byte) {
+        stack.push(nullFinally)
+        bytecodePointer += 1
+    }
+
+    /**
+     * END_FINALLY
+     */
+    fun endFinally(opval: Byte) {
+        // is the block stack popped??
+        // gonna guess, and say yes...
+        // this'll all be gone for 3.9, anyway.
+        val TOS = stack.first
+        when {
+            TOS === nullFinally -> {
+                stack.pop()
+                blockStack.pop()
+                bytecodePointer += 1
+            }
+            TOS is PyInt -> {
+                // no need to do division, because we can put our own instruction on there
+                stack.pop()
+                blockStack.pop()
+                bytecodePointer = TOS.wrappedInt.toInt()
+            }
+            else -> TODO()
+        }
+    }
+
+    /**
+     * POP_EXCEPT
+     */
+    // reraises??
+    fun popExcept(oval: Byte) {
+        TODO()
+    }
+
+    /**
+     * POP_BLOCK
+     */
+    fun popBlock(oval: Byte) {
+        blockStack.pop()
         bytecodePointer += 1
     }
 
