@@ -34,9 +34,15 @@ repositories {
 
 
 dependencies {
+    // === KOTLIN === //
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
+    // === CORE DEPENDENCIES === //
+    // == picocli - for CLI parsing == //
+    implementation(group = "info.picocli", name = "picocli", version = "4.1.2")
+
+    // === TEST === //
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 }
 
