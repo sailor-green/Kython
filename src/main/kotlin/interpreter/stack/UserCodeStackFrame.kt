@@ -210,6 +210,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.STORE_FAST -> store(LoadPool.FAST, param)
                 InstructionOpcode.STORE_ATTR -> storeAttr(param)
 
+                // delete ops
+                InstructionOpcode.DELETE_FAST -> delete(LoadPool.FAST, param)
+                InstructionOpcode.DELETE_NAME -> delete(LoadPool.NAME, param)
+
                 // build ops
                 InstructionOpcode.BUILD_TUPLE -> buildSimple(BuildType.TUPLE, param)
                 InstructionOpcode.BUILD_LIST -> buildSimple(BuildType.LIST, param)
@@ -371,8 +375,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * POP_EXCEPT
      */
     // reraises??
+    // no clue what the FUCK this instruction is for.
     fun popExcept(oval: Byte) {
-        TODO()
+        bytecodePointer += 1
     }
 
     /**
@@ -446,6 +451,31 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val toStoreOn = stack.pop()
         val toStore = stack.pop()
         toStoreOn.pySetAttribute(name, toStore)
+        bytecodePointer += 1
+    }
+
+    /**
+     * DELETE_(NAME|FAST).
+     */
+    fun delete(pool: LoadPool, opval: Byte) {
+        val idx = opval.toInt()
+        when (pool) {
+            LoadPool.FAST -> {
+                val name = function.code.varnames[idx]
+                locals.remove(name) ?: error("Local $name was not present!")
+            }
+            LoadPool.NAME -> {
+                val name = function.code.names[idx]
+                if (name in locals) {
+                    locals.remove(name)
+                } else if (name in function.module.attribs) {
+                    function.module.attribs.remove(name)
+                } else {
+                    error("Name $name was not present!")
+                }
+            }
+            else -> error("Unknown pool to delete from: $pool")
+        }
         bytecodePointer += 1
     }
 
