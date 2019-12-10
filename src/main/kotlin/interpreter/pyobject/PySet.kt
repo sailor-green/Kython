@@ -21,9 +21,9 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PySetType
 
 /**
- * Represents an ordered Python set.
+ * Represents a Python set.
  */
-class PySet(val wrappedSet: LinkedHashSet<PyObject>) : PyObject() {
+class PySet(val wrappedSet: MutableSet<PyObject>) : PyObject() {
 
     override fun pyToStr(): PyString = PyString(
         "{" + wrappedSet.joinToString(", ") { it.pyGetRepr().wrappedString } + "}"
