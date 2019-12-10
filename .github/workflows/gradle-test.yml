@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         # needs updates as appropriate
-        java: [11.0.x, 13]
+        java: [11.0.x, 13, 14-ea]
         run_on: [windows-latest, ubuntu-latest, macos-latest]
 
 
