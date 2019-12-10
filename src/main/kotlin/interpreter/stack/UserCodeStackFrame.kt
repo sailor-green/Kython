@@ -28,7 +28,6 @@ import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.util.PythonFunctionStack
-import java.util.*
 
 /**
  * Represents a single stack frame on the stack of stack frames.

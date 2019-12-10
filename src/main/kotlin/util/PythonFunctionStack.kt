@@ -18,13 +18,12 @@
 package green.sailor.kython.util
 
 import green.sailor.kython.interpreter.pyobject.PyObject
-import java.util.*
 
 /**
  * Represents the stack for a Python function.
  *
- * This is used over a regular [ArrayDeque] because we need indexing (for Python). It only has the
- * things needed for the implementation.
+ * This is used over a regular [java.util.ArrayDeque] because we need indexing (for Python).
+ * It only has the things needed for the implementation.
  */
 class PythonFunctionStack(val maxSize: Int) : Collection<PyObject> {
     /** The backing array for this stack. */
