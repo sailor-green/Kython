@@ -30,7 +30,7 @@ import green.sailor.kython.interpreter.pyobject.PyType
 object PyListType : PyType("list") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
-        val items = iterator.iterate()
+        val items = iterator.iterate().toMutableList()
         return PyList(items)
     }
 

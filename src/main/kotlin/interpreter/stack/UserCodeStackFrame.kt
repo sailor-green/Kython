@@ -192,6 +192,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.BUILD_STRING -> buildSimple(BuildType.STRING, param)
                 InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
 
+                InstructionOpcode.LIST_APPEND -> listAppend(param)
+                /*InstructionOpcode.SET_ADD -> setAdd(param)
+                InstructionOpcode.MAP_ADD -> mapAdd(param)*/
+
                 // binary ops
                 InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
                 InstructionOpcode.BINARY_POWER -> binaryOp(BinaryOp.POWER, param)
@@ -402,7 +406,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
-     * Loads __build_class__ onto the stack.
+     * LOAD_BUILD_CLASS.
      */
     fun loadBuildClass(arg: Byte) {
         stack.push(BuildClassFunction)
@@ -801,7 +805,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 PyTuple.get((0 until count).map { stack.pop() }.reversed())
             }
             BuildType.LIST -> {
-                PyList((0 until count).map { stack.pop() }.reversed())
+                PyList((0 until count).map { stack.pop() }.reversed().toMutableList())
             }
             BuildType.STRING -> {
                 val concatString = (0 until count)
@@ -820,6 +824,21 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             else -> TODO("Unimplemented build type $type")
         }
         stack.push(built)
+        bytecodePointer += 1
+    }
+
+    /**
+     * LIST_APPEND
+     */
+    fun listAppend(param: Byte) {
+        // the stack isn't a stack!
+        // !!!!
+        val toAdd = stack.pop()
+        val list = stack[stack.size - param.toInt()]
+        if (list !is PyList) error("Cannot LIST_APPEND on non-list $list")
+        if (list.subobjects !is MutableList) error("List is immutable?")
+        list.subobjects.add(toAdd)
+
         bytecodePointer += 1
     }
 }

@@ -20,7 +20,7 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyListType
 
-class PyList(subobjects: List<PyObject>) : PyContainer(subobjects) {
+class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     override fun pyToStr(): PyString {
         return PyString("[" + subobjects.joinToString {
             it.pyGetRepr().wrappedString

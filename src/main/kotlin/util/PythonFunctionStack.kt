@@ -65,7 +65,8 @@ class PythonFunctionStack(val maxSize: Int) : Collection<PyObject> {
     /**
      * Gets an item from the stack.
      */
-    fun get(idx: Int): PyObject = backingArray[idx] ?: error("Stack doesn't have an item at $idx")
+    operator fun get(idx: Int): PyObject =
+        backingArray[idx] ?: error("Stack doesn't have an item at $idx")
 
     // collection items
     override fun contains(element: PyObject): Boolean = backingArray.contains(element)
