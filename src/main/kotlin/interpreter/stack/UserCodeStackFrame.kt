@@ -28,6 +28,8 @@ import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.util.PythonFunctionStack
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 /**
  * Represents a single stack frame on the stack of stack frames.
@@ -37,6 +39,15 @@ import green.sailor.kython.util.PythonFunctionStack
 @Suppress("MemberVisibilityCanBePrivate")
 class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     companion object {
+        /**
+         * Represents the NULL object pushed onto the stack by BEGIN_FINALLY.
+         */
+        val nullFinally = object : PyObject() {
+            override var type: PyType
+                get() = error("You should never see this")
+                set(_) = error("You should never see this")
+        }
+
         /** Load pools for LOAD/STORE instructions. These represent where the instruction will operate on. */
         enum class LoadPool {
             CONST,
@@ -115,12 +126,15 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     val stack = PythonFunctionStack(function.code.stackSize)
 
-    /** The local variables for this frame. */
-    val locals = mutableMapOf<String, PyObject>()
+    /**
+     * The block stack for this stack frame.
+     */
+    val blockStack = ArrayDeque<Block>()
 
-    override fun createStackFrameInfo(): StackFrameInfo.UserFrameInfo {
-        return StackFrameInfo.UserFrameInfo(this)
-    }
+    /**
+     * The local variables for this frame.
+     */
+    val locals = mutableMapOf<String, PyObject>()
 
     /**
      * Gets the source code line number currently being executed.
@@ -153,6 +167,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
+     * Creates a new [StackFrameInfo] for this stack frame.
+     */
+    override fun createStackFrameInfo(): StackFrameInfo.UserFrameInfo =
+        StackFrameInfo.UserFrameInfo(this)
+
+    /**
      * Runs this stack frame, executing the function within.
      */
     override fun runFrame(kwargs: Map<String, PyObject>): PyObject {
@@ -171,7 +191,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
             // switch on opcode
             // Reference: https://docs.python.org/3/library/dis.html#python-bytecode-instructions
-            when (nextInstruction.opcode) {
+            try { when (nextInstruction.opcode) {
+                // block ops
+                InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
+
                 // load ops
                 InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
                 InstructionOpcode.LOAD_NAME -> load(LoadPool.NAME, param)
@@ -276,6 +299,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 InstructionOpcode.COMPARE_OP -> compareOp(param)
                 else -> error("Unimplemented opcode $opcode")
+            }} catch (e: KyError) {
+                // if no block, just throw through
+                if (blockStack.isEmpty()) throw e
+
+                // if yes block, jump to where the finally says we should jump
+                stack.push(e.wrapped)
+                val tobs = blockStack.peek()
+                bytecodePointer = (tobs.delta / 2) + 1
             }
         }
     }
@@ -283,9 +314,17 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     // scary instruction implementations
     // this is all below the main class because there's a LOT going on here
 
-    // i don't see how this can ever error...
     fun returnValue(arg: Byte): PyObject {
         return stack.pop()
+    }
+
+    /**
+     * SETUP_FINALLY
+     */
+    fun setupFinally(opval: Byte) {
+        val delta = opval.toUByte().toInt()
+        blockStack.push(FinallyBlock(delta))
+        bytecodePointer += 1
     }
 
     /**
