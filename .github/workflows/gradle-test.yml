@@ -14,12 +14,10 @@ jobs:
     strategy:
       matrix:
         # needs updates as appropriate
-        java: [11.0.x, 13, 14]
+        java: [11.0.x, 13, 14.0.15]
         run_on: [windows-latest, ubuntu-latest, macos-latest]
 
-
-      # prevents different java version tests failing
-      fail-fast: false
+      fail-fast: true
 
     steps:
     - uses: actions/checkout@v1
