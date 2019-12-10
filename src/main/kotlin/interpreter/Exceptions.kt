@@ -17,31 +17,33 @@
  */
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.interpreter.pyobject.PyException
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
+import green.sailor.kython.interpreter.pyobject.exception.throwKy
 
 /**
  * A nice list of exceptions.
  */
 object Exceptions {
     // BaseException and its special subclasses
-    val BASE_EXCEPTION = PyException.makeExceptionType("BaseException", listOf())
+    val BASE_EXCEPTION = PyExceptionType("BaseException")
 
     // Root of all other exceptions
-    val EXCEPTION = BASE_EXCEPTION.typeSubclassOf("Exception")
+    val EXCEPTION = PyExceptionType("Exception", BASE_EXCEPTION)
 
-    val STOP_ITERATION = EXCEPTION.typeSubclassOf("StopIteration")
+    // iterator signal
+    val STOP_ITERATION = PyExceptionType("StopIteration", EXCEPTION)
 
     // main errors
-    val ATTRIBUTE_ERROR = EXCEPTION.typeSubclassOf("AttributeError")
-    val NAME_ERROR = EXCEPTION.typeSubclassOf("NameError")
-    val TYPE_ERROR = EXCEPTION.typeSubclassOf("TypeError")
-    val VALUE_ERROR = EXCEPTION.typeSubclassOf("ValueError")
-    val INDEX_ERROR = EXCEPTION.typeSubclassOf("IndexError")
+    val ATTRIBUTE_ERROR = PyExceptionType("AttributeError", EXCEPTION)
+    val NAME_ERROR = PyExceptionType("NameError", EXCEPTION)
+    val TYPE_ERROR = PyExceptionType("TypeError", EXCEPTION)
+    val VALUE_ERROR = PyExceptionType("ValueError", EXCEPTION)
+    val INDEX_ERROR = PyExceptionType("IndexError", EXCEPTION)
 
     // runtimeerror and its children
-    val RUNTIME_ERROR = EXCEPTION.typeSubclassOf("RuntimeError")
-    val NOT_IMPLEMENTED_ERROR = RUNTIME_ERROR.typeSubclassOf("NotImplementedError")
+    val RUNTIME_ERROR = PyExceptionType("RuntimeError", EXCEPTION)
+    val NOT_IMPLEMENTED_ERROR = PyExceptionType("NotImplementedError", RUNTIME_ERROR)
 
     val EXCEPTION_MAP = mapOf(
         "BaseException" to EXCEPTION,
