@@ -19,14 +19,12 @@
 
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.KyError
+import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.throwKy
-import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.util.PythonFunctionStack
 import java.util.*
 import kotlin.collections.LinkedHashSet
@@ -299,12 +297,15 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 InstructionOpcode.COMPARE_OP -> compareOp(param)
                 else -> error("Unimplemented opcode $opcode")
-            }} catch (e: KyError) {
+            } } catch (e: KyError) {
                 // if no block, just throw through
                 if (blockStack.isEmpty()) throw e
 
                 // if yes block, jump to where the finally says we should jump
+                // traceback, excval, exctype
+                stack.push(PyRootObjectInstance())  // TODO
                 stack.push(e.wrapped)
+                stack.push(e.wrapped.type)
                 val tobs = blockStack.peek()
                 bytecodePointer = (tobs.delta / 2) + 1
             }
@@ -769,7 +770,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 val second = stack.pop()
                 if (top !== second) PyBool.TRUE else PyBool.FALSE
             }
-            EXCEPTION_MATCH -> TODO("exception match COMPARE_OP")
+            EXCEPTION_MATCH -> {
+                val top = stack.pop().cast<PyExceptionType>()
+                val second = stack.pop().cast<PyExceptionType>()
+                // TODO: issubclass
+                PyBool.get(second == top)
+            }
             else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
         } }
         stack.push(toPush)
