@@ -36,6 +36,7 @@ object Builtins {
     val DIR = DirBuiltinFunction()
     val ITER = IterBuiltinFunction()
     val CALLABLE = CallableBuiltinFunction()
+    val ISINSTANCE = IsinstanceBuiltinFunction()
     val KY_PRINT = PyBuiltinFunction.wrap(
         "ky_print", PyCallableSignature("any" to ArgType.POSITIONAL)
     ) {
@@ -66,6 +67,7 @@ object Builtins {
         "dir" to DIR,
         "iter" to ITER,
         "callable" to CALLABLE,
+        "isinstance" to ISINSTANCE,
         "_ky_print" to KY_PRINT,
 
         // class types
