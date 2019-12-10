@@ -465,13 +465,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 locals.remove(name) ?: error("Local $name was not present!")
             }
             LoadPool.NAME -> {
-                val name = function.code.names[idx]
-                if (name in locals) {
-                    locals.remove(name)
-                } else if (name in function.module.attribs) {
-                    function.module.attribs.remove(name)
-                } else {
-                    error("Name $name was not present!")
+                when (val name = function.code.names[idx]) {
+                    in locals -> locals.remove(name)
+                    in function.module.attribs -> function.module.attribs.remove(name)
+                    else -> error("Name $name was not present!")
                 }
             }
             else -> error("Unknown pool to delete from: $pool")
