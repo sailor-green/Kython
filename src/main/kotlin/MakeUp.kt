@@ -18,11 +18,11 @@
 package green.sailor.kython
 
 import green.sailor.kython.cli.PythonFileCommand
+import java.util.concurrent.Callable
+import kotlin.system.exitProcess
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.HelpCommand
-import java.util.concurrent.Callable
-import kotlin.system.exitProcess
 
 /**
  * Main initialiser for Kython.

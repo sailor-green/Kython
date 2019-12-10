@@ -15,25 +15,24 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
 package green.sailor.kython.cli
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import picocli.CommandLine.Command
-import picocli.CommandLine.Parameters
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.Callable
+import picocli.CommandLine.Command
+import picocli.CommandLine.Parameters
 
 @Command(
     name = "file",
     description = ["Runs a Python file"]
 )
 object PythonFileCommand : Callable<Int> {
-    @Parameters(index="0", description = ["The Python file to run."])
+    @Parameters(index = "0", description = ["The Python file to run."])
     var filename: String = ""
 
-    @Parameters(arity="0..*", description = ["The arguments to provide to the file."])
+    @Parameters(arity = "0..*", description = ["The arguments to provide to the file."])
     var args: MutableList<String> = mutableListOf()
 
     override fun call(): Int {
@@ -54,5 +53,4 @@ object PythonFileCommand : Callable<Int> {
         KythonInterpreter.runPythonFromPath(Paths.get(filename).toAbsolutePath())
         return 0
     }
-
 }
