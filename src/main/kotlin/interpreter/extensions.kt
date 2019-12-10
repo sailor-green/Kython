@@ -18,6 +18,9 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
+import green.sailor.kython.interpreter.pyobject.types.PyRootType
 
 /**
  * Helper function to iterate over an iterator.
@@ -33,4 +36,15 @@ fun PyObject.iterate(): List<PyObject> {
         }
     }
     return items
+}
+
+/**
+ * Checks if this PyObject is an instance of other types.
+ */
+fun PyObject.isinstance(others: Set<PyType>): Boolean {
+    // these are always true for their respective conditions
+    if (PyRootObjectType in others) return true
+    if (this is PyType && PyRootType in others) return true
+
+    return type.mro.toSet().intersect(others).isNotEmpty()
 }

@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.iface.ArgType
 import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.isinstance
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
@@ -36,8 +37,7 @@ class IsinstanceBuiltinFunction : PyBuiltinFunction("isinstance") {
                 .toSet()
             else -> typeError("of_type must be a type or a tuple of types")
         }
-        val basesSet = obb.type.mro.toSet()
-        return PyBool.get(toCheckSet.intersect(basesSet).isNotEmpty())
+        return PyBool.get(obb.isinstance(toCheckSet))
     }
 
     override val signature: PyCallableSignature = PyCallableSignature(
