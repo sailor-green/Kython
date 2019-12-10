@@ -24,12 +24,15 @@ import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.typeError
 
 class IsinstanceBuiltinFunction : PyBuiltinFunction("isinstance") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["obb"] ?: error("Built-in signature mismatch!")
         val ofType = kwargs["of_type"] ?: error("Built-in signature mismatch!")
+        if (ofType == PyRootObjectType) return PyBool.TRUE
+
         val toCheckSet = when (ofType) {
             is PyType -> setOf(ofType)
             is PyTuple -> ofType.subobjects
