@@ -52,10 +52,13 @@ fun PyObject.isinstance(others: Set<PyType>): Boolean {
 /**
  * Checks if this PyType is a subclass of another type.
  */
-fun PyType.issubclass(others: Set<PyType>): Boolean {
-    // always true
+fun PyType.issubclass(others: Set<PyType>) = setOf(this).issubclass(others)
+
+tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
+    if (this.isEmpty()) return false
     if (PyRootType in others) return true
 
-    return others.intersect(bases.toSet()).isNotEmpty() ||
-        bases.any { it.issubclass(others) }
+    val bases = this.flatMap { it.bases }
+    if (others.intersect(bases).isNotEmpty()) return true
+    return bases.issubclass(others)
 }
