@@ -317,7 +317,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 stack.push(e.wrapped)
                 stack.push(e.wrapped.type)
                 val tobs = blockStack.pop()
-                bytecodePointer = (tobs.delta / 2) + 1
+                bytecodePointer = tobs.delta
             }
         }
     }
@@ -336,7 +336,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * SETUP_FINALLY
      */
     fun setupFinally(opval: Byte) {
-        val delta = opval.toUByte().toInt()
+        val delta = (opval.toUByte().toInt() / 2) + bytecodePointer + 1
         blockStack.push(FinallyBlock(delta))
         bytecodePointer += 1
     }
