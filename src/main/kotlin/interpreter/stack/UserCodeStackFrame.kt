@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.util.PythonFunctionStack
 import java.util.*
@@ -198,6 +199,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
                 InstructionOpcode.POP_EXCEPT -> popExcept(param)
                 InstructionOpcode.POP_BLOCK -> popBlock(param)
+                InstructionOpcode.RERAISE -> reraise(param)
 
                 // load ops
                 InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
@@ -329,9 +331,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         return stack.pop()
     }
 
-    // try-except-finally-else handling
-    // holy shit this is so pointlessly complex in 3.8
-    // 3.9 fixes this all, can't wait
     /**
      * SETUP_FINALLY
      */
@@ -350,34 +349,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     /**
-     * END_FINALLY
-     */
-    fun endFinally(opval: Byte) {
-        // is the block stack popped??
-        // gonna guess, and say yes...
-        // this'll all be gone for 3.9, anyway.
-        val TOS = stack.first
-        when {
-            TOS === nullFinally -> {
-                stack.pop()
-                blockStack.pop()
-                bytecodePointer += 1
-            }
-            TOS is PyInt -> {
-                // no need to do division, because we can put our own instruction on there
-                stack.pop()
-                blockStack.pop()
-                bytecodePointer = TOS.wrappedInt.toInt()
-            }
-            else -> TODO()
-        }
-    }
-
-    /**
      * POP_EXCEPT
      */
-    // reraises??
-    // no clue what the FUCK this instruction is for.
+    // todo: actually implement this, i guess.
     fun popExcept(oval: Byte) {
         bytecodePointer += 1
     }
@@ -388,6 +362,17 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     fun popBlock(oval: Byte) {
         blockStack.pop()
         bytecodePointer += 1
+    }
+
+    /**
+     * RERAISE
+     */
+    fun reraise(opval: Byte) {
+        val excType = stack.pop() as? PyExceptionType ?: error("TOS wasn't an exception type!")
+        val excVal = stack.pop() as? PyException ?: error("TOS wasn't an exception!")
+        val excTb = stack.pop()
+        // TODO: properly copy tb or whatever
+        excVal.throwKy()
     }
 
     /**

@@ -34,6 +34,8 @@ class PythonFunctionStack(val maxSize: Int) : Collection<PyObject> {
     /** The size of this stack. */
     override val size get() = watermark
 
+    override fun toString(): String = backingArray.toString()
+
     /** The top-most item on the stack. */
     val first get() = backingArray[watermark - 1] ?: error("Stack is empty")
 
