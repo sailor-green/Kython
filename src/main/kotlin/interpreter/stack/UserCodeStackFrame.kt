@@ -19,6 +19,7 @@
 
 package green.sailor.kython.interpreter.stack
 
+import green.sailor.kython.MakeUp
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.functions.PyUserFunction
@@ -180,16 +181,19 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             // simple fetch decode execute loop
             // maybe this could be pipelined.
             val nextInstruction = function.getInstruction(bytecodePointer)
+            if (MakeUp.debugMode) {
+                System.err.println("idx: $bytecodePointer | Next instruction: $nextInstruction")
+            }
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
             // special case this, because it returns from runFrame
-            if (nextInstruction.opcode == InstructionOpcode.RETURN_VALUE) {
+            if (opcode == InstructionOpcode.RETURN_VALUE) {
                 return returnValue(param)
             }
 
             // switch on opcode
             // Reference: https://docs.python.org/3/library/dis.html#python-bytecode-instructions
-            try { when (nextInstruction.opcode) {
+            try { when (opcode) {
                 // block ops
                 InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
                 InstructionOpcode.POP_EXCEPT -> popExcept(param)
@@ -312,7 +316,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 stack.push(PyRootObjectInstance()) // TODO
                 stack.push(e.wrapped)
                 stack.push(e.wrapped.type)
-                val tobs = blockStack.peek()
+                val tobs = blockStack.pop()
                 bytecodePointer = (tobs.delta / 2) + 1
             }
         }
