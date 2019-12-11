@@ -30,15 +30,8 @@ import java.nio.file.Path
  * Represents the CPython compiler interface.
  */
 class CPythonCompiler {
-    private val isWindows = System.getProperty("os.name").startsWith("Windows")
-
-    val cpythonExe = if (isWindows) {
-        "python.exe"
-    } else {
-        "python3.8"
-    }
-
     private val kycPyPath = Files.createTempDirectory("kython").resolve("kyc.py")
+    val cPythonExe = System.getenv("CPYTHON_EXE") ?: "python3.9"
 
     init {
         Files.copy(javaClass.classLoader.getResource("kyc.py").openStream(), kycPyPath)
@@ -48,7 +41,7 @@ class CPythonCompiler {
         val builder = ProcessBuilder()
         builder.command(
             listOf(
-                cpythonExe,
+                cPythonExe,
                 "-I", // isolate cpython, not using user site or env vars,
                 "-S", // no site.py
                 kycPyPath.toAbsolutePath().toString()
@@ -81,7 +74,7 @@ class CPythonCompiler {
      * Compiles from a string.
      */
     fun compile(data: String): KyCodeObject {
-        return if (!isWindows) {
+        return if (false) {
             val args = listOf("--code", data)
             KyCodeObject(executeCompiler(args).code)
         } else {
