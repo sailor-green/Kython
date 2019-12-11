@@ -45,13 +45,13 @@ data class Instruction(val opcode: InstructionOpcode, val argument: Byte) {
         // add a real idx field
         if (opcode.hasAbsJump) {
             val realIdx = argument.toUByte().toInt() / 2
-            base += "(instruction: $realIdx)"
+            base += "(jump to: $realIdx)"
         }
         if (opcode.hasRelJump) {
             val realAmount = argument.toInt() / 2
             val ourPos = frame.function.code.instructions.indexOf(this)
             val realIdx = ourPos + realAmount + 1
-            base += "(instruction: $realIdx)"
+            base += "(jump to: $realIdx)"
         }
         return base
     }

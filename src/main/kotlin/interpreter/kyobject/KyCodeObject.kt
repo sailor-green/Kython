@@ -141,6 +141,7 @@ class KyCodeObject(original: KycCodeObject) {
         val padSize = ceil(log(instructions.size.toDouble(), 10.0)).toInt()
 
         return buildString {
+            val jumpTargets = mutableMapOf<Int, MutableList<Int>>()
             var lastLineNum = -1
 
             for ((idx, instruction) in instructions.withIndex()) {
@@ -154,9 +155,23 @@ class KyCodeObject(original: KycCodeObject) {
                     lastLineNum = lineNum
                 }
 
+                if (instruction.opcode.hasRelJump) {
+                    val realAmount = instruction.argument.toInt() / 2
+                    val realIdx = idx + realAmount + 1
+                    (jumpTargets.computeIfAbsent(realIdx) { mutableListOf() }).add(idx)
+                }
+                if (instruction.opcode.hasAbsJump) {
+                    val realIdx = instruction.argument.toInt() / 2
+                    (jumpTargets.computeIfAbsent(realIdx) { mutableListOf() }).add(idx)
+                }
                 val idxFmt = idx.toString().padStart(padSize, '0')
                 append("    $idxFmt ")
                 append(instruction.getDisassembly(frame))
+                val ourPos = jumpTargets[idx]
+                if (ourPos != null) {
+                    append(" (jump from: ${ourPos.joinToString { it.toString() }})")
+                }
+
                 if (idx == frame.bytecodePointer) {
                     append("  <-- HERE")
                 }
