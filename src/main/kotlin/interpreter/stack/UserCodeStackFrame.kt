@@ -885,7 +885,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             // next instruction
             1
         } catch (e: KyError) {
-            if (e.wrapped.type == Exceptions.STOP_ITERATION) {
+            if (e.wrapped.isinstance(setOf(Exceptions.STOP_ITERATION))) {
                 // jump past the for
                 stack.pop()
                 (param.toInt() / 2) + 1

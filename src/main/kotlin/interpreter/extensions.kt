@@ -31,7 +31,7 @@ fun PyObject.iterate(): List<PyObject> {
         try {
             items.add(pyNext())
         } catch (e: KyError) {
-            if (e.wrapped.type == Exceptions.STOP_ITERATION) break
+            if (e.wrapped.isinstance(setOf(Exceptions.STOP_ITERATION))) break
             throw e
         }
     }
