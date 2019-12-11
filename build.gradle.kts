@@ -26,7 +26,7 @@ plugins {
 }
 
 group = "green.sailor"
-version = "3.8"
+version = "3.9"
 
 repositories {
     mavenCentral()

@@ -1,4 +1,4 @@
-This is Kython version 3.8
+This is Kython version 3.9
 ==========================
 .. image:: https://img.shields.io/codecov/c/github/sailor-green/kython?style=for-the-badge
     :alt: Codecov
@@ -22,12 +22,13 @@ Contents
 General information
 ===================
 
-Kython is a Python 3.8 interpreter written in Kotlin/JVM.
+Kython is a Python 3 interpreter written in Kotlin/JVM.
 
 Setup
 =====
 
-In order to run Kython, you need to `download <http://www.python.org/>`_ and compile CPython 3.8.
+Kython currently requires a copy of CPython to compile code from the text form to the ``kyc`` format that can be
+understood by the interpreter. A version of CPython that matches the current Kython version is required
 
 Testing
 =======

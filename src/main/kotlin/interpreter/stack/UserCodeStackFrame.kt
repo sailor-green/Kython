@@ -192,8 +192,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             try { when (nextInstruction.opcode) {
                 // block ops
                 InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
-                InstructionOpcode.BEGIN_FINALLY -> beginFinally(param)
-                InstructionOpcode.END_FINALLY -> endFinally(param)
                 InstructionOpcode.POP_EXCEPT -> popExcept(param)
                 InstructionOpcode.POP_BLOCK -> popBlock(param)
 
