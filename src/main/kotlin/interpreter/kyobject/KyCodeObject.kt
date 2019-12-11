@@ -141,7 +141,19 @@ class KyCodeObject(original: KycCodeObject) {
         val padSize = ceil(log(instructions.size.toDouble(), 10.0)).toInt()
 
         return buildString {
-            instructions.forEachIndexed { idx, instruction ->
+            var lastLineNum = -1
+
+            for ((idx, instruction) in instructions.withIndex()) {
+                val lineNum = lnotab.getLineNumberFromIdx(idx)
+                if (lineNum != lastLineNum) {
+                    appendln()
+                    append("${firstline + lineNum}")
+                    append("   ")
+                    append(frame.function.module.sourceLines[firstline + lineNum - 1].trimIndent())
+                    appendln()
+                    lastLineNum = lineNum
+                }
+
                 val idxFmt = idx.toString().padStart(padSize, '0')
                 append("    $idxFmt ")
                 append(instruction.getDisassembly(frame))
