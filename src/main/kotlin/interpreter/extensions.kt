@@ -56,6 +56,6 @@ fun PyType.issubclass(others: Set<PyType>): Boolean {
     // always true
     if (PyRootType in others) return true
 
-    return others.intersect(bases.toSet()).isNotEmpty()
-        || bases.any { it.issubclass(others) }
+    return others.intersect(bases.toSet()).isNotEmpty() ||
+        bases.any { it.issubclass(others) }
 }
