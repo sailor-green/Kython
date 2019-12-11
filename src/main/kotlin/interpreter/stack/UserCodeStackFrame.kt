@@ -840,10 +840,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 if (top !== second) PyBool.TRUE else PyBool.FALSE
             }
             EXCEPTION_MATCH -> {
+                // TOS is the name we just loaded, which is the one we want to compare
                 val top = stack.pop().cast<PyExceptionType>()
+                // This is the actual exception type duplicated on the stack
                 val second = stack.pop().cast<PyExceptionType>()
-                // TODO: issubclass
-                PyBool.get(second == top)
+                PyBool.get(second.issubclass(setOf(top)))
             }
             else -> Exceptions.RUNTIME_ERROR("Invalid parameter for COMPARE_OP: $arg").throwKy()
         } }
