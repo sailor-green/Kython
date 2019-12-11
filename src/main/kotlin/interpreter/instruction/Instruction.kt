@@ -23,6 +23,13 @@ import green.sailor.kython.interpreter.stack.UserCodeStackFrame
  * Represents a single bytecode instruction.
  */
 data class Instruction(val opcode: InstructionOpcode, val argument: Byte) {
+    companion object {
+        val CMP_OP = listOf(
+            "<", "<=", "==", "!=", ">", ">=", "in", "not in", "is", "is not", "exception match",
+            "BAD"
+        )
+    }
+
     /**
      * Gets the formatted disassembly.
      */
@@ -40,6 +47,9 @@ data class Instruction(val opcode: InstructionOpcode, val argument: Byte) {
         }
         if (opcode.hasLocal) {
             base += "(${frame.function.code.varnames[iArg]})"
+        }
+        if (opcode.hasCmp) {
+            base += "(${CMP_OP[iArg]})"
         }
 
         // add a real idx field
