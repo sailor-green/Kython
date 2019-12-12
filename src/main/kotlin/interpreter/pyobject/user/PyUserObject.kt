@@ -114,6 +114,7 @@ open class PyUserObject(type: PyUserType) : PyObject() {
     // == iterables == //
     override fun pyIter(): PyObject = magicMethod0("__iter__") { super.pyIter() }
     override fun pyNext(): PyObject = magicMethod0("__next__") { super.pyNext() }
+    override fun pyLen(): PyInt = magicMethod0("__len__") { super.pyLen() }
 
     // == conversion == //
     override fun pyGetRepr(): PyString = magicMethod0("__repr__") { super.pyGetRepr() }
