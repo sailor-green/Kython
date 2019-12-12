@@ -195,7 +195,6 @@ open class UnKyc(private val buf: ByteBuffer) {
     fun readCode(): KycCodeObject {
         // simple int values
         val co_argcount = readObject() as KycInt
-        // TODO: co_posonlyargcount
         val co_posonlyargcount = readObject() as KycInt
         val co_kwonlyargcount = readObject() as KycInt
         val co_nlocals = readObject() as KycInt

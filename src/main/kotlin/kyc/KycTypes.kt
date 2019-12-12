@@ -194,5 +194,5 @@ class KycFile(
     val comment: KycUnicodeString,
     val code: KycCodeObject
 ) : BaseKycType() {
-    override fun wrap(): PyObject = TODO()
+    override fun wrap(): PyObject = error("This object cannot be wrapped")
 }
