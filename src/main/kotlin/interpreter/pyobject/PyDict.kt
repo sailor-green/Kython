@@ -25,9 +25,6 @@ import green.sailor.kython.interpreter.pyobject.types.PyDictType
  */
 class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() {
     companion object {
-        /** Represents the empty dict. */
-        val EMPTY = PyDict(linkedMapOf())
-
         /**
          * Creates a new PyDict from any map, wrapping primitive types.
          */
@@ -56,6 +53,8 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
     }
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
+
+    override fun pyLen(): PyInt = PyInt(items.size.toLong())
 
     override var type: PyType
         get() = PyDictType

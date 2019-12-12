@@ -54,6 +54,8 @@ class PyBytes(val wrapped: ByteArray) : PyObject() {
         return PyBool.get(isLt)
     }
 
+    override fun pyLen(): PyInt = PyInt(wrapped.size.toLong())
+
     override var type: PyType
         get() = PyBytesType
         set(_) = Exceptions.invalidClassSet(this)

@@ -296,10 +296,16 @@ abstract class PyObject {
      */
     open fun pyIter(): PyObject = typeError("'${type.name}' object is not iterable")
 
+    // __next__
     /**
      * Implements next(some_object).
      */
     open fun pyNext(): PyObject = typeError("'${type.name}' object is not an iterator")
+
+    /**
+     * Implements len(some_object).
+     */
+    open fun pyLen(): PyInt = typeError("object of type '${type.name}' has no len")
 
     // == Descriptors == //
 

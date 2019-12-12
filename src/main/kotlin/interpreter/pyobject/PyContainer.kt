@@ -25,4 +25,5 @@ import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 abstract class PyContainer(val subobjects: List<PyObject>) : PyObject() {
     override fun pyToBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
     override fun pyIter(): PyObject = PyBuiltinIterator(subobjects.listIterator())
+    override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
 }

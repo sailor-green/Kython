@@ -41,6 +41,8 @@ class PySet(val wrappedSet: MutableSet<PyObject>) : PyObject() {
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 
+    override fun pyLen(): PyInt = PyInt(wrappedSet.size.toLong())
+
     override var type: PyType
         get() = PySetType
         set(_) = Exceptions.invalidClassSet(this)

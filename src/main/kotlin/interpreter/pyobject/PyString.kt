@@ -80,6 +80,8 @@ class PyString(val wrappedString: String) : PyObject() {
         }
     })
 
+    override fun pyLen(): PyInt = PyInt(wrappedString.length.toLong())
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
