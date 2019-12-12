@@ -88,6 +88,24 @@ abstract class PyObject {
 
     // ==== MAGIC METHODS: INTERFACES ====
 
+    override fun hashCode(): Int {
+        // not the cleanest...
+        // todo: maybe think about how to make this not, uh, very pointless for default objects.
+        // because unless overridden, this wraps and unwraps for no real purpose
+        // could possibly use a custom LinkedHashMap impl that calls pyHash or something.
+        return pyHash().wrappedInt.toInt()
+    }
+
+    // __hash__
+    /**
+     * Implements hash(some_object).
+     */
+    open fun pyHash(): PyInt {
+        // this should be Object.hashcode()
+        return PyInt(super.hashCode().toLong())
+    }
+
+    // __dir__
     /**
      * Implements dir(some_object).
      */
