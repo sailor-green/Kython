@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyNotImplemented
+import green.sailor.kython.interpreter.pyobject.iterators.PyRangeType
 import green.sailor.kython.interpreter.pyobject.types.*
 
 /**
@@ -58,6 +59,7 @@ object Builtins {
     val BOOL_TYPE = PyBoolType
     val BYTES_TYPE = PyBytesType
     val LIST_TYPE = PyListType
+    val RANGE_TYPE = PyRangeType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
@@ -81,6 +83,7 @@ object Builtins {
         "dict" to DICT_TYPE,
         "bool" to BOOL_TYPE,
         "bytes" to BYTES_TYPE,
+        "range" to RANGE_TYPE,
 
         // specials
         "None" to NONE,
