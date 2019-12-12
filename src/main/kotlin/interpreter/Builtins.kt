@@ -38,6 +38,7 @@ object Builtins {
     val ITER = IterBuiltinFunction()
     val CALLABLE = CallableBuiltinFunction()
     val ISINSTANCE = IsinstanceBuiltinFunction()
+    val LEN = LenBuiltinFunction()
     val KY_PRINT = PyBuiltinFunction.wrap(
         "ky_print", PyCallableSignature("any" to ArgType.POSITIONAL)
     ) {
@@ -70,6 +71,7 @@ object Builtins {
         "iter" to ITER,
         "callable" to CALLABLE,
         "isinstance" to ISINSTANCE,
+        "len" to LEN,
         "_ky_print" to KY_PRINT,
 
         // class types
