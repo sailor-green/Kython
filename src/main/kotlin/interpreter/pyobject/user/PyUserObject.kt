@@ -155,7 +155,7 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod1(
     }
 }
 
-inline fun <reified T: PyObject> PyUserObject.magicMethod2(
+inline fun <reified T : PyObject> PyUserObject.magicMethod2(
     other1: PyObject,
     other2: PyObject,
     name: String,
