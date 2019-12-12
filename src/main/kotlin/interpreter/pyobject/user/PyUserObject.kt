@@ -61,6 +61,11 @@ open class PyUserObject(type: PyUserType) : PyObject() {
             super.pyGetAttribute(name)
         }
 
+    override fun pySetAttribute(name: String, value: PyObject): PyObject =
+        magicMethod2(PyString(name), value, "__setattr__") {
+            super.pySetAttribute(name, value)
+        }
+
     override fun pyDir(): PyTuple = magicMethod0("__dir__") { super.pyDir() }
 
     // == comparison == //
@@ -69,7 +74,7 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         if (type == other.type) PyBool.get(this === other) else PyNotImplemented
     }
     override fun pyNotEquals(other: PyObject): PyObject = magicMethod1(other, "__neq__") {
-        super.pyNotEquals(it)
+        super.pyNotEquals(other)
     }
     override fun pyLesser(other: PyObject): PyObject =
         magicMethod1(other, "__lt__") { PyNotImplemented }
@@ -139,13 +144,28 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod0(name: String, fallba
 inline fun <reified T : PyObject> PyUserObject.magicMethod1(
     other: PyObject,
     name: String,
-    fallback: (PyObject) -> T
+    fallback: () -> T
 ): T {
     val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
     return if (meth != null && meth !is DefaultBuiltinFunction) {
         // this should be bound!!
         meth.pyCall(listOf(other)).cast()
     } else {
-        fallback(other)
+        fallback()
+    }
+}
+
+inline fun <reified T: PyObject> PyUserObject.magicMethod2(
+    other1: PyObject,
+    other2: PyObject,
+    name: String,
+    fallback: () -> T
+): T {
+    val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
+    return if (meth != null && meth !is DefaultBuiltinFunction) {
+        // this should be bound!!
+        meth.pyCall(listOf(other2, other1)).cast()
+    } else {
+        fallback()
     }
 }
