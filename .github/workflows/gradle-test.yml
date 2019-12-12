@@ -3,7 +3,7 @@ name: Gradle Build - Test - Dist
 on:
   push:
     branches:
-      - master
+      - 3.9
 
   pull_request: {}
 
