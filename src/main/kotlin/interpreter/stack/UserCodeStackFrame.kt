@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-@file:Suppress("SpellCheckingInspection", "unused")
+@file:Suppress("SpellCheckingInspection", "unused", "UNUSED_PARAMETER")
 
 package green.sailor.kython.interpreter.stack
 
