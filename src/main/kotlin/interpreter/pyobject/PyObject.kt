@@ -17,6 +17,7 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.attributeError
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
 import green.sailor.kython.interpreter.iface.PyCallable
@@ -113,6 +114,7 @@ abstract class PyObject {
         return ObjectGetattribute.pyCall(listOf(PyString(name), this))
     }
 
+    // __setattr__
     /**
      * Implements some_object.some_attribute = other_object.
      */
@@ -120,7 +122,7 @@ abstract class PyObject {
         return ObjectSetattribute.pyCall(listOf(value, PyString(name), this))
     }
 
-    // == __call__
+    // __call__
 
     /**
      * Implements some_object().
@@ -134,6 +136,18 @@ abstract class PyObject {
         }
         typeError("This object is not callable")
     }
+
+    // __enter__
+    /**
+     * Implements the `__enter__` portion of `with some_object`.
+     */
+    open fun pyWithEnter(): PyObject = attributeError("__enter__")
+
+    // __exit__
+    /**
+     * Implements the `__exit__` portion of `with some_object`.
+     */
+    open fun pyWithExit(): PyObject = attributeError("__exit__")
 
     // == Conversion ==
     // __bool__

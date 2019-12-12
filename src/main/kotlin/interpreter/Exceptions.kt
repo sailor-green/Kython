@@ -72,6 +72,11 @@ object Exceptions {
 fun typeError(message: String): Nothing = Exceptions.TYPE_ERROR(message).throwKy()
 
 /**
- * Causes a new ValueErrror.
+ * Causes a new ValueError.
  */
 fun valueError(message: String): Nothing = Exceptions.VALUE_ERROR(message).throwKy()
+
+/**
+ * Causes a new AttributeError.
+ */
+fun attributeError(message: String): Nothing = Exceptions.ATTRIBUTE_ERROR(message).throwKy()
