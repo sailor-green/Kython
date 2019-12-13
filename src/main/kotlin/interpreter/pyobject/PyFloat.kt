@@ -90,6 +90,13 @@ class PyFloat(val wrapped: Double) : PyObject() {
     }
 
     override fun hashCode(): Int = wrapped.hashCode()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is PyFloat) return false
+        if (wrapped != other.wrapped) return false
+
+        return true
+    }
 
     override var type: PyType
         get() = PyFloatType

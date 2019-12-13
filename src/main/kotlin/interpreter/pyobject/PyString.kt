@@ -93,9 +93,7 @@ class PyString(val wrappedString: String) : PyObject() {
         return wrappedString == other.wrappedString
     }
 
-    override fun hashCode(): Int {
-        return wrappedString.hashCode()
-    }
+    override fun hashCode(): Int = wrappedString.hashCode()
 
     override var type: PyType
         get() = PyStringType
