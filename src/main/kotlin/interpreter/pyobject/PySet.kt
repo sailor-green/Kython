@@ -18,6 +18,8 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
+import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
 import green.sailor.kython.interpreter.pyobject.types.PySetType
 import green.sailor.kython.interpreter.typeError
 
@@ -44,6 +46,12 @@ class PySet(val wrappedSet: MutableSet<PyObject>) : PyObject() {
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 
     override fun pyLen(): PyInt = PyInt(wrappedSet.size.toLong())
+    override fun pyIter(): PyObject {
+        if (wrappedSet.isEmpty()) {
+            return PyEmptyIterator
+        }
+        return PyBuiltinIterator(wrappedSet.iterator())
+    }
 
     override var type: PyType
         get() = PySetType
