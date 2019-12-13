@@ -89,6 +89,8 @@ class PyFloat(val wrapped: Double) : PyObject() {
         return PyNotImplemented
     }
 
+    override fun hashCode(): Int = wrapped.hashCode()
+
     override var type: PyType
         get() = PyFloatType
         set(_) = Exceptions.invalidClassSet(this)

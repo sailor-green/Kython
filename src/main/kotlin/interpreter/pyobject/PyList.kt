@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyListType
+import green.sailor.kython.interpreter.typeError
 
 class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     override fun pyToStr(): PyString {
@@ -35,6 +36,7 @@ class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     }
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
+    override fun pyHash(): PyInt = typeError("lists are not hashable - they are mutable")
 
     override var type: PyType
         get() = PyListType

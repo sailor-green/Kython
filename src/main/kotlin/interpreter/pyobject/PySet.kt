@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PySetType
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a Python set.
@@ -37,6 +38,7 @@ class PySet(val wrappedSet: MutableSet<PyObject>) : PyObject() {
         }
         return PyBool.get(wrappedSet == other.wrappedSet)
     }
+    override fun pyHash(): PyInt = typeError("sets are not hashable - they are mutable")
 
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")

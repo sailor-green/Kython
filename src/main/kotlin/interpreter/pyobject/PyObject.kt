@@ -96,6 +96,12 @@ abstract class PyObject {
         return pyHash().wrappedInt.toInt()
     }
 
+    override fun equals(other: Any?): Boolean {
+        // equally (no pun intended), not the cleanest
+        if (other !is PyObject) return false
+        return pyEquals(other).pyToBool().wrapped
+    }
+
     // __hash__
     /**
      * Implements hash(some_object).

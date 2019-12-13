@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyDictType
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
@@ -54,6 +55,7 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
+    override fun pyHash(): PyInt = typeError("lists are not hashable - they are mutable")
     override fun pyLen(): PyInt = PyInt(items.size.toLong())
 
     override var type: PyType
