@@ -18,8 +18,8 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.PyCallable
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.types.PyMethodType
 import green.sailor.kython.interpreter.stack.StackFrame
 

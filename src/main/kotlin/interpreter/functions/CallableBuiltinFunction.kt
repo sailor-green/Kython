@@ -17,7 +17,7 @@
  */
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 

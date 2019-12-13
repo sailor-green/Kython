@@ -17,8 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.iterate
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PySet
@@ -35,7 +35,8 @@ object PySetType : PyType("set") {
         return PySet(set)
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
-        "x" to ArgType.POSITIONAL
-    )
+    override val signature: PyCallableSignature =
+        PyCallableSignature(
+            "x" to ArgType.POSITIONAL
+        )
 }

@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package green.sailor.kython.interpreter.iface
+package green.sailor.kython.interpreter.callable
 
 import green.sailor.kython.interpreter.pyobject.PyDict
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -29,18 +29,21 @@ import green.sailor.kython.interpreter.typeError
 class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
     companion object {
         /** The empty signature. */
-        val EMPTY = PyCallableSignature()
+        val EMPTY =
+            PyCallableSignature()
 
         /** The empty method signature, for builtins. */
-        val EMPTY_METHOD = PyCallableSignature(
-            "self" to ArgType.POSITIONAL
-        )
+        val EMPTY_METHOD =
+            PyCallableSignature(
+                "self" to ArgType.POSITIONAL
+            )
 
         /** The all-consuming signature. */
-        val ALL_CONSUMING = PyCallableSignature(
-            "args" to ArgType.POSITIONAL_STAR,
-            "kwargs" to ArgType.KEYWORD_STAR
-        )
+        val ALL_CONSUMING =
+            PyCallableSignature(
+                "args" to ArgType.POSITIONAL_STAR,
+                "kwargs" to ArgType.KEYWORD_STAR
+            )
     }
 
     override fun toString(): String {

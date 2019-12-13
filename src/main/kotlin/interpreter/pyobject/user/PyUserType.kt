@@ -17,8 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.user
 
-import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.PyCallable
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType

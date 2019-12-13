@@ -17,8 +17,8 @@
  */
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.isinstance
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -43,8 +43,9 @@ class IsinstanceBuiltinFunction : PyBuiltinFunction("isinstance") {
         return PyBool.get(obb.isinstance(toCheckSet))
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
-        "obb" to ArgType.POSITIONAL,
-        "of_type" to ArgType.POSITIONAL
-    )
+    override val signature: PyCallableSignature =
+        PyCallableSignature(
+            "obb" to ArgType.POSITIONAL,
+            "of_type" to ArgType.POSITIONAL
+        )
 }

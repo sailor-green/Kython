@@ -17,8 +17,8 @@
  */
 package green.sailor.kython.interpreter.functions.magic
 
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -36,9 +36,10 @@ object ObjectSetattribute : DefaultBuiltinFunction("object.__getattribute__") {
         return PyNone
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
-        "self" to ArgType.POSITIONAL,
-        "name" to ArgType.POSITIONAL,
-        "value" to ArgType.POSITIONAL
-    )
+    override val signature: PyCallableSignature =
+        PyCallableSignature(
+            "self" to ArgType.POSITIONAL,
+            "name" to ArgType.POSITIONAL,
+            "value" to ArgType.POSITIONAL
+        )
 }

@@ -17,8 +17,8 @@
  */
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**
@@ -30,5 +30,6 @@ class ReprBuiltinFunction : PyBuiltinFunction("repr") {
         return obb.pyGetRepr()
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature("obb" to ArgType.POSITIONAL)
+    override val signature: PyCallableSignature =
+        PyCallableSignature("obb" to ArgType.POSITIONAL)
 }

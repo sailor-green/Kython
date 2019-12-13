@@ -17,15 +17,16 @@
  */
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**
  * Represents the dir(x) built-in function.
  */
 class DirBuiltinFunction : PyBuiltinFunction("dir") {
-    override val signature: PyCallableSignature = PyCallableSignature("obb" to ArgType.POSITIONAL)
+    override val signature: PyCallableSignature =
+        PyCallableSignature("obb" to ArgType.POSITIONAL)
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["obb"] ?: error("Built-in signature mismatch!")

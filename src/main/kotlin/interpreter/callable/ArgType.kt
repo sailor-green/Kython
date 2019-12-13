@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-package green.sailor.kython.interpreter.iface
+package green.sailor.kython.interpreter.callable
 
 /**
  * Represents an argument type.

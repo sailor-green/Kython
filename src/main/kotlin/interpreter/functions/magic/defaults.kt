@@ -17,15 +17,16 @@
  */
 package green.sailor.kython.interpreter.functions.magic
 
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 
-private val cmpSig = PyCallableSignature(
-    "self" to ArgType.POSITIONAL,
-    "other" to ArgType.POSITIONAL
-)
+private val cmpSig =
+    PyCallableSignature(
+        "self" to ArgType.POSITIONAL,
+        "other" to ArgType.POSITIONAL
+    )
 
 /**
  * Superclass for all "default" builtins - used to signify if an object method will just call the

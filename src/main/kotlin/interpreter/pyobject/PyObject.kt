@@ -18,9 +18,9 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.attributeError
+import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
-import green.sailor.kython.interpreter.iface.PyCallable
 import green.sailor.kython.interpreter.typeError
 
 // initialdict:
