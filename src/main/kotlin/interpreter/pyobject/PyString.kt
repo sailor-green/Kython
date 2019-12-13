@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
+import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
 import green.sailor.kython.interpreter.valueError
 
@@ -70,15 +71,21 @@ class PyString(val wrappedString: String) : PyObject() {
         return PyString(wrappedString.repeat(other.wrappedInt.toInt()))
     }
 
-    override fun pyIter(): PyObject = PyBuiltinIterator(object : Iterator<PyObject> {
-        val realIterator = wrappedString.iterator()
-        override fun hasNext(): Boolean = realIterator.hasNext()
-        override fun next(): PyObject = try {
-            PyString(realIterator.nextChar().toString())
-        } catch (e: StringIndexOutOfBoundsException) {
-            throw NoSuchElementException(e.message)
+    override fun pyIter(): PyObject {
+        if (wrappedString.isEmpty()) {
+            return PyEmptyIterator
         }
-    })
+
+        return PyBuiltinIterator(object : Iterator<PyObject> {
+            val realIterator = wrappedString.iterator()
+            override fun hasNext(): Boolean = realIterator.hasNext()
+            override fun next(): PyObject = try {
+                PyString(realIterator.nextChar().toString())
+            } catch (e: StringIndexOutOfBoundsException) {
+                throw NoSuchElementException(e.message)
+            }
+        })
+    }
 
     override fun pyLen(): PyInt = PyInt(wrappedString.length.toLong())
 
