@@ -18,8 +18,8 @@
 package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyDict
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -57,10 +57,11 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
         return metaclass.pyCall(listOf(bodyDict, bases, name))
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
-        "class_body" to ArgType.POSITIONAL,
-        "name" to ArgType.POSITIONAL,
-        "bases" to ArgType.POSITIONAL_STAR,
-        "keywords" to ArgType.KEYWORD_STAR
-    )
+    override val signature: PyCallableSignature =
+        PyCallableSignature(
+            "class_body" to ArgType.POSITIONAL,
+            "name" to ArgType.POSITIONAL,
+            "bases" to ArgType.POSITIONAL_STAR,
+            "keywords" to ArgType.KEYWORD_STAR
+        )
 }

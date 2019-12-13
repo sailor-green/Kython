@@ -17,9 +17,9 @@
  */
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
-import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.PyType

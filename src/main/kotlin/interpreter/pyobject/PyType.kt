@@ -18,17 +18,18 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallable
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallable
-import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents a python type (i.e. a class).
  */
-abstract class PyType(val name: String) : PyObject(), PyCallable {
+abstract class PyType(val name: String) : PyObject(),
+    PyCallable {
     /**
      * Creates a new instance of the object represented by this type.
      *

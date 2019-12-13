@@ -17,8 +17,8 @@
  */
 package green.sailor.kython.interpreter.pyobject.exception
 
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
@@ -43,9 +43,10 @@ open class PyExceptionType(
         return makeException(args)
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
-        "*args" to ArgType.POSITIONAL_STAR
-    )
+    override val signature: PyCallableSignature =
+        PyCallableSignature(
+            "*args" to ArgType.POSITIONAL_STAR
+        )
 
     operator fun invoke(vararg args: String): PyException {
         return makeException(PyTuple.get(args.map { PyString(it) }))
