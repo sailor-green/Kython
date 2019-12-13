@@ -18,8 +18,6 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.*
-import green.sailor.kython.interpreter.iface.ArgType
-import green.sailor.kython.interpreter.iface.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyNotImplemented
@@ -39,12 +37,7 @@ object Builtins {
     val CALLABLE = CallableBuiltinFunction()
     val ISINSTANCE = IsinstanceBuiltinFunction()
     val LEN = LenBuiltinFunction()
-    val KY_PRINT = PyBuiltinFunction.wrap(
-        "ky_print", PyCallableSignature("any" to ArgType.POSITIONAL)
-    ) {
-        println(it["any"])
-        PyNone
-    }
+    val ID = IdBuiltinFunction()
 
     val OBJECT = PyRootObjectType
     val TYPE = PyRootType
@@ -72,7 +65,7 @@ object Builtins {
         "callable" to CALLABLE,
         "isinstance" to ISINSTANCE,
         "len" to LEN,
-        "_ky_print" to KY_PRINT,
+        "id" to ID,
 
         // class types
         "object" to OBJECT,
