@@ -17,7 +17,6 @@
  */
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.pyobject.*
 
