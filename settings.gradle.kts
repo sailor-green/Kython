@@ -10,3 +10,5 @@ pluginManagement {
 
 rootProject.name = "kython"
 
+include("core", "annotations", "generators")
+

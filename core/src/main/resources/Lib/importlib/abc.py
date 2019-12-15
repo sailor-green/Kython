@@ -292,7 +292,7 @@ class FileLoader(_bootstrap_external.FileLoader, ResourceLoader, ExecutionLoader
     ExecutionLoader ABCs."""
 
 _register(FileLoader, machinery.SourceFileLoader,
-            machinery.SourcelessFileLoader)
+          machinery.SourcelessFileLoader)
 
 
 class SourceLoader(_bootstrap_external.SourceLoader, ResourceLoader, ExecutionLoader):

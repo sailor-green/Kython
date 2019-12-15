@@ -51,7 +51,8 @@ import picocli.CommandLine.HelpCommand
 )
 object MakeUp : Callable<Int> {
     // == JAVA PROPERTIES == //
-    @JvmStatic val debugMode = System.getProperty("kython.interpreter.debug") == "true"
+    @JvmStatic
+    val debugMode = System.getProperty("kython.interpreter.debug") == "true"
 
     // == CLI PROPERTIES == //
 
@@ -105,8 +106,7 @@ object MakeUp : Callable<Int> {
             System.err.println("Running Kython in debug mode!")
             System.err.println("Processing builtin method annotations...")
         }
-        // todo: kapt
-        buildBuiltinMethods()
+        // buildBuiltinMethods()
 
         exitProcess(CommandLine(this).execute(*args))
     }

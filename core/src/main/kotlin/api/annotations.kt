@@ -25,6 +25,7 @@ package green.sailor.kython.api
  *
  * @param name: The Python name to expose this method to.
  */
+// @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
 annotation class ExposeMethod(
@@ -37,6 +38,7 @@ annotation class ExposeMethod(
  * @param name: The name of the method parameter.
  * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
  */
+// @Retention(AnnotationRetention.SOURCE)
 annotation class MethodParam(
     val name: String,
     val argType: String
