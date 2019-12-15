@@ -41,12 +41,11 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
         val items = linkedMapOf<PyObject, PyObject>()
         val bodyDict = PyDict(items)
         if (clsFn.code.argCount > 0) {
-            clsFn.pyCall(listOf(bodyDict))
+            clsFn.kyCall(listOf(bodyDict))
         } else {
             // if you pass a builtin to `__build_class__`, you deserve this error
             val frame = clsFn.createFrame() as UserCodeStackFrame
-            val args = clsFn.signature.getFinalArgs(listOf())
-            KythonInterpreter.runStackFrame(frame, args)
+            KythonInterpreter.runStackFrame(frame, mapOf())
             items.putAll(frame.locals.mapKeys { PyString(it.key) })
         }
 
@@ -54,7 +53,7 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
         val kws = kwargs["keywords"]!!.cast<PyDict>().internalDict
         val metaclass = kws.getOrDefault("metaclass", PyRootType)
         // type(name, bases, class_dict)
-        return metaclass.pyCall(listOf(bodyDict, bases, name))
+        return metaclass.kyCall(listOf(bodyDict, bases, name))
     }
 
     override val signature: PyCallableSignature =

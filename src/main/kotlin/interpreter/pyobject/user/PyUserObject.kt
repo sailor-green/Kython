@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject.user
 
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.functions.magic.DefaultBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.*
@@ -49,9 +50,14 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         return "__call__" in type.internalDict
     }
 
-    override fun pyCall(args: List<PyObject>, kwargs: Map<String, PyObject>): PyObject {
-        return type.internalDict["__call__"]?.pyDescriptorGet(this, type)?.pyCall(args, kwargs)
-            ?: super.pyCall(args, kwargs)
+    override fun kyGetSignature(): PyCallableSignature {
+        return type.internalDict["__call__"]?.kyGetSignature()
+            ?: typeError("This object is not callable")
+    }
+
+    override fun kyCall(args: List<PyObject>): PyObject {
+        return type.internalDict["__call__"]?.pyDescriptorGet(this, type)?.kyCall(args)
+            ?: super.kyCall(args)
     }
 
     // magicMethodX wrappers
@@ -133,7 +139,7 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod0(name: String, fallba
     val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
     return if (meth != null && meth !is DefaultBuiltinFunction) {
         // this should be bound!!
-        meth.pyCall(listOf()).cast()
+        meth.kyCall(listOf()).cast()
     } else {
         fallback()
     }
@@ -150,7 +156,7 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod1(
     val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
     return if (meth != null && meth !is DefaultBuiltinFunction) {
         // this should be bound!!
-        meth.pyCall(listOf(other)).cast()
+        meth.kyCall(listOf(other)).cast()
     } else {
         fallback()
     }
@@ -165,7 +171,7 @@ inline fun <reified T : PyObject> PyUserObject.magicMethod2(
     val meth = type.internalDict[name]?.pyDescriptorGet(this, type)
     return if (meth != null && meth !is DefaultBuiltinFunction) {
         // this should be bound!!
-        meth.pyCall(listOf(other2, other1)).cast()
+        meth.kyCall(listOf(other2, other1)).cast()
     } else {
         fallback()
     }

@@ -34,10 +34,4 @@ abstract class PyFunction : PyObject(),
     override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
-
-    // identical, but elides a bunch of stack frames.
-    override fun runCallable(args: List<PyObject>, kwargsTuple: PyTuple?): PyObject {
-        val finalArgs = signature.getFinalArgs(args, kwargsTuple)
-        return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
-    }
 }

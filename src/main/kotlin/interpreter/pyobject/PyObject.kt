@@ -17,11 +17,14 @@
  */
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.attributeError
 import green.sailor.kython.interpreter.callable.PyCallable
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
 import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
 import green.sailor.kython.interpreter.typeError
+import kotlin.contracts.contract
 
 // initialdict:
 // take PyString as an example
@@ -86,6 +89,30 @@ abstract class PyObject {
         return false
     }
 
+    /**
+     * Gets the signature for this type, if callable.
+     */
+    open fun kyGetSignature(): PyCallableSignature {
+        if (this is PyCallable) return signature
+        error("This object is not callable")
+    }
+
+    /**
+     * Calls this object from Kotlin. This should only be used for simple functions, such as magic
+     * methods - use pyCall() to call from the Python bytecode layer.
+     *
+     * @param args: The arguments to pass in that will be transformed into keyword arguments.
+     */
+    open fun kyCall(
+        args: List<PyObject> = listOf()
+    ): PyObject {
+        val sig = kyGetSignature()
+        val transformed = sig.argsToKwargs(args)
+        val us = this as PyCallable
+        val frame = us.createFrame()
+        return KythonInterpreter.runStackFrame(frame, transformed)
+    }
+
     // ==== MAGIC METHODS: INTERFACES ====
 
     override fun hashCode(): Int {
@@ -135,7 +162,7 @@ abstract class PyObject {
      */
     open fun pyGetAttribute(name: String): PyObject {
         // TODO: No
-        return ObjectGetattribute.pyCall(listOf(PyString(name), this))
+        return ObjectGetattribute.kyCall(listOf(PyString(name), this))
     }
 
     // __setattr__
@@ -143,22 +170,23 @@ abstract class PyObject {
      * Implements some_object.some_attribute = other_object.
      */
     open fun pySetAttribute(name: String, value: PyObject): PyObject {
-        return ObjectSetattribute.pyCall(listOf(value, PyString(name), this))
+        return ObjectSetattribute.kyCall(listOf(value, PyString(name), this))
     }
 
     // __call__
 
     /**
-     * Implements some_object().
+     * Implements some_object() from the bytecode layer.
      */
     open fun pyCall(
-        args: List<PyObject> = listOf(),
-        kwargs: Map<String, PyObject> = mapOf()
+        args: List<PyObject>,
+        kwargTuple: List<String> = listOf()
     ): PyObject {
-        if (this is PyCallable) {
-            return runCallable(args)
-        }
-        typeError("This object is not callable")
+        val sig = kyGetSignature()
+        val transformed = sig.callFunctionGetArgs(args, kwargTuple)
+        val us = this as PyCallable
+        val frame = us.createFrame()
+        return KythonInterpreter.runStackFrame(frame, transformed)
     }
 
     // __enter__

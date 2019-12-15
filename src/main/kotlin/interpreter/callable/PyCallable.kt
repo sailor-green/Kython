@@ -43,7 +43,8 @@ interface PyCallable {
         args: List<PyObject>,
         kwargsTuple: PyTuple? = null
     ): PyObject {
-        val finalArgs = signature.getFinalArgs(args, kwargsTuple)
-        return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
+        TODO()
+        //val finalArgs = signature.getFinalArgs(args, kwargsTuple)
+        //return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
     }
 }

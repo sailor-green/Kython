@@ -150,7 +150,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         if (!fn.kyIsCallable()) {
             Exceptions.TYPE_ERROR("'${obj.type.name}'.$magicName is not callable.").throwKy()
         }
-        val result = if (param != null) fn.pyCall(listOf(param)) else fn.pyCall(listOf())
+        val result = if (param != null) fn.kyCall(listOf(param)) else fn.kyCall(listOf())
         stack.push(result)
     }
 

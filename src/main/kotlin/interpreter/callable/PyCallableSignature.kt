@@ -18,9 +18,11 @@
 package green.sailor.kython.interpreter.callable
 
 import green.sailor.kython.interpreter.pyobject.PyDict
+import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.typeError
+import java.util.*
 
 /**
  * Represents a callable signature. This is created for every function instance (including built-in functions) and is
@@ -68,77 +70,114 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         return this
     }
 
+    /** The computed reverse arg mapping. */
+    val reverseMapping = mutableMapOf<ArgType, List<String>>().apply {
+        for (arg in args) {
+            (computeIfAbsent(arg.second) { mutableListOf() } as MutableList).add(arg.first)
+        }
+
+        // validate!!
+        this[ArgType.POSITIONAL_STAR]?.let {
+            if (it.size > 1) typeError("A function cannot have multiple POSITIONAL_STAR")
+        }
+        this[ArgType.KEYWORD_STAR]?.let {
+            if (it.size > 1) typeError("A function cannot have multiple KEYWORD_STAR")
+        }
+    }
+
+
+
     /**
-     * Gets the arguments for this signature.
+     * Helper function for implementing CALL_FUNCTION/CALL_FUNCTION_KW.
      *
-     * @param args: The arguments provided on the stack, from right to left.
-     * @param kwargsTuple: The keyword arguments tuple, if there is any.
-     *
-     * @return A map of arg -> object to call the function with. This will be loaded into
-     *         NAMES on the function object.
+     * The arguments passed into this function should be the list of arguments popped off below the
+     * kwargs tuple, and the kwargs tuple itself. If this is just CALL_FUNCTION, then the kwargTuple
+     * should be empty. kwargcount should be the co_kwonlyargcount.
      */
-    fun getFinalArgs(args: List<PyObject>, kwargsTuple: PyTuple? = null): Map<String, PyObject> {
-        // complicated...
-        // CALL_FUNCTION does BOS(BOS-1, BOS-2, BOS-3, etc)
-        // CALL_FUNCTION_KW does the same, but TOS is a tuple containing keyword arguments
-        // fuck CALL_FUNCTION_EX for now.
-        val finalMap = defaults.toMutableMap()
-
-        if (kwargsTuple == null) {
-            // if no kwargs (i.e. call_function), we just nicely iterate over the signature args and
-            // match them with the function call args
-            val argsIt = args.asReversed().iterator()
-            loop@for ((name, type) in this.args) {
-                when (type) {
-                    ArgType.POSITIONAL -> {
-                        // raises a java error if the iterator is empty
-                        try {
-                            val arg = argsIt.next()
-                            finalMap[name] = arg
-                        } catch (e: NoSuchElementException) {
-                            if (name !in finalMap) {
-                                typeError("No value provided for arg $name")
-                            }
-                        }
-                    }
-                    ArgType.POSITIONAL_STAR -> {
-                        finalMap[name] = PyTuple.get(argsIt.asSequence().toList())
-                    }
-
-                    // keyword args are NOT allowed for this function
-                    ArgType.KEYWORD -> {
-                        // this is just for the better error message
-                        if (name in finalMap) {
-                            continue@loop // default
-                        }
-                        try {
-                            val arg = argsIt.next()
-                        } catch (e: NoSuchElementException) {
-                            if (name !in finalMap) {
-                                typeError("No value provided for arg $name")
-                            }
-                        }
-                        typeError(
-                            "This function takes $name as a keyword, " +
-                                "not a positional argument"
-                        )
-                    }
-
-                    // keyword stars are just given an empty dict
-                    ArgType.KEYWORD_STAR -> finalMap[name] = PyDict(linkedMapOf())
-                }
-            }
-
-            // make sure too many args weren't passed
-            if (argsIt.hasNext()) {
-                val remaining = argsIt.asSequence().toList().size
-                typeError(
-                    "Passed too many arguments! Expected ${args.size}, " +
-                    "got ${finalMap.size + remaining}"
-                )
+    fun callFunctionGetArgs(passedArgs: List<PyObject>, kwargTuple: List<String> = listOf()):
+        Map<String, PyObject> {
+        // if our args is empty, we obviously take zero arguments
+        // so we can short-circuit all of this and just make sure the passed arg list is empty
+        // (and if it isn't, uh oh!)
+        if (args.isEmpty()) {
+            if (passedArgs.isNotEmpty()) {
+                typeError("This function takes no arguments")
+            } else {
+                return mutableMapOf()
             }
         }
 
-        return finalMap
+        // make a new deque of the args to pop off of
+        val mutArgs = ArrayDeque<PyObject>(passedArgs)
+
+        val finalArgs = mutableMapOf<String, PyObject>()
+        // the iterator used for the args
+        // args are also in reverse order, of (posargN+Y, posargN+Y-1, etc)
+        // so we make a reversed list here too
+
+        // step 1) pair off kwargs to final args
+        val pairedKwargs = mutableMapOf<String, PyObject>()
+        for (kwarg in kwargTuple.asReversed()) {
+            // this should never fail - if it does, it's an interpreter error
+            // because call_function's handler didn't pop the right amount, or the bytecode was
+            // wrong, or whatever else.
+            pairedKwargs[kwarg] = mutArgs.removeFirst()
+        }
+
+        // step 2) consume all regular args
+        for (arg in reverseMapping.getOrDefault(ArgType.POSITIONAL, listOf())) {
+            val poppedArg = mutArgs.pollLast()
+                ?: pairedKwargs.getOrDefault(arg, defaults[arg])
+                ?: typeError("Missing required positional argument $arg")
+            finalArgs[arg] = poppedArg
+        }
+        // step 3) consume all positional args left, since all kwargs have been consumed and
+        // all regular positional args
+        // this is weird with nulls cos we don't wanna
+        val argName = reverseMapping[ArgType.POSITIONAL_STAR]?.first()
+        val posArgCollector = mutableListOf<PyObject>()
+        while (true) {
+            val next = mutArgs.pollLast() ?: break
+            if (argName == null) typeError("Too many arguments!")
+            posArgCollector.add(next)
+        }
+        if (argName != null) finalArgs[argName] = PyTuple.get(posArgCollector)
+
+        // step 4) validate the collected kwargs, and add them to **kwargs if needed
+        val kwCollectedArgName = reverseMapping[ArgType.KEYWORD_STAR]?.first()
+        val extraKwargs = mutableMapOf<String, PyObject>()
+        val kwargNames = reverseMapping.getOrDefault(ArgType.KEYWORD, listOf()).toMutableSet()
+        for ((name, value) in pairedKwargs) {
+            // if it's already in the list of keyword arguments, just set it in finalargs
+            if (name in kwargNames) {
+                finalArgs[name] = value
+            } else {
+                if (kwCollectedArgName == null) typeError("Unexpected keyword argument $name")
+                extraKwargs[name] = value
+            }
+            // removing all the resolved kwargs will let us match up to defaults if needed
+            kwargNames.remove(name)
+        }
+
+        // step 5) match up defaults
+        if (kwargNames.isNotEmpty()) {
+            for (kwarg in kwargNames) {
+                finalArgs[kwarg] =
+                    defaults[kwarg]
+                    ?: typeError("Missing required keyword argument: $argName")
+            }
+        }
+
+        return finalArgs
+    }
+
+    /**
+     * Turns a list of arguments to keyword arguments.
+     *
+     * This function is intended to be used internally; use callFunctionGetArgs for implementing
+     * the bytecode instructions.
+     */
+    fun argsToKwargs(args: List<PyObject>): Map<String, PyObject> {
+        TODO()
     }
 }
