@@ -5,8 +5,6 @@ on:
     branches:
       - "3.8"
 
-  pull_request: {}
-
 jobs:
   test:
     runs-on: ${{ matrix.run_on }}
