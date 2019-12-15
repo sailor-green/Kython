@@ -34,16 +34,4 @@ interface PyCallable {
      * The signature for this function.
      */
     val signature: PyCallableSignature
-
-    /**
-     * A shortcut for running this function.
-     */
-    fun runCallable(
-        args: List<PyObject>,
-        kwargsTuple: PyTuple? = null
-    ): PyObject {
-        TODO()
-        // val finalArgs = signature.getFinalArgs(args, kwargsTuple)
-        // return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
-    }
 }
