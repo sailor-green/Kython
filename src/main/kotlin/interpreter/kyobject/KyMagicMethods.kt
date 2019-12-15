@@ -13,8 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
+
 package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.functions.magic.*
