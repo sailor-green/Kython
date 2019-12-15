@@ -31,12 +31,13 @@ class PyMethod(
     val instance: PyObject
 ) : PyObject(), PyCallable {
 
-    override fun runCallable(
-        args: List<PyObject>,
-        kwargsTuple: PyTuple?
-    ): PyObject {
-        val realArgs = args.toMutableList().apply { add(instance) }
-        return super.runCallable(realArgs, kwargsTuple)
+    override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
+        val realArgs = args.toMutableList().also { it.add(instance) }
+        return super.pyCall(realArgs, kwargTuple)
+    }
+
+    override fun kyCall(args: List<PyObject>): PyObject {
+        return super.kyCall(args.toMutableList().also { it.add(instance) })
     }
 
     override fun createFrame(): StackFrame = function.createFrame()
