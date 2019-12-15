@@ -17,6 +17,8 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.api.ExposeMethod
+import green.sailor.kython.api.MethodParam
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
@@ -46,29 +48,31 @@ object PyStringType : PyType("str") {
         )
     }
 
-    /** str.upper() */
-    val pyUpper = PyBuiltinFunction.wrap("upper", PyCallableSignature.EMPTY_METHOD) {
-        val self = it["self"]!!.cast<PyString>()
-        PyString(self.wrappedString.toUpperCase())
+    /** str.lower() */
+    @ExposeMethod("lower")
+    @MethodParam("self", "POSITIONAL")
+    fun pyStrLower(kwargs: Map<String, PyObject>): PyString {
+        val self = kwargs["self"]!!.cast<PyString>()
+        return PyString(self.wrappedString.toLowerCase())
+    }
+
+    @ExposeMethod("upper")
+    @MethodParam("self", "POSITIONAL")
+    fun pyStrUpper(kwargs: Map<String, PyObject>): PyString {
+        val self = kwargs["self"]!!.cast<PyString>()
+        return PyString(self.wrappedString.toUpperCase())
     }
 
     // there *is* special casing
     /** str.__int__() */
-    val pyStrInt = PyBuiltinFunction.wrap("__int__", PyCallableSignature.EMPTY_METHOD) {
-        val self = it["self"]!!.cast<PyString>()
+    @ExposeMethod("__int__")
+    @MethodParam("self", "POSITIONAL")
+    fun pyStrInt(kwargs: Map<String, PyObject>): PyInt {
+        val self = kwargs["self"]!!.cast<PyString>()
         try {
-            PyInt(self.wrappedString.toInt().toLong())
+            return PyInt(self.wrappedString.toInt().toLong())
         } catch (e: NumberFormatException) {
             valueError("Cannot convert '${self.wrappedString}' to int")
         }
     }
-
-    override val internalDict: LinkedHashMap<String, PyObject> =
-        linkedMapOf(
-            // magic method impls
-            "__int__" to pyStrInt,
-
-            // regular method impls
-            "upper" to pyUpper
-        )
 }
