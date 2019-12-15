@@ -24,7 +24,9 @@ import kotlin.math.abs
 /**
  * Represents a Python int type. This internally wraps a long,
  */
-open class PyInt(val wrappedInt: Long) : PyObject() {
+open class PyInt(val wrappedInt: Long) : PyPrimitive() {
+    override fun unwrap(): Any = wrappedInt
+
     // default impls
     override fun pyToStr(): PyString = PyString(wrappedInt.toString())
     override fun pyGetRepr(): PyString = pyToStr()

@@ -23,7 +23,9 @@ import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
 /**
  * Abstract superclass shared between PyList and PyTuple, contains some common methods.
  */
-abstract class PyContainer(val subobjects: List<PyObject>) : PyObject() {
+abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
+    override fun unwrap(): Any = subobjects
+
     override fun pyToBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
     override fun pyIter(): PyObject {
         if (subobjects.isEmpty()) return PyEmptyIterator

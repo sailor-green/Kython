@@ -25,7 +25,9 @@ import kotlin.math.abs
  * Represents a Python float. This wraps a kotlin Double (CPython wraps a C double,
  * so we're consistent there).
  */
-class PyFloat(val wrapped: Double) : PyObject() {
+class PyFloat(val wrapped: Double) : PyPrimitive() {
+    override fun unwrap(): Any = wrapped
+
     private val _floatStr by lazy {
         PyString(wrapped.toString())
     }

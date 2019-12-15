@@ -34,6 +34,8 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
         fun get(b: Boolean) = if (b) TRUE else FALSE
     }
 
+    override fun unwrap(): Any = wrapped
+
     private val cachedTrueString = PyString("True")
     private val cachedFalseString = PyString("False")
 
