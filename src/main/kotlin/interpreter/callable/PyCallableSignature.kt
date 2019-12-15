@@ -17,8 +17,6 @@
  */
 package green.sailor.kython.interpreter.callable
 
-import green.sailor.kython.interpreter.pyobject.PyDict
-import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.typeError
@@ -84,8 +82,6 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             if (it.size > 1) typeError("A function cannot have multiple KEYWORD_STAR")
         }
     }
-
-
 
     /**
      * Helper function for implementing CALL_FUNCTION/CALL_FUNCTION_KW.

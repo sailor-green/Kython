@@ -17,7 +17,6 @@
  */
 package green.sailor.kython.interpreter.callable
 
-import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -44,7 +43,7 @@ interface PyCallable {
         kwargsTuple: PyTuple? = null
     ): PyObject {
         TODO()
-        //val finalArgs = signature.getFinalArgs(args, kwargsTuple)
-        //return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
+        // val finalArgs = signature.getFinalArgs(args, kwargsTuple)
+        // return KythonInterpreter.runStackFrame(createFrame(), finalArgs)
     }
 }
