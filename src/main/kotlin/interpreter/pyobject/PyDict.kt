@@ -24,7 +24,7 @@ import green.sailor.kython.interpreter.typeError
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() {
+class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyPrimitive() {
     companion object {
         /**
          * Creates a new PyDict from any map, wrapping primitive types.
@@ -37,6 +37,8 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyObject() 
             return PyDict(newMap)
         }
     }
+
+    override fun unwrap(): Any = items
 
     override fun pyToStr(): PyString {
         val joined = items.entries.joinToString {

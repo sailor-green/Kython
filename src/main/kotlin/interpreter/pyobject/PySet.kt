@@ -26,7 +26,8 @@ import green.sailor.kython.interpreter.typeError
 /**
  * Represents a Python set.
  */
-class PySet(val wrappedSet: MutableSet<PyObject>) : PyObject() {
+class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
+    override fun unwrap(): Any = wrappedSet
 
     override fun pyToStr(): PyString = PyString(
         "{" + wrappedSet.joinToString(", ") { it.pyGetRepr().wrappedString } + "}"

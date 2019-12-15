@@ -23,7 +23,8 @@ import green.sailor.kython.interpreter.pyobject.types.PyBytesType
 /**
  * Represents a Python bytes object. This wraps a regular JVM ByteArray.
  */
-class PyBytes(val wrapped: ByteArray) : PyObject() {
+class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
+    override fun unwrap(): Any = wrapped
     override fun pyToStr(): PyString = pyGetRepr()
 
     override fun pyGetRepr(): PyString {
