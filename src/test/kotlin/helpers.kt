@@ -17,6 +17,7 @@
 
 package green.sailor.kython.test
 
+import green.sailor.kython.interpreter.InterpreterThread
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyModule
@@ -41,13 +42,12 @@ fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf
         error("Frame isn't a user code frame, not sure what happened")
     }
 
-    // these functions won't return anything, they're exec()
-    // instead a `result` should be assigned to
-    rootFrameLocal.set(frame)
+    val thread = InterpreterThread(frame)
+    interpreterThreadLocal.set(thread)
     try {
-        runStackFrame(frame, args)
+        thread.runStackFrame(frame, args)
     } finally {
-        rootFrameLocal.remove()
+        interpreterThreadLocal.remove()
     }
     return frame.locals["result"] ?: error("No result assigned!")
 }
