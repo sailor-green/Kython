@@ -134,7 +134,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         val posArgCollector = mutableListOf<PyObject>()
         while (true) {
             val next = mutArgs.pollLast() ?: break
-            if (argName == null) typeError("Too many arguments!")
+            if (argName == null) typeError("Too many positional arguments passed!")
             posArgCollector.add(next)
         }
         if (argName != null) finalArgs[argName] = PyTuple.get(posArgCollector)
@@ -173,7 +173,22 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
      * This function is intended to be used internally; use callFunctionGetArgs for implementing
      * the bytecode instructions.
      */
-    fun argsToKwargs(args: List<PyObject>): Map<String, PyObject> {
-        TODO()
+    fun argsToKwargs(passedArgs: List<PyObject>): Map<String, PyObject> {
+        // args are passed right to left
+        if (passedArgs.size != args.size) {
+            typeError("Passed incorrect amount args! Expected ${args.size}, got ${passedArgs.size}")
+        }
+        val finalArgs = mutableMapOf<String, PyObject>()
+        val ourArgs = args.iterator()
+
+        for (arg in passedArgs.asReversed()) {
+            val argDef = ourArgs.next()
+            if (argDef.second != ArgType.POSITIONAL) {
+                typeError("Functions called from Kotlin can only take positional arguments!")
+            }
+            finalArgs[argDef.first] = arg
+        }
+
+        return finalArgs
     }
 }
