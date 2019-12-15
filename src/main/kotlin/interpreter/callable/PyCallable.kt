@@ -17,8 +17,6 @@
  */
 package green.sailor.kython.interpreter.callable
 
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
