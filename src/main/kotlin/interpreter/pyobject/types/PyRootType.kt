@@ -18,6 +18,8 @@
 package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.user.PyUserType
 import green.sailor.kython.interpreter.typeError
@@ -27,31 +29,37 @@ import green.sailor.kython.interpreter.typeError
  */
 object PyRootType : PyType("type") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val args = kwargs["args"]!!.cast<PyTuple>()
+        val first = kwargs["name"] ?: error("Built-in signature mismatch!")
+        val second = kwargs["bases"] ?: error("Built-in signature mismatch!")
+        val third = kwargs["class_body"] ?: error("Built-in signature mismatch!")
 
-        return when (args.subobjects.size) {
-            1 -> {
-                args.subobjects.first().type
+        return when {
+            second === PyNone && third === PyNone -> {
+                // lol
+                return PyString(first.type.name)
             }
-            3 -> {
-                val name = args.subobjects[0].cast<PyString>()
+            else -> {
+                val name = first.cast<PyString>()
                 // validate bases
-                val bases = args.subobjects[1].cast<PyTuple>().subobjects.map {
+                val bases = second.cast<PyTuple>().subobjects.map {
                     it as? PyType ?: typeError("Base is not a type")
                 }
 
-                val bodyPyDict = args.subobjects[2].cast<PyDict>()
+                val bodyPyDict = third.cast<PyDict>()
                 val body = bodyPyDict.items.mapKeys {
                     it.key.cast<PyString>().wrappedString
                 } as LinkedHashMap
 
                 PyUserType(name.wrappedString, bases, body)
             }
-            else -> {
-                typeError("type() takes 1 or 3 arguments")
-            }
         }
     }
+
+    override val signature: PyCallableSignature = PyCallableSignature(
+        "name" to ArgType.POSITIONAL,
+        "bases" to ArgType.POSITIONAL,
+        "class_body" to ArgType.POSITIONAL
+    ).withDefaults("bases" to PyNone, "class_body" to PyNone)
 
     override var type: PyType
         get() = this

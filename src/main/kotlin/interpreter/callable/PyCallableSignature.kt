@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter.callable
 
+import green.sailor.kython.interpreter.pyobject.PyDict
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.typeError
@@ -137,7 +138,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             if (argName == null) typeError("Too many positional arguments passed!")
             posArgCollector.add(next)
         }
-        if (argName != null) finalArgs[argName] = PyTuple.get(posArgCollector)
+        argName?.let { finalArgs[it] = PyTuple.get(posArgCollector) }
 
         // step 4) validate the collected kwargs, and add them to **kwargs if needed
         val kwCollectedArgName = reverseMapping[ArgType.KEYWORD_STAR]?.first()
@@ -154,6 +155,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // removing all the resolved kwargs will let us match up to defaults if needed
             kwargNames.remove(name)
         }
+        kwCollectedArgName?.let { finalArgs[it] = PyDict.fromAnyMap(extraKwargs) }
 
         // step 5) match up defaults
         if (kwargNames.isNotEmpty()) {
@@ -175,10 +177,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
      */
     fun argsToKwargs(passedArgs: List<PyObject>): Map<String, PyObject> {
         // args are passed right to left
-        if (passedArgs.size != args.size) {
-            typeError("Passed incorrect amount args! Expected ${args.size}, got ${passedArgs.size}")
-        }
-        val finalArgs = mutableMapOf<String, PyObject>()
+        val finalArgs = mutableMapOf<String, PyObject>().apply { putAll(defaults) }
         val ourArgs = args.iterator()
 
         for (arg in passedArgs.asReversed()) {
@@ -188,6 +187,8 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             }
             finalArgs[argDef.first] = arg
         }
+        // TODO: idk, make this better
+        if (finalArgs.size != passedArgs.size) typeError("Missing arguments!")
 
         return finalArgs
     }

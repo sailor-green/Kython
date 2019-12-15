@@ -57,7 +57,8 @@ class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyPrimitive
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
-    override fun pyHash(): PyInt = typeError("lists are not hashable - they are mutable")
+    override fun pyHash(): PyInt = typeError("dicts are not hashable - they are mutable")
+    override fun hashCode(): Int = System.identityHashCode(this)
     override fun pyLen(): PyInt = PyInt(items.size.toLong())
 
     override var type: PyType

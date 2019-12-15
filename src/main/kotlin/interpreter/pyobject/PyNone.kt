@@ -31,6 +31,8 @@ object PyNone : PyObject() {
     override fun pyToStr(): PyString = noneString
     override fun pyGetRepr(): PyString = noneString
     override fun pyToBool(): PyBool = PyBool.FALSE
+    override fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
+    override fun equals(other: Any?): Boolean = this === other
 
     override var type: PyType
         get() = PyNoneType

@@ -40,7 +40,7 @@ class InterpreterThread(
 
     override fun run() {
         KythonInterpreter.interpreterThreadLocal.set(this)
-        runStackFrame(rootStackFrame, mapOf())
+        kickoffThread(rootStackFrame)
     }
 
     /**
