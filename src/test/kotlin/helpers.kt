@@ -22,6 +22,7 @@ import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import org.junit.jupiter.api.Assertions
 
@@ -70,4 +71,20 @@ fun assertFalse(result: PyObject) {
     }
     // todo
     Assertions.fail<Nothing>("Object was $result, not a boolean")
+}
+
+/**
+ * Asserts that this PyObject equals a different object.
+ */
+fun assertUnwrappedTrue(wrapped: PyObject, fn: (Any?) -> Boolean) {
+    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
+    return Assertions.assertTrue(fn(wrapped.unwrap()))
+}
+
+/**
+ * Asserts that this PyObject does not equal a different object.
+ */
+fun assertUnwrappedFalse(wrapped: PyObject, fn: (Any?) -> Boolean) {
+    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
+    return Assertions.assertFalse(fn(wrapped.unwrap()))
 }
