@@ -19,7 +19,7 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.generation.generated.addBuiltinsForPyStringType
+import green.sailor.kython.generation.generated.addAllBuiltins
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -54,7 +54,7 @@ object KythonInterpreter {
 
     init {
         // add all the generated builtins
-        addBuiltinsForPyStringType()
+        addAllBuiltins()
     }
 
     /**

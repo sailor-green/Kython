@@ -20,8 +20,8 @@ package green.sailor.kython.generation.extensions
 import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
 
-internal fun ProcessingEnvironment.println(vararg items: Any?) =
-    messager.printMessage(Diagnostic.Kind.WARNING, items.joinToString())
+internal fun ProcessingEnvironment.note(vararg items: Any?) =
+    messager.printMessage(Diagnostic.Kind.WARNING, items.joinToString(" "))
 
 internal fun ProcessingEnvironment.error(message: String) =
     messager.printMessage(Diagnostic.Kind.ERROR, message)

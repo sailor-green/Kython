@@ -17,16 +17,21 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.annotation.ExposeMethod
+import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.iterate
 import green.sailor.kython.interpreter.pyobject.PyList
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents the type of a list.
  */
+@GenerateMethods
 object PyListType : PyType("list") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
@@ -38,5 +43,15 @@ object PyListType : PyType("list") {
         PyCallableSignature(
             "x" to ArgType.POSITIONAL
         )
+    }
+
+    @ExposeMethod("append")
+    @MethodParam("self", "POSITIONAL")
+    @MethodParam("value", "POSITIONAL")
+    fun pyListAppend(kwargs: Map<String, PyObject>): PyObject {
+        val self = kwargs["self"]?.cast<PyList>() ?: error("Built-in signature mismatch!")
+        val value = kwargs["value"] ?: error("Built-in signature mismatch!")
+        (self.subobjects as MutableList).add(value)
+        return PyNone
     }
 }

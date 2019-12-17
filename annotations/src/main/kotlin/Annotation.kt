@@ -44,6 +44,7 @@ annotation class ExposeMethod(
  * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
  */
 @Retention(AnnotationRetention.SOURCE)
+@Repeatable
 annotation class MethodParam(
     val name: String,
     val argType: String
