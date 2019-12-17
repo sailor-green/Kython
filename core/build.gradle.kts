@@ -55,6 +55,10 @@ application {
 }
 
 
+tasks.distZip {
+    archiveBaseName.set("kython")
+}
+
 sourceSets {
     main {
         java {

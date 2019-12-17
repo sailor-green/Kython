@@ -17,6 +17,11 @@
 
 plugins {
     kotlin("jvm")
+    application
+}
+
+application {
+    mainClassName = "green.sailor.kython.annotation.Annotation.kt"
 }
 
 dependencies {
