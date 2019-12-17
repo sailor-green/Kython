@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package extensions
+package green.sailor.kython.generation.extensions
 
 import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
