@@ -15,16 +15,14 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.api
-
-// todo: we want to annotation processing this, instead of doing it at runtime.
-// but, im not in the mood to learn kapt today.
+package annotation
 
 /**
  * Exposes a method on a type object to its instance object.
  *
  * @param name: The Python name to expose this method to.
  */
+@Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
 annotation class ExposeMethod(
@@ -37,7 +35,18 @@ annotation class ExposeMethod(
  * @param name: The name of the method parameter.
  * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
  */
+@Retention(AnnotationRetention.SOURCE)
 annotation class MethodParam(
     val name: String,
     val argType: String
+)
+
+// TODO: Document
+// This is subject to change.
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
+annotation class GeneratedMethod(
+    val to: String,
+    val name: String,
+    val type: String
 )
