@@ -67,6 +67,7 @@ object MakeUp : Callable<Int> {
     /**
      * Builds the builtin method objects from annotations.
      */
+    @Suppress("unused")
     fun buildBuiltinMethods() {
         System.err.println("!! Running runtime method processing!")
         // TODO: Add all of these
@@ -106,7 +107,6 @@ object MakeUp : Callable<Int> {
             System.err.println("Running Kython in debug mode!")
             System.err.println("Processing builtin method annotations...")
         }
-        // buildBuiltinMethods()
 
         exitProcess(CommandLine(this).execute(*args))
     }
