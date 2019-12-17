@@ -15,5 +15,4 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// This is a dummy file so that IntelliJ doesn't complain about package directives.
 package green.sailor.kython.generation
