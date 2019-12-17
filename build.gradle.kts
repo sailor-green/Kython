@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.3.61"
     id("com.diffplug.gradle.spotless") version "3.26.0"
+    distribution
 }
 
 allprojects {
@@ -38,5 +39,19 @@ allprojects {
         group = "linting"
         description = "Apply a spotless linter correction for Kotlin."
         dependsOn(tasks.spotlessApply)
+    }
+}
+
+distributions {
+    create("release") {
+        distributionBaseName.set("kython")
+        contents {
+            with(subprojects.first { it.name == "core" }) {
+                plugins.withType(ApplicationPlugin::class.java) {
+                    from(tasks.distZip)
+                    into("/")
+                }
+            }
+        }
     }
 }
