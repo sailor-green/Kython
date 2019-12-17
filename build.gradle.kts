@@ -3,8 +3,6 @@ plugins {
     id("com.diffplug.gradle.spotless") version "3.26.0"
 }
 
-
-
 allprojects {
     repositories {
         mavenCentral()
@@ -42,6 +40,3 @@ allprojects {
         dependsOn(tasks.spotlessApply)
     }
 }
-
-
-

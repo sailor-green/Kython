@@ -20,7 +20,6 @@ package green.sailor.kython.generation.builtins
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import extensions.error
-import extensions.println
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GeneratedMethod
 import java.io.File
