@@ -19,9 +19,9 @@ package green.sailor.kython.generation.builtins
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import extensions.error
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GeneratedMethod
+import green.sailor.kython.generation.extensions.error
 import java.io.File
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
