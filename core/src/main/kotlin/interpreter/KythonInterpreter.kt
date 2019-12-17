@@ -19,6 +19,7 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.generation.generated.addBuiltinsForPyStringType
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyModule
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -50,6 +51,11 @@ object KythonInterpreter {
      * Index 0 is always the main thread object.
      */
     val threads = mutableListOf<InterpreterThread>()
+
+    init {
+        // add all the generated builtins
+        addBuiltinsForPyStringType()
+    }
 
     /**
      * Gets the root frame for this thread.
