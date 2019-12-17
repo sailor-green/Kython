@@ -4,14 +4,17 @@
   - gradlew
   - gradle.properties
   - gradle/*
+  - annotations/build.gradle.kts
+  - generators/build.gradle.kts
+  - core/build.gradle.kts
 "area: repo":
   - ./*
 # PRs about instructions or the StackFrame.
 "area: bytecode":
   # Double ** because I'm lazy.
-  - src/**/UserCodeStackFrame.kt
-  - src/**/instruction/*
+  - core/src/**/UserCodeStackFrame.kt
+  - core/src/**/instruction/*
 # PRs about the interpreter
 "area: builtins":
-  - src/**/interpreter/pyobject/*
-  - src/**/interpreter/pyobject/**/*
+  - core/src/**/interpreter/pyobject/*
+  - core/src/**/interpreter/pyobject/**/*
