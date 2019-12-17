@@ -18,6 +18,14 @@
 package green.sailor.kython.annotation
 
 /**
+ * Marks a type object as the target of method generation.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+@MustBeDocumented
+annotation class GenerateMethods
+
+/**
  * Exposes a method on a type object to its instance object.
  *
  * @param name: The Python name to expose this method to.
@@ -39,14 +47,4 @@ annotation class ExposeMethod(
 annotation class MethodParam(
     val name: String,
     val argType: String
-)
-
-// TODO: Document
-// This is subject to change.
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.FUNCTION)
-annotation class GeneratedMethod(
-    val to: String,
-    val name: String,
-    val type: String
 )

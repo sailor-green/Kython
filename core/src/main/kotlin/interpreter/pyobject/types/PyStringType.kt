@@ -18,7 +18,7 @@
 package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.annotation.ExposeMethod
-import green.sailor.kython.annotation.GeneratedMethod
+import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
@@ -28,6 +28,10 @@ import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.valueError
 
+/**
+ * Represents the str builtin type.
+ */
+@GenerateMethods
 object PyStringType : PyType("str") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val arg = kwargs["x"]!!
@@ -51,7 +55,6 @@ object PyStringType : PyType("str") {
     /** str.lower() */
     @ExposeMethod("lower")
     @MethodParam("self", "POSITIONAL")
-    @GeneratedMethod("lower", "self", "POSITIONAL")
     fun pyStrLower(kwargs: Map<String, PyObject>): PyString {
         val self = kwargs["self"]!!.cast<PyString>()
         return PyString(self.wrappedString.toLowerCase())

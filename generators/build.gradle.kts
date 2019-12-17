@@ -24,5 +24,5 @@ plugins {
 dependencies {
     // === CODE GENERATION === //
     implementation(project(":annotations"))
-    implementation("com.squareup:kotlinpoet:1.4.4")
+    implementation("com.squareup:kotlinpoet:1.4.1")
 }
