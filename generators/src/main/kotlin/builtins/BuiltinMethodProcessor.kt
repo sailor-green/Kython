@@ -24,10 +24,7 @@ import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.generation.extensions.error
 import java.nio.file.Paths
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.RoundEnvironment
-import javax.annotation.processing.SupportedOptions
-import javax.annotation.processing.SupportedSourceVersion
+import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
@@ -130,7 +127,7 @@ class BuiltinMethodProcessor : AbstractProcessor() {
                         "POSITIONAL" -> argTypePos
                         "POSITIONAL_STAR" -> argTypePosStar
                         "KEYWORD" -> argTypeKw
-                        "KEYWORD_STAR" -> argTypePosStar
+                        "KEYWORD_STAR" -> argTypeKwStar
                         else -> {
                             processingEnv.error("Unknown arg type ${annotation.argType}")
                             error("Unknown arg type")
@@ -142,6 +139,7 @@ class BuiltinMethodProcessor : AbstractProcessor() {
             }.build()
 
             val methodKlass = TypeSpec.objectBuilder(mangledName).apply {
+                addAnnotation(Generated::class)
                 addModifiers(KModifier.PRIVATE)
                 addKdoc("Generated wrapper for $rawMethodName -> ${i.simpleName}")
                 // PyBuiltinFunction(name)
@@ -157,6 +155,7 @@ class BuiltinMethodProcessor : AbstractProcessor() {
 
         // add a function that wraps it all up
         val adderFunction = FunSpec.builder("addBuiltinsFor${className.simpleName}").apply {
+            addAnnotation(Generated::class)
             addKdoc("Adds all the builtin wrapper methods to the type object.")
             for ((methodName, spec) in typeSpecs) {
                 val newClassName = ClassName(builder.packageName, spec.name!!)
