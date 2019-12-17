@@ -17,9 +17,9 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
+import annotation.ExposeMethod
 import annotation.GeneratedMethod
-import green.sailor.kython.api.ExposeMethod
-import green.sailor.kython.api.MethodParam
+import annotation.MethodParam
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyInt

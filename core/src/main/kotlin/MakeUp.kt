@@ -17,21 +17,22 @@
 
 package green.sailor.kython
 
-import green.sailor.kython.api.ExposeMethod
-import green.sailor.kython.api.MethodParam
+
+import annotation.ExposeMethod
+import annotation.MethodParam
 import green.sailor.kython.cli.PythonFileCommand
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
+import picocli.CommandLine
+import picocli.CommandLine.Command
+import picocli.CommandLine.HelpCommand
 import java.util.concurrent.Callable
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.findAnnotation
 import kotlin.system.exitProcess
-import picocli.CommandLine
-import picocli.CommandLine.Command
-import picocli.CommandLine.HelpCommand
 
 /**
  * Main initialiser for Kython.
