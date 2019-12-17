@@ -20,7 +20,7 @@ jobs:
       with:
         java-version: 11.0.x
 
-    - name: Make sure gradle is executablee
+    - name: Make sure gradle is executable
       run: chmod +x ./gradlew
 
     - name: Run spotlessCheck
