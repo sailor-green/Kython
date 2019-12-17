@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package annotation
+package green.sailor.kython.annotation
 
 /**
  * Exposes a method on a type object to its instance object.

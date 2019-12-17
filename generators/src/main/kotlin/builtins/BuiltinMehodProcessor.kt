@@ -15,9 +15,9 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package builtins
+package green.sailor.kython.generation.builtins
 
-import annotation.GeneratedMethod
+import green.sailor.kython.annotation.GeneratedMethod
 import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -30,7 +30,7 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
 @AutoService(Processor::class)
-@SupportedSourceVersion(SourceVersion.RELEASE_11) //maybe this is causing problems
+@SupportedSourceVersion(SourceVersion.RELEASE_11) // maybe this is causing problems
 @SupportedOptions(BuiltinMethodProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class BuiltinMethodProcessor : AbstractProcessor() {
     companion object {
