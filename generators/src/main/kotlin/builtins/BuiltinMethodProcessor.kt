@@ -23,7 +23,6 @@ import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.generation.extensions.error
-import green.sailor.kython.generation.extensions.println
 import java.nio.file.Paths
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -110,8 +109,8 @@ class BuiltinMethodProcessor : AbstractProcessor() {
                 addKdoc("Pass-through to call the real function.")
                 addModifiers(KModifier.OVERRIDE)
 
-                val mapName = Map::class.asClassName().
-                    parameterizedBy(String::class.asClassName(), pyObject)
+                val mapName = Map::class.asClassName()
+                    .parameterizedBy(String::class.asClassName(), pyObject)
                 // (kwargs: Map<String, PyObject>)
                 addParameter(ParameterSpec.builder("kwargs", mapName).build())
 
