@@ -17,10 +17,11 @@
 
 package green.sailor.kython.generation.builtins
 
-import com.google.auto.service.AutoService
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import extensions.error
+import extensions.println
+import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GeneratedMethod
 import java.io.File
 import javax.annotation.processing.*
@@ -29,12 +30,15 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 
-@AutoService(Processor::class)
-@SupportedSourceVersion(SourceVersion.RELEASE_11) // maybe this is causing problems
+@SupportedSourceVersion(SourceVersion.RELEASE_11)
 @SupportedOptions(BuiltinMethodProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class BuiltinMethodProcessor : AbstractProcessor() {
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
+    }
+
+    override fun getSupportedAnnotationTypes(): MutableSet<String> {
+        return mutableSetOf(ExposeMethod::class.java.name)
     }
 
     override fun process(

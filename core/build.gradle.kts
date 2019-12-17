@@ -27,7 +27,7 @@ plugins {
 kapt {
     correctErrorTypes = true
     // FIXME: Who knows what it actually wants here.
-    annotationProcessor("com.google.auto.service:auto-service:1.0-rc6")
+    annotationProcessor("green.sailor.kython.generation.builtins.BuiltinMethodProcessor")
 }
 
 
@@ -44,7 +44,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 
     // === CODE GENERATION === //
-    compileOnly(project(":annotations"))
+    implementation(project(":annotations"))
     kapt(project(":generators"))
 
 }

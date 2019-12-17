@@ -16,6 +16,7 @@ allprojects {
 
     spotless {
         kotlin {
+            targetExclude("build/generated/**")
             ktlint().userData(
                 mapOf(
                     "disabled_rules" to "no-wildcard-imports",
@@ -24,6 +25,7 @@ allprojects {
             )
             @Suppress("INACCESSIBLE_TYPE")  // this works fine?
             licenseHeaderFile("$rootDir/gradle/LICENCE-HEADER")
+
         }
     }
 
