@@ -35,4 +35,3 @@ annotation class GenerateModule(
 annotation class ExposeField(
     val name: String
 )
-

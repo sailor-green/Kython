@@ -17,8 +17,8 @@
 
 package green.sailor.kython.builtins
 
-import green.sailor.kython.annotation.GenerateModule
 import green.sailor.kython.annotation.ExposeField
+import green.sailor.kython.annotation.GenerateModule
 import green.sailor.kython.interpreter.kyobject.KyBuiltinModule
 import green.sailor.kython.interpreter.pyobject.PyString
 

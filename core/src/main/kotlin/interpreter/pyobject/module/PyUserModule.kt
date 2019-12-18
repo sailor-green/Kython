@@ -22,6 +22,4 @@ import green.sailor.kython.interpreter.kyobject.KyUserModule
 /**
  * Wraps a user module object.
  */
-class PyUserModule(val userModule: KyUserModule) : PyModule() {
-
-}
+class PyUserModule(val userModule: KyUserModule) : PyModule()
