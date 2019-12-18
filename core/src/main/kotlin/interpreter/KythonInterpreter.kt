@@ -19,7 +19,8 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.generation.generated.addAllBuiltins
+import green.sailor.kython.generation.generated.addAllFields
+import green.sailor.kython.generation.generated.addAllMethods
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -54,7 +55,8 @@ object KythonInterpreter {
 
     init {
         // add all the generated builtins
-        addAllBuiltins()
+        addAllFields()
+        addAllMethods()
     }
 
     /**
