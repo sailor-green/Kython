@@ -23,4 +23,4 @@ package green.sailor.kython.interpreter.pyobject.module
  *
  * THIS CLASS IS NOT FOR EXTENSION MODULES.
  */
-abstract class PyBuiltinModule : PyModule()
+abstract class PyBuiltinModule(name: String) : PyModule(name)

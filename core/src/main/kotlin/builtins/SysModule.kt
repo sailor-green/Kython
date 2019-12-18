@@ -17,19 +17,15 @@
 
 package green.sailor.kython.builtins
 
-import green.sailor.kython.annotation.ExposeField
-import green.sailor.kython.annotation.GenerateModule
-import green.sailor.kython.interpreter.kyobject.KyBuiltinModule
+import green.sailor.kython.annotation.BuiltinModule
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
+import green.sailor.kython.util.DictDelegate
 
 /**
  * Represents the sys built-in module.
  */
-@GenerateModule("sys")
-object SysModule : KyBuiltinModule(
-    "sys",
-    "Contains internal objects used by the interpreter."
-) {
-    @ExposeField("platform")
-    var platform = PyString(System.getProperty("os.name").toLowerCase())
+@BuiltinModule("sys")
+object SysModule : PyBuiltinModule("sys") {
+    var platform by DictDelegate("platform") { PyString(System.getProperty("os.name")) }
 }

@@ -15,23 +15,23 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.annotation
+package green.sailor.kython.util
+
+import green.sailor.kython.interpreter.pyobject.PyObject
+import kotlin.reflect.KProperty
 
 /**
- * Exposes a KyModule as a PyBuiltinModule.
- * Code will be automatically generated for these builtin modules to add them to the modules dict.
+ * Represents a delegate to the internal dictionary of this object.
  */
-@Target(AnnotationTarget.CLASS)
-@MustBeDocumented
-annotation class GenerateModule(
-    val name: String
-)
+class DictDelegate<T : PyObject>(
+    val propName: String,
+    val defaultValue: () -> T
+) {
+    operator fun getValue(thisRef: PyObject, property: KProperty<*>): T {
+        return thisRef.internalDict.computeIfAbsent(propName) { defaultValue() } as T
+    }
 
-/**
- * Exposes a field on a module to Python.
- */
-@Target(AnnotationTarget.PROPERTY)
-@MustBeDocumented
-annotation class ExposeField(
-    val name: String
-)
+    operator fun setValue(thisRef: PyObject, property: KProperty<*>, value: T) {
+        thisRef.internalDict[propName] = value
+    }
+}

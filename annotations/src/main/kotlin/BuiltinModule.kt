@@ -15,16 +15,14 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.kyobject
-
-import green.sailor.kython.annotation.GenerateModule
+package green.sailor.kython.annotation
 
 /**
- * Represents a builtin module object. Built-in modules (like sys, _thread, _imp) should extend
- * this module, and mark it with [GenerateModule] to generate the appropriate [PyBuiltinModule]
- * object.
- *
- * @param name: The name of this module.
- * @param docString: The docstring for this module.
+ * Exposes a KyModule as a PyBuiltinModule.
+ * Code will be automatically generated for these builtin modules to add them to the modules dict.
  */
-abstract class KyBuiltinModule(val name: String, val docString: String)
+@Target(AnnotationTarget.CLASS)
+@MustBeDocumented
+annotation class BuiltinModule(
+    val name: String
+)
