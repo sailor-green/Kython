@@ -5,7 +5,7 @@ This is Kython version 3.9
     :target: https://codecov.io/gh/sailor-green/Kython
 .. image:: https://img.shields.io/github/workflow/status/sailor-green/kython/Gradle%20Build%20-%20Test%20-%20Dist?style=for-the-badge
     :alt: GitHub Workflow Status
-    :target: https://github.com/sailor-green/Kython/actions?query=workflow%3A%22Gradle+Build+-+Test+-+Dist%22
+    :target: https://github.com/sailor-green/Kython/workflows/Gradle%20Build%20-%20Test%20-%20Dist/badge.svg
 .. image:: https://img.shields.io/github/license/sailor-green/kython?color=0&style=for-the-badge
     :alt: GitHub
     :target: https://github.com/sailor-green/Kython/blob/master/LICENCE
