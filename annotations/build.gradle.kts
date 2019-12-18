@@ -20,6 +20,9 @@ plugins {
     application
 }
 
+
+project
+
 application {
     mainClassName = "green.sailor.kython.annotation.Annotation.kt"
 }

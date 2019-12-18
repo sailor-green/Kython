@@ -23,6 +23,6 @@ plugins {
 
 dependencies {
     // === CODE GENERATION === //
-    implementation(project(":annotations"))
+    implementation(project(":kython-annotations"))
     implementation("com.squareup:kotlinpoet:1.4.1")
 }

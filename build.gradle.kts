@@ -46,7 +46,7 @@ distributions {
     create("release") {
         distributionBaseName.set("kython")
         contents {
-            with(subprojects.first { it.name == "core" }) {
+            with(subprojects.first { it.name == "kython-core" }) {
                 plugins.withType(ApplicationPlugin::class.java) {
                     from(tasks.distZip)
                     into("/")
