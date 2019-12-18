@@ -20,7 +20,7 @@ import sys
 # type annotations; these are ok because they're never really imported.
 if False:
     import types
-    from typing import Tuple, Any, List, Dict
+    from typing import Tuple, Any, List, Dict, Set
 
 try:
     sys.getwindowsversion()
@@ -37,7 +37,10 @@ def _compile_int(i: int) -> bytes:
     Compiles an int into bytes.
     """
     # TODO: OverflowError
-    return b"i" + i.to_bytes(length=4, byteorder="little", signed=True)
+    try:
+        return b"i" + i.to_bytes(length=4, byteorder="little", signed=True)
+    except OverflowError:
+        return b"L" + i.to_bytes(length=8, byteorder="little", signed=True)
 
 
 def _compile_bytestring(s: bytes) -> bytes:
@@ -92,6 +95,18 @@ def _compile_dict(t: Dict[Any, Any]) -> bytes:
         items.append(_compile_object(v))
 
     return b"d" + size + b"".join(items)
+
+
+def _compile_set(t: Set[Any]) -> bytes:
+    """
+    Compiles a set into bytes.
+    """
+    size = len(t).to_bytes(length=4, byteorder="little")
+    items = []
+    for item in t:
+        items.append(_compile_object(item))
+
+    return b"{" + size + b"".join(items)
 
 
 def _compile_nonetype() -> bytes:
@@ -158,6 +173,8 @@ def _compile_object(i: Any) -> bytes:
         return _compile_list(i)
     elif isinstance(i, dict):
         return _compile_dict(i)
+    elif isinstance(i, (set, frozenset)):
+        return _compile_set(i)
     elif isinstance(i, float):
         return _compile_float(i)
     elif hasattr(i, "co_code"):

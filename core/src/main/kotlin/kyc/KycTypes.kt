@@ -161,6 +161,13 @@ class KycDict(override val wrapped: Map<BaseKycType, BaseKycType>) : BaseKycType
     }
 }
 
+/** An encoded set. */
+class KycSet(override val wrapped: Set<BaseKycType>) : BaseKycType() {
+    override fun wrap(): PySet {
+        return PySet(wrapped.mapTo(mutableSetOf()) { it.wrap() })
+    }
+}
+
 /** An encoded code object. */
 data class KycCodeObject(
     val argCount: KycInt,

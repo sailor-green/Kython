@@ -84,6 +84,7 @@ open class UnKyc(private val buf: ByteBuffer) {
             KycType.TUPLE -> readTuple()
             KycType.LIST -> readList()
             KycType.DICT -> readDict()
+            KycType.SET, KycType.FROZENSET -> readSet()
 
             // code type
             KycType.CODE -> readCode()
@@ -185,6 +186,16 @@ open class UnKyc(private val buf: ByteBuffer) {
             map[this.readObject()] = this.readObject()
         }
         return KycDict(map)
+    }
+
+    /**
+     * Reads a set from the stream.
+     */
+    fun readSet(): KycSet {
+        val set = mutableSetOf<BaseKycType>()
+        val size = buf.int
+        (0 until size).mapTo(set) { readObject() }
+        return KycSet(set)
     }
 
     // the fun one...
