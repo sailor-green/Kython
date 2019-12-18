@@ -30,7 +30,6 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
-@SupportedSourceVersion(SourceVersion.RELEASE_12)
 @SupportedOptions(BuiltinMethodProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class BuiltinMethodProcessor : AbstractProcessor() {
     companion object {
@@ -59,6 +58,10 @@ class BuiltinMethodProcessor : AbstractProcessor() {
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(ExposeMethod::class.java.name)
+    }
+
+    override fun getSupportedSourceVersion(): SourceVersion {
+        return SourceVersion.latest()
     }
 
     override fun process(
