@@ -15,4 +15,4 @@
 # along with kython.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-green.sailor.kython.generation.builtins.BuiltinMethodProcessor
+green.sailor.kython.generation.DictProcessor

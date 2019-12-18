@@ -15,4 +15,13 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.generation
+package green.sailor.kython.annotation
+
+/**
+ * Exposes a field wrapper to the Python world.
+ *
+ * A field wrapper is like an @property, but for built-in objects.
+ */
+annotation class ExposeFieldWrapper(
+    val name: String
+)

@@ -18,15 +18,16 @@
 package green.sailor.kython.builtins
 
 import green.sailor.kython.annotation.BuiltinModule
+import green.sailor.kython.annotation.ExposeField
+import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
-import green.sailor.kython.util.DictDelegate
 
 /**
  * Represents the sys built-in module.
  */
-@BuiltinModule("_kython_sys")
+@GenerateMethods
 object SysModule : PyBuiltinModule("_kython_sys") {
-
+    @ExposeField("platform")
+    val platform = PyString(System.getProperty("os.name").toLowerCase())
 }
-

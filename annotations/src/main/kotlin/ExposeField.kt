@@ -21,7 +21,7 @@ package green.sailor.kython.annotation
  * Exposes a read-only field to the Python world.
  */
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.PROPERTY)
+@Target(AnnotationTarget.FIELD)
 @MustBeDocumented
 annotation class ExposeField(
     val name: String
