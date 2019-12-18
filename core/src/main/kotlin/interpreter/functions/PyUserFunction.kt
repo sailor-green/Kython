@@ -23,7 +23,7 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
-import green.sailor.kython.interpreter.kyobject.KyModule
+import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyCodeObject
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -60,7 +60,7 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
     val code = codeObject
 
     /** The KyModule for this function. */
-    lateinit var module: KyModule
+    lateinit var module: KyUserModule
 
     // helper methods
     /**

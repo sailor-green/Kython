@@ -20,7 +20,7 @@ package green.sailor.kython.test
 import green.sailor.kython.interpreter.InterpreterThread
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
-import green.sailor.kython.interpreter.kyobject.KyModule
+import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Assertions
 fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf()): PyObject {
     val compiled = cpyInterface.compile(code)
     val fn = PyUserFunction(compiled)
-    val module = KyModule(fn, "<test>", code.split(System.lineSeparator()))
+    val module = KyUserModule(fn, "<test>", code.split(System.lineSeparator()))
     val frame = fn.createFrame()
     if (frame !is UserCodeStackFrame) {
         error("Frame isn't a user code frame, not sure what happened")

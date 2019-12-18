@@ -28,7 +28,7 @@ import green.sailor.kython.interpreter.stack.UserCodeStackFrame
  * @param filename: The source code filename for this module, exposed as ` __file__`.
  * @param sourceLines: The source lines for this module.
  */
-class KyModule(
+class KyUserModule(
     val moduleFunction: PyUserFunction,
     val filename: String,
     val sourceLines: List<String>

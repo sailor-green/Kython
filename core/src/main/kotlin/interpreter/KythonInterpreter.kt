@@ -21,7 +21,7 @@ package green.sailor.kython.interpreter
 
 import green.sailor.kython.generation.generated.addAllBuiltins
 import green.sailor.kython.interpreter.functions.PyUserFunction
-import green.sailor.kython.interpreter.kyobject.KyModule
+import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -40,7 +40,7 @@ object KythonInterpreter {
     val cpyInterface = CPythonCompiler()
 
     /** The mapping of modules. */
-    val modules = mutableMapOf<String, KyModule>()
+    val modules = mutableMapOf<String, KyUserModule>()
 
     /** The thread-local for the current [InterpreterThread]. */
     val interpreterThreadLocal = ThreadLocal<InterpreterThread>()
@@ -94,7 +94,7 @@ object KythonInterpreter {
         val fn = cpyInterface.compile(path)
 
         val rootFunction = PyUserFunction(fn)
-        val module = KyModule(rootFunction, path.toString(), Files.readAllLines(path))
+        val module = KyUserModule(rootFunction, path.toString(), Files.readAllLines(path))
         module.attribs["__name__"] = PyString("__main__")
         modules["__main__"] = module
 
@@ -108,7 +108,7 @@ object KythonInterpreter {
         val fn = cpyInterface.compile(s)
 
         val rootFunction = PyUserFunction(fn)
-        val module = KyModule(rootFunction, "<code>", s.split(System.lineSeparator()))
+        val module = KyUserModule(rootFunction, "<code>", s.split(System.lineSeparator()))
         modules["__main__"] = module
 
         runMainThread(module.stackFrame)
@@ -121,8 +121,8 @@ object KythonInterpreter {
      * @param moduleFunction: The module function that has been unmarshalled.
      * @param sourcePath: The source path for the module.
      */
-    fun buildModule(moduleFunction: PyUserFunction, sourcePath: Path): KyModule {
-        return KyModule(moduleFunction, sourcePath.toString(), Files.readAllLines(sourcePath))
+    fun buildModule(moduleFunction: PyUserFunction, sourcePath: Path): KyUserModule {
+        return KyUserModule(moduleFunction, sourcePath.toString(), Files.readAllLines(sourcePath))
             .also { runStackFrame(it.stackFrame, mapOf()) }
     }
 }
