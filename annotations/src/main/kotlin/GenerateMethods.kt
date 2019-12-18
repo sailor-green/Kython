@@ -18,13 +18,9 @@
 package green.sailor.kython.annotation
 
 /**
- * Exposes a module as a builtin module. These modules are read-only Kotlin-code implementations.
- *
- * It is recommended you expose these modules as a "hidden" module and create a pure-python shim
- * around them, instead of exposing them directly, to keep with vanilla Python behaviour.
+ * Marks a type object as the target of method generation.
  */
+@Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
-annotation class BuiltinModule(
-    val name: String
-)
+annotation class GenerateMethods

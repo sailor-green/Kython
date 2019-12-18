@@ -18,13 +18,27 @@
 package green.sailor.kython.annotation
 
 /**
- * Exposes a module as a builtin module. These modules are read-only Kotlin-code implementations.
+ * Exposes a Kotlin method to the Python world. This will wrap it in a PyBuiltinFunction and add it
+ * to the internalDict of the object.
  *
- * It is recommended you expose these modules as a "hidden" module and create a pure-python shim
- * around them, instead of exposing them directly, to keep with vanilla Python behaviour.
+ * @param name: The Python name to expose this method to.
  */
-@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
-annotation class BuiltinModule(
+annotation class ExposeMethod(
     val name: String
+)
+
+/**
+ * Represents a method parameter.
+ *
+ * @param name: The name of the method parameter.
+ * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+annotation class MethodParam(
+    val name: String,
+    val argType: String
 )

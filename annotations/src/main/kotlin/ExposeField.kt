@@ -18,34 +18,11 @@
 package green.sailor.kython.annotation
 
 /**
- * Marks a type object as the target of method generation.
+ * Exposes a read-only field to the Python world.
  */
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY)
 @MustBeDocumented
-annotation class GenerateMethods
-
-/**
- * Exposes a method on a type object to its instance object.
- *
- * @param name: The Python name to expose this method to.
- */
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.FUNCTION)
-@MustBeDocumented
-annotation class ExposeMethod(
+annotation class ExposeField(
     val name: String
-)
-
-/**
- * Represents a method parameter.
- *
- * @param name: The name of the method parameter.
- * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
- */
-@Retention(AnnotationRetention.SOURCE)
-@Repeatable
-annotation class MethodParam(
-    val name: String,
-    val argType: String
 )

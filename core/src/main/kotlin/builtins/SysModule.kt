@@ -25,7 +25,8 @@ import green.sailor.kython.util.DictDelegate
 /**
  * Represents the sys built-in module.
  */
-@BuiltinModule("sys")
-object SysModule : PyBuiltinModule("sys") {
-    var platform by DictDelegate("platform") { PyString(System.getProperty("os.name")) }
+@BuiltinModule("_kython_sys")
+object SysModule : PyBuiltinModule("_kython_sys") {
+
 }
+
