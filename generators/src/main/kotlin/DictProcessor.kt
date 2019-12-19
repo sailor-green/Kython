@@ -152,7 +152,7 @@ class DictProcessor : AbstractProcessor() {
             val member = MemberName(className, i.simpleName.toString())
             val codeBlock = CodeBlock.of(
                 "%T.internalDict[%S] = %M",
-                className, exposeField, member
+                className, exposeField.name, member
             )
             items.add(codeBlock)
         }
