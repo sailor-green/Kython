@@ -15,16 +15,17 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.interpreter.kyobject.KyCodeObject
-import green.sailor.kython.interpreter.pyobject.types.PyCodeType
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.typeError
 
 /**
- * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.
+ * Represents the code type.
  */
-class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
-    override var type: PyType
-        get() = PyCodeType
-        set(_) {}
+object PyCodeType : PyType("code") {
+    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+        typeError("Cannot make new instances of code objects")
+    }
 }
