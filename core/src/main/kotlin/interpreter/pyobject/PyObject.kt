@@ -114,20 +114,6 @@ abstract class PyObject {
 
     // ==== MAGIC METHODS: INTERFACES ====
 
-    override fun hashCode(): Int {
-        // not the cleanest...
-        // todo: maybe think about how to make this not, uh, very pointless for default objects.
-        // because unless overridden, this wraps and unwraps for no real purpose
-        // could possibly use a custom LinkedHashMap impl that calls pyHash or something.
-        return pyHash().wrappedInt.toInt()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        // equally (no pun intended), not the cleanest
-        if (other !is PyObject) return false
-        return pyEquals(other).pyToBool().wrapped
-    }
-
     // __hash__
     /**
      * Implements hash(some_object).
