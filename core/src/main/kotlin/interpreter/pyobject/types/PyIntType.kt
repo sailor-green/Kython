@@ -17,6 +17,9 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
+import green.sailor.kython.annotation.ExposeMethod
+import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
@@ -25,6 +28,7 @@ import green.sailor.kython.interpreter.valueError
 /**
  * Represents the type of an int.
  */
+@GenerateMethods
 object PyIntType : PyType("int") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val value = kwargs["value"] ?: error("Built-in signature mismatch")
@@ -57,6 +61,14 @@ object PyIntType : PyType("int") {
                 return value.pyToInt()
             }
         }
+    }
+
+    @ExposeMethod("to_bytes")
+    @MethodParam("self", "POSITIONAL")
+    @MethodParam("size", "POSITIONAL")
+    @MethodParam("endian", "POSITIONAL")
+    fun pyIntToBytes(kwargs: Map<String, PyObject>): PyBytes {
+        TODO()
     }
 
     override val signature: PyCallableSignature by lazy {
