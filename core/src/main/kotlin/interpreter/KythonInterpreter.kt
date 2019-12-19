@@ -19,16 +19,23 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
 import green.sailor.kython.interpreter.functions.PyUserFunction
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
+import green.sailor.kython.interpreter.loaders.JarFileModuleLoader
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.module.PyModule
+import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.kyc.UnKyc
 import green.sailor.kython.util.CPythonCompiler
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Represents the main interpreter object. A number of properties for this object are exposed under
@@ -41,7 +48,7 @@ object KythonInterpreter {
     val cpyInterface = CPythonCompiler()
 
     /** The mapping of modules. */
-    val modules = mutableMapOf<String, KyUserModule>()
+    val modules = mutableMapOf<String, PyModule>()
 
     /** The thread-local for the current [InterpreterThread]. */
     val interpreterThreadLocal = ThreadLocal<InterpreterThread>()
@@ -98,7 +105,7 @@ object KythonInterpreter {
         val rootFunction = PyUserFunction(fn)
         val module = KyUserModule(rootFunction, path.toString(), Files.readAllLines(path))
         module.attribs["__name__"] = PyString("__main__")
-        modules["__main__"] = module
+        modules["__main__"] = PyUserModule(module, "__main__")
 
         runMainThread(module.stackFrame)
     }
@@ -111,7 +118,7 @@ object KythonInterpreter {
 
         val rootFunction = PyUserFunction(fn)
         val module = KyUserModule(rootFunction, "<code>", s.split(System.lineSeparator()))
-        modules["__main__"] = module
+        modules["__main__"] = PyUserModule(module, "__main__")
 
         runMainThread(module.stackFrame)
     }
