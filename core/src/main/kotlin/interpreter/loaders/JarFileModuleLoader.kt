@@ -17,12 +17,14 @@
 
 package green.sailor.kython.interpreter.loaders
 
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.kyc.UnKyc
+import java.nio.file.Files
 import java.nio.file.Paths
 
 /**
@@ -36,14 +38,33 @@ object JarFileModuleLoader {
      * @param name: The absolute name of the module to load.
      * @param args: Any arguments to inject into the module (e.g. for shim objects).
      */
-    fun getModule(name: String, args: List<PyObject> = listOf()): PyUserModule {
-        val path = javaClass.classLoader.getResource(name)?.toURI()?.let { Paths.get(it) }
-            ?: error("Could not find resource $name")
-        // todo: not assume these are all compiled kyc files
-        val file = UnKyc.parseKycFile(path)
+    fun getLibModule(name: String, args: Map<String, PyObject> = mapOf()): PyUserModule {
+        val qualName = "Lib/$name"
+        return getModule(qualName, args)
+    }
+
+    fun getModule(name: String, args: Map<String, PyObject> = mapOf()): PyUserModule {
+        val module = getModuleNoRun(name)
+        val frame = module.userModule.stackFrame
+        KythonInterpreter.runStackFrame(frame, mapOf())
+        return module
+    }
+
+    fun getModuleNoRun(name: String): PyUserModule {
+        val kycName = "$name.kyc"
+        val sourceName = "$name.py"
+
+        val kycPath = javaClass.classLoader.getResource(kycName)?.toURI()?.let { Paths.get(it) }
+            ?: error("Could not find resource $kycName")
+
+        val file = UnKyc.parseKycFile(kycPath)
         val moduleFunction = PyUserFunction(KyCodeObject(file.code))
-        val kyModule = KyUserModule(moduleFunction, path.fileName.toString(), listOf())
-        moduleFunction.kyCall(args)
-        return PyUserModule(kyModule, file.code.codeName.wrapped)
+        val sourcePath = javaClass.classLoader.getResource(sourceName)
+            ?.toURI()?.let { Paths.get(it) } ?: error("Could not find resource $kycName")
+        val sourceLines = Files.readAllLines(sourcePath)
+
+        val kyModule = KyUserModule(moduleFunction, kycPath.fileName.toString(), sourceLines)
+        val userModule = PyUserModule(kyModule, moduleFunction.code.codename)
+        return userModule
     }
 }

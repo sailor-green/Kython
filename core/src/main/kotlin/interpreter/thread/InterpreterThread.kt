@@ -15,33 +15,19 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter
+package green.sailor.kython.interpreter.thread
 
 import green.sailor.kython.MakeUp
+import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
-import kotlin.system.exitProcess
 
 /**
- * Represents an interpreter thread.
+ * The base class for an interpreter thread.
  */
-class InterpreterThread(
-    /** The root stack frame for this thread. */
-    var rootStackFrame: StackFrame
-) : Runnable {
-    // lazy to avoid creating a new thread for the main thread, when it's not needed.
-    /** The wrapped Java thread object. */
-    val thread by lazy { Thread(this) }
-
+abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     /** The current executing stack frame for this thread. */
     var currentStackFrame: StackFrame? = null
-
-    fun start() = thread.start()
-
-    override fun run() {
-        KythonInterpreter.interpreterThreadLocal.set(this)
-        kickoffThread(rootStackFrame)
-    }
 
     /**
      * Runs a stack frame on this thread.
@@ -70,7 +56,7 @@ class InterpreterThread(
      * you're invoking the interpreter normally, and [runRootFrame] if you want to just invoke the
      * interpreter.
      */
-    fun wrapTraceback(rootFrame: StackFrame, rootThread: Boolean) {
+    protected fun wrapTraceback(rootFrame: StackFrame) {
         try {
             runStackFrame(rootFrame, mapOf())
         } catch (e: KyError) {
@@ -92,28 +78,21 @@ class InterpreterThread(
                 }
                 System.err.println("${type.name}: $errorString")
             }
-
-            // exit with status code 1 if we hit an error
-            if (rootThread) {
-                exitProcess(1)
-            }
         }
     }
 
     /**
-     * Kicks off an interpreter thread.
-     *
-     * @param child: If this is a child thread. If false, exceptions will be fatal.
+     * Runs this thread, wrapping internal errors in a full dump.
      */
-    fun kickoffThread(frame: StackFrame, root: Boolean = true) {
+    protected fun runThreadWithErrorView(rethrow: Boolean = true) {
         try {
-            wrapTraceback(frame, root)
+            wrapTraceback(rootStackFrame)
         } catch (e: Throwable) { // blah blah, bad practice, who cares
             System.err.println("Fatal interpreter error!")
-            e.printStackTrace(System.err)
+            if (!rethrow) e.printStackTrace(System.err)
             System.err.println("\nKython stack (most recent frame first):")
 
-            val stacks = StackFrame.flatten(frame).reversed()
+            val stacks = StackFrame.flatten(rootStackFrame).reversed()
             stacks.forEachIndexed { idx, it ->
                 System.err.println("Frame $idx:")
                 with(it.createStackFrameInfo()) {
@@ -136,6 +115,12 @@ class InterpreterThread(
                 // newline
                 System.err.println()
             }
+            if (rethrow) throw e
         }
     }
+
+    /**
+     * Runs this interpreter thread.
+     */
+    abstract fun runThread()
 }

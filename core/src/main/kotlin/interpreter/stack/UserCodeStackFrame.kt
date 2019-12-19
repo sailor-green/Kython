@@ -679,12 +679,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val tos = stack.pop()
         val tos1 = stack.pop()
         val first = cb(tos1, tos)
-        if (first != PyNotImplemented) {
+        if (first !== PyNotImplemented) {
             return first
         }
 
         val second = cb2(tos, tos1)
-        if (second != PyNotImplemented) {
+        if (second !== PyNotImplemented) {
             return second
         }
 

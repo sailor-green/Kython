@@ -19,23 +19,21 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
+import green.sailor.kython.interpreter.bootstrap.Bootstrapper
 import green.sailor.kython.interpreter.functions.PyUserFunction
-import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
-import green.sailor.kython.interpreter.loaders.JarFileModuleLoader
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyModule
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.stack.StackFrame
-import green.sailor.kython.kyc.UnKyc
+import green.sailor.kython.interpreter.thread.InterpreterThread
+import green.sailor.kython.interpreter.thread.MainInterpreterThread
 import green.sailor.kython.util.CPythonCompiler
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 
 /**
  * Represents the main interpreter object. A number of properties for this object are exposed under
@@ -90,10 +88,13 @@ object KythonInterpreter {
      * Runs the main thread.
      */
     fun runMainThread(frame: StackFrame) {
-        val interpreterThread = InterpreterThread(frame)
+        val bootstrap = Bootstrapper.build()
+        bootstrap.runThread()
+
+        val interpreterThread = MainInterpreterThread(frame)
         threads.add(interpreterThread)
         // dont kick off a separate thread
-        interpreterThread.run()
+        interpreterThread.runThread()
     }
 
     /**
