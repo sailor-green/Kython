@@ -17,6 +17,8 @@
 
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.annotation.ExposeField
+import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.interpreter.Builtins
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
@@ -59,6 +61,8 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
     /** The code object for this function. */
     val code = codeObject
 
+    val wrappedCode = PyCodeObject(code)
+
     /** The KyModule for this function. */
     lateinit var module: KyUserModule
 
@@ -80,8 +84,11 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
     override fun createFrame(): StackFrame = UserCodeStackFrame(this)
 
     override fun pyToStr(): PyString = PyString("<user function ${code.codename}>")
-
     override fun pyGetRepr(): PyString = pyToStr()
+
+    override val internalDict: LinkedHashMap<String, PyObject> = super.internalDict.apply {
+        put("__code__", wrappedCode)
+    }
 
     override var type: PyType
         get() = PyUserFunctionType
