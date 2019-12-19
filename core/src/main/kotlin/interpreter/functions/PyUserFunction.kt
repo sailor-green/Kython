@@ -17,8 +17,6 @@
 
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.annotation.ExposeField
-import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.interpreter.Builtins
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
