@@ -61,6 +61,11 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 
+    override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyTuple) return PyNotImplemented
+        return get(subobjects + other.subobjects)
+    }
+
     override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
 
     override fun hashCode(): Int = subobjects.hashCode()
