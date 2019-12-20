@@ -43,7 +43,10 @@ import picocli.CommandLine.HelpCommand
 object MakeUp : Callable<Int> {
     // == JAVA PROPERTIES == //
     @JvmStatic
-    val debugMode = System.getProperty("kython.interpreter.debug") == "true"
+    val debugMode = System.getProperty("kython.interpreter.debug")?.toBoolean() ?: false
+
+    @JvmStatic
+    val noBootstrap = System.getProperty("kython.interpreter.nobootstrap")?.toBoolean() ?: false
 
     // == CLI PROPERTIES == //
 

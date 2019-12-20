@@ -19,6 +19,7 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.MakeUp
 import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
 import green.sailor.kython.interpreter.bootstrap.Bootstrapper
@@ -88,8 +89,10 @@ object KythonInterpreter {
      * Runs the main thread.
      */
     fun runMainThread(frame: StackFrame) {
-        val bootstrap = Bootstrapper.build()
-        bootstrap.runThread()
+        if (!MakeUp.noBootstrap) {
+            val bootstrap = Bootstrapper.build()
+            bootstrap.runThread()
+        }
 
         val interpreterThread = MainInterpreterThread(frame)
         threads.add(interpreterThread)
