@@ -63,7 +63,6 @@ tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
     return bases.issubclass(others)
 }
 
-
 // helper functions
 /**
  * Casts this [PyObject] to its concrete subclass, raising a PyException if it fails.
