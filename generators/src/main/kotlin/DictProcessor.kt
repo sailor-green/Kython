@@ -25,6 +25,8 @@ import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.note
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING
 import java.nio.file.Paths
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -41,6 +43,7 @@ import javax.lang.model.element.TypeElement
  * Annotation processor that
  */
 @SupportedOptions(DictProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
+@IncrementalAnnotationProcessor(ISOLATING)
 class DictProcessor : AbstractProcessor() {
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
