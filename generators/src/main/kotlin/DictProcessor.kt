@@ -202,7 +202,7 @@ class DictProcessor : AbstractProcessor() {
                         "KEYWORD" -> argTypeKw
                         "KEYWORD_STAR" -> argTypeKwStar
                         else -> {
-                            processingEnv.error("Unknown arg type ${argType}")
+                            processingEnv.error("Unknown arg type $argType")
                             error("Unknown arg type")
                         }
                     }

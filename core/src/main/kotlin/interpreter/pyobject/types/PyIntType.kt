@@ -27,7 +27,6 @@ import green.sailor.kython.interpreter.valueError
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-
 /**
  * Represents the type of an int.
  */
