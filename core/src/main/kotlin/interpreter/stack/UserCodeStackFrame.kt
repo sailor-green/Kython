@@ -223,6 +223,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.BUILD_LIST -> buildSimple(BuildType.LIST, param)
                 InstructionOpcode.BUILD_STRING -> buildSimple(BuildType.STRING, param)
                 InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
+                InstructionOpcode.BUILD_CONST_KEY_MAP -> buildConstKeyMap(param)
 
                 InstructionOpcode.LIST_APPEND -> listAppend(param)
                 /*InstructionOpcode.SET_ADD -> setAdd(param)
@@ -501,13 +502,19 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         if (flags and FunctionFlags.ANNOTATIONS != 0) {
             val annotationDict = stack.pop()
         }
-        if (flags and FunctionFlags.KEYWORD_DEFAULT != 0) {
-            val kwOnlyParamDefaultDict = stack.pop()
+        val defaults = if (flags and FunctionFlags.KEYWORD_DEFAULT != 0) {
+            val kwOnlyParamDefaultDict = stack.pop().cast<PyDict>()
+            val newKeys =
+                kwOnlyParamDefaultDict.items.mapKeys { it.key.cast<PyString>().wrappedString }
+            newKeys
+        } else { mapOf() }
+
+        val defaultsTuple = if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
+            stack.pop().cast<PyTuple>().subobjects
+        } else {
+            listOf()
         }
-        if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
-            val positionalParamDefaultTuple = stack.pop()
-        }
-        val function = PyUserFunction(code.wrappedCodeObject)
+        val function = PyUserFunction(code.wrappedCodeObject, defaults, defaultsTuple)
         function.module = this.function.module
         stack.push(function)
         bytecodePointer += 1
@@ -906,6 +913,19 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             UnaryOp.NEGATIVE -> stack.push(top.pyNegative())
             UnaryOp.POSITIVE -> stack.push(top.pyPositive())
         }
+        bytecodePointer += 1
+    }
+
+    /**
+     * BUILD_CONST_KEY_MAP
+     */
+    fun buildConstKeyMap(arg: Byte) {
+        val argCount = arg.toInt()
+        val tuple = stack.pop().cast<PyTuple>()
+        val args = (0 until argCount).map { stack.pop() }.asReversed().iterator()
+        val collected =
+            tuple.subobjects.associateWithTo(linkedMapOf()) { args.next() }
+        stack.push(PyDict(collected))
         bytecodePointer += 1
     }
 

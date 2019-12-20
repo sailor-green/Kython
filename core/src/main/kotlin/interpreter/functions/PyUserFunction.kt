@@ -38,7 +38,11 @@ import green.sailor.kython.interpreter.typeError
  *
  * @param codeObject: The marshalled code object to transform into a real code object.
  */
-class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
+class PyUserFunction(
+    codeObject: KyCodeObject,
+    val defaults: Map<String, PyObject> = mapOf(),
+    val defaultsTuple: List<PyObject> = listOf()
+) : PyFunction() {
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
@@ -106,7 +110,6 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
             args.add(Pair(name, ArgType.POSITIONAL))
         }
 
-        // todo: with defaults
         // add a *args if we have one
         if (code.flags and KyCodeObject.CO_HAS_VARARGS != 0) {
             val name = code.varnames[code.argCount]
@@ -126,7 +129,9 @@ class PyUserFunction(codeObject: KyCodeObject) : PyFunction() {
             args.add(Pair(name, ArgType.KEYWORD_STAR))
         }
 
-        return PyCallableSignature(*args.toTypedArray())
+        val sig = PyCallableSignature(*args.toTypedArray())
+        sig.defaults.putAll(defaults)
+        return sig
     }
 
     override val signature: PyCallableSignature by lazy { generateSignature() }
