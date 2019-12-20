@@ -25,8 +25,6 @@ import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.note
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING
 import java.nio.file.Paths
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -38,6 +36,8 @@ import javax.annotation.processing.SupportedOptions
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING
 
 /**
  * Annotation processor that
