@@ -22,6 +22,7 @@ import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.iterate
 import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyNone
@@ -52,7 +53,7 @@ object PyListType : PyType("list") {
         "item", "POSITIONAL"
     )
     fun pyListAppend(kwargs: Map<String, PyObject>): PyObject {
-        val self = kwargs["self"]?.cast<PyList>() ?: error("Built-in signature mismatch!")
+        val self = kwargs["self"].cast<PyList>()
         val value = kwargs["value"] ?: error("Built-in signature mismatch!")
         (self.subobjects as MutableList).add(value)
         return PyNone

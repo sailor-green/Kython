@@ -22,6 +22,7 @@ import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -56,7 +57,7 @@ object PyStringType : PyType("str") {
     @ExposeMethod("lower")
     @MethodParams("self", "POSITIONAL")
     fun pyStrLower(kwargs: Map<String, PyObject>): PyString {
-        val self = kwargs["self"]!!.cast<PyString>()
+        val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toLowerCase())
     }
 
@@ -64,7 +65,7 @@ object PyStringType : PyType("str") {
     @ExposeMethod("upper")
     @MethodParams("self", "POSITIONAL")
     fun pyStrUpper(kwargs: Map<String, PyObject>): PyString {
-        val self = kwargs["self"]!!.cast<PyString>()
+        val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toUpperCase())
     }
 
@@ -74,7 +75,7 @@ object PyStringType : PyType("str") {
     @ExposeMethod("__int__")
     @MethodParams("self", "POSITIONAL")
     fun pyStrInt(kwargs: Map<String, PyObject>): PyInt {
-        val self = kwargs["self"]!!.cast<PyString>()
+        val self = kwargs["self"].cast<PyString>()
         try {
             return PyInt(self.wrappedString.toInt().toLong())
         } catch (e: NumberFormatException) {

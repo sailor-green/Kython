@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.functions.magic
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -29,7 +30,7 @@ import green.sailor.kython.interpreter.pyobject.PyString
 object ObjectSetattribute : DefaultBuiltinFunction("object.__getattribute__") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"] ?: error("Built-in signature mismatch!")
-        val name = kwargs["name"]?.cast<PyString>() ?: error("Built-in signature mismatch!")
+        val name = kwargs["name"].cast<PyString>()
         val value = kwargs["value"] ?: error("Built-in signature mismatch!")
 
         self.internalDict[name.wrappedString] = value

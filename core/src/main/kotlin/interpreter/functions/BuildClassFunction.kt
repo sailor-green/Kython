@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.functions
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyDict
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -32,9 +33,9 @@ import green.sailor.kython.interpreter.stack.UserCodeStackFrame
  */
 object BuildClassFunction : PyBuiltinFunction("__build_class__") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-        val clsFn = kwargs["class_body"]!!.cast<PyUserFunction>()
-        val name = kwargs["name"]!!.cast<PyString>()
-        val bases = kwargs["bases"]!!.cast<PyTuple>()
+        val clsFn = kwargs["class_body"].cast<PyUserFunction>()
+        val name = kwargs["name"].cast<PyString>()
+        val bases = kwargs["bases"].cast<PyTuple>()
 
         // TODO: __prepare__
         // build the class body dict

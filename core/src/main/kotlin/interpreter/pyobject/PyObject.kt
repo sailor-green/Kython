@@ -67,17 +67,6 @@ abstract class PyObject {
     /** The `__dict__` of this PyObject. */
     open val internalDict = linkedMapOf<String, PyObject>()
 
-    // helper functions
-    /**
-     * Casts this [PyObject] to its concrete subclass, raising a PyException if it fails.
-     */
-    inline fun <reified T : PyObject> cast(): T {
-        if (this !is T) {
-            typeError("Invalid type: ${type.name}")
-        }
-        return this
-    }
-
     /**
      * Checks if this type is callable. This will check for [PyCallable], or a valid `__call__`.
      */

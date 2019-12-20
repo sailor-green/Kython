@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.functions.magic
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -33,7 +34,7 @@ import green.sailor.kython.interpreter.throwKy
 object ObjectGetattribute : PyBuiltinFunction("object.__getattribute__") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"]!!
-        val name = kwargs["name"]?.cast<PyString>() ?: error("Built-in signature mismatch!")
+        val name = kwargs["name"].cast<PyString>()
         val attrName = name.wrappedString
 
         // try and find the object on the dict

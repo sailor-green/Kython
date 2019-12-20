@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.exception
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
@@ -39,7 +40,7 @@ open class PyExceptionType(
     fun makeException(args: PyTuple) = PyException(this, args)
 
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val args = kwargs["args"]?.cast<PyTuple>() ?: error("Built-in signature mismatch!")
+        val args = kwargs["args"].cast<PyTuple>()
         return makeException(args)
     }
 

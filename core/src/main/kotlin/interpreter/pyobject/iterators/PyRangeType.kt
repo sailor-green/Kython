@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.iterators
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -26,7 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyType
 
 object PyRangeType : PyType("range") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val argStart = kwargs["start"]?.cast<PyInt>() ?: error("Built-in signature mismatch!")
+        val argStart = kwargs["start"].cast<PyInt>()
         val argStop = kwargs["stop"] ?: error("Built-in signature mismatch!")
         return if (argStop === PyNone) {
             val start = 0L

@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.user
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.functions.magic.DefaultBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.*
