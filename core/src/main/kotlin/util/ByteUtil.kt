@@ -81,7 +81,6 @@ fun bytesToLongLE(ba: ByteArray): Long {
     return long
 }
 
-
 fun bytesToLongBE(ba: ByteArray): Long {
     require(ba.size <= 8) { "Cannot convert arrays > 8 bytes to longs" }
     var long = 0L
