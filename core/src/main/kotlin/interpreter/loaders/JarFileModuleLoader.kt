@@ -45,8 +45,11 @@ object JarFileModuleLoader {
         return getModule(qualName, pyName, args)
     }
 
-    fun getModule(name: String, pyName: String,
-                  args: Map<String, PyObject> = mapOf()): PyUserModule {
+    fun getModule(
+        name: String,
+        pyName: String,
+        args: Map<String, PyObject> = mapOf()
+    ): PyUserModule {
         val module = getModuleNoRun(name, pyName)
         val frame = module.userModule.stackFrame
         KythonInterpreter.runStackFrame(frame, mapOf())
