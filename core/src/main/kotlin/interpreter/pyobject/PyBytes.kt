@@ -57,6 +57,11 @@ class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
 
     override fun pyLen(): PyInt = PyInt(wrapped.size.toLong())
 
+    override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
+        if (other !is PyBytes) return PyNotImplemented
+        return PyBytes(wrapped + other.wrapped)
+    }
+
     override var type: PyType
         get() = PyBytesType
         set(_) = Exceptions.invalidClassSet(this)
