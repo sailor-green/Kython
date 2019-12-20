@@ -203,7 +203,6 @@ class DictProcessor : AbstractProcessor() {
             val signature = PropertySpec.builder("signature", pyCallableSignature).apply {
                 addModifiers(KModifier.OVERRIDE)
                 val sigAnno = i.getAnnotation(MethodParams::class.java)
-                processingEnv.note(sigAnno.parameters.joinToString())
                 val statements = sigAnno.parameters.map {
                     val argtype = when (it.type) {
                         "POSITIONAL" -> argTypePos
