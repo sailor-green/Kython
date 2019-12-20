@@ -17,6 +17,8 @@
 
 package green.sailor.kython.test
 
+import green.sailor.kython.util.bytesToLongBE
+import green.sailor.kython.util.bytesToLongLE
 import green.sailor.kython.util.longToBytesBE
 import green.sailor.kython.util.longToBytesLE
 import org.junit.jupiter.api.Assertions.*
@@ -39,5 +41,21 @@ class TestByteUtil {
         val toBytes = longToBytesLE(long)
         assertEquals(toBytes.size, 3)
         assertTrue(toBytes.contentEquals(expected))
+    }
+
+    @Test
+    fun `Test bytes to long, big endian`() {
+        val bytes = byteArrayOf(18, 52, 86)
+        val expected = 0x123456L
+        val fromBytes = bytesToLongBE(bytes)
+        assertEquals(fromBytes, expected)
+    }
+
+    @Test
+    fun `Test bytes to long, little endian`() {
+        val bytes = byteArrayOf(86, 52, 18)
+        val expected = 0x123456L
+        val fromBytes = bytesToLongLE(bytes)
+        assertEquals(fromBytes, expected)
     }
 }

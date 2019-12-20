@@ -67,3 +67,26 @@ fun longToBytesLE(long: Long, workingArray: ByteArray? = null): ByteArray {
     }
     return result
 }
+
+/**
+ * Converts a list of bytes to a long,
+ */
+fun bytesToLongLE(ba: ByteArray): Long {
+    require(ba.size <= 8) { "Cannot convert arrays > 8 bytes to longs" }
+
+    var long = 0L
+    for ((idx, byte) in ba.withIndex()) {
+        long = long or (byte.toLong() shl (8 * idx))
+    }
+    return long
+}
+
+
+fun bytesToLongBE(ba: ByteArray): Long {
+    require(ba.size <= 8) { "Cannot convert arrays > 8 bytes to longs" }
+    var long = 0L
+    for ((idx, byte) in ba.reversed().withIndex()) {
+        long = long or (byte.toLong() shl (8 * idx))
+    }
+    return long
+}
