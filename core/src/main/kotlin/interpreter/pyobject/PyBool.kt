@@ -46,6 +46,7 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
     override fun pyToStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
     override fun pyGetRepr(): PyString = pyToStr()
     override fun pyToBool(): PyBool = this
+    override fun pyToInt(): PyInt = if (wrapped) ONE else ZERO
     override fun pyEquals(other: PyObject): PyObject = get(this === other)
 
     /**
