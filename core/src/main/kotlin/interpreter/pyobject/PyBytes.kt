@@ -59,6 +59,9 @@ class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
 
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
         if (other !is PyBytes) return PyNotImplemented
+        // simple case, concatting empty bytes, we can micro-optimise and just return this
+        if (other.wrapped.isEmpty()) return this
+
         return PyBytes(wrapped + other.wrapped)
     }
 
