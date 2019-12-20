@@ -30,6 +30,7 @@ annotation class ExposeMethod(
     val name: String
 )
 
+// annotation processing doesn't... work... with repeatables.......???
 /**
  * Represents a method parameter.
  *
@@ -37,8 +38,7 @@ annotation class ExposeMethod(
  * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
  */
 @Retention(AnnotationRetention.SOURCE)
-@Repeatable
-annotation class MethodParam(
-    val name: String,
-    val argType: String
+@Target(AnnotationTarget.FUNCTION)
+annotation class MethodParams(
+    vararg val args: String
 )

@@ -19,10 +19,7 @@ package green.sailor.kython.generation
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import green.sailor.kython.annotation.ExposeField
-import green.sailor.kython.annotation.ExposeMethod
-import green.sailor.kython.annotation.GenerateMethods
-import green.sailor.kython.annotation.MethodParam
+import green.sailor.kython.annotation.*
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.note
 import java.nio.file.Paths
@@ -196,19 +193,20 @@ class DictProcessor : AbstractProcessor() {
             // override val signature
             val signature = PropertySpec.builder("signature", pyCallableSignature).apply {
                 addModifiers(KModifier.OVERRIDE)
-                val sigAnnos = i.getAnnotationsByType(MethodParam::class.java)
-                val statements = sigAnnos.map {
-                    val argtype = when (it.argType) {
+                val sigAnno = i.getAnnotation(MethodParams::class.java)
+                processingEnv.note(sigAnno.args.joinToString())
+                val statements = sigAnno.args.toList().chunked(2).map { (name, argType) ->
+                    val argtype = when (argType) {
                         "POSITIONAL" -> argTypePos
                         "POSITIONAL_STAR" -> argTypePosStar
                         "KEYWORD" -> argTypeKw
                         "KEYWORD_STAR" -> argTypeKwStar
                         else -> {
-                            processingEnv.error("Unknown arg type ${it.argType}")
+                            processingEnv.error("Unknown arg type ${argType}")
                             error("Unknown arg type")
                         }
                     }
-                    CodeBlock.of("%S to %M", it.name, argtype)
+                    CodeBlock.of("%S to %M", name, argtype)
                 }
                 initializer("%T(${statements.joinToString(", ")})",
                     pyCallableSignature

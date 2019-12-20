@@ -19,7 +19,7 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GenerateMethods
-import green.sailor.kython.annotation.MethodParam
+import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
@@ -64,9 +64,11 @@ object PyIntType : PyType("int") {
     }
 
     @ExposeMethod("to_bytes")
-    @MethodParam("self", "POSITIONAL")
-    @MethodParam("size", "POSITIONAL")
-    @MethodParam("endian", "POSITIONAL")
+    @MethodParams(
+        "self", "POSITIONAL",
+        "size", "POSITIONAL",
+        "endian", "POSITIONAL"
+    )
     fun pyIntToBytes(kwargs: Map<String, PyObject>): PyBytes {
         TODO()
     }
