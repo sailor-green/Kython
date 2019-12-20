@@ -34,7 +34,7 @@ annotation class ExposeMethod(
  * Represents a method parameter.
  *
  * @param name: The name of the method parameter.
- * @param argType: The argument type of the method parameter. Will be looked up from ArgType.
+ * @param type: The argument type of the method parameter. Will be looked up from ArgType.
  */
 @Retention(AnnotationRetention.SOURCE)
 annotation class MethodParam(val name: String, val type: String)
@@ -42,7 +42,7 @@ annotation class MethodParam(val name: String, val type: String)
 /**
  * Represents a collection of method parameters.
  *
- * @param parameters the collection of [MethodParam]s
+ * @param parameters The collection of [MethodParam]s.
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
