@@ -19,14 +19,20 @@ package green.sailor.kython.generation
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import green.sailor.kython.annotation.*
+import green.sailor.kython.annotation.ExposeField
+import green.sailor.kython.annotation.ExposeMethod
+import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.note
 import java.nio.file.Paths
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import javax.annotation.processing.*
+import javax.annotation.processing.AbstractProcessor
+import javax.annotation.processing.Generated
+import javax.annotation.processing.RoundEnvironment
+import javax.annotation.processing.SupportedOptions
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
@@ -194,21 +200,22 @@ class DictProcessor : AbstractProcessor() {
             val signature = PropertySpec.builder("signature", pyCallableSignature).apply {
                 addModifiers(KModifier.OVERRIDE)
                 val sigAnno = i.getAnnotation(MethodParams::class.java)
-                processingEnv.note(sigAnno.args.joinToString())
-                val statements = sigAnno.args.toList().chunked(2).map { (name, argType) ->
-                    val argtype = when (argType) {
+                processingEnv.note(sigAnno.parameters.joinToString())
+                val statements = sigAnno.parameters.map {
+                    val argtype = when (it.type) {
                         "POSITIONAL" -> argTypePos
                         "POSITIONAL_STAR" -> argTypePosStar
                         "KEYWORD" -> argTypeKw
                         "KEYWORD_STAR" -> argTypeKwStar
                         else -> {
-                            processingEnv.error("Unknown arg type $argType")
+                            processingEnv.error("Unknown arg type ${it.type}")
                             error("Unknown arg type")
                         }
                     }
-                    CodeBlock.of("%S to %M", name, argtype)
+                    CodeBlock.of("%S to %M", it.name, argtype)
                 }
-                initializer("%T(${statements.joinToString(", ")})",
+                initializer(
+                    "%T(${statements.joinToString(", ")})",
                     pyCallableSignature
                 )
             }.build()

@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
@@ -55,7 +56,7 @@ object PyStringType : PyType("str") {
 
     /** str.lower() */
     @ExposeMethod("lower")
-    @MethodParams("self", "POSITIONAL")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
     fun pyStrLower(kwargs: Map<String, PyObject>): PyString {
         val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toLowerCase())
@@ -63,7 +64,7 @@ object PyStringType : PyType("str") {
 
     /** str.upper() */
     @ExposeMethod("upper")
-    @MethodParams("self", "POSITIONAL")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
     fun pyStrUpper(kwargs: Map<String, PyObject>): PyString {
         val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toUpperCase())
@@ -73,7 +74,7 @@ object PyStringType : PyType("str") {
     // but this is exposed in case somebody wants to do it manually?
     /** str.__int__() */
     @ExposeMethod("__int__")
-    @MethodParams("self", "POSITIONAL")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
     fun pyStrInt(kwargs: Map<String, PyObject>): PyInt {
         val self = kwargs["self"].cast<PyString>()
         try {
