@@ -39,13 +39,8 @@ object PyIntType : PyType("int") {
         when (value) {
             // MUST COME FIRST
             // cpython: int(True) == 1, type(int(True)) == int
-            //
-            // since PyBool *is* a PyInt, normally, this would pass through to the PyInt and return
-            // the value directly.
-            // but instead, we explicitly check for it, then re-wrap it.
-            // i would like to not have to re-wrap it, but im not sure how that would work...
             is PyBool -> {
-                return PyInt(value.wrappedInt)
+                return if (value.wrapped) PyInt.ONE else PyInt.ZERO
             }
             is PyInt -> {
                 return value

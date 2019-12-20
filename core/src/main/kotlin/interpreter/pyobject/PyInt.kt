@@ -25,6 +25,11 @@ import kotlin.math.abs
  * Represents a Python int type. This internally wraps a long,
  */
 open class PyInt(val wrappedInt: Long) : PyPrimitive() {
+    companion object {
+        val ZERO = PyInt(0L)
+        val ONE = PyInt(1L)
+    }
+
     override fun unwrap(): Any = wrappedInt
 
     // default impls
