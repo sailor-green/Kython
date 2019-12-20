@@ -24,12 +24,17 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.valueError
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
 
 /**
  * Represents the type of an int.
  */
 @GenerateMethods
 object PyIntType : PyType("int") {
+    val toBytesBuffer = ByteBuffer.allocate(8)
+
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val value = kwargs["value"] ?: error("Built-in signature mismatch")
         when (value) {
@@ -67,10 +72,40 @@ object PyIntType : PyType("int") {
     @MethodParams(
         "self", "POSITIONAL",
         "size", "POSITIONAL",
-        "endian", "POSITIONAL"
+        "byteorder", "POSITIONAL"
     )
     fun pyIntToBytes(kwargs: Map<String, PyObject>): PyBytes {
-        TODO()
+        val self = kwargs["self"]!!.cast<PyInt>().wrappedInt
+        val size = kwargs["size"]?.cast<PyInt>()?.wrappedInt
+            ?: error("Built-in signature mismatch")
+        val endian = kwargs["byteorder"]?.cast<PyString>()?.wrappedString
+            ?: error("Built-in signature mismatch")
+
+        // https://stackoverflow.com/a/2274499
+        var n = 0
+        var x = self
+        do {
+            x = x shr 8
+            n++
+        } while (x != 0L)
+
+        if (n > size) TODO("Overflow error")
+
+        // blegh...
+        // todo: make this better
+        toBytesBuffer.clear()
+        toBytesBuffer.order(
+            if (endian == "little") ByteOrder.LITTLE_ENDIAN else ByteOrder.BIG_ENDIAN
+        )
+        toBytesBuffer.putLong(self)
+
+        val result = toBytesBuffer.array().copyOf()
+        val ba = PyBytes(if (endian == "little")
+            result.dropLast(8 - size.toInt()).toByteArray()
+        else
+            result.drop(8 - size.toInt()).toByteArray()
+        )
+        return ba
     }
 
     override val signature: PyCallableSignature by lazy {
