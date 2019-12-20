@@ -28,7 +28,8 @@ class Bootstrapper private constructor(bsFrame: StackFrame) : InterpreterThread(
          * Builds the bootstrapper frame.
          */
         fun build(): Bootstrapper {
-            val bootstrapModule = JarFileModuleLoader.getModuleNoRun("bootstrap")
+            val bootstrapModule = JarFileModuleLoader
+                .getModuleNoRun("bootstrap", "__kython_bootstrap")
             addBootstrapFunctions(bootstrapModule.userModule)
             val frame = bootstrapModule.userModule.stackFrame
             return Bootstrapper(frame)

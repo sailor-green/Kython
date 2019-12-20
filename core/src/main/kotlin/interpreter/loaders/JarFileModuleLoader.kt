@@ -22,6 +22,7 @@ import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.kyc.UnKyc
 import java.nio.file.Files
@@ -40,17 +41,19 @@ object JarFileModuleLoader {
      */
     fun getLibModule(name: String, args: Map<String, PyObject> = mapOf()): PyUserModule {
         val qualName = "Lib/$name"
-        return getModule(qualName, args)
+        val pyName = name.replace("/", ".")
+        return getModule(qualName, pyName, args)
     }
 
-    fun getModule(name: String, args: Map<String, PyObject> = mapOf()): PyUserModule {
-        val module = getModuleNoRun(name)
+    fun getModule(name: String, pyName: String,
+                  args: Map<String, PyObject> = mapOf()): PyUserModule {
+        val module = getModuleNoRun(name, pyName)
         val frame = module.userModule.stackFrame
         KythonInterpreter.runStackFrame(frame, mapOf())
         return module
     }
 
-    fun getModuleNoRun(name: String): PyUserModule {
+    fun getModuleNoRun(name: String, pyName: String): PyUserModule {
         val kycName = "$name.kyc"
         val sourceName = "$name.py"
 
@@ -64,6 +67,7 @@ object JarFileModuleLoader {
         val sourceLines = Files.readAllLines(sourcePath)
 
         val kyModule = KyUserModule(moduleFunction, kycPath.fileName.toString(), sourceLines)
+        kyModule.attribs["__name__"] = PyString(pyName)
         val userModule = PyUserModule(kyModule, moduleFunction.code.codename)
         return userModule
     }
