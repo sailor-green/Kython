@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
@@ -49,8 +50,8 @@ object PyListType : PyType("list") {
     /** list.append(item) */
     @ExposeMethod("append")
     @MethodParams(
-        "self", "POSITIONAL",
-        "item", "POSITIONAL"
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("item", "POSITIONAL")
     )
     fun pyListAppend(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"].cast<PyList>()

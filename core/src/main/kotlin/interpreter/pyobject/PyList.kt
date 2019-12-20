@@ -34,6 +34,7 @@ class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
         if (other !is PyList) return PyNotImplemented
         return PyBool.get(subobjects == other.subobjects)
     }
+
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyHash(): PyInt = typeError("lists are not hashable - they are mutable")

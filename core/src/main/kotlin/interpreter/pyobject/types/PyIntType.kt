@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
@@ -52,7 +53,7 @@ object PyIntType : PyType("int") {
                 } catch (e: NumberFormatException) {
                     valueError(
                         "Cannot convert '${value.wrappedString}' to int " +
-                        "with base ${base.wrappedInt}"
+                            "with base ${base.wrappedInt}"
                     )
                 }
             }
@@ -64,9 +65,9 @@ object PyIntType : PyType("int") {
 
     @ExposeMethod("to_bytes")
     @MethodParams(
-        "self", "POSITIONAL",
-        "size", "POSITIONAL",
-        "byteorder", "POSITIONAL"
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("size", "POSITIONAL"),
+        MethodParam("byteorder", "POSITIONAL")
     )
     fun pyIntToBytes(kwargs: Map<String, PyObject>): PyBytes {
         val self = kwargs["self"].cast<PyInt>().wrappedInt
@@ -88,8 +89,8 @@ object PyIntType : PyType("int") {
     // TODO: Class methods...
     @ExposeMethod("from_bytes")
     @MethodParams(
-        "bytes", "POSITIONAL",
-        "byteorder", "POSITIONAL"
+        MethodParam("bytes", "POSITIONAL"),
+        MethodParam("byteorder", "POSITIONAL")
     )
     fun pyIntFromBytes(kwargs: Map<String, PyObject>): PyInt {
         val bytes = kwargs["bytes"].cast<PyBytes>().wrapped
