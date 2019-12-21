@@ -37,7 +37,6 @@ class PyClassmethod(val wrapped: PyObject) : PyObject() {
         )
     }
 
-
     // this will always run!
     override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
         return PyMethod(wrapped, klass)

@@ -33,11 +33,11 @@ class PyMethod(
 
     override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
         val realArgs = args.toMutableList().also { it.add(instance) }
-        return super.pyCall(realArgs, kwargTuple)
+        return function.pyCall(realArgs, kwargTuple)
     }
 
     override fun kyCall(args: List<PyObject>): PyObject {
-        return super.kyCall(args.toMutableList().also { it.add(instance) })
+        return function.kyCall(args.toMutableList().also { it.add(instance) })
     }
 
     override fun pyToStr(): PyString {
