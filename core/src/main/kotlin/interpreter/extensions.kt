@@ -70,7 +70,11 @@ tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
 fun PyObject.getAttribute(attrName: String): PyObject {
     // try and find the object on the dict
     if (attrName in internalDict) {
-        return internalDict[attrName]!!
+        return if (this is PyType) {
+            internalDict[attrName]!!.pyDescriptorGet(PyNone, this)
+        } else {
+            internalDict[attrName]!!.pyDescriptorGet(this, this.type)
+        }
     }
 
     // try and find it on the MRO

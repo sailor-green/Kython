@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.*
 import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.interpreter.pyobject.PyClassmethod
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.iterators.PyRangeType
@@ -54,6 +55,7 @@ object Builtins {
     val BYTES_TYPE = PyBytesType
     val LIST_TYPE = PyListType
     val RANGE_TYPE = PyRangeType
+    val CLASSMETHOD_TYPE = PyClassmethod.PyClassmethodType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
@@ -66,7 +68,6 @@ object Builtins {
         "isinstance" to ISINSTANCE,
         "len" to LEN,
         "id" to ID,
-
         // class types
         "object" to OBJECT,
         "type" to TYPE,
@@ -79,11 +80,12 @@ object Builtins {
         "bool" to BOOL_TYPE,
         "bytes" to BYTES_TYPE,
         "range" to RANGE_TYPE,
+        "classmethod" to CLASSMETHOD_TYPE,
 
         // specials
         "None" to NONE,
         "True" to PyBool.TRUE,
         "False" to PyBool.FALSE,
-        "NotImplemented" to PyNotImplemented
+        "NotImplemented" to NOT_IMPLEMENTED
     ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
 }
