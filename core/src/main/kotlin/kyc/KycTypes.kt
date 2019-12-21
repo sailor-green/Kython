@@ -19,6 +19,7 @@ package green.sailor.kython.kyc
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.util.PyObjectMap
 
 /**
  * The enum for marshal types.
@@ -156,7 +157,7 @@ class KycTuple(override val wrapped: List<BaseKycType>) : BaseKycType() {
 class KycDict(override val wrapped: Map<BaseKycType, BaseKycType>) : BaseKycType() {
     override fun wrap(): PyDict {
         val transformed =
-            wrapped.entries.associateByTo(linkedMapOf(), { it.key.wrap() }, { it.value.wrap() })
+            wrapped.entries.associateByTo(PyObjectMap(), { it.key.wrap() }, { it.value.wrap() })
         return PyDict(transformed)
     }
 }

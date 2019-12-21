@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
+import green.sailor.kython.util.PyObjectMap
 import green.sailor.kython.util.PythonFunctionStack
 import java.util.*
 import kotlin.collections.LinkedHashSet
@@ -924,7 +925,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val tuple = stack.pop().cast<PyTuple>()
         val args = (0 until argCount).map { stack.pop() }.asReversed().iterator()
         val collected =
-            tuple.subobjects.associateWithTo(linkedMapOf()) { args.next() }
+            tuple.subobjects.associateWithTo(PyObjectMap()) { args.next() }
         stack.push(PyDict(collected))
         bytecodePointer += 1
     }

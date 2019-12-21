@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.util.PyObjectMap
 
 /**
  * Represents the `__build_class__` builtin, used to create new classes.
@@ -39,7 +40,7 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
 
         // TODO: __prepare__
         // build the class body dict
-        val items = linkedMapOf<PyObject, PyObject>()
+        val items = PyObjectMap()
         val bodyDict = PyDict(items)
         if (clsFn.code.argCount > 0) {
             clsFn.kyCall(listOf(bodyDict))

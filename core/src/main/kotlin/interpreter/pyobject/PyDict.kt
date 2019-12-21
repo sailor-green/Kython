@@ -20,18 +20,19 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyDictType
 import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.util.PyObjectMap
 
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: LinkedHashMap<out PyObject, out PyObject>) : PyPrimitive() {
+class PyDict(val items: PyObjectMap) : PyPrimitive() {
     companion object {
         /**
          * Creates a new PyDict from any map, wrapping primitive types.
          */
         fun fromAnyMap(map: Map<*, *>): PyDict {
             val newMap = map.entries.associateByTo(
-                linkedMapOf(), { get(it.key) }, { get(it.value) }
+                PyObjectMap(), { get(it.key) }, { get(it.value) }
             )
 
             return PyDict(newMap)

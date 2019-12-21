@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.util.PyObjectMap
 
 // initialdict:
 // take PyString as an example
@@ -368,7 +369,7 @@ abstract class PyObject {
      */
     val pyDict: PyDict
         get() {
-            val mapTo = LinkedHashMap<PyString, PyObject>(internalDict.size)
+            val mapTo = PyObjectMap()
             return PyDict(internalDict.mapKeysTo(mapTo) { PyString(it.key) })
         }
 }
