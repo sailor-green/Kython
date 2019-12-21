@@ -27,9 +27,10 @@ import green.sailor.kython.interpreter.stack.StackFrame
  * Represents a method (a function bound to a self object).
  */
 class PyMethod(
-    val function: PyCallable,
+    val function: PyObject,
     val instance: PyObject
-) : PyObject(), PyCallable {
+) : PyObject() {
+    override fun kyIsCallable(): Boolean = true
 
     override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
         val realArgs = args.toMutableList().also { it.add(instance) }
@@ -39,10 +40,6 @@ class PyMethod(
     override fun kyCall(args: List<PyObject>): PyObject {
         return super.kyCall(args.toMutableList().also { it.add(instance) })
     }
-
-    override fun createFrame(): StackFrame = function.createFrame()
-
-    override val signature: PyCallableSignature = function.signature
 
     override fun pyToStr(): PyString {
         val output = buildString {
