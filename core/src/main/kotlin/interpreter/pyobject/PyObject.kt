@@ -82,7 +82,7 @@ abstract class PyObject {
      */
     open fun kyGetSignature(): PyCallableSignature {
         if (this is PyCallable) return signature
-        error("This object is not callable")
+        typeError("This object is not callable")
     }
 
     /**

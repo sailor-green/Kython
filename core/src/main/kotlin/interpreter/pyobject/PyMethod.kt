@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.types.PyMethodType
 
 /**
@@ -28,6 +29,7 @@ class PyMethod(
     val instance: PyObject
 ) : PyObject() {
     override fun kyIsCallable(): Boolean = true
+    override fun kyGetSignature(): PyCallableSignature = function.kyGetSignature()
 
     override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
         val realArgs = args.toMutableList().also { it.add(instance) }
