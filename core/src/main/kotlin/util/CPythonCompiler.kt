@@ -30,11 +30,17 @@ import java.nio.file.Path
  * Represents the CPython compiler interface.
  */
 class CPythonCompiler {
-    private val kycPyPath = Files.createTempDirectory("kython").resolve("kyc.py")
+    private val kycDir = Files.createTempDirectory("kython")
+    private val kycPyPath = kycDir.resolve("kyc.py")
     val cPythonExe = System.getenv("CPYTHON_EXE") ?: "python3.9"
 
     init {
         Files.copy(javaClass.classLoader.getResource("kyc.py").openStream(), kycPyPath)
+        Runtime.getRuntime().addShutdownHook(Thread {
+            Files.walk(kycDir).use {
+                it.sorted(Comparator.reverseOrder()).forEach { file -> file.toFile().delete() }
+            }
+        })
     }
 
     fun executeCompiler(args: List<String>): KycFile {
@@ -74,17 +80,20 @@ class CPythonCompiler {
      * Compiles from a string.
      */
     fun compile(data: String): KyCodeObject {
-        return if (false) {
+        return if (true) {
             val args = listOf("--code", data)
             KyCodeObject(executeCompiler(args).code)
         } else {
             // windows requires a... different approach
             val tmp = Files.createTempFile("kyc-windows-sucks", ".py")
-            Files.write(tmp, data.toByteArray(Charset.defaultCharset()))
-            val args = listOf("--path", tmp.toAbsolutePath().toString())
-            val result = KyCodeObject(executeCompiler(args).code)
-            Files.deleteIfExists(tmp)
-            result
+            try {
+                Files.write(tmp, data.toByteArray(Charset.defaultCharset()))
+                val args = listOf("--path", tmp.toAbsolutePath().toString())
+                val result = KyCodeObject(executeCompiler(args).code)
+                result
+            } finally {
+                Files.deleteIfExists(tmp)
+            }
         }
     }
 }
