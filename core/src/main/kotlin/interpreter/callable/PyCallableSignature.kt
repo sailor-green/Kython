@@ -106,11 +106,9 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
 
         // make a new deque of the args to pop off of
         val mutArgs = ArrayDeque<PyObject>(passedArgs)
-
         val finalArgs = mutableMapOf<String, PyObject>()
-        // the iterator used for the args
-        // args are also in reverse order, of (posargN+Y, posargN+Y-1, etc)
-        // so we make a reversed list here too
+
+        var argCount = 0
 
         // step 1) pair off kwargs to final args
         val pairedKwargs = mutableMapOf<String, PyObject>()
@@ -119,6 +117,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             // because call_function's handler didn't pop the right amount, or the bytecode was
             // wrong, or whatever else.
             pairedKwargs[kwarg] = mutArgs.removeFirst()
+            argCount += 1
         }
 
         // step 2) consume all regular args
@@ -127,6 +126,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
                 ?: pairedKwargs.getOrDefault(arg, defaults[arg])
                 ?: typeError("Missing required positional argument $arg")
             finalArgs[arg] = poppedArg
+            argCount += 1
         }
         // step 3) consume all positional args left, since all kwargs have been consumed and
         // all regular positional args
@@ -135,7 +135,14 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         val posArgCollector = mutableListOf<PyObject>()
         while (true) {
             val next = mutArgs.pollLast() ?: break
-            if (argName == null) typeError("Too many positional arguments passed!")
+            argCount += 1
+            if (argName == null) {
+                val argAmtCount = reverseMapping[ArgType.POSITIONAL]?.size ?: 0
+                typeError(
+                    "Too many positional arguments passed! " +
+                    "Expected $argAmtCount, got $argCount"
+                )
+            }
             posArgCollector.add(next)
         }
         argName?.let { finalArgs[it] = PyTuple.get(posArgCollector) }
