@@ -18,10 +18,7 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.*
-import green.sailor.kython.interpreter.pyobject.PyBool
-import green.sailor.kython.interpreter.pyobject.PyClassmethod
-import green.sailor.kython.interpreter.pyobject.PyNone
-import green.sailor.kython.interpreter.pyobject.PyNotImplemented
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.iterators.PyRangeType
 import green.sailor.kython.interpreter.pyobject.types.*
 
@@ -56,6 +53,7 @@ object Builtins {
     val LIST_TYPE = PyListType
     val RANGE_TYPE = PyRangeType
     val CLASSMETHOD_TYPE = PyClassmethod.PyClassmethodType
+    val STATICMETHOD_TYPE = PyStaticmethod.PyStaticmethodType
 
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
@@ -81,6 +79,7 @@ object Builtins {
         "bytes" to BYTES_TYPE,
         "range" to RANGE_TYPE,
         "classmethod" to CLASSMETHOD_TYPE,
+        "staticmethod" to STATICMETHOD_TYPE,
 
         // specials
         "None" to NONE,
