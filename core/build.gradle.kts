@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
- *
  */
 
 
@@ -38,6 +37,9 @@ dependencies {
     // === CORE DEPENDENCIES === //
     // == picocli - for CLI parsing == //
     implementation(group = "info.picocli", name = "picocli", version = "4.1.2")
+
+    // == Apache Commons Collections - For our custom dict == //
+    implementation(group="org.apache.commons", name = "commons-collections4", version = "4.4")
 
     // === TEST === //
     testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
