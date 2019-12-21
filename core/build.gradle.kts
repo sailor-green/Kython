@@ -39,10 +39,10 @@ dependencies {
     implementation(group = "info.picocli", name = "picocli", version = "4.1.2")
 
     // == Apache Commons Collections - For our custom dict == //
-    implementation(group="org.apache.commons", name = "commons-collections4", version = "4.4")
+    implementation(group = "org.apache.commons", name = "commons-collections4", version = "4.4")
 
     // === TEST === //
-    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.5.2")
 
     // === CODE GENERATION === //
     api(project(":kython-annotations"))
