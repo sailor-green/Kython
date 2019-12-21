@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
@@ -61,6 +62,34 @@ tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
     val bases = this.flatMap { it.bases }
     if (others.intersect(bases).isNotEmpty()) return true
     return bases.issubclass(others)
+}
+
+/**
+ * Implements the defaults get attribute for an object.
+ */
+fun PyObject.getAttribute(attrName: String): PyObject {
+    // try and find the object on the dict
+    if (attrName in internalDict) {
+        return internalDict[attrName]!!
+    }
+
+    // try and find it on the MRO
+    val mro = if (this is PyType) mro else type.mro
+    val descriptorSelf = if (this is PyType) PyNone else this
+    mro.mapNotNull {
+        it.internalDict[attrName]
+    }.firstOrNull()?.let { return it.pyDescriptorGet(descriptorSelf, this.type) }
+
+    // can't find it
+    Exceptions.ATTRIBUTE_ERROR("Object ${type.name} has no attribute $attrName").throwKy()
+}
+
+/**
+ * Implements the default set attribute for an object.
+ */
+fun PyObject.setAttribute(attrName: String, value: PyObject): PyObject {
+    internalDict[attrName] = value
+    return PyNone
 }
 
 // helper functions

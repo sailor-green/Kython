@@ -17,13 +17,9 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.attributeError
+import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.functions.magic.ObjectGetattribute
-import green.sailor.kython.interpreter.functions.magic.ObjectSetattribute
-import green.sailor.kython.interpreter.typeError
 
 // initialdict:
 // take PyString as an example
@@ -135,8 +131,7 @@ abstract class PyObject {
      * Implements some_object.some_attribute.
      */
     open fun pyGetAttribute(name: String): PyObject {
-        // TODO: No
-        return ObjectGetattribute.kyCall(listOf(PyString(name), this))
+        return getAttribute(name)
     }
 
     // __setattr__
@@ -144,7 +139,7 @@ abstract class PyObject {
      * Implements some_object.some_attribute = other_object.
      */
     open fun pySetAttribute(name: String, value: PyObject): PyObject {
-        return ObjectSetattribute.kyCall(listOf(value, PyString(name), this))
+        return setAttribute(name, value)
     }
 
     // __call__

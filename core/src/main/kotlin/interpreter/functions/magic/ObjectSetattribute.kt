@@ -20,9 +20,9 @@ package green.sailor.kython.interpreter.functions.magic
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.setAttribute
 
 /**
  * The default implementation of `__setattr__`.
@@ -32,9 +32,7 @@ object ObjectSetattribute : DefaultBuiltinFunction("object.__getattribute__") {
         val self = kwargs["self"] ?: error("Built-in signature mismatch!")
         val name = kwargs["name"].cast<PyString>()
         val value = kwargs["value"] ?: error("Built-in signature mismatch!")
-
-        self.internalDict[name.wrappedString] = value
-        return PyNone
+        return self.setAttribute(name.wrappedString, value)
     }
 
     override val signature: PyCallableSignature =
