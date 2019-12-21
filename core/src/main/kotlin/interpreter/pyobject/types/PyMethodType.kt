@@ -38,7 +38,7 @@ object PyMethodType : PyType("method") {
         }
 
         // TODO
-        return PyMethod(function as PyCallable, instance)
+        return PyMethod(function, instance)
     }
 
     override val signature: PyCallableSignature by lazy {
