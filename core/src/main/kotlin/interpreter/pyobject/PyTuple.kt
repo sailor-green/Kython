@@ -66,8 +66,6 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
         return get(subobjects + other.subobjects)
     }
 
-    override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
-
     override fun hashCode(): Int = subobjects.hashCode()
 
     override var type: PyType
