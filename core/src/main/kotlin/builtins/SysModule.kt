@@ -26,7 +26,7 @@ import green.sailor.kython.util.dictDelegate
  * Represents the sys built-in module.
  */
 @GenerateMethods
-object SysModule : PyBuiltinModule("_kython_sys") {
+object SysModule : PyBuiltinModule("sys") {
     val platform by dictDelegate("platform") {
         PyString(System.getProperty("os.name").toLowerCase())
     }
