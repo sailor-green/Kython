@@ -273,11 +273,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.CALL_METHOD -> callFunction(param)
                 InstructionOpcode.CALL_FUNCTION -> callFunction(param)
 
-                // import ops
-                InstructionOpcode.IMPORT_NAME -> importName(param)
-                InstructionOpcode.IMPORT_FROM -> importFrom(param)
-                InstructionOpcode.IMPORT_STAR -> importStar(param)
-
                 // stack ops
                 InstructionOpcode.POP_TOP -> popTop(param)
                 InstructionOpcode.ROT_TWO -> rotTwo(param)
@@ -545,21 +540,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         val attrName = function.code.names[arg.toInt()]
         val attr = module.pyGetAttribute(attrName)
         stack.push(attr)
-        bytecodePointer += 1
-    }
-
-    /**
-     * IMPORT_STAR
-     */
-    fun importStar(arg: Byte) {
-        val module = stack.pop()
-
-        // TODO: Use the real __dir__
-        module.pyDir().internalDict.forEach {
-            if (!it.key.startsWith("_")) {
-                locals[it.key] = it.value
-            }
-        }
         bytecodePointer += 1
     }
 

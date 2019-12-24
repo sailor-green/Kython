@@ -93,9 +93,9 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
             System.err.println("\nKython stack (most recent frame first):")
 
             val stacks = StackFrame.flatten(rootStackFrame).reversed()
-            stacks.forEachIndexed { idx, it ->
+            for ((idx, frame) in stacks.withIndex()) {
                 System.err.println("Frame $idx:")
-                with(it.createStackFrameInfo()) {
+                with(frame.createStackFrameInfo()) {
                     System.err.println("   $tracebackString")
                     disassembly?.let { dis ->
                         System.err.println("\nDisassembly:\n$dis")
