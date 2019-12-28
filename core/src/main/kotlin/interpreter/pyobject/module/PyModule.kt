@@ -26,8 +26,4 @@ import green.sailor.kython.interpreter.pyobject.PyType
  *
  * This can either wrap a user function, or a builtin module.
  */
-abstract class PyModule(val name: String) : PyObject() {
-    override var type: PyType
-        get() = TODO()
-        set(_) = Exceptions.invalidClassSet(this)
-}
+abstract class PyModule(val name: String) : PyObject()

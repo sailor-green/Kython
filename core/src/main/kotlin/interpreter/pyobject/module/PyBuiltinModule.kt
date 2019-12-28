@@ -17,10 +17,19 @@
 
 package green.sailor.kython.interpreter.pyobject.module
 
-/**
- * Represents a builtin module. This class will be automatically generated from a
- * [KyBuiltinModule] at compile-time, and added to the list of builtin modules.
- *
- * THIS CLASS IS NOT FOR EXTENSION MODULES.
- */
-abstract class PyBuiltinModule(name: String) : PyModule(name)
+import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.typeError
+
+
+abstract class PyBuiltinModule(name: String) : PyModule(name) {
+    object BuiltinModuleType : PyType("builtin_module") {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
+            typeError("Cannot make new instances of builtin modules.")
+    }
+
+    override var type: PyType
+        get() = BuiltinModuleType
+        set(_) = Exceptions.invalidClassSet(this)
+}

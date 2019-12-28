@@ -17,7 +17,9 @@
 
 package green.sailor.kython.interpreter.pyobject.module
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.kyobject.KyUserModule
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Wraps a user module object.
@@ -25,4 +27,8 @@ import green.sailor.kython.interpreter.kyobject.KyUserModule
 class PyUserModule(
     val userModule: KyUserModule,
     name: String
-) : PyModule(name)
+) : PyModule(name) {
+    override var type: PyType
+        get() = TODO()
+        set(_) = Exceptions.invalidClassSet(this)
+}
