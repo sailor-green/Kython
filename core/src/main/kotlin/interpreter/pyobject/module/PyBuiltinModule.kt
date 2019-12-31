@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.typeError
 
-
 abstract class PyBuiltinModule(name: String) : PyModule(name) {
     object BuiltinModuleType : PyType("builtin_module") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
