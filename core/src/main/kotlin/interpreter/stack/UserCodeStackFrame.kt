@@ -113,7 +113,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val param = nextInstruction.argument
             // special case this, because it returns from runFrame
             if (opcode == InstructionOpcode.RETURN_VALUE) {
-                return returnValue(param)
+                return stack.pop()
             }
 
             // switch on opcode
@@ -245,11 +245,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     }
 
     // scary instruction implementations
-    // this is all below the main class because there's a LOT going on here
-
-    fun returnValue(arg: Byte): PyObject {
-        return stack.pop()
-    }
+    // this is all below the main class because there's a LOT going on her
 
     // Imports
     /**
