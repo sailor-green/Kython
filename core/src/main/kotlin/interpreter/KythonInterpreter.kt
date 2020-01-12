@@ -89,10 +89,11 @@ object KythonInterpreter {
      * Runs the main thread.
      */
     fun runMainThread(frame: StackFrame) {
-        if (!MakeUp.noBootstrap) {
-            val bootstrap = Bootstrapper.build()
-            bootstrap.runThread()
-        }
+        // temporarily disabled!
+        // if (!MakeUp.noBootstrap) {
+        //     val bootstrap = Bootstrapper.build()
+        //     bootstrap.runThread()
+        // }
 
         val interpreterThread = MainInterpreterThread(frame)
         threads.add(interpreterThread)
