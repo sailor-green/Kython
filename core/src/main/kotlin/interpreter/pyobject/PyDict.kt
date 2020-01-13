@@ -25,7 +25,7 @@ import green.sailor.kython.util.PyObjectMap
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
  */
-class PyDict(val items: PyObjectMap) : PyPrimitive() {
+class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : PyPrimitive() {
     companion object {
         /**
          * Creates a new PyDict from any map, wrapping primitive types.
@@ -37,6 +37,18 @@ class PyDict(val items: PyObjectMap) : PyPrimitive() {
 
             return PyDict(newMap)
         }
+
+        /**
+         * Makes a new PyDict from a PyObjectMap.
+         */
+        fun from(map: PyObjectMap) = PyDict(map)
+
+        /**
+         * Makes a new PyDict from a raw map type, without casting.
+         *
+         * Do not use this method if you don't know what you're doing!
+         */
+        fun unsafeFromUnVerifiedMap(map: MutableMap<PyObject, PyObject>) = PyDict(map)
     }
 
     override fun unwrap(): Any = items

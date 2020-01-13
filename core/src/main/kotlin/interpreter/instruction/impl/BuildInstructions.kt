@@ -33,7 +33,7 @@ fun UserCodeStackFrame.buildConstKeyMap(arg: Byte) {
     val args = (0 until argCount).map { stack.pop() }.asReversed().iterator()
     val collected =
         tuple.subobjects.associateWithTo(PyObjectMap()) { args.next() }
-    stack.push(PyDict(collected))
+    stack.push(PyDict.from(collected))
     bytecodePointer += 1
 }
 

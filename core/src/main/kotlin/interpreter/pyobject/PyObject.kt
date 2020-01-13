@@ -370,6 +370,6 @@ abstract class PyObject {
     val pyDict: PyDict
         get() {
             val mapTo = PyObjectMap()
-            return PyDict(internalDict.mapKeysTo(mapTo) { PyString(it.key) })
+            return PyDict.from(internalDict.mapKeysTo(mapTo) { PyString(it.key) })
         }
 }

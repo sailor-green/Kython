@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.module
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.typeError
 
@@ -27,6 +28,13 @@ abstract class PyBuiltinModule(name: String) : PyModule(name) {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
             typeError("Cannot make new instances of builtin modules.")
     }
+
+    override fun pyToStr(): PyString {
+        val klass = this::class.qualifiedName
+        return PyString("<module '$name' (kotlin $klass)>")
+    }
+
+    override fun pyGetRepr(): PyString = pyToStr()
 
     override var type: PyType
         get() = BuiltinModuleType

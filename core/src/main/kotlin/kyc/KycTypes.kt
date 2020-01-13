@@ -158,7 +158,7 @@ class KycDict(override val wrapped: Map<BaseKycType, BaseKycType>) : BaseKycType
     override fun wrap(): PyDict {
         val transformed =
             wrapped.entries.associateByTo(PyObjectMap(), { it.key.wrap() }, { it.value.wrap() })
-        return PyDict(transformed)
+        return PyDict.from(transformed)
     }
 }
 

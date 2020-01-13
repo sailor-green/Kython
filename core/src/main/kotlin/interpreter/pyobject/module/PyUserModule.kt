@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.module
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.kyobject.KyUserModule
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
@@ -28,7 +29,13 @@ class PyUserModule(
     val userModule: KyUserModule,
     name: String
 ) : PyModule(name) {
+    object PyUserModuleType : PyType("user_module") {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+            TODO("not implemented")
+        }
+    }
+
     override var type: PyType
-        get() = TODO()
+        get() = PyUserModuleType
         set(_) = Exceptions.invalidClassSet(this)
 }

@@ -41,7 +41,7 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
         // TODO: __prepare__
         // build the class body dict
         val items = PyObjectMap()
-        val bodyDict = PyDict(items)
+        val bodyDict = PyDict.from(items)
         if (clsFn.code.argCount > 0) {
             clsFn.kyCall(listOf(bodyDict))
         } else {
