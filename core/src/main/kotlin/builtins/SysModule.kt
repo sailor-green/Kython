@@ -18,6 +18,8 @@
 package green.sailor.kython.builtins
 
 import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.interpreter.pyobject.PyList
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.util.dictDelegate
@@ -30,4 +32,15 @@ object SysModule : PyBuiltinModule("sys") {
     val platform by dictDelegate("platform") {
         PyString(System.getProperty("os.name").toLowerCase())
     }
+
+    val path by dictDelegate("path") {
+        PyList(defaultPath() as MutableList<PyObject>)
+    }
+}
+
+/**
+ * Creates the default path elements.
+ */
+fun defaultPath(): MutableList<PyString> {
+    return listOf("classpath:/Lib").mapTo(mutableListOf()) { PyString(it) }
 }

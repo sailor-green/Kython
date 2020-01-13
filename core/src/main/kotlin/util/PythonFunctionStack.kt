@@ -27,9 +27,9 @@ import green.sailor.kython.interpreter.pyobject.PyObject
  */
 class PythonFunctionStack(val maxSize: Int) : Collection<PyObject> {
     /** The backing array for this stack. */
-    private val backingArray = arrayOfNulls<PyObject>(maxSize)
+    internal val backingArray = arrayOfNulls<PyObject>(maxSize)
     /** The internal watermark for this stack. */
-    private var watermark = 0
+    internal var watermark = 0
 
     /** The size of this stack. */
     override val size get() = watermark

@@ -19,10 +19,9 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.MakeUp
+import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
-import green.sailor.kython.interpreter.bootstrap.Bootstrapper
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -63,6 +62,9 @@ object KythonInterpreter {
         // add all the generated builtins
         addAllFields()
         addAllMethods()
+
+        // add builtin modules
+        modules["sys"] = SysModule
     }
 
     /**
@@ -94,6 +96,8 @@ object KythonInterpreter {
         //     val bootstrap = Bootstrapper.build()
         //     bootstrap.runThread()
         // }
+
+        // TODO: Configure importers.
 
         val interpreterThread = MainInterpreterThread(frame)
         threads.add(interpreterThread)

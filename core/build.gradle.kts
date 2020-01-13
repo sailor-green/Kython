@@ -41,6 +41,9 @@ dependencies {
     // == Apache Commons Collections - For our custom dict == //
     implementation(group = "org.apache.commons", name = "commons-collections4", version = "4.4")
 
+    // == API Guardian Annotations == //
+    api(group = "org.apiguardian", name = "apiguardian-api", version = "1.1.+")
+
     // === TEST === //
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.5.2")
 

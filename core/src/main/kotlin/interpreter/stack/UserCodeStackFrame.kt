@@ -125,6 +125,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.POP_BLOCK -> popBlock(param)
                 InstructionOpcode.RERAISE -> reraise(param)
 
+                // import ops
+                InstructionOpcode.IMPORT_NAME -> importName(param)
+
                 // load ops
                 InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
                 InstructionOpcode.LOAD_NAME -> load(LoadPool.NAME, param)
@@ -246,14 +249,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
     // scary instruction implementations
     // this is all below the main class because there's a LOT going on her
-
-    // Imports
-    /**
-     * IMPORT_NAME
-     */
-    fun importName(arg: Byte) {
-        TODO("Implement IMPORT_NAME")
-    }
 
     /**
      * IMPORT_FROM

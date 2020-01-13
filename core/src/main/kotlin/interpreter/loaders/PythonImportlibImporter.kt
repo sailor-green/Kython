@@ -15,17 +15,16 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.thread
+package green.sailor.kython.interpreter.loaders
 
-import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.pyobject.module.PyModule
 
-/**
- * Represents the main thread.
- */
-class MainInterpreterThread(frame: StackFrame) : InterpreterThread(frame) {
-    override fun runThread() {
-        KythonInterpreter.interpreterThreadLocal.set(this)
-        runThreadWithErrorView()
+class PythonImportlibImporter : Importer {
+    init {
+        TODO("Importer not implemented")
+    }
+
+    override fun absoluteImport(name: String): PyModule {
+        TODO("not implemented")
     }
 }
