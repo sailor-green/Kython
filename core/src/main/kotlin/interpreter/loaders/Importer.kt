@@ -18,7 +18,6 @@
 package green.sailor.kython.interpreter.loaders
 
 import green.sailor.kython.interpreter.pyobject.module.PyModule
-import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import org.apiguardian.api.API
 
 /**

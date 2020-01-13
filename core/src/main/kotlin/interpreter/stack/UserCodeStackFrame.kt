@@ -45,6 +45,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     var bytecodePointer: Int = 0
 
+    // debug mode helper
+    // this is used in case an instruction is written without emitting a bytecode change
+    @Suppress("PropertyName")
+    var _lastBytecodePointer: Int = -1
+
     /**
      * The inner stack for this stack frame.
      */
@@ -107,7 +112,16 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             // maybe this could be pipelined.
             val nextInstruction = function.getInstruction(bytecodePointer)
             if (MakeUp.debugMode) {
+
+                if (_lastBytecodePointer == bytecodePointer) {
+                    System.err.println(
+                        "WARNING: Bytecode pointer is unchanged from last instruction"
+                    )
+                    System.err.println("WARNING: You may have forgotten a bytecodePointer += 1!")
+                }
+
                 System.err.println("idx: $bytecodePointer | Next instruction: $nextInstruction")
+                _lastBytecodePointer = bytecodePointer
             }
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
