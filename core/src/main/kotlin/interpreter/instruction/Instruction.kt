@@ -27,8 +27,10 @@ sealed class Instruction(open val argument: Byte)
 /**
  * Represents a single bytecode instruction.
  */
-data class PythonInstruction(val opcode: InstructionOpcode, override val argument: Byte)
-    : Instruction(argument) {
+data class PythonInstruction(
+    val opcode: InstructionOpcode,
+    override val argument: Byte
+) : Instruction(argument) {
     companion object {
         val CMP_OP = listOf(
             "<", "<=", "==", "!=", ">", ">=", "in", "not in", "is", "is not", "exception match",
