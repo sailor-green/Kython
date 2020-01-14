@@ -26,14 +26,14 @@ import org.junit.jupiter.params.provider.ValueSource
 class TestPyString {
     @ParameterizedTest(name = "For value {0}")
     @ValueSource(strings = ["test", "randomString", "123", "", "1Hello", "Hey!"])
-    fun `Test str_lower`(value: String) {
+    fun `Test str lower`(value: String) {
         val result = testWithObject<PyString>("""result = str("$value").lower()""")
         assertUnwrappedTrue(result) { it == value.toLowerCase() }
     }
 
     @ParameterizedTest(name = "For value {0}")
     @ValueSource(strings = ["test", "randomString", "123", "", "1Hello", "Hey!"])
-    fun `Test str_upper`(value: String) {
+    fun `Test str upper`(value: String) {
         val result = testWithObject<PyString>("""result = str("$value").upper()""")
         assertUnwrappedTrue(result) { it == value.toUpperCase() }
     }
