@@ -38,15 +38,12 @@ class StringDictWrapper(val wrapped: MutableMap<String, PyObject>) :
             }
         }
 
-    private val PyObject.string
-        get() = cast<PyString>().wrappedString
+    private val PyObject.string get() = cast<PyString>().wrappedString
 
     override val keys: MutableSet<PyObject>
         get() = wrapped.keys.mapTo(mutableSetOf()) { PyString(it) }
-    override val values: MutableCollection<PyObject>
-        get() = wrapped.values
-    override val size: Int
-        get() = wrapped.size
+    override val values: MutableCollection<PyObject> get() = wrapped.values
+    override val size: Int get() = wrapped.size
 
     override fun clear() = wrapped.clear()
     override fun containsKey(key: PyObject): Boolean = wrapped.containsKey(key.string)
@@ -54,8 +51,7 @@ class StringDictWrapper(val wrapped: MutableMap<String, PyObject>) :
     override fun containsValue(value: PyObject): Boolean = wrapped.containsValue(value)
     override fun get(key: PyObject): PyObject? = wrapped[key.string]
     override fun isEmpty(): Boolean = wrapped.isEmpty()
-    override fun put(key: PyObject, value: PyObject): PyObject? =
-        wrapped.put(key.string, value)
+    override fun put(key: PyObject, value: PyObject): PyObject? = wrapped.put(key.string, value)
 
     override fun putAll(from: Map<out PyObject, PyObject>) =
         wrapped.putAll(from.mapKeys { it.key.string })

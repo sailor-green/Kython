@@ -53,13 +53,8 @@ class PyObjectMap : AbstractLinkedMap<PyObject, PyObject>(
         return h
     }
 
-    override fun isEqualKey(key1: Any?, key2: Any?): Boolean {
-        return checkEquality(key1, key2)
-    }
-
-    override fun isEqualValue(value1: Any?, value2: Any?): Boolean {
-        return checkEquality(value1, value2)
-    }
+    override fun isEqualKey(key1: Any?, key2: Any?) = checkEquality(key1, key2)
+    override fun isEqualValue(value1: Any?, value2: Any?) = checkEquality(value1, value2)
 
     private fun checkEquality(key1: Any?, key2: Any?): Boolean {
         require(key1 is PyObject) { "Keys must be PyObject" }
