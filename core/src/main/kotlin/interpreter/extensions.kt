@@ -81,8 +81,9 @@ fun PyObject.getAttribute(attrName: String): PyObject {
     val (mro, descriptorSelf) =
         if (this is PyType) mro to PyNone else type.mro to this
 
-    mro.find { it.internalDict[attrName] != null }
-        ?.let { return it.pyDescriptorGet(descriptorSelf, type) }
+    mro.mapNotNull {
+        it.internalDict[attrName]
+    }.firstOrNull()?.let { return it.pyDescriptorGet(descriptorSelf, type) }
 
     // can't find it
     Exceptions.ATTRIBUTE_ERROR("Object ${type.name} has no attribute $attrName").throwKy()
