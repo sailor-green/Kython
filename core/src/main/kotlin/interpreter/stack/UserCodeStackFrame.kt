@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
+import green.sailor.kython.interpreter.instruction.PythonInstruction
 import green.sailor.kython.interpreter.instruction.impl.*
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
@@ -123,6 +124,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 System.err.println("idx: $bytecodePointer | Next instruction: $nextInstruction")
                 _lastBytecodePointer = bytecodePointer
             }
+            if (nextInstruction !is PythonInstruction) TODO("Intristic instruction evaluation")
+
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
             // special case this, because it returns from runFrame
