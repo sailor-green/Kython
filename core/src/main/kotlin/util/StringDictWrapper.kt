@@ -28,7 +28,7 @@ class StringDictWrapper(val wrapped: MutableMap<String, PyObject>) :
     MutableMap<PyObject, PyObject> {
     override val entries: MutableSet<MutableMap.MutableEntry<PyObject, PyObject>>
         get() {
-            return wrapped.entries.mapTo(mutableSetOf()) { it ->
+            return wrapped.entries.mapTo(mutableSetOf()) {
                 object : MutableMap.MutableEntry<PyObject, PyObject> {
                     override val key: PyObject = PyString(it.key)
                     override val value = it.value
@@ -38,6 +38,9 @@ class StringDictWrapper(val wrapped: MutableMap<String, PyObject>) :
             }
         }
 
+    private val PyObject.string
+        get() = cast<PyString>().wrappedString
+
     override val keys: MutableSet<PyObject>
         get() = wrapped.keys.mapTo(mutableSetOf()) { PyString(it) }
     override val values: MutableCollection<PyObject>
@@ -46,16 +49,16 @@ class StringDictWrapper(val wrapped: MutableMap<String, PyObject>) :
         get() = wrapped.size
 
     override fun clear() = wrapped.clear()
-    override fun containsKey(key: PyObject): Boolean =
-        wrapped.containsKey(key.cast<PyString>().wrappedString)
+    override fun containsKey(key: PyObject): Boolean = wrapped.containsKey(key.string)
+
     override fun containsValue(value: PyObject): Boolean = wrapped.containsValue(value)
-    override fun get(key: PyObject): PyObject? = wrapped[key.cast<PyString>().wrappedString]
+    override fun get(key: PyObject): PyObject? = wrapped[key.string]
     override fun isEmpty(): Boolean = wrapped.isEmpty()
     override fun put(key: PyObject, value: PyObject): PyObject? =
-        wrapped.put(key.cast<PyString>().wrappedString, value)
-    override fun putAll(from: Map<out PyObject, PyObject>) =
+        wrapped.put(key.string, value)
 
-        wrapped.putAll(from.mapKeys { it.key.cast<PyString>().wrappedString })
-    override fun remove(key: PyObject): PyObject? =
-        wrapped.remove(key.cast<PyString>().wrappedString)
+    override fun putAll(from: Map<out PyObject, PyObject>) =
+        wrapped.putAll(from.mapKeys { it.key.string })
+
+    override fun remove(key: PyObject): PyObject? = wrapped.remove(key.string)
 }
