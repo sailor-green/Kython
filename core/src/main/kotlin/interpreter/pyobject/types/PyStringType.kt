@@ -24,11 +24,9 @@ import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.valueError
 
 /**
  * Represents the str builtin type.
@@ -68,19 +66,5 @@ object PyStringType : PyType("str") {
     fun pyStrUpper(kwargs: Map<String, PyObject>): PyString {
         val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toUpperCase())
-    }
-
-    // there *is* special casing for int(str)
-    // but this is exposed in case somebody wants to do it manually?
-    /** str.__int__() */
-    @ExposeMethod("__int__")
-    @MethodParams(MethodParam("self", "POSITIONAL"))
-    fun pyStrInt(kwargs: Map<String, PyObject>): PyInt {
-        val self = kwargs["self"].cast<PyString>()
-        try {
-            return PyInt(self.wrappedString.toInt().toLong())
-        } catch (e: NumberFormatException) {
-            valueError("Cannot convert '${self.wrappedString}' to int")
-        }
     }
 }
