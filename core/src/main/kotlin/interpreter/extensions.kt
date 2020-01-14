@@ -56,10 +56,10 @@ fun PyObject.isinstance(others: Set<PyType>): Boolean {
 fun PyType.issubclass(others: Set<PyType>) = setOf(this).issubclass(others)
 
 tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
-    if (this.isEmpty()) return false
+    if (isEmpty()) return false
     if (PyRootType in others) return true
 
-    val bases = this.flatMap { it.bases }
+    val bases = flatMap { it.bases }
     if (others.intersect(bases).isNotEmpty()) return true
     return bases.issubclass(others)
 }
@@ -73,16 +73,16 @@ fun PyObject.getAttribute(attrName: String): PyObject {
         return if (this is PyType) {
             internalDict[attrName]!!.pyDescriptorGet(PyNone, this)
         } else {
-            internalDict[attrName]!!.pyDescriptorGet(this, this.type)
+            internalDict[attrName]!!.pyDescriptorGet(this, type)
         }
     }
 
     // try and find it on the MRO
-    val mro = if (this is PyType) mro else type.mro
-    val descriptorSelf = if (this is PyType) PyNone else this
-    mro.mapNotNull {
-        it.internalDict[attrName]
-    }.firstOrNull()?.let { return it.pyDescriptorGet(descriptorSelf, this.type) }
+    val (mro, descriptorSelf) =
+        if (this is PyType) mro to PyNone else type.mro to this
+
+    mro.find { it.internalDict[attrName] != null }
+        ?.let { return it.pyDescriptorGet(descriptorSelf, type) }
 
     // can't find it
     Exceptions.ATTRIBUTE_ERROR("Object ${type.name} has no attribute $attrName").throwKy()
@@ -102,8 +102,5 @@ fun PyObject.setAttribute(attrName: String, value: PyObject): PyObject {
  */
 inline fun <reified T : PyObject> PyObject?.cast(): T {
     if (this == null) error("Casting on null?")
-    if (this !is T) {
-        typeError("Invalid type: ${type.name}")
-    }
-    return this
+    return this as? T ?: typeError("Invalid type: ${type.name}")
 }
