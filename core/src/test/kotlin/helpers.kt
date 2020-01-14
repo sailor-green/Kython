@@ -91,6 +91,11 @@ fun assertUnwrappedTrue(wrapped: PyObject, fn: (Any?) -> Boolean) {
     return Assertions.assertTrue(fn(wrapped.unwrap()))
 }
 
+fun assertUnwrappedEquals(wrapped: PyObject, expected: Any) {
+    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
+    Assertions.assertEquals(wrapped.unwrap(), expected)
+}
+
 /**
  * Asserts that this PyObject does not equal a different object.
  */

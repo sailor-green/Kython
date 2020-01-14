@@ -24,15 +24,21 @@ import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
+import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.util.center
+import java.util.*
 
 /**
  * Represents the str builtin type.
  */
 @GenerateMethods
 object PyStringType : PyType("str") {
+    private val Map<String, PyObject>.selfWrappedString
+        get() = this["self"].cast<PyString>().wrappedString
+
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val arg = kwargs["x"]!!
         if (arg is PyString) {
@@ -66,5 +72,35 @@ object PyStringType : PyType("str") {
     fun pyStrUpper(kwargs: Map<String, PyObject>): PyString {
         val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toUpperCase())
+    }
+
+    /** str.capitalize */
+    @ExposeMethod("capitalize")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrCapitalize(kwargs: Map<String, PyObject>): PyString {
+        return PyString(kwargs.selfWrappedString.capitalize())
+    }
+
+    /** str.casefold */
+    @ExposeMethod("casefold")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrCasefold(kwargs: Map<String, PyObject>): PyString {
+        val folded = kwargs.selfWrappedString.toUpperCase(Locale.US).toLowerCase(Locale.US)
+        return PyString(folded)
+    }
+
+    @ExposeMethod("center")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("width", "POSITIONAL"),
+        MethodParam("fillchar", "POSITIONAL")
+    )
+    fun pyStringCenter(kwargs: Map<String, PyObject>): PyString {
+        val width = kwargs["width"].cast<PyInt>()
+        val fillchar = kwargs["fillchar"]?.cast<PyString>()
+        val actualChar = fillchar?.wrappedString?.singleOrNull() ?: ' '
+        val centered = kwargs.selfWrappedString.center(width.wrappedInt, actualChar)
+
+        return PyString(centered)
     }
 }
