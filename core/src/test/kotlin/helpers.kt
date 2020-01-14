@@ -53,6 +53,16 @@ fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf
 }
 
 /**
+ * Reified helper used to automatically convert a [code]
+ * result to the desired PyObject counter-part.
+ */
+inline fun <reified T : PyObject> testWithObject(
+    code: String,
+    args: Map<String, PyObject> = mapOf()
+) =
+    KythonInterpreter.testExec(code, args) as T
+
+/**
  * Asserts that this PyObject is truthy.
  */
 fun assertTrue(result: PyObject) {
