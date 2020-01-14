@@ -46,36 +46,44 @@ class TestEquals {
         // "abc" and "ABC" will stored in co_consts differently
         // and two new PyString will be created to wrap them
         // so this is a required test
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExec(
+            """
             result = "abc".upper() == "ABC"
-        """.trimIndent())
+        """.trimIndent()
+        )
         assertTrue(result is PyBool)
         assertTrue((result as PyBool).wrapped)
     }
 
     @Test
     fun `Test equals of tuple`() {
-        // this should trick the compiler/interpreter into creatiing two tuple instances
-        val result = KythonInterpreter.testExec("""
+        // this should trick the compiler/interpreter into creating two tuple instances
+        val result = KythonInterpreter.testExec(
+            """
             x = tuple((1,))
             y = tuple((1,))
             result = x == y
-        """.trimIndent())
+        """.trimIndent()
+        )
         assertTrue(result)
 
-        val result2 = KythonInterpreter.testExec("""
+        val result2 = KythonInterpreter.testExec(
+            """
             x = (1,)
             y = (2,)
             result = x == y
-        """.trimIndent())
+        """.trimIndent()
+        )
         assertFalse(result2)
     }
 
     @Test
     fun `Test invalid equals`() {
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExec(
+            """
             result = object() == object()
-        """.trimIndent())
+        """.trimIndent()
+        )
         assertFalse(result)
     }
 }
