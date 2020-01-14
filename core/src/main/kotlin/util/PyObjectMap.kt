@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.pyobject.PyObject
 import org.apache.commons.collections4.map.AbstractLinkedMap
 
 // TODO: key equals proper behaviour
-// TODO: Also lift out those equals into a nice extension function
 /**
  * Represents a map of PyObjects, hashed and equalled through the Python methods.
  *
@@ -55,27 +54,19 @@ class PyObjectMap : AbstractLinkedMap<PyObject, PyObject>(
     }
 
     override fun isEqualKey(key1: Any?, key2: Any?): Boolean {
+        return checkEquality(key1, key2)
+    }
+
+    override fun isEqualValue(value1: Any?, value2: Any?): Boolean {
+        return checkEquality(value1, value2)
+    }
+
+    private fun checkEquality(key1: Any?, key2: Any?): Boolean {
         require(key1 is PyObject) { "Keys must be PyObject" }
         require(key2 is PyObject) { "Keys must be PyObject" }
         val isEqual1 = key1.pyEquals(key2)
         return if (isEqual1 === PyNotImplemented) {
             val isEqual2 = key2.pyEquals(key1)
-            if (isEqual2 === PyNotImplemented) {
-                false
-            } else {
-                isEqual2.pyToBool().wrapped
-            }
-        } else {
-            isEqual1.pyToBool().wrapped
-        }
-    }
-
-    override fun isEqualValue(value1: Any?, value2: Any?): Boolean {
-        require(value1 is PyObject) { "Keys must be PyObject" }
-        require(value2 is PyObject) { "Keys must be PyObject" }
-        val isEqual1 = value1.pyEquals(value2)
-        return if (isEqual1 === PyNotImplemented) {
-            val isEqual2 = value2.pyEquals(value1)
             if (isEqual2 === PyNotImplemented) {
                 false
             } else {
