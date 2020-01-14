@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * This file is part of kython.
  *
@@ -96,4 +98,9 @@ tasks.jacocoTestReport {
         xml.isEnabled = true
         html.isEnabled = false
     }
+}
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
 }
