@@ -51,7 +51,7 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
         fun unsafeFromUnVerifiedMap(map: MutableMap<PyObject, PyObject>) = PyDict(map)
     }
 
-    override fun unwrap(): Any = items
+    override fun unwrap(): MutableMap<PyObject, PyObject> = items
 
     override fun pyToStr(): PyString {
         val joined = items.entries.joinToString {
@@ -59,6 +59,7 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
         }
         return PyString("{$joined}")
     }
+
     override fun pyGetRepr(): PyString = pyToStr()
     override fun pyToBool(): PyBool = PyBool.get(items.isNotEmpty())
     override fun pyEquals(other: PyObject): PyObject {
@@ -67,6 +68,7 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
         }
         return PyBool.get(items == other.items)
     }
+
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
@@ -77,6 +79,14 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
     override var type: PyType
         get() = PyDictType
         set(_) = Exceptions.invalidClassSet(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (items != (other as PyDict).items) return false
+
+        return true
+    }
 
     /**
      * Gets an item from the internal dict.
