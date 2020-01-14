@@ -89,6 +89,7 @@ object PyStringType : PyType("str") {
         return PyString(folded)
     }
 
+    /** str.center */
     @ExposeMethod("center")
     @MethodParams(
         MethodParam("self", "POSITIONAL"),
