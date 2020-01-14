@@ -29,7 +29,7 @@ class Bootstrapper private constructor(bsFrame: StackFrame) : InterpreterThread(
          */
         fun build(): Bootstrapper {
             val bootstrapModule = JarFileModuleLoader
-                .getModuleNoRun("bootstrap", "__kython_bootstrap")
+                .unsafeInternalGetModuleNoRun("bootstrap", "__kython_bootstrap")
             addBootstrapFunctions(bootstrapModule.userModule)
             val frame = bootstrapModule.userModule.stackFrame
             return Bootstrapper(frame)
@@ -39,7 +39,7 @@ class Bootstrapper private constructor(bsFrame: StackFrame) : InterpreterThread(
     override fun runThread() {
         try {
             KythonInterpreter.interpreterThreadLocal.set(this)
-            runThreadWithErrorView()
+            internalRunThreadWithErrorLogs()
         } finally {
             KythonInterpreter.interpreterThreadLocal.remove()
         }

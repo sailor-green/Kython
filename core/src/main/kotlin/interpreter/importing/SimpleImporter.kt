@@ -48,7 +48,7 @@ class SimpleImporter : Importer {
             // try and find the module from the jar path
             val realPath = path.removePrefix("classpath:")
             val absolutePath = realPath + name.replace(".", "/")
-            return JarFileModuleLoader.getLibModule(absolutePath)
+            return JarFileModuleLoader.getClasspathModule(absolutePath)
         }
 
         val resolvedPath = Paths.get(
