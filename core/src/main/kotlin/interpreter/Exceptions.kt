@@ -41,6 +41,10 @@ object Exceptions {
     val VALUE_ERROR = PyExceptionType("ValueError", EXCEPTION)
     val INDEX_ERROR = PyExceptionType("IndexError", EXCEPTION)
 
+    // import errors
+    val IMPORT_ERROR = PyExceptionType("ImportError", EXCEPTION)
+    val MODULE_NOT_FOUND_ERROR = PyExceptionType("ModuleNotFoundError", EXCEPTION)
+
     // runtimeerror and its children
     val RUNTIME_ERROR = PyExceptionType("RuntimeError", EXCEPTION)
     val NOT_IMPLEMENTED_ERROR = PyExceptionType("NotImplementedError", RUNTIME_ERROR)
@@ -80,3 +84,8 @@ fun valueError(message: String): Nothing = Exceptions.VALUE_ERROR(message).throw
  * Causes a new AttributeError.
  */
 fun attributeError(message: String): Nothing = Exceptions.ATTRIBUTE_ERROR(message).throwKy()
+
+/**
+ * Ensures an [KyError] is of the specified type.
+ */
+fun KyError.ensure(type: PyExceptionType) { if (type !== type) throw this }

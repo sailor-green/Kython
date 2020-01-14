@@ -26,14 +26,20 @@ import green.sailor.kython.interpreter.valueError
 /**
  * Represents a Python string. This wraps a regular JVM string.
  */
-class PyString(val wrappedString: String) : PyPrimitive() {
+class PyString private constructor(val wrappedString: String) : PyPrimitive() {
     companion object {
         // some common strings
-        val UNPRINTABLE =
-            PyString("<unprintable>")
+        val UNPRINTABLE = PyString("<unprintable>")
+
+        val EMPTY = PyString("")
+
+        operator fun invoke(s: String): PyString {
+            if (s.isEmpty()) return EMPTY
+            return PyString(s)
+        }
     }
 
-    override fun unwrap(): Any = wrappedString
+    override fun unwrap(): String = wrappedString
     override fun pyToStr(): PyString = this
     override fun pyGetRepr(): PyString = PyString("'$wrappedString'")
     override fun pyToBool(): PyBool = PyBool.get(wrappedString.isNotEmpty())

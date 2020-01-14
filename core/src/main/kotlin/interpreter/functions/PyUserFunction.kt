@@ -85,7 +85,11 @@ class PyUserFunction(
 
     override fun createFrame(): StackFrame = UserCodeStackFrame(this)
 
-    override fun pyToStr(): PyString = PyString("<user function ${code.codename}>")
+    override fun pyToStr(): PyString {
+        val hashCode = System.identityHashCode(this).toString(16)
+        return PyString("<user function '${code.codename}' at 0x$hashCode>")
+    }
+
     override fun pyGetRepr(): PyString = pyToStr()
 
     override val internalDict: LinkedHashMap<String, PyObject> = super.internalDict.apply {

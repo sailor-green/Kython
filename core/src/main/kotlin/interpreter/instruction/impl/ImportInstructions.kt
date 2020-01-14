@@ -20,7 +20,7 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.loaders.Importer
+import green.sailor.kython.interpreter.importing.Importer
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 

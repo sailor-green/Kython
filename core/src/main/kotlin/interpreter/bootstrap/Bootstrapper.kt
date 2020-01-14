@@ -18,7 +18,7 @@
 package green.sailor.kython.interpreter.bootstrap
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.loaders.JarFileModuleLoader
+import green.sailor.kython.interpreter.importing.JarFileModuleLoader
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.thread.InterpreterThread
 

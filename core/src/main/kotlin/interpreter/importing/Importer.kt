@@ -15,20 +15,28 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.loaders
+package green.sailor.kython.interpreter.importing
 
 import green.sailor.kython.interpreter.pyobject.module.PyModule
+import org.apiguardian.api.API
 
 /**
- * An importer implementation that implements all the semantics of the importlib module (with some
- * modification relating to pyc files).
+ * Represents the interface for importers.
  */
-class BuiltinImportlibImporter : Importer {
-    init {
-        TODO("Importer not finished")
+@API(status = API.Status.STABLE)
+interface Importer {
+    // there is a single global importer per interpreter
+    companion object {
+        /** The global importer for the interpreter. */
+        var CURRENT = SimpleImporter()
     }
 
-    override fun absoluteImport(name: String): PyModule {
-        TODO("not implemented")
-    }
+    /**
+     * Imports a module with the specified name absolutely.
+     *
+     * @param name: The name to get.
+     * @return A [PyModule] representing the module that has been imported.
+     */
+    @API(status = API.Status.STABLE)
+    fun absoluteImport(name: String): PyModule
 }

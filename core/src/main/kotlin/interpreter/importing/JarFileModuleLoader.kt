@@ -15,13 +15,12 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.loaders
+package green.sailor.kython.interpreter.importing
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
-import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.kyc.UnKyc
@@ -36,19 +35,17 @@ object JarFileModuleLoader {
      * Attempts to load a module from the classpath.
      * This will re-enter the interpreter to run the module file!!
      *
-     * @param name: The absolute name of the module to load.
-     * @param args: Any arguments to inject into the module (e.g. for shim objects).
+     * @param name: The absolute path name of the module to load.
      */
-    fun getLibModule(name: String, args: Map<String, PyObject> = mapOf()): PyUserModule {
+    fun getLibModule(name: String): PyUserModule {
         val qualName = "Lib/$name"
         val pyName = name.replace("/", ".")
-        return getModule(qualName, pyName, args)
+        return getModule(qualName, pyName)
     }
 
     fun getModule(
         name: String,
-        pyName: String,
-        args: Map<String, PyObject> = mapOf()
+        pyName: String
     ): PyUserModule {
         val module = getModuleNoRun(name, pyName)
         val frame = module.userModule.stackFrame
