@@ -63,7 +63,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * The local variables for this frame.
      */
-    val locals = mutableMapOf<String, PyObject>()
+    val locals = linkedMapOf<String, PyObject>()
 
     /**
      * Gets the source code line number currently being executed.

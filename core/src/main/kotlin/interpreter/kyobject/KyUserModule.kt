@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.functions.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**
@@ -37,7 +38,7 @@ class KyUserModule(
     val stackFrame = moduleFunction.createFrame() as UserCodeStackFrame
 
     /** The mapping of attributes of this module. */
-    val attribs = stackFrame.locals
+    val attribs: LinkedHashMap<String, PyObject> = stackFrame.locals
 
     init {
         moduleFunction.module = this

@@ -51,5 +51,5 @@ class PyUserModule(
         set(_) = Exceptions.invalidClassSet(this)
 
     override val internalDict: LinkedHashMap<String, PyObject>
-        get() = LinkedHashMap(userModule.attribs)
+        get() = userModule.attribs
 }
