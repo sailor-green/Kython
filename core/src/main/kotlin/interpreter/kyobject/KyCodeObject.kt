@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.kyobject
 
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
+import green.sailor.kython.interpreter.instruction.PythonInstruction
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.kyc.KycCodeObject
 import green.sailor.kython.util.Lnotab
@@ -128,7 +129,7 @@ class KyCodeObject(original: KycCodeObject) {
             // Prevents opcodes >128 from turning into -opcode.
             val opcode = buf.get().toUByte().toInt()
             val opval = buf.get()
-            instructions.add(Instruction(InstructionOpcode.get(opcode), opval))
+            instructions.add(PythonInstruction(InstructionOpcode.get(opcode), opval))
         }
 
         return instructions.toTypedArray()
@@ -145,6 +146,8 @@ class KyCodeObject(original: KycCodeObject) {
             var lastLineNum = -1
 
             for ((idx, instruction) in instructions.withIndex()) {
+                if (instruction !is PythonInstruction) TODO()
+
                 val lineNum = lnotab.getLineNumberFromIdx(idx)
                 if (lineNum != lastLineNum) {
                     appendln()
