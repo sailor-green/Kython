@@ -67,7 +67,7 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
         return get(subobjects + other.subobjects)
     }
 
-    override fun hashCode(): Int = subobjects.hashCode()
+    override fun hashCode() = subobjects.hashCode()
 
     override var type: PyType
         get() = PyTupleType

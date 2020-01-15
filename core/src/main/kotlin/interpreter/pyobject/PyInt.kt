@@ -103,9 +103,7 @@ open class PyInt(val wrappedInt: Long) : PyPrimitive() {
         return wrappedInt == other.wrappedInt
     }
 
-    override fun hashCode(): Int {
-        return wrappedInt.hashCode()
-    }
+    override fun hashCode() = wrappedInt.hashCode()
 
     override var type: PyType
         get() = PyIntType

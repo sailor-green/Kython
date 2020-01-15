@@ -91,7 +91,7 @@ class PyFloat(val wrapped: Double) : PyPrimitive() {
         return PyNotImplemented
     }
 
-    override fun hashCode(): Int = wrapped.hashCode()
+    override fun hashCode() = wrapped.hashCode()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PyFloat) return false

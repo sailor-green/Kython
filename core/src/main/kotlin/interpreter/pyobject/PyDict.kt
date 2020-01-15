@@ -73,7 +73,6 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
     override fun pyHash(): PyInt = typeError("dicts are not hashable - they are mutable")
-    override fun hashCode(): Int = System.identityHashCode(this)
     override fun pyLen(): PyInt = PyInt(items.size.toLong())
 
     override var type: PyType

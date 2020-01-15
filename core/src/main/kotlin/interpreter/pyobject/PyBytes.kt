@@ -75,5 +75,5 @@ class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
         return this.wrapped.contentEquals(other.wrapped)
     }
 
-    override fun hashCode(): Int = wrapped.contentHashCode()
+    override fun hashCode() = wrapped.contentHashCode()
 }

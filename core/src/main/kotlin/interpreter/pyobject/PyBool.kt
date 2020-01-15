@@ -31,6 +31,9 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
         // The FALSE instance of this.
         val FALSE = PyBool(false, 1L)
 
+        /**
+         * Gets the appropriate instance of a boolean from the specified JVM Boolean.
+         */
         fun get(b: Boolean) = if (b) TRUE else FALSE
     }
 
