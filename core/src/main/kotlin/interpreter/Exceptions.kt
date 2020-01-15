@@ -88,4 +88,4 @@ fun attributeError(message: String): Nothing = Exceptions.ATTRIBUTE_ERROR(messag
 /**
  * Ensures an [KyError] is of the specified type.
  */
-fun KyError.ensure(type: PyExceptionType) { if (type !== type) throw this }
+fun KyError.ensure(type: PyExceptionType) { if (wrapped.type !== type) throw this }
