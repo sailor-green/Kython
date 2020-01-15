@@ -17,7 +17,7 @@
 
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.functions.PyBuiltinFunction
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**

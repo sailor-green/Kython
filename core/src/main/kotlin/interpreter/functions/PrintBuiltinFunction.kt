@@ -22,6 +22,7 @@ import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 /**
  * Represents the print() builtin.

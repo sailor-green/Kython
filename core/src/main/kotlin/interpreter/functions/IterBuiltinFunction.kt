@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 /**
  * Represents the iter(x) built-in function.
