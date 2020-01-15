@@ -19,8 +19,8 @@ package green.sailor.kython.interpreter.functions.magic
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 private val cmpSig =
     PyCallableSignature(

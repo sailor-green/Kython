@@ -19,8 +19,8 @@ package green.sailor.kython.interpreter.importing
 
 import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.interpreter.*
-import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.module.PyModule
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import java.nio.file.Paths

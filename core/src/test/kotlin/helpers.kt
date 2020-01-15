@@ -18,11 +18,11 @@
 package green.sailor.kython.test
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
+import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.thread.MainInterpreterThread
 import org.junit.jupiter.api.Assertions

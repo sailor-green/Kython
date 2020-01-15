@@ -18,10 +18,10 @@
 package green.sailor.kython.interpreter.importing
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.kyc.UnKyc
 import java.nio.file.Files

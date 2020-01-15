@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.functions
+package green.sailor.kython.interpreter.pyobject.function
 
 import green.sailor.kython.interpreter.Builtins
 import green.sailor.kython.interpreter.Exceptions

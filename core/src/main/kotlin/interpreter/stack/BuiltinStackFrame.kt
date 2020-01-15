@@ -17,8 +17,8 @@
 
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 /**
  * Represents a built-in stack frame.

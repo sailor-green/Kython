@@ -19,11 +19,11 @@ package green.sailor.kython.interpreter.bootstrap
 
 import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.importing.JarFileModuleLoader
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 private fun wrap(name: String, fn: () -> PyObject) =
     PyBuiltinFunction
