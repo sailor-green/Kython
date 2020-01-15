@@ -30,6 +30,7 @@ import green.sailor.kython.util.dictDelegate
 /**
  * Represents the sys built-in module.
  */
+@Suppress("unused")
 @GenerateMethods
 object SysModule : PyBuiltinModule("sys") {
     val version by dictDelegate("version") { PyString("3.9.0") }
