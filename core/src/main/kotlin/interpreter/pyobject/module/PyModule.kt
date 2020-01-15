@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter.pyobject.module
 
+import green.sailor.kython.interpreter.attributeError
 import green.sailor.kython.interpreter.pyobject.PyObject
 
 /**
@@ -24,4 +25,8 @@ import green.sailor.kython.interpreter.pyobject.PyObject
  *
  * This can either wrap a user function, or a builtin module.
  */
-abstract class PyModule(val name: String) : PyObject()
+abstract class PyModule(val name: String) : PyObject() {
+    override fun pyGetAttribute(name: String): PyObject {
+        return internalDict[name] ?: attributeError(name)
+    }
+}

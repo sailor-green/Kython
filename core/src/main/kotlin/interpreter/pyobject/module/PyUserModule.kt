@@ -42,10 +42,6 @@ class PyUserModule(
     }
     override fun pyGetRepr(): PyString = pyToStr()
 
-    override fun pyGetAttribute(name: String): PyObject {
-        return internalDict[name] ?: attributeError(name)
-    }
-
     override var type: PyType
         get() = PyUserModuleType
         set(_) = Exceptions.invalidClassSet(this)
