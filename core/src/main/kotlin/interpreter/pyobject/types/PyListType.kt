@@ -24,7 +24,7 @@ import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.iterate
+import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -37,7 +37,7 @@ import green.sailor.kython.interpreter.pyobject.PyType
 object PyListType : PyType("list") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
-        val items = iterator.iterate().toMutableList()
+        val items = iterator.toNativeList()
         return PyList(items)
     }
 

@@ -70,7 +70,7 @@ class SimpleImporter : Importer {
 
         // ok, so we have to actually *load* the modules
         // try and find the package in the specified places
-        for (item in SysModule.path.pyIter().iterate()) {
+        for (item in SysModule.path.asIterator()) {
             val unwrapped = item.cast<PyString>().unwrap()
             try {
                 return importFrom(unwrapped, name)

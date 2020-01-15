@@ -26,7 +26,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyRootType
 /**
  * Helper function to iterate over an iterator.
  */
-fun PyObject.iterate(): List<PyObject> {
+fun PyObject.toNativeList(): MutableList<PyObject> {
     val items = mutableListOf<PyObject>()
     while (true) {
         try {
@@ -37,6 +37,32 @@ fun PyObject.iterate(): List<PyObject> {
         }
     }
     return items
+}
+
+/**
+ * Turns a PyObject (e.g. a List) into an iterator.
+ */
+fun PyObject.asIterator(): Iterator<PyObject> = object : Iterator<PyObject> {
+    val backing = mutableListOf<PyObject>()
+    val builtinIterator = pyIter()
+
+    override fun hasNext(): Boolean {
+        try {
+            val next = builtinIterator.pyNext()
+            backing.add(next)
+            return true
+        } catch (e: KyError) {
+            e.ensure(Exceptions.STOP_ITERATION)
+        }
+        return false
+    }
+
+    override fun next(): PyObject {
+        if (!hasNext()) {
+            error("Next called whilst there was no next")
+        }
+        return backing.removeAt(0)
+    }
 }
 
 /**
