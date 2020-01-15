@@ -19,10 +19,10 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PySet
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.toNativeList
 
 /**
  * Represents the type of a set.
