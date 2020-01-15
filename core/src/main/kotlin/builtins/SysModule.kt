@@ -32,6 +32,8 @@ import green.sailor.kython.util.dictDelegate
  */
 @GenerateMethods
 object SysModule : PyBuiltinModule("sys") {
+    val version by dictDelegate("version") { PyString("3.9.0") }
+
     val platform by dictDelegate("platform") {
         PyString(System.getProperty("os.name").toLowerCase())
     }
