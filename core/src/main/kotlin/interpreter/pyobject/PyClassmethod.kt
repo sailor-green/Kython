@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
+import green.sailor.kython.interpreter.pyobject.function.PyMethod
 
 /**
  * Represents a class method object.
