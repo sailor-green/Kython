@@ -25,7 +25,7 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.util.*
+import green.sailor.kython.util.center
 import java.util.*
 
 /**
@@ -53,6 +53,64 @@ object PyStringType : PyType("str") {
         PyCallableSignature(
             "x" to ArgType.POSITIONAL
         )
+    }
+
+    private val numerics = setOf(
+        CharCategory.DECIMAL_DIGIT_NUMBER,
+        CharCategory.LETTER_NUMBER,
+        CharCategory.OTHER_NUMBER
+    )
+
+    /**
+     * Return `true` if all characters in the [string] are alphabetic
+     * and there is at least one character, `false` otherwise.
+     */
+    private fun isAlpha(string: String) = string.isNotEmpty() && string.all { it.isLetter() }
+
+    /**
+     * Return `true` if the string is empty or all characters in the [string] are ASCII,
+     * `false` otherwise. ASCII characters have code points in the range U+0000-U+007F.
+     */
+    private fun isAscii(string: String) = string.chars().allMatch { it in (0..0x7F) }
+
+    /**
+     * Return `true` if all characters in the [string] are numeric characters,
+     * and there is at least one character, `false` otherwise.
+     * Numeric characters include digit characters, and all characters that
+     * have the Unicode numeric value property, e.g. U+2155, VULGAR FRACTION ONE FIFTH.
+     */
+    private fun isNumeric(string: String) =
+        string.isNotEmpty() && string.all { it.category in numerics }
+
+    /**
+     * Return `true` if all characters in the [string] are decimal characters and there is at least
+     * one character, `false` otherwise.
+     * Decimal characters are those that can be used to form numbers in
+     * base 10, e.g. U+0660, ARABIC-INDIC DIGIT ZERO.
+     */
+    private fun isDecimal(string: String) =
+        string.isNotEmpty() && string.all { it.category == CharCategory.DECIMAL_DIGIT_NUMBER }
+
+    /**
+     * Return `true` if all characters in the [string] are alphanumeric
+     * and there is at least one character
+     */
+    private fun isAlnum(string: String): Boolean = string.run {
+        (all { it.isLetter() } || all { it.category in numerics } || isDigit(this)) &&
+            isNotEmpty()
+    }
+
+    /**
+     * Return `true` if all characters in the [string] are digits
+     * and there is at least one character, `false` otherwise.
+     */
+    private fun isDigit(string: String): Boolean {
+        // Java uses surrogates due to its UTF-16 encoding.
+        // We need to manually iterate over code-points.
+        val codePoints = string.codePoints()
+            .toArray()
+            .map { CharCategory.valueOf(Character.getType(it)) }
+        return string.isNotEmpty() && codePoints.all { it in numerics - CharCategory.LETTER_NUMBER }
     }
 
     /** str.lower() */
