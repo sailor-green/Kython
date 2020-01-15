@@ -24,9 +24,9 @@ import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.kyc.UnKyc
-import org.apiguardian.api.API
 import java.nio.file.Files
 import java.nio.file.Paths
+import org.apiguardian.api.API
 
 /**
  * Represents a jar file module loader, loading py files from jar files.

@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.thread
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.stack.StackFrame
-import org.apiguardian.api.API
 
 /**
  * Represents the main thread.
