@@ -17,6 +17,10 @@
 
 package green.sailor.kython.util
 
+/**
+ * Returns a centered [String] with a padding of [width] using [padWith]
+ * as padding character.
+ */
 fun String.center(width: Long, padWith: Char): String {
     if (isEmpty()) return this
     val string = this
@@ -32,3 +36,29 @@ fun String.center(width: Long, padWith: Char): String {
         }
     }
 }
+
+private val numerics = setOf(
+    CharCategory.DECIMAL_DIGIT_NUMBER,
+    CharCategory.LETTER_NUMBER,
+    CharCategory.OTHER_NUMBER
+)
+
+// Funcs for pyStrIsAlphanumeric and core stdlib funcs.
+
+fun isAlpha(string: String) = string.isNotEmpty() && string.all { it.isLetter() }
+fun isAscii(string: String) = string.chars().allMatch { it in (0..0x7F) }
+fun isNumeric(string: String) = string.isNotEmpty() && string.all { it.category in numerics }
+fun isDecimal(string: String) =
+    string.isNotEmpty() && string.all { it.category == CharCategory.DECIMAL_DIGIT_NUMBER }
+
+// Optimised to avoid calling isNotEmpty() multiple times.
+fun isAlnum(string: String): Boolean = string.run {
+    (all { it.isLetter() } || all { it.category in numerics } || isDigit(this)) &&
+        isNotEmpty()
+}
+
+// Java uses surrogates due to its UTF-16 encoding, we need to manually iterate over code-points.
+fun isDigit(string: String) = string.isNotEmpty() && string.codePoints()
+    .toArray()
+    .map { CharCategory.valueOf(Character.getType(it)) }
+    .all { it in numerics - CharCategory.LETTER_NUMBER }

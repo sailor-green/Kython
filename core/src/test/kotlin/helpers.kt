@@ -91,9 +91,9 @@ fun assertUnwrappedTrue(wrapped: PyObject, fn: (Any?) -> Boolean) {
     return Assertions.assertTrue(fn(wrapped.unwrap()))
 }
 
-fun assertUnwrappedEquals(wrapped: PyObject, expected: Any) {
+fun assertUnwrappedEquals(wrapped: PyObject, expected: Any, calledWith: String = "") {
     if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
-    Assertions.assertEquals(wrapped.unwrap(), expected)
+    Assertions.assertEquals(expected, wrapped.unwrap(), "Called with '$calledWith'")
 }
 
 /**
@@ -102,4 +102,44 @@ fun assertUnwrappedEquals(wrapped: PyObject, expected: Any) {
 fun assertUnwrappedFalse(wrapped: PyObject, fn: (Any?) -> Boolean) {
     if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
     return Assertions.assertFalse(fn(wrapped.unwrap()))
+}
+
+/**
+ * Tests the compiler with [code] using the [builder block][block] and unwraps
+ * the result into the specified [primitive][PyPrimitive].
+ *
+ * This function optionally takes [locals][args]
+ *
+ * @see KythonInterpreter.testExec
+ */
+inline fun <reified T : PyPrimitive> testPrimitive(
+    code: String,
+    args: Map<String, PyObject> = mapOf(),
+    block: PyObjectTester<T>.() -> Unit
+) =
+    PyObjectTester<T>(code, args).block()
+
+class PyObjectTester<T : PyPrimitive>(
+    private val testCode: String,
+    private val args: Map<String, PyObject>
+) {
+    // General note:
+    // We run .testExec each time to exclude possible side-effects.
+    @Suppress("UNCHECKED_CAST")
+    fun resultsIn(expected: Any) {
+        val result = KythonInterpreter.testExec(testCode, args) as T
+        assertUnwrappedEquals(result, expected, testCode)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun isTrue() {
+        val result = KythonInterpreter.testExec(testCode, args) as T
+        assertUnwrappedEquals(result, true, testCode)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun isFalse() {
+        val result = KythonInterpreter.testExec(testCode, args) as T
+        assertUnwrappedEquals(result, false, testCode)
+    }
 }

@@ -24,11 +24,8 @@ import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.pyobject.PyInt
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.util.center
+import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.util.*
 import java.util.*
 
 /**
@@ -96,12 +93,55 @@ object PyStringType : PyType("str") {
         MethodParam("width", "POSITIONAL"),
         MethodParam("fillchar", "POSITIONAL")
     )
-    fun pyStringCenter(kwargs: Map<String, PyObject>): PyString {
+    fun pyStrCenter(kwargs: Map<String, PyObject>): PyString {
         val width = kwargs["width"].cast<PyInt>()
         val fillchar = kwargs["fillchar"]?.cast<PyString>()
         val actualChar = fillchar?.wrappedString?.singleOrNull() ?: ' '
         val centered = kwargs.selfWrappedString.center(width.wrappedInt, actualChar)
 
         return PyString(centered)
+    }
+
+    /** str.isalpha */
+    @ExposeMethod("isalpha")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsAlpha(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isAlpha(kwargs.selfWrappedString))
+    }
+
+    /** str.isascii */
+    @ExposeMethod("isascii")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsAscii(kwargs: Map<String, PyObject>): PyBool {
+        // Python accepts all chars within U+0000-U+007F.
+        return PyBool.get(isAscii(kwargs.selfWrappedString))
+    }
+
+    /** str.isdecimal */
+    @ExposeMethod("isdecimal")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsDecimal(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isDecimal(kwargs.selfWrappedString))
+    }
+
+    /** str.isdigit */
+    @ExposeMethod("isdigit")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsDigit(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isDigit(kwargs.selfWrappedString))
+    }
+
+    /** str.isalnum */
+    @ExposeMethod("isalnum")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsAlphanumeric(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isAlnum(kwargs.selfWrappedString))
+    }
+
+    /** str.isnumeric */
+    @ExposeMethod("isnumeric")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsNumeric(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isNumeric(kwargs.selfWrappedString))
     }
 }
