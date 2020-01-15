@@ -93,7 +93,12 @@ fun PyObject.getAttribute(attrName: String): PyObject {
  * Implements the default set attribute for an object.
  */
 fun PyObject.setAttribute(attrName: String, value: PyObject): PyObject {
-    internalDict[attrName] = value
+    val existing = type.internalDict[attrName]
+    if (existing != null && existing.kyHasSet()) {
+        existing.pyDescriptorSet(this, value)
+    } else {
+        internalDict[attrName] = value
+    }
     return PyNone
 }
 
