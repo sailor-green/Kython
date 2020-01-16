@@ -24,7 +24,6 @@ import green.sailor.kython.util.longToBytesLE
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-
 class TestByteUtil {
     @Test
     fun `Test long to bytes, big endian`() {
