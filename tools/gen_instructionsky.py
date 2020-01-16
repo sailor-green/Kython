@@ -25,19 +25,19 @@ header = rf"""/**
 enum class InstructionOpcode(
     /** The raw int opcode. */
     val opcode: Int,
-    /* If this instruction operates on a const. */
+    /** If this instruction operates on a const. */
     val hasConst: Boolean,
-    /* If this instruction operates on a free variable. */
+    /** If this instruction operates on a free variable. */
     val hasFree: Boolean,
-    /* If this instruction operates on a named variable. */
+    /** If this instruction operates on a named variable. */
     val hasName: Boolean,
-    /* If this instruction has a relative jump. */
+    /** If this instruction has a relative jump. */
     val hasRelJump: Boolean,
-    /* If this instruction has an absolute jump. */
+    /** If this instruction has an absolute jump. */
     val hasAbsJump: Boolean,
-    /* If this instruction operators on a local variable. */
+    /** If this instruction operators on a local variable. */
     val hasLocal: Boolean,
-    /* If this instruction is used for comparison. */
+    /** If this instruction is used for comparison. */
     val hasCmp: Boolean
 ) {{
 """
