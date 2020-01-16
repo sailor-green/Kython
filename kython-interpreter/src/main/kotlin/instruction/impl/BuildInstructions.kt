@@ -81,3 +81,26 @@ fun UserCodeStackFrame.listAppend(param: Byte) {
 
     bytecodePointer += 1
 }
+
+/**
+ * SET_ADD
+ */
+fun UserCodeStackFrame.setAdd(param: Byte) {
+    val toAdd = stack.pop()
+    val set = stack[stack.size - param.toInt()]
+    if (set !is PySet) error("Cannot SET_ADD on non-set $set")
+    set.wrappedSet.add(toAdd)
+
+    bytecodePointer += 1
+}
+
+/**
+ * MAP_ADD
+ */
+fun UserCodeStackFrame.mapAdd(param: Byte) {
+    val toAdd = stack.pop()
+    val name = stack.pop()
+    val dict = stack[stack.size - param.toInt()]
+    if (dict !is PyDict) error("Cannot MAP_ADD on non-dict $dict")
+    dict.items[name] = toAdd
+}

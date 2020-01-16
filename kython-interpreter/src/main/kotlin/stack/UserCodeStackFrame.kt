@@ -170,8 +170,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.BUILD_CONST_KEY_MAP -> buildConstKeyMap(param)
 
                 InstructionOpcode.LIST_APPEND -> listAppend(param)
-                /*InstructionOpcode.SET_ADD -> setAdd(param)
-                InstructionOpcode.MAP_ADD -> mapAdd(param)*/
+                InstructionOpcode.SET_ADD -> setAdd(param)
+                InstructionOpcode.MAP_ADD -> mapAdd(param)
 
                 // binary ops
                 InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
