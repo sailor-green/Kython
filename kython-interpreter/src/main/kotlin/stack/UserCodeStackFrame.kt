@@ -252,7 +252,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.LOAD_BUILD_CLASS -> loadBuildClass(param)
 
                 InstructionOpcode.COMPARE_OP -> compareOp(param)
-                else -> error("Unimplemented opcode $opcode")
+                else -> {
+                    if (KythonInterpreter.config.debugMode) {
+                        error("Unimplemented opcode $opcode")
+                    } else {
+                        Exceptions.SYSTEM_ERROR("Unimplemented opcode $opcode").throwKy()
+                    }
+                }
             } } catch (e: KyError) {
                 // if no block, just throw through
                 if (blockStack.isEmpty()) throw e
