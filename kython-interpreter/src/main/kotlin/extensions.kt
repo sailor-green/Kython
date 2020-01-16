@@ -40,7 +40,6 @@ fun BaseKycType.unwrap(): PyObject =
         else -> PyObject.wrapPrimitive(this.wrapped)
     }
 
-
 /**
  * Helper function to iterate over an iterator.
  */

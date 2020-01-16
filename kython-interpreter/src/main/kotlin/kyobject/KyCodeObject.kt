@@ -20,12 +20,10 @@ package green.sailor.kython.interpreter.kyobject
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.instruction.PythonInstruction
-import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.unwrap
 import green.sailor.kython.kyc.KycCodeObject
 import green.sailor.kython.util.Lnotab
-import green.sailor.kython.util.PyObjectMap
 import java.nio.ByteBuffer
 import kotlin.math.ceil
 import kotlin.math.log
