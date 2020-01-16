@@ -48,9 +48,9 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
             return PyString("(${subobjects.first().pyGetRepr()},)")
         }
 
-        return PyString("(" + subobjects.joinToString {
+        return PyString(subobjects.joinToString(prefix = "(", postfix = ")") {
             it.pyGetRepr().wrappedString
-        } + ")")
+        })
     }
 
     override fun pyGetRepr(): PyString = pyToStr()
@@ -58,6 +58,7 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
         if (other !is PyTuple) return PyNotImplemented
         return PyBool.get(subobjects == other.subobjects)
     }
+
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
 

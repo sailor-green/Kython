@@ -24,9 +24,10 @@ import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.util.center
+import java.util.*
+import kotlin.streams.asSequence
 
 /**
  * Represents the str builtin type.
@@ -52,6 +53,71 @@ object PyStringType : PyType("str") {
         )
     }
 
+    private val numerics = setOf(
+        CharCategory.DECIMAL_DIGIT_NUMBER,
+        CharCategory.LETTER_NUMBER,
+        CharCategory.OTHER_NUMBER
+    )
+    /** Wrapped value of PyString self attribute. */
+    private val Map<String, PyObject>.selfWrappedString
+        get() = this["self"].cast<PyString>().wrappedString
+
+    /** [Int] sequence of code points */
+    private val String.codePoints get() = codePoints().asSequence()
+
+    /**
+     * Return `true` if all characters in the [string] are alphabetic
+     * and there is at least one character, `false` otherwise.
+     */
+    private fun isAlpha(string: String) = string.isNotEmpty() && string.all { it.isLetter() }
+
+    /**
+     * Return `true` if the string is empty or all characters in the [string] are ASCII,
+     * `false` otherwise. ASCII characters have code points in the range U+0000-U+007F.
+     */
+    private fun isAscii(string: String) = string.chars().allMatch { it in (0..0x7F) }
+
+    /**
+     * Return `true` if all characters in the [string] are numeric characters,
+     * and there is at least one character, `false` otherwise.
+     * Numeric characters include digit characters, and all characters that
+     * have the Unicode numeric value property, e.g. U+2155, VULGAR FRACTION ONE FIFTH.
+     */
+    private fun isNumeric(string: String) =
+        string.isNotEmpty() && string.all { it.category in numerics }
+
+    /**
+     * Return `true` if all characters in the [string] are decimal characters and there is at least
+     * one character, `false` otherwise.
+     * Decimal characters are those that can be used to form numbers in
+     * base 10, e.g. U+0660, ARABIC-INDIC DIGIT ZERO.
+     */
+    private fun isDecimal(string: String) =
+        string.isNotEmpty() && string.all { it.category == CharCategory.DECIMAL_DIGIT_NUMBER }
+
+    /**
+     * Return `true` if all characters in the [string] are alphanumeric
+     * and there is at least one character
+     */
+    private fun isAlnum(string: String): Boolean {
+        val passesBasic = string.run {
+            all { it.isLetter() } || all { it.category in numerics } || isDigit(this)
+        }
+        return passesBasic && string.isNotEmpty()
+    }
+
+    /**
+     * Return `true` if all characters in the [string] are digits
+     * and there is at least one character, `false` otherwise.
+     */
+    private fun isDigit(string: String): Boolean {
+        // Java uses surrogates due to its UTF-16 encoding.
+        // We need to manually iterate over code-points.
+        val codePoints = string.codePoints
+            .map { CharCategory.valueOf(Character.getType(it)) }
+        return string.isNotEmpty() && codePoints.all { it in numerics - CharCategory.LETTER_NUMBER }
+    }
+
     /** str.lower() */
     @ExposeMethod("lower")
     @MethodParams(MethodParam("self", "POSITIONAL"))
@@ -66,5 +132,180 @@ object PyStringType : PyType("str") {
     fun pyStrUpper(kwargs: Map<String, PyObject>): PyString {
         val self = kwargs["self"].cast<PyString>()
         return PyString(self.wrappedString.toUpperCase())
+    }
+
+    /** str.capitalize */
+    @ExposeMethod("capitalize")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrCapitalize(kwargs: Map<String, PyObject>): PyString {
+        return PyString(kwargs.selfWrappedString.capitalize())
+    }
+
+    /** str.casefold */
+    @ExposeMethod("casefold")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrCasefold(kwargs: Map<String, PyObject>): PyString {
+        val folded = kwargs.selfWrappedString.toUpperCase(Locale.US).toLowerCase(Locale.US)
+        return PyString(folded)
+    }
+
+    /** str.center */
+    @ExposeMethod("center")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("width", "POSITIONAL"),
+        MethodParam("fillchar", "POSITIONAL")
+    )
+    fun pyStrCenter(kwargs: Map<String, PyObject>): PyString {
+        val width = kwargs["width"].cast<PyInt>()
+        val fillchar = kwargs["fillchar"]?.cast<PyString>()
+        val actualChar = fillchar?.wrappedString?.singleOrNull() ?: ' '
+        val centered = kwargs.selfWrappedString.center(width.wrappedInt, actualChar)
+
+        return PyString(centered)
+    }
+
+    /** str.isalpha */
+    @ExposeMethod("isalpha")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsAlpha(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isAlpha(kwargs.selfWrappedString))
+    }
+
+    /** str.isascii */
+    @ExposeMethod("isascii")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsAscii(kwargs: Map<String, PyObject>): PyBool {
+        // Python accepts all chars within U+0000-U+007F.
+        return PyBool.get(isAscii(kwargs.selfWrappedString))
+    }
+
+    /** str.isdecimal */
+    @ExposeMethod("isdecimal")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsDecimal(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isDecimal(kwargs.selfWrappedString))
+    }
+
+    /** str.isdigit */
+    @ExposeMethod("isdigit")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsDigit(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isDigit(kwargs.selfWrappedString))
+    }
+
+    /** str.isalnum */
+    @ExposeMethod("isalnum")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsAlphanumeric(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isAlnum(kwargs.selfWrappedString))
+    }
+
+    /** str.isnumeric */
+    @ExposeMethod("isnumeric")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsNumeric(kwargs: Map<String, PyObject>): PyBool {
+        return PyBool.get(isNumeric(kwargs.selfWrappedString))
+    }
+
+    /** str.islower */
+    @ExposeMethod("islower")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsLower(kwargs: Map<String, PyObject>): PyBool {
+        val isLower = kwargs.selfWrappedString.run { isNotEmpty() && all { it.isLowerCase() } }
+        return PyBool.get(isLower)
+    }
+
+    /** str.isupper */
+    @ExposeMethod("isupper")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsUpper(kwargs: Map<String, PyObject>): PyBool {
+        val isUpper = kwargs.selfWrappedString.run { isNotEmpty() && all { it.isUpperCase() } }
+        return PyBool.get(isUpper)
+    }
+
+    /** str.isspace */
+    @ExposeMethod("isspace")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsSpace(kwargs: Map<String, PyObject>): PyBool {
+        val isSpace = kwargs.selfWrappedString.run { isNotEmpty() && all { it.isWhitespace() } }
+        return PyBool.get(isSpace)
+    }
+
+    /** str.istitle */
+    @ExposeMethod("istitle")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrIsTitle(kwargs: Map<String, PyObject>): PyBool {
+        val str = kwargs.selfWrappedString
+        return PyBool.get((str.toLowerCase().capitalize() == str) && str.isNotEmpty())
+    }
+
+    /** str.title */
+    @ExposeMethod("title")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrTitle(kwargs: Map<String, PyObject>): PyString {
+        return PyString(kwargs.selfWrappedString.toLowerCase().capitalize())
+    }
+
+    /** str.partition */
+    @ExposeMethod("partition")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("sep", "POSITIONAL")
+    )
+    fun pyStrPartition(kwargs: Map<String, PyObject>): PyTuple {
+        var separator = kwargs["sep"].cast<PyString>().wrappedString
+        val splitResult = kwargs.selfWrappedString.run {
+            split(separator, limit = 2).takeIf { it.size == 2 }
+                ?: listOf(this, "").also { separator = "" }
+        }
+
+        val args = listOf(
+            PyString(splitResult[0]),
+            PyString(separator),
+            PyString(splitResult[1])
+        )
+        return PyTuple.get(args)
+    }
+
+    /** str.rpartition */
+    @ExposeMethod("rpartition")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("sep", "POSITIONAL")
+    )
+    fun pyStrRPartition(kwargs: Map<String, PyObject>): PyTuple {
+        val separator = kwargs["sep"].cast<PyString>().wrappedString
+        val string = kwargs.selfWrappedString
+        val index = string.lastIndexOf(separator)
+        val args = if (index == -1) {
+            // Not found
+            listOf("", "", string)
+        } else {
+            string.run { listOf(substring(0, index), separator, substring(index + 1)) }
+        }
+
+        return PyTuple.get(args.map { PyString(it) })
+    }
+
+    /** str.swapcase */
+    @ExposeMethod("swapcase")
+    @MethodParams(MethodParam("self", "POSITIONAL"))
+    fun pyStrSwapCase(kwargs: Map<String, PyObject>): PyString {
+        val swapped = kwargs.selfWrappedString
+            .map { if (it.isUpperCase()) it.toLowerCase() else it.toUpperCase() }
+            .joinToString("")
+        return PyString(swapped)
+    }
+
+    /** str.zfill */
+    @ExposeMethod("zfill")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("width", "POSITIONAL")
+    )
+    fun pyStrZFill(kwargs: Map<String, PyObject>): PyString {
+        val width = kwargs["width"].cast<PyInt>().wrappedInt
+        return PyString(kwargs.selfWrappedString.padStart(width.toInt(), '0'))
     }
 }

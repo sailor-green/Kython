@@ -20,6 +20,7 @@ package green.sailor.kython.test
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.interpreter.pyobject.PyContainer
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
@@ -53,16 +54,6 @@ fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf
 }
 
 /**
- * Reified helper used to automatically convert a [code]
- * result to the desired PyObject counter-part.
- */
-inline fun <reified T : PyObject> testWithObject(
-    code: String,
-    args: Map<String, PyObject> = mapOf()
-) =
-    KythonInterpreter.testExec(code, args) as T
-
-/**
  * Asserts that this PyObject is truthy.
  */
 fun assertTrue(result: PyObject) {
@@ -91,10 +82,82 @@ fun assertUnwrappedTrue(wrapped: PyObject, fn: (Any?) -> Boolean) {
     return Assertions.assertTrue(fn(wrapped.unwrap()))
 }
 
+fun assertUnwrappedEquals(wrapped: PyObject, expected: Any?, calledWith: String = "") {
+    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
+    Assertions.assertEquals(expected, wrapped.unwrap(), "Called with '$calledWith'")
+}
+
 /**
  * Asserts that this PyObject does not equal a different object.
  */
 fun assertUnwrappedFalse(wrapped: PyObject, fn: (Any?) -> Boolean) {
     if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
     return Assertions.assertFalse(fn(wrapped.unwrap()))
+}
+
+/**
+ * Tests the compiler with [code] using the [builder block][block] and unwraps
+ * the result into the specified [primitive][PyPrimitive].
+ *
+ * This function optionally takes [locals][args]
+ *
+ * @see KythonInterpreter.testExec
+ */
+internal inline fun <reified T : PyPrimitive> testPrimitive(
+    code: String,
+    args: Map<String, PyObject> = mapOf(),
+    block: PyObjectTester<T>.() -> Unit
+) =
+    PyObjectTester<T>(code, args).block()
+
+/**
+ * Helper class used to automatically unwrap PyObject tests results
+ * along with assertion methods.
+ */
+class PyObjectTester<T : PyPrimitive> internal constructor(
+    /** The code to run the interpreter with */
+    private val testCode: String,
+    /** Potential arguments to pass as locals to the interpreter */
+    private val args: Map<String, PyObject>
+) {
+    /** The compiler result */
+    @Suppress("UNCHECKED_CAST")
+    private val execResult
+        get() = KythonInterpreter.testExec(testCode, args) as T
+
+    /**
+     * Asserts that a [PyContainer] based result equals [expected].
+     * This is done by unwrapping and flattening [execResult] into its JVM core type.
+     */
+    @Suppress("UNCHECKED_CAST")
+    internal inline fun <reified U : PyPrimitive> flattenedPyResultsIn(expected: Any?) {
+        val result = execResult
+        check(result is PyContainer) { "Result was not a PyContainer" }
+        val unwrapped = (result.unwrap() as List<U>).map { it.unwrap() }
+        Assertions.assertEquals(expected, unwrapped)
+    }
+
+    // General note:
+    // We run .testExec each time to exclude possible side-effects.
+
+    /**
+     * Asserts that an unwrapped [execResult] equals [expected].
+     */
+    fun resultsIn(expected: Any?) {
+        assertUnwrappedEquals(execResult, expected, testCode)
+    }
+
+    /**
+     * Asserts that an unwrapped [execResult] is true.
+     */
+    fun isTrue() {
+        assertUnwrappedEquals(execResult, true, testCode)
+    }
+
+    /**
+     * Asserts that an unwrapped [execResult] is false.
+     */
+    fun isFalse() {
+        assertUnwrappedEquals(execResult, false, testCode)
+    }
 }
