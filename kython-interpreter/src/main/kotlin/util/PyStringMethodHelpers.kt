@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.util
+package green.sailor.kython.interpreter.util
 
 /**
  * Returns a centered [String] with a padding of [width] using [padWith]

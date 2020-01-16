@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.util
+package green.sailor.kython.interpreter.util
 
 import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyObject

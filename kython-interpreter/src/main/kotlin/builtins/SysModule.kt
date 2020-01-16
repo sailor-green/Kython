@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.builtins
+package green.sailor.kython.interpreter.builtins
 
 import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.interpreter.KythonInterpreter
