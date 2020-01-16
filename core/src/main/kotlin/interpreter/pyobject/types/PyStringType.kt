@@ -286,6 +286,7 @@ object PyStringType : PyType("str") {
         return PyTuple.get(args.map { PyString(it) })
     }
 
+    /** str.swapcase */
     @ExposeMethod("swapcase")
     @MethodParams(MethodParam("self", "POSITIONAL"))
     fun pyStrSwapCase(kwargs: Map<String, PyObject>): PyString {
@@ -295,6 +296,7 @@ object PyStringType : PyType("str") {
         return PyString(swapped)
     }
 
+    /** str.zfill */
     @ExposeMethod("zfill")
     @MethodParams(
         MethodParam("self", "POSITIONAL"),
