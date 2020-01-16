@@ -34,38 +34,6 @@ import kotlin.math.log
  */
 @Suppress("unused")
 class KyCodeObject(original: KycCodeObject) {
-    companion object {
-        // code flags
-
-        // not sure
-        const val CO_OPTIMISED = 1
-        const val CO_NEWLOCALS = 2
-
-        // function has an *args argument
-        const val CO_HAS_VARARGS = 4 // CO_VARARGS
-
-        // function has a **kwargs argument
-        const val CO_HAS_VARKWARGS = 8 // CO_VARKWARGS
-
-        // function is nested
-        const val CO_NESTED = 16
-
-        // function is a generator
-        const val CO_GENERATOR = 32
-
-        // not sure
-        const val CO_NOFREE = 64
-
-        // async function
-        const val CO_ASYNC_FUNCTION = 128 // CO_COROUTINE
-
-        // not sure
-        const val CO_ITERABLE_ASYNC_FUNCTION = 256
-
-        // async generator
-        const val CO_ASYNC_GENERATOR = 256
-    }
-
     /** The argument count for the function. */
     val argCount: Int = original.argCount.wrapped
 
@@ -82,12 +50,11 @@ class KyCodeObject(original: KycCodeObject) {
     val stackSize = original.stackSize.wrapped
 
     /** The flags for this function. */
-    val flags = original.flags.wrapped
+    val flags = CodeFlags(original.flags.wrapped)
 
     /** The raw bytecode for this function. */
     val rawBytecode = original.bytecode.wrapped
 
-    // TODO: Unwrap these into real objects.
     /** The constants for this function. */
     val consts = original.consts.wrapped.map { it.wrap() }
 

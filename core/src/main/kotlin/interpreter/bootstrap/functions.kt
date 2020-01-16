@@ -19,24 +19,25 @@ package green.sailor.kython.interpreter.bootstrap
 
 import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.functions.PyBuiltinFunction
 import green.sailor.kython.interpreter.importing.JarFileModuleLoader
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 private fun wrap(name: String, fn: () -> PyObject) =
-    PyBuiltinFunction.wrap(name, PyCallableSignature.EMPTY) { fn() }
+    PyBuiltinFunction
+        .wrap(name, PyCallableSignature.EMPTY) { fn() }
 
 private val loadSys = wrap("__load_kython_sys") { SysModule }
 // todo
 private val loadImp = wrap("__load_imp") { PyNone }
 
 private val loadBootstrapExternal = wrap("__load_bootstrap_external") {
-    JarFileModuleLoader.getLibModule("importlib/_bootstrap_external")
+    JarFileModuleLoader.getClasspathModule("importlib/_bootstrap_external")
 }
 private val loadBootstrap = wrap("__load_bootstrap") {
-    JarFileModuleLoader.getLibModule("importlib/_bootstrap")
+    JarFileModuleLoader.getClasspathModule("importlib/_bootstrap")
 }
 
 /**

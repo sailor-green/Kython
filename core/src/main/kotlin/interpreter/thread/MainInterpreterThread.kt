@@ -26,6 +26,6 @@ import green.sailor.kython.interpreter.stack.StackFrame
 class MainInterpreterThread(frame: StackFrame) : InterpreterThread(frame) {
     override fun runThread() {
         KythonInterpreter.interpreterThreadLocal.set(this)
-        runThreadWithErrorView()
+        internalRunThreadWithErrorLogs()
     }
 }

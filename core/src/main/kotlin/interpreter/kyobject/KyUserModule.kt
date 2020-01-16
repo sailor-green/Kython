@@ -17,8 +17,8 @@
 
 package green.sailor.kython.interpreter.kyobject
 
-import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**

@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.functions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 
 class LenBuiltinFunction : PyBuiltinFunction("len") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {

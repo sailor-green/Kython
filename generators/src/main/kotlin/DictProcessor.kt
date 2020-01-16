@@ -46,7 +46,7 @@ class DictProcessor : AbstractProcessor() {
 
         // helper constants
         val builtinMethod = ClassName(
-            "green.sailor.kython.interpreter.functions",
+            "green.sailor.kython.interpreter.pyobject.function",
             "PyBuiltinFunction"
         )
         val pyObject = ClassName(

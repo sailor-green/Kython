@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.typeError
 

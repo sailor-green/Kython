@@ -21,7 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.functions.PyBuiltinFunction
+import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.StackFrame
 
@@ -37,7 +37,8 @@ abstract class PyType(val name: String) : PyObject(),
      * from Kotlin land.
      */
     val builtinFunctionWrapper by lazy {
-        PyBuiltinFunction.wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
+        PyBuiltinFunction
+            .wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
     }
 
     /** A list of parent classes for this PyType. */

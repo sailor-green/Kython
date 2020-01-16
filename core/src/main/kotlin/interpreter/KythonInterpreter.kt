@@ -22,10 +22,10 @@ package green.sailor.kython.interpreter
 import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
-import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.module.PyModule
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -111,7 +111,8 @@ object KythonInterpreter {
     fun runPythonFromPath(path: Path) {
         val fn = cpyInterface.compile(path)
 
-        val rootFunction = PyUserFunction(fn)
+        val rootFunction =
+            PyUserFunction(fn)
         val module = KyUserModule(rootFunction, path.toString(), Files.readAllLines(path))
         module.attribs["__name__"] = PyString("__main__")
         modules["__main__"] = PyUserModule(module, "__main__")
@@ -125,7 +126,8 @@ object KythonInterpreter {
     fun runPythonFromString(s: String) {
         val fn = cpyInterface.compile(s)
 
-        val rootFunction = PyUserFunction(fn)
+        val rootFunction =
+            PyUserFunction(fn)
         val module = KyUserModule(rootFunction, "<code>", s.split(System.lineSeparator()))
         modules["__main__"] = PyUserModule(module, "__main__")
 

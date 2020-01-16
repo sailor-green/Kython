@@ -51,5 +51,5 @@ object SysModule : PyBuiltinModule("sys") {
  * Creates the default path elements.
  */
 fun defaultPath(): MutableList<PyString> {
-    return listOf("", "classpath:").mapTo(mutableListOf()) { PyString(it) }
+    return listOf("", "classpath:/Lib").mapTo(mutableListOf()) { PyString(it) }
 }

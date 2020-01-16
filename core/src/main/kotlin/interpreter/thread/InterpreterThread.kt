@@ -21,10 +21,12 @@ import green.sailor.kython.MakeUp
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
+import org.apiguardian.api.API
 
 /**
  * The base class for an interpreter thread.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     /** The current executing stack frame for this thread. */
     var currentStackFrame: StackFrame? = null
@@ -32,6 +34,7 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     /**
      * Runs a stack frame on this thread.
      */
+    @API(status = API.Status.MAINTAINED)
     fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): PyObject {
         val parent = currentStackFrame
         parent?.let {
@@ -52,11 +55,10 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     }
 
     /**
-     * Wraps a root frame to handle otherwise unhandled KyErrors. Use [kickoffThread] instead if
-     * you're invoking the interpreter normally, and [runRootFrame] if you want to just invoke the
-     * interpreter.
+     * Wraps a root frame to handle otherwise unhandled KyErrors.
      */
-    protected fun wrapTraceback(rootFrame: StackFrame) {
+    @API(status = API.Status.INTERNAL)
+    fun internalWrapTraceback(rootFrame: StackFrame) {
         try {
             runStackFrame(rootFrame, mapOf())
         } catch (e: KyError) {
@@ -84,9 +86,10 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     /**
      * Runs this thread, wrapping internal errors in a full dump.
      */
-    protected fun runThreadWithErrorView(rethrow: Boolean = true) {
+    @API(status = API.Status.INTERNAL)
+    fun internalRunThreadWithErrorLogs(rethrow: Boolean = true) {
         try {
-            wrapTraceback(rootStackFrame)
+            internalWrapTraceback(rootStackFrame)
         } catch (e: Throwable) { // blah blah, bad practice, who cares
             System.err.println("Fatal interpreter error!")
             if (!rethrow) e.printStackTrace(System.err)

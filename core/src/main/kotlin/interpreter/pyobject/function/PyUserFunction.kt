@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.functions
+package green.sailor.kython.interpreter.pyobject.function
 
 import green.sailor.kython.interpreter.Builtins
 import green.sailor.kython.interpreter.Exceptions
@@ -115,7 +115,7 @@ class PyUserFunction(
         }
 
         // add a *args if we have one
-        if (code.flags and KyCodeObject.CO_HAS_VARARGS != 0) {
+        if (code.flags.CO_HAS_VARARGS) {
             val name = code.varnames[code.argCount]
             args.add(Pair(name, ArgType.POSITIONAL_STAR))
         }
@@ -128,7 +128,7 @@ class PyUserFunction(
         }
 
         // **kwargs
-        if (code.flags and KyCodeObject.CO_HAS_VARKWARGS != 0) {
+        if (code.flags.CO_HAS_VARKWARGS) {
             val name = code.varnames[code.argCount + code.kwOnlyArgCount]
             args.add(Pair(name, ArgType.KEYWORD_STAR))
         }

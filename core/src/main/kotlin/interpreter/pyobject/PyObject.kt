@@ -340,11 +340,14 @@ abstract class PyObject {
     open fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject = this
 
     /**
+     * If this object has a `__set__` descriptor.
+     */
+    open fun kyHasSet(): Boolean = false
+
+    /**
      * Implements `__set__` for this object.
      */
-    open fun pyDescriptorSet(): PyObject {
-        TODO()
-    }
+    open fun pyDescriptorSet(instance: PyObject, value: PyObject) = Unit
 
     /**
      * Implements `__set_name__` for this object.
