@@ -93,6 +93,9 @@ fun PyObject.isinstance(others: Set<PyType>): Boolean {
     return type.mro.toSet().intersect(others).isNotEmpty()
 }
 
+/** Checks if this PyType is a subclass of another type. */
+fun PyType.issubclass(other: PyType) = issubclass(setOf(other))
+
 /**
  * Checks if this PyType is a subclass of another type.
  */

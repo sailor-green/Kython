@@ -76,4 +76,3 @@ enum class UnaryOp {
     /** not thing */
     NOT
 }
-
