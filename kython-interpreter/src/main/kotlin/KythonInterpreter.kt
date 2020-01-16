@@ -19,9 +19,9 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
+import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -31,7 +31,7 @@ import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.thread.InterpreterThread
 import green.sailor.kython.interpreter.thread.MainInterpreterThread
-import green.sailor.kython.util.CPythonCompiler
+import green.sailor.kython.interpreter.util.CPythonCompiler
 import java.nio.file.Files
 import java.nio.file.Path
 

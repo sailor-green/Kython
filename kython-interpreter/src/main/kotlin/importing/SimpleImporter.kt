@@ -17,8 +17,8 @@
 
 package green.sailor.kython.interpreter.importing
 
-import green.sailor.kython.builtins.SysModule
 import green.sailor.kython.interpreter.*
+import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.module.PyModule

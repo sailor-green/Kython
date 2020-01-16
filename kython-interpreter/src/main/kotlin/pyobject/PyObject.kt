@@ -20,13 +20,7 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.util.PyObjectMap
-
-// initialdict:
-// take PyString as an example
-// PyStringType contains all the methods, e.g. upper/lower/et cetera
-// internalDict copies all the method wrappers from PyStringType on creation, binding them to
-// the PyString object
+import green.sailor.kython.interpreter.util.PyObjectMap
 
 /**
  * Represents a Python object. Examples include an int, strings, et cetera, or user-defined objects.

@@ -25,7 +25,7 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.util.center
+import green.sailor.kython.interpreter.util.center
 import java.util.*
 import kotlin.streams.asSequence
 

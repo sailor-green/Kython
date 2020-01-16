@@ -18,7 +18,7 @@
 package green.sailor.kython.interpreter.stack
 
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.util.PythonFunctionStack
+import green.sailor.kython.interpreter.util.PythonFunctionStack
 
 /**
  * Represents stack frame information for a specific stack frame.

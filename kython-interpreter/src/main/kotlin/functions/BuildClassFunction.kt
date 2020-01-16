@@ -29,7 +29,7 @@ import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.util.PyObjectMap
+import green.sailor.kython.interpreter.util.PyObjectMap
 
 /**
  * Represents the `__build_class__` builtin, used to create new classes.

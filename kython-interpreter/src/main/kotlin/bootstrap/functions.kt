@@ -17,7 +17,7 @@
 
 package green.sailor.kython.interpreter.bootstrap
 
-import green.sailor.kython.builtins.SysModule
+import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.importing.JarFileModuleLoader
 import green.sailor.kython.interpreter.kyobject.KyUserModule

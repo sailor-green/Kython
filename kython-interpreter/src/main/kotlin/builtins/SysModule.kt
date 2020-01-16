@@ -24,9 +24,8 @@ import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
-import green.sailor.kython.util.StringDictWrapper
-import green.sailor.kython.util.dictDelegate
-
+import green.sailor.kython.interpreter.util.StringDictWrapper
+import green.sailor.kython.interpreter.util.dictDelegate
 /**
  * Represents the sys built-in module.
  */

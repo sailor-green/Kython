@@ -21,8 +21,8 @@ import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
+import green.sailor.kython.interpreter.util.PyObjectMap
 import green.sailor.kython.kyc.*
-import green.sailor.kython.util.PyObjectMap
 
 /**
  * Turns a [BaseKycType] into a [PyObject]

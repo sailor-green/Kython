@@ -22,7 +22,7 @@ package green.sailor.kython.interpreter.instruction.impl
 import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.util.PyObjectMap
+import green.sailor.kython.interpreter.util.PyObjectMap
 
 /**
  * BUILD_CONST_KEY_MAP
@@ -58,9 +58,7 @@ fun UserCodeStackFrame.buildSimple(type: BuildType, arg: Byte) {
         }
         BuildType.SET -> {
             PySet(
-                LinkedHashSet((0 until count)
-                    .map { stack.pop() }
-                    .reversed())
+                LinkedHashSet((0 until count).map { stack.pop() }.reversed())
             )
         }
         else -> TODO("Unimplemented build type $type")

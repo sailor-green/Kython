@@ -20,7 +20,7 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyDictType
 import green.sailor.kython.interpreter.typeError
-import green.sailor.kython.util.PyObjectMap
+import green.sailor.kython.interpreter.util.PyObjectMap
 
 /**
  * Represents a Python dict, a mapping between PyObject -> PyObject.
