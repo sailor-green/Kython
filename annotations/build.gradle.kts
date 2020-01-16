@@ -17,27 +17,4 @@
 
 plugins {
     kotlin("jvm")
-    application
-}
-
-
-project
-
-application {
-    mainClassName = "green.sailor.kython.annotation.Annotation.kt"
-}
-
-dependencies {
-    // === KOTLIN === //
-    implementation(kotlin("stdlib-jdk8"))
-}
-
-// enforce java 11 class files
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "11"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "11"
-    }
 }

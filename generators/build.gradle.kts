@@ -17,15 +17,10 @@
 
 plugins {
     kotlin("jvm")
-    kotlin("kapt")
 }
-
-val incapVersion = 0.2
 
 dependencies {
     // === CODE GENERATION === //
     implementation(project(":kython-annotations"))
     implementation("com.squareup:kotlinpoet:1.4.1")
-    implementation("net.ltgt.gradle.incap:incap:$incapVersion")
-    kapt("net.ltgt.gradle.incap:incap-processor:$incapVersion")
 }

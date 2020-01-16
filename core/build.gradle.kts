@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * This file is part of kython.
  *
@@ -17,7 +15,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 plugins {
     kotlin("jvm")
     kotlin("kapt")
@@ -32,10 +29,6 @@ kapt {
 
 
 dependencies {
-    // === KOTLIN === //
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(kotlin("reflect"))
-
     // === CORE DEPENDENCIES === //
     // == picocli - for CLI parsing == //
     implementation(group = "info.picocli", name = "picocli", version = "4.1.2")
@@ -52,7 +45,6 @@ dependencies {
     // === CODE GENERATION === //
     api(project(":kython-annotations"))
     kapt(project(":kython-generators"))
-
 }
 
 
@@ -74,16 +66,6 @@ sourceSets {
 }
 
 
-// enforce java 11 class files
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "11"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "11"
-    }
-}
-
 // apparently this is how you do junit
 tasks.test {
     useJUnitPlatform()
@@ -100,7 +82,6 @@ tasks.jacocoTestReport {
     }
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
+tasks.compileKotlin {
+    kotlinOptions.freeCompilerArgs = listOf("-XXLanguage:+InlineClasses")
 }
