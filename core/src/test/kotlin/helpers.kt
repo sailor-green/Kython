@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.functions.PyUserFunction
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.interpreter.pyobject.PyContainer
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
@@ -53,16 +54,6 @@ fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf
 }
 
 /**
- * Reified helper used to automatically convert a [code]
- * result to the desired PyObject counter-part.
- */
-inline fun <reified T : PyObject> testWithObject(
-    code: String,
-    args: Map<String, PyObject> = mapOf()
-) =
-    KythonInterpreter.testExec(code, args) as T
-
-/**
  * Asserts that this PyObject is truthy.
  */
 fun assertTrue(result: PyObject) {
@@ -91,7 +82,7 @@ fun assertUnwrappedTrue(wrapped: PyObject, fn: (Any?) -> Boolean) {
     return Assertions.assertTrue(fn(wrapped.unwrap()))
 }
 
-fun assertUnwrappedEquals(wrapped: PyObject, expected: Any, calledWith: String = "") {
+fun assertUnwrappedEquals(wrapped: PyObject, expected: Any?, calledWith: String = "") {
     if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
     Assertions.assertEquals(expected, wrapped.unwrap(), "Called with '$calledWith'")
 }
@@ -112,34 +103,61 @@ fun assertUnwrappedFalse(wrapped: PyObject, fn: (Any?) -> Boolean) {
  *
  * @see KythonInterpreter.testExec
  */
-inline fun <reified T : PyPrimitive> testPrimitive(
+internal inline fun <reified T : PyPrimitive> testPrimitive(
     code: String,
     args: Map<String, PyObject> = mapOf(),
     block: PyObjectTester<T>.() -> Unit
 ) =
     PyObjectTester<T>(code, args).block()
 
-class PyObjectTester<T : PyPrimitive>(
+/**
+ * Helper class used to automatically unwrap PyObject tests results
+ * along with assertion methods.
+ */
+class PyObjectTester<T : PyPrimitive> internal constructor(
+    /** The code to run the interpreter with */
     private val testCode: String,
+    /** Potential arguments to pass as locals to the interpreter */
     private val args: Map<String, PyObject>
 ) {
+    /** The compiler result */
+    @Suppress("UNCHECKED_CAST")
+    private val execResult
+        get() = KythonInterpreter.testExec(testCode, args) as T
+
+    /**
+     * Asserts that a [PyContainer] based result equals [expected].
+     * This is done by unwrapping and flattening [execResult] into its JVM core type.
+     */
+    @Suppress("UNCHECKED_CAST")
+    internal inline fun <reified U : PyPrimitive> flattenedPyResultsIn(expected: Any?) {
+        val result = execResult
+        check(result is PyContainer) { "Result was not a PyContainer" }
+        val unwrapped = (result.unwrap() as List<U>).map { it.unwrap() }
+        Assertions.assertEquals(expected, unwrapped)
+    }
+
     // General note:
     // We run .testExec each time to exclude possible side-effects.
-    @Suppress("UNCHECKED_CAST")
-    fun resultsIn(expected: Any) {
-        val result = KythonInterpreter.testExec(testCode, args) as T
-        assertUnwrappedEquals(result, expected, testCode)
+
+    /**
+     * Asserts that an unwrapped [execResult] equals [expected].
+     */
+    fun resultsIn(expected: Any?) {
+        assertUnwrappedEquals(execResult, expected, testCode)
     }
 
-    @Suppress("UNCHECKED_CAST")
+    /**
+     * Asserts that an unwrapped [execResult] is true.
+     */
     fun isTrue() {
-        val result = KythonInterpreter.testExec(testCode, args) as T
-        assertUnwrappedEquals(result, true, testCode)
+        assertUnwrappedEquals(execResult, true, testCode)
     }
 
-    @Suppress("UNCHECKED_CAST")
+    /**
+     * Asserts that an unwrapped [execResult] is false.
+     */
     fun isFalse() {
-        val result = KythonInterpreter.testExec(testCode, args) as T
-        assertUnwrappedEquals(result, false, testCode)
+        assertUnwrappedEquals(execResult, false, testCode)
     }
 }

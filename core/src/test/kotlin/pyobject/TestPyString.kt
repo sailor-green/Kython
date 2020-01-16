@@ -19,6 +19,7 @@ package green.sailor.kython.test.pyobject
 
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.test.testPrimitive
 import green.sailor.kython.util.center
 import java.util.*
@@ -167,6 +168,153 @@ class TestPyString {
 
         testPrimitive<PyBool>("""result = "2b".isalnum()""") {
             isFalse()
+        }
+    }
+
+    @Test
+    fun `Test str islower`() {
+        testPrimitive<PyBool>("""result = "123".islower()""") {
+            isFalse()
+        }
+
+        testPrimitive<PyBool>("""result = "hey".islower()""") {
+            isTrue()
+        }
+
+        testPrimitive<PyBool>("""result = "HEY".islower()""") {
+            isFalse()
+        }
+    }
+
+    @Test
+    fun `Test str isupper`() {
+        testPrimitive<PyBool>("""result = "123".isupper()""") {
+            isFalse()
+        }
+
+        testPrimitive<PyBool>("""result = "hey".isupper()""") {
+            isFalse()
+        }
+
+        testPrimitive<PyBool>("""result = "HEY".isupper()""") {
+            isTrue()
+        }
+    }
+
+    @Test
+    fun `Test str isspace`() {
+        testPrimitive<PyBool>("""result = "".isspace()""") {
+            isFalse()
+        }
+
+        testPrimitive<PyBool>("""result = " ".isspace()""") {
+            isTrue()
+        }
+
+        testPrimitive<PyBool>("""result = "\n".isspace()""") {
+            isTrue()
+        }
+    }
+
+    @Test
+    fun `Test str istitle`() {
+        testPrimitive<PyBool>("""result = "".istitle()""") {
+            isFalse()
+        }
+
+        testPrimitive<PyBool>("""result = "Hello".istitle()""") {
+            isTrue()
+        }
+
+        testPrimitive<PyBool>("""result = "HELLO".istitle()""") {
+            isFalse()
+        }
+
+        testPrimitive<PyBool>("""result = "HEllo".istitle()""") {
+            isFalse()
+        }
+    }
+
+    @Test
+    fun `Test str title`() {
+        testPrimitive<PyBool>("""result = "hello".title()""") {
+            resultsIn("Hello")
+        }
+
+        testPrimitive<PyBool>("""result = "HeLlO".title()""") {
+            resultsIn("Hello")
+        }
+
+        testPrimitive<PyBool>("""result = "\n".title()""") {
+            resultsIn("\n")
+        }
+
+        testPrimitive<PyBool>("""result = "X".title()""") {
+            resultsIn("X")
+        }
+    }
+
+    @Test
+    fun `Test str partition`() {
+        testPrimitive<PyTuple>("""result = "hello world friend".partition(" ")""") {
+            flattenedPyResultsIn<PyString>(listOf("hello", " ", "world friend"))
+        }
+
+        testPrimitive<PyTuple>("""result = "hello ".partition(" ")""") {
+            flattenedPyResultsIn<PyString>(listOf("hello", " ", ""))
+        }
+
+        testPrimitive<PyTuple>("""result = "hello".partition(" ")""") {
+            flattenedPyResultsIn<PyString>(listOf("hello", "", ""))
+        }
+
+        testPrimitive<PyTuple>("""result = "hello".partition("hey")""") {
+            flattenedPyResultsIn<PyString>(listOf("hello", "", ""))
+        }
+    }
+
+    @Test
+    fun `Test str rpartition`() {
+        testPrimitive<PyTuple>("""result = "hello world friend".rpartition(" ")""") {
+            flattenedPyResultsIn<PyString>(listOf("hello world", " ", "friend"))
+        }
+
+        testPrimitive<PyTuple>("""result = "hello ".rpartition(" ")""") {
+            flattenedPyResultsIn<PyString>(listOf("hello", " ", ""))
+        }
+
+        testPrimitive<PyTuple>("""result = "hello".rpartition(" ")""") {
+            flattenedPyResultsIn<PyString>(listOf("", "", "hello"))
+        }
+
+        testPrimitive<PyTuple>("""result = "hello".rpartition("hey")""") {
+            flattenedPyResultsIn<PyString>(listOf("", "", "hello"))
+        }
+    }
+
+    @Test
+    fun `Test str swapcase`() {
+        testPrimitive<PyString>("""result = "hello".swapcase()""") {
+            resultsIn("HELLO")
+        }
+
+        testPrimitive<PyString>("""result = "hELLO".swapcase()""") {
+            resultsIn("Hello")
+        }
+
+        testPrimitive<PyString>("""result = "\n".swapcase()""") {
+            resultsIn("\n")
+        }
+    }
+
+    @Test
+    fun `Test str zfill`() {
+        testPrimitive<PyString>("""result = "abc".zfill(3)""") {
+            resultsIn("abc")
+        }
+
+        testPrimitive<PyString>("""result = "123".zfill(6)""") {
+            resultsIn("000123")
         }
     }
 }
