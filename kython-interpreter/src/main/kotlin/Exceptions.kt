@@ -34,6 +34,9 @@ object Exceptions {
     // iterator signal
     val STOP_ITERATION = PyExceptionType("StopIteration", EXCEPTION)
 
+    // super bad error
+    val SYSTEM_ERROR = PyExceptionType("SystemError", EXCEPTION)
+
     // main errors
     val ATTRIBUTE_ERROR = PyExceptionType("AttributeError", EXCEPTION)
     val NAME_ERROR = PyExceptionType("NameError", EXCEPTION)

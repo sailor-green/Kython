@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
@@ -29,6 +30,7 @@ import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.util.PyObjectMap
 
 /**
@@ -48,7 +50,10 @@ object BuildClassFunction : PyBuiltinFunction("__build_class__") {
             clsFn.kyCall(listOf(bodyDict))
         } else {
             // if you pass a builtin to `__build_class__`, you deserve this error
-            val frame = clsFn.createFrame() as UserCodeStackFrame
+            val frame = clsFn.createFrame()
+            if (frame !is UserCodeStackFrame) {
+                Exceptions.SYSTEM_ERROR("Cannot pass builtin function").throwKy()
+            }
             KythonInterpreter.runStackFrame(frame, mapOf())
             items.putAll(frame.locals.mapKeys { PyString(it.key) })
         }
