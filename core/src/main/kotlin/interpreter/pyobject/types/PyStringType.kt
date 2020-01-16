@@ -99,9 +99,11 @@ object PyStringType : PyType("str") {
      * Return `true` if all characters in the [string] are alphanumeric
      * and there is at least one character
      */
-    private fun isAlnum(string: String): Boolean = string.run {
-        (all { it.isLetter() } || all { it.category in numerics } || isDigit(this)) &&
-            isNotEmpty()
+    private fun isAlnum(string: String): Boolean {
+        val passesBasic = string.run {
+            all { it.isLetter() } || all { it.category in numerics } || isDigit(this)
+        }
+        return passesBasic && string.isNotEmpty()
     }
 
     /**

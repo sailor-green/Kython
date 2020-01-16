@@ -21,12 +21,11 @@ import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.test.testPrimitive
-import green.sailor.kython.util.center
-import java.util.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import java.util.*
 
 class TestPyString {
     @ParameterizedTest(name = "For value {0}")
@@ -64,7 +63,7 @@ class TestPyString {
     @Test
     fun `Test str center width and fillchar`() {
         testPrimitive<PyString>("""result = str("moon").center(10, ":")""") {
-            resultsIn("moon".center(10L, ':'))
+            resultsIn(":::moon:::")
         }
     }
 
@@ -73,7 +72,7 @@ class TestPyString {
     @Disabled
     fun `Test str center only width`() {
         testPrimitive<PyString>("""result = str("moon").center(10)""") {
-            resultsIn("moon".center(10L, ' '))
+            resultsIn("   moon   ")
         }
     }
 
@@ -213,6 +212,10 @@ class TestPyString {
 
         testPrimitive<PyBool>("""result = "\n".isspace()""") {
             isTrue()
+        }
+
+        testPrimitive<PyBool>("""result = "\u200b".isspace()""") {
+            isFalse()
         }
     }
 
