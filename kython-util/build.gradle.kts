@@ -15,3 +15,26 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+plugins {
+    id("jacoco")
+}
+
+dependencies {
+    // === TEST === //
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.5.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
+
+
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = false
+    }
+}

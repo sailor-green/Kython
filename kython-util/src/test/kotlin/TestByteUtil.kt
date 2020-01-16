@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.test
+package green.sailor.kython.util.test
 
 import green.sailor.kython.util.bytesToLongBE
 import green.sailor.kython.util.bytesToLongLE
@@ -23,6 +23,7 @@ import green.sailor.kython.util.longToBytesBE
 import green.sailor.kython.util.longToBytesLE
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+
 
 class TestByteUtil {
     @Test

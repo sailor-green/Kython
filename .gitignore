@@ -68,3 +68,4 @@ testfile/
 
 # kyc compiled files
 *.kyc
+/kython-util/build/

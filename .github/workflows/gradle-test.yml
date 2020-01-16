@@ -58,12 +58,19 @@ jobs:
             -   name: Build distribution
                 run: ./gradlew :kython-cli:distZip
 
-            -   name: Upload reports
+            -   name: Upload reports (core)
                 uses: actions/upload-artifact@v1
                 if: always()
                 with:
-                    name: Reports - ${{ matrix.java }}-${{ matrix.run_on }}
-                    path: core/build/reports
+                    name: Reports - Core - ${{ matrix.java }}-${{ matrix.run_on }}
+                    path: kython-interpreter/build/reports
+
+            - name:
+              uses: actions/upload-artifact@v1
+              if: always()
+              with:
+                  name: Reports - Utils - ${{ matrix.java }}-${{ matrix.run_on }}
+                  path: kython-util/build/reports
 
             -   name: Upload build files
                 uses: actions/upload-artifact@v1
