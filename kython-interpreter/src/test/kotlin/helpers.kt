@@ -110,6 +110,14 @@ internal inline fun <reified T : PyPrimitive> testPrimitive(
 ) =
     PyObjectTester<T>(code, args).block()
 
+/** Asserts whether a given unwrapped[code] result is true. */
+internal fun isTrue(code: String, args: Map<String, PyObject> = mapOf()) =
+    testPrimitive<PyBool>(code, args) { isTrue() }
+
+/** Asserts whether a given unwrapped[code] result is false. */
+internal fun isFalse(code: String, args: Map<String, PyObject> = mapOf()) =
+    testPrimitive<PyBool>(code, args) { isFalse() }
+
 /**
  * Helper class used to automatically unwrap PyObject tests results
  * along with assertion methods.

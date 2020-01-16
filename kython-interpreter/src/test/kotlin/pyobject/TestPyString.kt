@@ -20,6 +20,8 @@ package green.sailor.kython.test.pyobject
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.test.isFalse
+import green.sailor.kython.test.isTrue
 import green.sailor.kython.test.testPrimitive
 import java.util.*
 import org.junit.jupiter.api.Disabled
@@ -78,40 +80,22 @@ class TestPyString {
 
     @Test
     fun `Test str isalpha`() {
-        testPrimitive<PyBool>("""result = "abc".isalpha()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "123".isalpha()""") {
-            isFalse()
-        }
+        isTrue("""result = "abc".isalpha()""")
+        isFalse("""result = "123".isalpha()""")
     }
 
     @Test
     fun `Test str isascii`() {
-        testPrimitive<PyBool>("""result = "hello".isascii()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "€".isascii()""") {
-            isFalse()
-        }
+        isTrue("""result = "hello".isascii()""")
+        isFalse("""result = "€".isascii()""")
     }
 
     @Test
     fun `Test str isdecimal`() {
-        testPrimitive<PyBool>("""result = "123".isdecimal()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "hey".isdecimal()""") {
-            isFalse()
-        }
-
+        isTrue("""result = "123".isdecimal()""")
+        isFalse("""result = "hey".isdecimal()""")
         // ARABIC-INDIC DIGIT ZERO.
-        testPrimitive<PyBool>("""result = "٠".isdecimal() """) {
-            isTrue()
-        }
+        isTrue("""result = "٠".isdecimal() """)
     }
 
     @Test
@@ -133,126 +117,66 @@ class TestPyString {
     @Test
     fun `Test str isnumeric`() {
         // KHAROSHTHI DIGIT (UTF-16 surrogates edgecase)
-        testPrimitive<PyBool>("""result = "𐩃𐩂".isnumeric()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "123".isnumeric()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "hey".isnumeric()""") {
-            isFalse()
-        }
+        isFalse("""result = "𐩃𐩂".isnumeric()""")
+        isTrue("""result = "123".isnumeric()""")
+        isFalse("""result = "hey".isnumeric()""")
     }
 
     @Test
     fun `Test str isalnum`() {
         // KHAROSHTHI DIGIT (UTF-16 surrogates edgecase)
-        testPrimitive<PyBool>("""result = "𐩃𐩂".isalnum()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "".isalnum()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "hey".isalnum()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "\n".isalnum()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "2b".isalnum()""") {
-            isFalse()
-        }
+        isTrue("""result = "𐩃𐩂".isalnum()""")
+        isFalse("""result = "".isalnum()""")
+        isTrue("""result = "hey".isalnum()""")
+        isFalse("""result = "\n".isalnum()""")
+        isFalse("""result = "2b".isalnum()""")
     }
 
     @Test
     fun `Test str islower`() {
-        testPrimitive<PyBool>("""result = "123".islower()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "hey".islower()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "HEY".islower()""") {
-            isFalse()
-        }
+        isFalse("""result = "123".islower()""")
+        isTrue("""result = "hey".islower()""")
+        isFalse("""result = "HEY".islower()""")
     }
 
     @Test
     fun `Test str isupper`() {
-        testPrimitive<PyBool>("""result = "123".isupper()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "hey".isupper()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "HEY".isupper()""") {
-            isTrue()
-        }
+        isFalse("""result = "123".isupper()""")
+        isFalse("""result = "hey".isupper()""")
+        isTrue("""result = "HEY".isupper()""")
     }
 
     @Test
     fun `Test str isspace`() {
-        testPrimitive<PyBool>("""result = "".isspace()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = " ".isspace()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "\n".isspace()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "\u200b".isspace()""") {
-            isFalse()
-        }
+        isFalse("""result = "".isspace()""")
+        isTrue("""result = " ".isspace()""")
+        isTrue("""result = "\n".isspace()""")
+        isFalse("""result = "\u200b".isspace()""")
     }
 
     @Test
     fun `Test str istitle`() {
-        testPrimitive<PyBool>("""result = "".istitle()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "Hello".istitle()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "HELLO".istitle()""") {
-            isFalse()
-        }
-
-        testPrimitive<PyBool>("""result = "HEllo".istitle()""") {
-            isFalse()
-        }
+        isFalse("""result = "".istitle()""")
+        isTrue("""result = "Hello".istitle()""")
+        isFalse("""result = "HELLO".istitle()""")
+        isFalse("""result = "HEllo".istitle()""")
     }
 
     @Test
     fun `Test str title`() {
-        testPrimitive<PyBool>("""result = "hello".title()""") {
+        testPrimitive<PyString>("""result = "hello".title()""") {
             resultsIn("Hello")
         }
 
-        testPrimitive<PyBool>("""result = "HeLlO".title()""") {
+        testPrimitive<PyString>("""result = "HeLlO".title()""") {
             resultsIn("Hello")
         }
 
-        testPrimitive<PyBool>("""result = "\n".title()""") {
+        testPrimitive<PyString>("""result = "\n".title()""") {
             resultsIn("\n")
         }
 
-        testPrimitive<PyBool>("""result = "X".title()""") {
+        testPrimitive<PyString>("""result = "X".title()""") {
             resultsIn("X")
         }
     }
