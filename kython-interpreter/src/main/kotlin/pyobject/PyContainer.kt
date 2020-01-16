@@ -32,5 +32,6 @@ abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
         return PyBuiltinIterator(subobjects.listIterator())
     }
 
+    override fun pyLengthHint(): PyInt = PyInt(subobjects.size.toLong())
     override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
 }

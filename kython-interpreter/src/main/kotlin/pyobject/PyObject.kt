@@ -318,13 +318,21 @@ abstract class PyObject {
      */
     open fun pyNext(): PyObject = typeError("'${type.name}' object is not an iterator")
 
+    // __len__
     /**
      * Implements len(some_object).
      */
     open fun pyLen(): PyInt = typeError("object of type '${type.name}' has no len")
 
+    // __length_hint__
+    /**
+     * Used internally for optimisation.
+     */
+    open fun pyLengthHint(): PyInt = PyInt.ZERO
+
     // == Descriptors == //
 
+    // __get__
     /**
      * Implements `__get__` for this object.
      *
@@ -338,11 +346,13 @@ abstract class PyObject {
      */
     open fun kyHasSet(): Boolean = false
 
+    // __set__
     /**
      * Implements `__set__` for this object.
      */
     open fun pyDescriptorSet(instance: PyObject, value: PyObject) = Unit
 
+    // __set_name__
     /**
      * Implements `__set_name__` for this object.
      */
