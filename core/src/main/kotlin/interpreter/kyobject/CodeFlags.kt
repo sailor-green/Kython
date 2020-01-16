@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.kyobject
 /**
  * Type safe wrapper class over code object flags.
  */
+@Suppress("PropertyName", "unused")
 inline class CodeFlags(val flags: Int) {
     val CO_OPTIMISED get() = (flags and 1) != 0
 
@@ -34,7 +35,7 @@ inline class CodeFlags(val flags: Int) {
     /** Marks if this function is a generator. */
     val CO_GENERATOR get() = (flags and 32) != 0
     /** Marks if this function has no free/cell variables. */
-    val CO_NOFREE get() = (flags and 64) != 0
+    val CO_NO_FREE_VARS get() = (flags and 64) != 0
     /** Marks if this function is an async function. */
     val CO_ASYNC_FUNCTION get() = (flags and 128) != 0
     // unsure
