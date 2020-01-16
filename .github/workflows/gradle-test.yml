@@ -1,65 +1,72 @@
 name: Gradle Build - Test - Dist
 
 on:
-  push:
-    branches:
-      - 3.9
+    push:
+        branches:
+            - 3.9
 
-  pull_request: {}
+    pull_request: {}
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # needs updates as appropriate
-        java: [13]
+    test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                # needs updates as appropriate
+                java: [13]
 
-      # prevents different java version tests failing
-      fail-fast: false
+            # prevents different java version tests failing
+            fail-fast: false
 
-    steps:
-    - uses: actions/checkout@v1
+        steps:
+            -   uses: actions/checkout@v1
 
-    - name: Set up Java ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
+            -   name: Set up Java ${{ matrix.java }}
+                uses: actions/setup-java@v1
+                with:
+                    java-version: ${{ matrix.java }}
+            -   name: Cache gradle dependencies
+                uses: actions/cache@v1.1.0
+                with:
+                    path: ~/.gradle/caches
+                    key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+                    restore-keys: |
+                        ${{ runner.os }}-gradle-
 
-    - name: Install CPython 3.8
-      run: |
-        sudo add-apt-repository ppa:deadsnakes/ppa
-        sudo apt-get update
-        sudo apt-get install python3.9
+            -   name: Install CPython 3.8
+                run: |
+                    sudo add-apt-repository ppa:deadsnakes/ppa
+                    sudo apt-get update
+                    sudo apt-get install python3.9
 
-    - name: Make sure gradle is executable
-      run: chmod +x ./gradlew
+            -   name: Make sure gradle is executable
+                run: chmod +x ./gradlew
 
-    - name: Run gradle dependencies
-      run: ./gradlew dependencies
+            -   name: Run gradle dependencies
+                run: ./gradlew dependencies
 
-    - name: Run tests
-      run: ./gradlew build test jacocoTestReport
+            -   name: Run tests
+                run: ./gradlew build test jacocoTestReport
 
-    - name: Upload coverage
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: core/build/reports/jacoco/test/jacocoTestReport.xml
-        name: kython-java-${{ matrix.java }}
+            -   name: Upload coverage
+                uses: codecov/codecov-action@v1
+                with:
+                    token: ${{ secrets.CODECOV_TOKEN }}
+                    file: core/build/reports/jacoco/test/jacocoTestReport.xml
+                    name: kython-java-${{ matrix.java }}
 
-    - name: Build distribution
-      run: ./gradlew releaseDistZip
+            -   name: Build distribution
+                run: ./gradlew releaseDistZip
 
-    - name: Upload reports
-      uses: actions/upload-artifact@v1
-      if: always()
-      with:
-        name: Reports - ${{ matrix.java }}-${{ matrix.run_on }}
-        path: core/build/reports
+            -   name: Upload reports
+                uses: actions/upload-artifact@v1
+                if: always()
+                with:
+                    name: Reports - ${{ matrix.java }}-${{ matrix.run_on }}
+                    path: core/build/reports
 
-    - name: Upload build files
-      uses: actions/upload-artifact@v1
-      with:
-        name: Distributions - ${{ matrix.java }}-${{ matrix.run_on }}
-        path: build/distributions
+            -   name: Upload build files
+                uses: actions/upload-artifact@v1
+                with:
+                    name: Distributions - ${{ matrix.java }}-${{ matrix.run_on }}
+                    path: build/distributions
