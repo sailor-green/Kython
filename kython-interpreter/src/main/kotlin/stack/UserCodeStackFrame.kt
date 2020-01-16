@@ -173,6 +173,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.SET_ADD -> setAdd(param)
                 InstructionOpcode.MAP_ADD -> mapAdd(param)
 
+                InstructionOpcode.BUILD_TUPLE_UNPACK -> buildUnpack(BuildType.TUPLE, param)
+                InstructionOpcode.BUILD_LIST_UNPACK -> buildUnpack(BuildType.LIST, param)
+                InstructionOpcode.BUILD_SET_UNPACK -> buildUnpack(BuildType.SET, param)
+
                 // binary ops
                 InstructionOpcode.BINARY_ADD -> binaryOp(BinaryOp.ADD, param)
                 InstructionOpcode.BINARY_POWER -> binaryOp(BinaryOp.POWER, param)

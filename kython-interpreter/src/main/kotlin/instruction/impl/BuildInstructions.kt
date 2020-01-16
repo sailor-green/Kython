@@ -22,6 +22,7 @@ package green.sailor.kython.interpreter.instruction.impl
 import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.PyObjectMap
 
 /**
@@ -60,6 +61,37 @@ fun UserCodeStackFrame.buildSimple(type: BuildType, arg: Byte) {
             PySet(
                 LinkedHashSet((0 until count).map { stack.pop() }.reversed())
             )
+        }
+        else -> TODO("Unimplemented build type $type")
+    }
+    stack.push(built)
+    bytecodePointer += 1
+}
+
+// (*a, *b)
+/**
+ * BUILD_*_UNPACK
+ */
+fun UserCodeStackFrame.buildUnpack(type: BuildType, arg: Byte) {
+    val count = arg.toInt()
+    val built = when (type) {
+        BuildType.TUPLE -> {
+            val items = (0 until count)
+                .map { stack.pop() }.asReversed()
+                .flatMap { it.pyIter().toNativeList() }
+            PyTuple.get(items)
+        }
+        BuildType.LIST -> {
+            val items = (0 until count)
+                .map { stack.pop() }.asReversed()
+                .flatMapTo(mutableListOf()) { it.pyIter().toNativeList() }
+            PyList(items)
+        }
+        BuildType.SET -> {
+            val items = (0 until count)
+                .map { stack.pop() }.asReversed()
+                .flatMapTo(mutableSetOf()) { it.pyIter().toNativeList() }
+            PySet(items)
         }
         else -> TODO("Unimplemented build type $type")
     }
