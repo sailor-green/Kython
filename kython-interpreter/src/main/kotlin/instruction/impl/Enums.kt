@@ -31,6 +31,17 @@ enum class LoadPool {
 }
 
 /**
+ * Build types for BUILD_ instructions.
+ */
+enum class BuildType {
+    TUPLE,
+    DICT,
+    LIST,
+    SET,
+    STRING,
+}
+
+/**
  * Enumeration for the list of binary operators.
  */
 enum class BinaryOp {
@@ -52,17 +63,17 @@ enum class BinaryOp {
     DELETE_SUBSCR
 }
 
+/**
+ * Enumeration for the list of unary operators.
+ */
 enum class UnaryOp {
+    /** +thing */
     POSITIVE,
+    /** -thing */
     NEGATIVE,
+    /** ~thing */
     INVERT,
+    /** not thing */
     NOT
 }
 
-enum class BuildType {
-    TUPLE,
-    DICT,
-    LIST,
-    SET,
-    STRING,
-}
