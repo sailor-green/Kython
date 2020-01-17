@@ -58,5 +58,4 @@ fun <T : PyObject> KythonInterpreter.testExec(
     code: String
 ) = testExecInternal(code) as T
 
-
 fun <T : PyObject> String.runPy() = KythonInterpreter.testExec<T>(this)
