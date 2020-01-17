@@ -25,10 +25,10 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.instruction.PythonInstruction
 import green.sailor.kython.interpreter.instruction.impl.*
-import green.sailor.kython.interpreter.pyobject.PyCellObject
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.util.PythonFunctionStack
 import java.util.*

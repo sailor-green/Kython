@@ -25,6 +25,8 @@ import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
+import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy

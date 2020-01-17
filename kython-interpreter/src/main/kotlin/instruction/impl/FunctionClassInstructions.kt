@@ -23,6 +23,8 @@ import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
+import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.typeError
 

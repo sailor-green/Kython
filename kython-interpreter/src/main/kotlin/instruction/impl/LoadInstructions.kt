@@ -20,7 +20,7 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.nameError
-import green.sailor.kython.interpreter.pyobject.PyCellObject
+import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**

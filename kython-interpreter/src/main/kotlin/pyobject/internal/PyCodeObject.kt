@@ -15,10 +15,11 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.internal
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
-import green.sailor.kython.interpreter.pyobject.types.PyCodeType
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.

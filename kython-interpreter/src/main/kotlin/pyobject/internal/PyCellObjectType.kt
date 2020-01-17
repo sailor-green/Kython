@@ -15,17 +15,17 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.types
+package green.sailor.kython.interpreter.pyobject.internal
 
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.typeError
 
 /**
- * Represents the code type.
+ * Represents the type of a cell object.
  */
-object PyCodeType : PyType("code") {
+object PyCellObjectType : PyType("cell") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        typeError("Cannot make new instances of code objects")
+        typeError("Cannot create new instances of cell variable")
     }
 }

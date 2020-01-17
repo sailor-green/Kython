@@ -15,10 +15,11 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.internal
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.types.PyCellObjectType
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 import kotlin.reflect.KProperty
 
 // this is a VERY naiive implementation of cellvars

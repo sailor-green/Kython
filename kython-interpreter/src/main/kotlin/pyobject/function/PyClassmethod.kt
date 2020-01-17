@@ -15,33 +15,36 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.function
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
- * Represents a static method object.
+ * Represents a class method object.
  */
-class PyStaticmethod(val wrapped: PyObject) : PyObject() {
-    object PyStaticmethodType : PyType("staticmethod") {
+class PyClassmethod(val wrapped: PyObject) : PyObject() {
+    object PyClassmethodType : PyType("classmethod") {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+            val fn = kwargs["function"].cast<PyObject>()
+            return PyClassmethod(fn)
+        }
+
         override val signature = PyCallableSignature(
             "function" to ArgType.POSITIONAL
         )
+    }
 
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            val fn = kwargs["function"].cast<PyObject>()
-            return PyStaticmethod(fn)
-        }
+    // this will always run!
+    override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
+        return PyMethod(wrapped, klass)
     }
 
     override var type: PyType
-        get() = PyStaticmethodType
+        get() = PyClassmethodType
         set(_) = Exceptions.invalidClassSet(this)
-
-    override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
-        return wrapped
-    }
 }
