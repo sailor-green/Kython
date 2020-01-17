@@ -83,10 +83,6 @@ class DictProcessor : AbstractProcessor() {
         val srcRoot = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
             ?: error("Cannot find source root")
 
-        processingEnv.note(
-            "Note: None of these warnings are really warnings, note logging is just too verbose"
-        )
-
         val wrappers = mutableMapOf<ClassName, Map<String, TypeSpec>>()
         val fields = mutableListOf<CodeBlock>()
         for (klass in roundEnv.getElementsAnnotatedWith(GenerateMethods::class.java)) {
