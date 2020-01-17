@@ -57,4 +57,37 @@ class `Test closures` {
         val result = KythonInterpreter.testExec<PyInt>(code)
         assertUnwrappedEquals(result, 2L)
     }
+
+    @Test
+    fun `Test closures different scope`() {
+        val code = """
+            def a():
+                x = 1
+                def b():
+                    x = 3
+                b()
+                return x
+
+            result = a()
+        """.trimIndent()
+        val result = KythonInterpreter.testExec<PyInt>(code)
+        assertUnwrappedEquals(result, 1L)
+    }
+
+    @Test
+    fun `Test load deref nonlocal`() {
+        val code = """
+            def a():
+                x = 1
+                def b():
+                    nonlocal x
+                    x = 3
+                b()
+                return x
+            result = a()
+
+        """.trimIndent()
+        val result = KythonInterpreter.testExec<PyInt>(code)
+        assertUnwrappedEquals(result, 3L)
+    }
 }

@@ -90,7 +90,7 @@ fun UserCodeStackFrame.loadDeref(arg: Byte) {
     val idx = arg.toInt()
     if (idx < function.code.cellvars.size) {
         // cellvar, we can just load it from our locals instead of doing anything with cells
-        val name = function.code.varnames[idx]
+        val name = function.code.cellvars[idx]
         val content = locals[name] ?: error("Tried to load uninitialised varname $name")
         stack.push(content)
     } else {
