@@ -25,7 +25,6 @@ import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.note
-import java.nio.file.Paths
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedOptions
@@ -126,7 +125,7 @@ class DictProcessor : AbstractProcessor() {
         }
 
         val file = builder.build()
-        file.writeTo(Paths.get(srcRoot))
+        file.writeTo(processingEnv.filer)
 
         return true
     }

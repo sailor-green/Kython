@@ -20,7 +20,7 @@ package green.sailor.kython.annotation
 /**
  * Marks a type object as the target of method generation.
  */
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
 annotation class GenerateMethods

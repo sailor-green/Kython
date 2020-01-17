@@ -57,6 +57,8 @@ object Builtins {
     val CLASSMETHOD_TYPE = PyClassmethod.PyClassmethodType
     val STATICMETHOD_TYPE = PyStaticmethod.PyStaticmethodType
 
+    val BUILD_CLASS = BuildClassFunction
+
     /** The PyDict map of builtins. */
     val BUILTINS_MAP = linkedMapOf(
         "print" to PRINT,
@@ -68,6 +70,7 @@ object Builtins {
         "isinstance" to ISINSTANCE,
         "len" to LEN,
         "id" to ID,
+        "__build_class__" to BUILD_CLASS,
         // class types
         "object" to OBJECT,
         "type" to TYPE,
