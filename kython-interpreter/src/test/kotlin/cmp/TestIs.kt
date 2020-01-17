@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test
 /**
  * Tests the `is` operator.
  */
-class `Test i` {
+class `Test is` {
     @Test
     fun `Test is on a single instance`() {
         val result = KythonInterpreter.testExec("""
