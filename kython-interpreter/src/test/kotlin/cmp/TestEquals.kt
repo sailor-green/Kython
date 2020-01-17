@@ -21,7 +21,7 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.test.helpers.assertFalse
 import green.sailor.kython.test.helpers.assertTrue
-import green.sailor.kython.test.helpers.testExecInternal
+import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -32,13 +32,11 @@ import org.junit.jupiter.api.Test
 class `Test equals` {
     @Test
     fun `Test equals of int`() {
-        val result = KythonInterpreter.testExecInternal("result = 1 == 1")
-        assertTrue(result is PyBool)
-        assertTrue((result as PyBool).wrapped)
+        val result = KythonInterpreter.testExec<PyBool>("result = 1 == 1")
+        assertTrue(result)
 
-        val result2 = KythonInterpreter.testExecInternal("result = 1 == 2")
-        assertTrue(result2 is PyBool)
-        assertFalse((result2 as PyBool).wrapped)
+        val result2 = KythonInterpreter.testExec<PyBool>("result = 1 == 2")
+        assertFalse(result2)
     }
 
     @Test
@@ -46,19 +44,18 @@ class `Test equals` {
         // "abc" and "ABC" will stored in co_consts differently
         // and two new PyString will be created to wrap them
         // so this is a required test
-        val result = KythonInterpreter.testExecInternal(
+        val result = KythonInterpreter.testExec<PyBool>(
             """
             result = "abc".upper() == "ABC"
         """.trimIndent()
         )
-        assertTrue(result is PyBool)
-        assertTrue((result as PyBool).wrapped)
+        assertTrue(result)
     }
 
     @Test
     fun `Test equals of tuple`() {
         // this should trick the compiler/interpreter into creating two tuple instances
-        val result = KythonInterpreter.testExecInternal(
+        val result = KythonInterpreter.testExec<PyBool>(
             """
             x = tuple((1,))
             y = tuple((1,))
@@ -67,7 +64,7 @@ class `Test equals` {
         )
         assertTrue(result)
 
-        val result2 = KythonInterpreter.testExecInternal(
+        val result2 = KythonInterpreter.testExec<PyBool>(
             """
             x = (1,)
             y = (2,)
@@ -79,7 +76,7 @@ class `Test equals` {
 
     @Test
     fun `Test invalid equals`() {
-        val result = KythonInterpreter.testExecInternal(
+        val result = KythonInterpreter.testExec<PyBool>(
             """
             result = object() == object()
         """.trimIndent()

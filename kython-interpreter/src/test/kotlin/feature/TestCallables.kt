@@ -20,32 +20,33 @@ package green.sailor.kython.test.feature
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.test.helpers.assertUnwrappedTrue
-import green.sailor.kython.test.helpers.testExecInternal
+import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.test.helpers.assertUnwrappedEquals
+import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class `Test callables` {
     @Test
     fun `Test calling a simple function`() {
-        val result = KythonInterpreter.testExecInternal("""
+        val result = KythonInterpreter.testExec<PyInt>("""
             def fn():
                 return 1
 
             result = fn()
         """.trimIndent())
-        assertUnwrappedTrue(result) { it == 1L }
+        assertUnwrappedEquals(result, 1L)
     }
 
     @Test
     fun `Test calling a function with arguments`() {
-        val result = KythonInterpreter.testExecInternal("""
+        val result = KythonInterpreter.testExec<PyInt>("""
             def fn(a, b):
                 return a + b
 
             result = fn(1, 2)
         """.trimIndent())
-        assertUnwrappedTrue(result) { it == 3L }
+        assertUnwrappedEquals(result, 3L)
     }
 
     @Test
@@ -57,12 +58,12 @@ class `Test callables` {
         """.trimIndent()
 
         val error = Assertions.assertThrows(KyError::class.java) {
-            KythonInterpreter.testExecInternal(initial + "result = a()")
+            KythonInterpreter.testExec<Nothing>(initial + "result = a()")
         }
         Assertions.assertTrue(error.wrapped.type == Exceptions.TYPE_ERROR)
 
         val error2 = Assertions.assertThrows(KyError::class.java) {
-            KythonInterpreter.testExecInternal(initial + "result = a(1, 2, 3)")
+            KythonInterpreter.testExec<Nothing>(initial + "result = a(1, 2, 3)")
         }
         Assertions.assertTrue(error2.wrapped.type == Exceptions.TYPE_ERROR)
     }

@@ -21,24 +21,14 @@ import green.sailor.kython.interpreter.pyobject.*
 import org.junit.jupiter.api.Assertions
 
 /**
- * Asserts that this PyObject is truthy.
+ * Asserts that this PyBool is true.
  */
-fun assertTrue(result: PyObject) {
-    if (result is PyBool) {
-        return Assertions.assertTrue(result.wrapped)
-    }
-    Assertions.fail<Nothing>("Object was $result, not a boolean")
-}
+fun assertTrue(result: PyBool) = Assertions.assertTrue(result.wrapped)
 
 /**
- * Asserts that this PyObject is falsey.
+ * Asserts that this PyBool is false.
  */
-fun assertFalse(result: PyObject) {
-    if (result is PyBool) {
-        return Assertions.assertFalse(result.wrapped)
-    }
-    Assertions.fail<Nothing>("Object was $result, not a boolean")
-}
+fun assertFalse(result: PyBool) = Assertions.assertFalse(result.wrapped)
 
 fun assertUnwrappedEquals(wrapped: PyObject, expected: Any?, calledWith: String = "") {
     if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
