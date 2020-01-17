@@ -22,6 +22,7 @@ import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
+import green.sailor.kython.interpreter.util.FakeDict
 import green.sailor.kython.interpreter.util.PyObjectMap
 import green.sailor.kython.kyc.*
 
@@ -138,7 +139,7 @@ fun PyObject.getAttribute(attrName: String): PyObject {
     }.firstOrNull()?.let { return it.pyDescriptorGet(descriptorSelf, type) }
 
     // can't find it
-    Exceptions.ATTRIBUTE_ERROR("Object ${type.name} has no attribute $attrName").throwKy()
+    attributeError("Object '${type.name}' has no attribute '$attrName'")
 }
 
 /**
@@ -149,6 +150,9 @@ fun PyObject.setAttribute(attrName: String, value: PyObject): PyObject {
     if (existing != null && existing.kyHasSet()) {
         existing.pyDescriptorSet(this, value)
     } else {
+        if (internalDict === FakeDict) {
+            attributeError("Object '${type.name}' has no attribute '$attrName'")
+        }
         internalDict[attrName] = value
     }
     return PyNone
