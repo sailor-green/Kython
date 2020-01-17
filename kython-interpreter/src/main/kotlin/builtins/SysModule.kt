@@ -26,6 +26,7 @@ import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.interpreter.util.StringDictWrapper
 import green.sailor.kython.interpreter.util.dictDelegate
+
 /**
  * Represents the sys built-in module.
  */
@@ -39,10 +40,12 @@ object SysModule : PyBuiltinModule("sys") {
     }
 
     val path by dictDelegate("path") {
+        @Suppress("UNCHECKED_CAST")
         PyList(defaultPath() as MutableList<PyObject>)
     }
 
     val modules by dictDelegate("modules") {
+        @Suppress("UNCHECKED_CAST")
         PyDict.unsafeFromUnVerifiedMap(
             StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
         )

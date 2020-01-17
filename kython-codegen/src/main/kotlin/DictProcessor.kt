@@ -34,7 +34,8 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
 
 /**
- * Annotation processor that
+ * Annotation processor that automatically generates functions for
+ * the standard library based on [ExposeField].
  */
 @SupportedOptions(
     DictProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME,

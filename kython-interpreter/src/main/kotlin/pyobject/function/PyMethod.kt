@@ -44,7 +44,7 @@ class PyMethod(
     override fun pyToStr(): PyString {
         val output = buildString {
             append("<method '")
-            append((function as PyObject).getPyStringSafe().wrappedString)
+            append((function).getPyStringSafe().wrappedString)
             append("' of '")
             append(instance.getPyStringSafe().wrappedString)
             append("'>")
