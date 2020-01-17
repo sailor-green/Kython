@@ -22,26 +22,26 @@ package green.sailor.kython.interpreter.kyobject
  */
 @Suppress("PropertyName", "unused")
 inline class CodeFlags(val flags: Int) {
-    val CO_OPTIMISED get() = (flags and 1) != 0
+    inline val CO_OPTIMISED get() = (flags and 1) != 0
 
     /** Marks if this function will get a new dict for f_locals. */
-    val CO_NEWLOCALS get() = (flags and 2) != 0
+    inline val CO_NEWLOCALS get() = (flags and 2) != 0
     /** Marks if this function has a *args argument. */
-    val CO_HAS_VARARGS get() = (flags and 4) != 0
+    inline val CO_HAS_VARARGS get() = (flags and 4) != 0
     /** Marks if this function has a **kwargs argument */
-    val CO_HAS_VARKWARGS get() = (flags and 8) != 0
+    inline val CO_HAS_VARKWARGS get() = (flags and 8) != 0
     /** Marks if this function is nested. */
-    val CO_NESTED get() = (flags and 16) != 0
+    inline val CO_NESTED get() = (flags and 16) != 0
     /** Marks if this function is a generator. */
-    val CO_GENERATOR get() = (flags and 32) != 0
+    inline val CO_GENERATOR get() = (flags and 32) != 0
     /** Marks if this function has no free/cell variables. */
-    val CO_NO_FREE_VARS get() = (flags and 64) != 0
+    inline val CO_NO_FREE_VARS get() = (flags and 64) != 0
     /** Marks if this function is an async function. */
-    val CO_ASYNC_FUNCTION get() = (flags and 128) != 0
+    inline val CO_ASYNC_FUNCTION get() = (flags and 128) != 0
     // unsure
-    val CO_ITERABLE_ASYNC_FUNCTION get() = (flags and 256) != 0
+    inline val CO_ITERABLE_ASYNC_FUNCTION get() = (flags and 256) != 0
     /** Marks if this function is an async generator. */
-    val CO_ASYNC_GENERATOR get() = (flags and 512)
+    inline val CO_ASYNC_GENERATOR get() = (flags and 512)
 }
 
 infix fun CodeFlags.and(p: Int) = flags and p
