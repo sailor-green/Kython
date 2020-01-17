@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.test
+package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.cast
