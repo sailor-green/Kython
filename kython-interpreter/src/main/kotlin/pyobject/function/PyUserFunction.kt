@@ -24,10 +24,7 @@ import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
-import green.sailor.kython.interpreter.pyobject.PyCodeObject
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy
@@ -41,7 +38,8 @@ import green.sailor.kython.interpreter.typeError
 class PyUserFunction(
     codeObject: KyCodeObject,
     val defaults: Map<String, PyObject> = mapOf(),
-    val defaultsTuple: List<PyObject> = listOf()
+    val defaultsTuple: List<PyObject> = listOf(),
+    closure: List<PyCellObject>? = null
 ) : PyFunction() {
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
@@ -63,6 +61,15 @@ class PyUserFunction(
     /** The code object for this function. */
     val code = codeObject
 
+    /** The closure for this function. */
+    val closure = closure?.let {
+        Array(closure.size) { closure[it] }
+    } ?: emptyArray()
+
+    /**
+     * The PyCodeObject for this function.
+     * Used to expose the code object to Python land.
+     */
     val wrappedCode = PyCodeObject(code)
 
     /** The KyModule for this function. */
@@ -89,7 +96,6 @@ class PyUserFunction(
         val hashCode = System.identityHashCode(this).toString(16)
         return PyString("<user function '${code.codename}' at 0x$hashCode>")
     }
-
     override fun pyGetRepr(): PyString = pyToStr()
 
     override val internalDict: LinkedHashMap<String, PyObject> = super.internalDict.apply {

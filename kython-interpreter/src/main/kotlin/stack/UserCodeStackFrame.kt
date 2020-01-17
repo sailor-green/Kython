@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.instruction.PythonInstruction
 import green.sailor.kython.interpreter.instruction.impl.*
+import green.sailor.kython.interpreter.pyobject.PyCellObject
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
@@ -65,6 +66,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * The local variables for this frame.
      */
     val locals = linkedMapOf<String, PyObject>()
+
+    /**
+     * The cell variables for this frame.
+     */
+    val cellvars = mutableMapOf<String, PyCellObject>()
 
     /**
      * Gets the source code line number currently being executed.
@@ -157,6 +163,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.STORE_NAME -> store(LoadPool.NAME, param)
                 InstructionOpcode.STORE_FAST -> store(LoadPool.FAST, param)
                 InstructionOpcode.STORE_ATTR -> storeAttr(param)
+
+                // closure awfulness
+                InstructionOpcode.STORE_DEREF -> storeDeref(param)
+                InstructionOpcode.LOAD_DEREF -> loadDeref(param)
+                InstructionOpcode.LOAD_CLOSURE -> loadClosure(param)
 
                 // delete ops
                 InstructionOpcode.DELETE_FAST -> delete(LoadPool.FAST, param)

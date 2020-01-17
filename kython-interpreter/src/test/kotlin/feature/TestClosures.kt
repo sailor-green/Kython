@@ -18,31 +18,42 @@
 package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.cast
-import green.sailor.kython.interpreter.pyobject.PyInt
-import green.sailor.kython.interpreter.pyobject.PyList
-import green.sailor.kython.interpreter.pyobject.PySet
+import green.sailor.kython.test.assertUnwrappedEquals
 import green.sailor.kython.test.testExec
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class `Test comprehensions` {
+/**
+ * Tests closures (nested functions).
+ */
+class `Test closures` {
     @Test
-    fun `Test basic list comprehension`() {
+    fun `Test basic load deref`() {
         val code = """
-            result = [int(x) for x in ("1", "2", "3", "4")]
+            def a():
+                x = 1
+                def b():
+                    return x
+                return b
+
+            result = a()()
         """.trimIndent()
-        val result = (KythonInterpreter.testExec(code) as PyList).unwrap()
-        Assertions.assertTrue(result.map { it.cast<PyInt>().wrappedInt } == listOf(1L, 2L, 3L, 4L))
+        val result = KythonInterpreter.testExec(code)
+        assertUnwrappedEquals(result, 1L)
     }
 
     @Test
-    fun `Test basic set comprehension`() {
+    fun `Test load deref after a store`() {
         val code = """
-            result = {int(x) for x in ("1", "2", "3", "4")}
+            def a():
+                x = 1
+                def b():
+                    return x
+                x = 2
+                return b
+
+            result = a()()
         """.trimIndent()
-        val result = (KythonInterpreter.testExec(code) as PySet).unwrap()
-        val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrappedInt }
-        Assertions.assertTrue(mapped == setOf(1L, 2L, 3L, 4L))
+        val result = KythonInterpreter.testExec(code)
+        assertUnwrappedEquals(result, 2L)
     }
 }

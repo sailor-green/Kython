@@ -58,9 +58,12 @@ fun UserCodeStackFrame.makeFunction(arg: Byte) {
 
     val code = stack.pop()
     require(code is PyCodeObject) { "Function code was not a code object!" }
-    if (flags and FunctionFlags.FREEVARS != 0) {
-        val freevarCellsTuple = stack.pop()
+    val freevarTuple = if (flags and FunctionFlags.FREEVARS != 0) {
+        stack.pop().cast<PyTuple>().subobjects.map { it.cast<PyCellObject>() }
+    } else {
+        listOf()
     }
+
     if (flags and FunctionFlags.ANNOTATIONS != 0) {
         val annotationDict = stack.pop()
     }
@@ -76,7 +79,7 @@ fun UserCodeStackFrame.makeFunction(arg: Byte) {
     } else {
         listOf()
     }
-    val function = PyUserFunction(code.wrappedCodeObject, defaults, defaultsTuple)
+    val function = PyUserFunction(code.wrappedCodeObject, defaults, defaultsTuple, freevarTuple)
     function.module = this.function.module
     stack.push(function)
     bytecodePointer += 1

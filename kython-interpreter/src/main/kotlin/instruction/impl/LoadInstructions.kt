@@ -19,6 +19,8 @@
 @file:JvmMultifileClass
 package green.sailor.kython.interpreter.instruction.impl
 
+import green.sailor.kython.interpreter.nameError
+import green.sailor.kython.interpreter.pyobject.PyCellObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**
@@ -62,6 +64,45 @@ fun UserCodeStackFrame.load(pool: LoadPool, opval: Byte) {
 }
 
 /**
+ * LOAD_CLOSURE
+ */
+fun UserCodeStackFrame.loadClosure(arg: Byte) {
+    // loads the actual cell object, rather than the cell value
+    val idx = arg.toInt()
+    if (idx < function.code.cellvars.size) {
+        // cellvar
+        val name = function.code.cellvars[idx]
+        val cell = cellvars[name] ?: nameError("$name could not be loaded from cellvars")
+        stack.push(cell)
+    } else {
+        // fucking freevar
+        val cell = function.closure[idx]
+        stack.push(cell)
+    }
+
+    bytecodePointer += 1
+}
+
+/**
+ * LOAD_DEREF
+ */
+fun UserCodeStackFrame.loadDeref(arg: Byte) {
+    val idx = arg.toInt()
+    if (idx < function.code.cellvars.size) {
+        // cellvar, we can just load it from our locals instead of doing anything with cells
+        val name = function.code.varnames[idx]
+        val content = locals[name] ?: error("Tried to load uninitialised varname $name")
+        stack.push(content)
+    } else {
+        // freevar
+        val cell = function.closure[idx]
+        stack.push(cell.content)
+    }
+
+    bytecodePointer += 1
+}
+
+/**
  * STORE_(NAME|FAST).
  */
 fun UserCodeStackFrame.store(pool: LoadPool, arg: Byte) {
@@ -73,6 +114,7 @@ fun UserCodeStackFrame.store(pool: LoadPool, arg: Byte) {
     }
     val name = toGetName[idx]
     locals[name] = stack.pop()
+
     bytecodePointer += 1
 }
 
@@ -84,6 +126,34 @@ fun UserCodeStackFrame.storeAttr(arg: Byte) {
     val toStoreOn = stack.pop()
     val toStore = stack.pop()
     toStoreOn.pySetAttribute(name, toStore)
+
+    bytecodePointer += 1
+}
+
+/**
+ * STORE_DEREF.
+ */
+fun UserCodeStackFrame.storeDeref(arg: Byte) {
+    val idx = arg.toInt()
+    // cellvars are outer variables
+    // freevars are inner variables loaded from the closure.
+    if (idx < function.code.cellvars.size) {
+        // cellvar, so this is an outer function
+        val name = function.code.cellvars[idx]
+        val value = stack.pop()
+        locals[name] = value
+
+        // I hate this!!
+        val cell = PyCellObject(locals, name)
+        cellvars[name] = cell
+    } else {
+        // free var, loaded from our closures
+        // we don't care for the name
+        val value = stack.pop()
+        val cell = function.closure[idx]
+        cell.content = value
+    }
+
     bytecodePointer += 1
 }
 
@@ -106,5 +176,6 @@ fun UserCodeStackFrame.delete(pool: LoadPool, opval: Byte) {
         }
         else -> error("Unknown pool to delete from: $pool")
     }
+
     bytecodePointer += 1
 }

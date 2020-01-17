@@ -89,6 +89,11 @@ fun valueError(message: String): Nothing = Exceptions.VALUE_ERROR(message).throw
 fun attributeError(message: String): Nothing = Exceptions.ATTRIBUTE_ERROR(message).throwKy()
 
 /**
+ * Causes a new NameError.
+ */
+fun nameError(message: String): Nothing = Exceptions.NAME_ERROR(message).throwKy()
+
+/**
  * Ensures an [KyError] is of the specified type.
  */
 fun KyError.ensure(type: PyExceptionType) { if (!wrapped.type.issubclass(type)) throw this }

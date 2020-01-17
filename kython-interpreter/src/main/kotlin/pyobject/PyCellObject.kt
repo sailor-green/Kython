@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyCellObjectType
+import kotlin.reflect.KProperty
 
 // this is a VERY naiive implementation of cellvars
 // it keeps the locals of the previous function permenantly loaded.
@@ -31,10 +32,19 @@ import green.sailor.kython.interpreter.pyobject.types.PyCellObjectType
  * @param localsMap: The local variables of the function being enclosed.
  * @param
  */
-class PyCellObject(val localsMap: Map<String, PyObject>, val name: String) : PyObject() {
+class PyCellObject(val localsMap: MutableMap<String, PyObject>, val name: String) : PyObject() {
+    private inner class Delegate {
+        operator fun getValue(thisRef: PyCellObject, property: KProperty<*>): PyObject {
+            return localsMap[name] ?: TODO("Proper error")
+        }
+        operator fun setValue(thisRef: PyCellObject, property: KProperty<*>, value: PyObject) {
+            localsMap[name] = value
+        }
+    }
+
     override var type: PyType
         get() = PyCellObjectType
         set(_) = Exceptions.invalidClassSet(this)
 
-    val content: PyObject get() = localsMap[name] ?: TODO("Proper exception")
+    var content: PyObject by Delegate()
 }
