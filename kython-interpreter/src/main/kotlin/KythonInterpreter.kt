@@ -129,8 +129,7 @@ object KythonInterpreter {
     fun runPythonFromString(s: String) {
         val fn = cpyInterface.compile(s)
 
-        val rootFunction =
-            PyUserFunction(fn)
+        val rootFunction = PyUserFunction(fn)
         val module = KyUserModule(rootFunction, "<code>", s.split(System.lineSeparator()))
         modules["__main__"] = PyUserModule(module, "__main__")
 
