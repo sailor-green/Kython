@@ -22,5 +22,5 @@ plugins {
 dependencies {
     // === CODE GENERATION === //
     implementation(project(":kython-codegen-annotations"))
-    implementation("com.squareup:kotlinpoet:1.4.1")
+    implementation("com.squareup:kotlinpoet:1.5.+")
 }
