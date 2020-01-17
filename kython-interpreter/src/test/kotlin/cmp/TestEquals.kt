@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
 /**
  * Tests the `__eq__` method.
  */
-class TestEquals {
+class `Test equals` {
     @Test
     fun `Test equals of int`() {
         val result = KythonInterpreter.testExec("result = 1 == 1")

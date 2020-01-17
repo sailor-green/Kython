@@ -24,7 +24,7 @@ import green.sailor.kython.test.testExec
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class TestBool {
+class `Test bool` {
     @Test
     fun `Test boolean int() call`() {
         val result = KythonInterpreter.testExec("""

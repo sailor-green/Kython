@@ -15,15 +15,17 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.test
+package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.test.assertUnwrappedTrue
+import green.sailor.kython.test.testExec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class TestCallables {
+class `Test callables` {
     @Test
     fun `Test calling a simple function`() {
         val result = KythonInterpreter.testExec("""
@@ -40,7 +42,7 @@ class TestCallables {
         val result = KythonInterpreter.testExec("""
             def fn(a, b):
                 return a + b
-            
+
             result = fn(1, 2)
         """.trimIndent())
         assertUnwrappedTrue(result) { it == 3L }
