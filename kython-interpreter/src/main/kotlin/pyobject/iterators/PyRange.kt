@@ -30,7 +30,7 @@ class PyRange(val start: Long, val stop: Long, val step: Long = 1) : PyObject() 
         get() = PyRangeType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override val internalDict: LinkedHashMap<String, PyObject> = super.internalDict.apply {
+    override val internalDict: MutableMap<String, PyObject> = super.internalDict.apply {
         put("start", PyInt(start))
         put("stop", PyInt(stop))
         put("step", PyInt(step))

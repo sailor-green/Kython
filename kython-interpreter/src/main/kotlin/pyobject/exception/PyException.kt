@@ -35,7 +35,7 @@ open class PyException(private val excType: PyExceptionType, val args: PyTuple) 
     val exceptionFrames: List<StackFrame> =
         StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())
 
-    override val internalDict: LinkedHashMap<String, PyObject> =
+    override val internalDict: MutableMap<String, PyObject> =
         super.internalDict.apply { put("args", args) }
 
     override var type: PyType

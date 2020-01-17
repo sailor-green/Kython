@@ -56,7 +56,7 @@ abstract class PyObject {
     abstract var type: PyType
 
     /** The `__dict__` of this PyObject. */
-    open val internalDict = linkedMapOf<String, PyObject>()
+    open val internalDict: MutableMap<String, PyObject> = linkedMapOf()
 
     /**
      * Checks if this type is callable. This will check for [PyCallable], or a valid `__call__`.
@@ -383,7 +383,7 @@ abstract class PyObject {
     /**
      * The internal [`__dict__`][PyDict] of this object, wrapped. This corresponds to `__dict__`.
      */
-    val pyDict: PyDict
+    open val pyDict: PyDict
         get() {
             val mapTo = PyObjectMap()
             return PyDict.from(internalDict.mapKeysTo(mapTo) { PyString(it.key) })

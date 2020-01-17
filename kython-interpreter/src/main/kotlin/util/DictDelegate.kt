@@ -35,7 +35,7 @@ class DictDelegate(val name: String) {
 /**
  * Creates a new dict delegate for this [PyObject]'s internal dict.
  */
-fun LinkedHashMap<String, PyObject>.dictDelegate(
+fun MutableMap<String, PyObject>.dictDelegate(
     name: String,
     initial: () -> PyObject
 ): DictDelegate {

@@ -17,6 +17,10 @@
 
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.attributeError
+import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.interpreter.util.FakeDict
+
 /**
  * Represents an object that wraps a primitive. This is useful for testing; in most occasions, you
  * should have the actual object you need to use, so use that instead.
@@ -26,4 +30,8 @@ abstract class PyPrimitive : PyObject() {
      * Unwraps this primitive into a JVM object.
      */
     abstract fun unwrap(): Any
+
+    override val internalDict: MutableMap<String, PyObject> = FakeDict
+    override val pyDict get() =
+        attributeError("'${type.name}' object has no attribute '__dict__'")
 }

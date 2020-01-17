@@ -100,7 +100,7 @@ class PyUserFunction(
     }
     override fun pyGetRepr(): PyString = pyToStr()
 
-    override val internalDict: LinkedHashMap<String, PyObject> = super.internalDict.apply {
+    override val internalDict: MutableMap<String, PyObject> = super.internalDict.apply {
         put("__code__", wrappedCode)
     }
 
