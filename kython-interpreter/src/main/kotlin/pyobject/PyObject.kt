@@ -251,17 +251,26 @@ abstract class PyObject {
      */
     open fun pyLesserEquals(other: PyObject): PyObject = PyNotImplemented
 
+    // __contains__
+    /**
+     * Implements some_object in other_object.
+     */
+    open fun pyContains(other: PyObject): PyObject = PyNotImplemented
+
     // == Unary operators == //
+    // __invert__
     /**
      * Implements ~some_object.
      */
     open fun pyInvert(): PyObject = typeError("'${type.name}' does not support unary inversion")
 
+    // __neg__
     /**
      * Implements -some_object.
      */
     open fun pyNegative(): PyObject = typeError("'${type.name}' does not support unary negative")
 
+    // __pos__
     /**
      * Implements +some_object.
      */

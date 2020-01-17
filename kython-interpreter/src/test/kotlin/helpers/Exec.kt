@@ -51,6 +51,12 @@ fun KythonInterpreter.testExecInternal(code: String): PyObject {
     return frame.locals["result"] ?: error("No result assigned!")
 }
 
+/**
+ * Executes test code, executing it.
+ */
 fun <T : PyObject> KythonInterpreter.testExec(
     code: String
 ) = testExecInternal(code) as T
+
+
+fun <T : PyObject> String.runPy() = KythonInterpreter.testExec<T>(this)

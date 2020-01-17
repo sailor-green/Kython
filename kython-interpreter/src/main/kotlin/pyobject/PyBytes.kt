@@ -55,6 +55,10 @@ class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
         return PyBool.get(isLt)
     }
 
+    override fun pyContains(other: PyObject): PyObject {
+        TODO()
+    }
+
     override fun pyLen(): PyInt = PyInt(wrapped.size.toLong())
 
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {

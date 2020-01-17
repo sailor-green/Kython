@@ -45,13 +45,13 @@ private fun UserCodeStackFrame.implCompareOp(
     // try obb1.__magic__(obb2)
     val first = cbFirst(tos, tos1)
     if (first !is PyNotImplemented) {
-        return first as? PyBool ?: error("bool() returned non-bool")
+        return first.pyToBool()
     }
 
     // try obb2.__magic__(obb1)
     val second = realSecond(tos1, tos)
     if (second !is PyNotImplemented) {
-        return second as? PyBool ?: error("bool() returned non-bool")
+        return second.pyToBool()
     }
 
     if (!shouldError) {
@@ -94,11 +94,8 @@ fun UserCodeStackFrame.compareOp(arg: Byte) {
         )
         EQUAL -> implCompareOp { tos, tos1 -> tos.pyEquals(tos1) }
         NOT_EQUAL -> implCompareOp { tos, tos1 -> tos.pyNotEquals(tos1) }
-        /*CONTAINS -> magicMethod(top, "__contains__", second)
-        NOT_CONTAINS -> {
-            magicMethod(top, "__contains__", second)
-            stack.push(if (stack.pop() == PyBool.TRUE) PyBool.FALSE else PyBool.TRUE)
-        }*/
+        CONTAINS -> implCompareOp { tos, tos1 -> tos.pyContains(tos1) }
+        NOT_CONTAINS -> implCompareOp { tos, tos1 -> tos.pyContains(tos1).pyToBool().invert() }
         IS -> {
             val top = stack.pop()
             val second = stack.pop()

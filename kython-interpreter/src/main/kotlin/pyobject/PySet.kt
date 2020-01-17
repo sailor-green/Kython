@@ -29,6 +29,8 @@ import green.sailor.kython.interpreter.typeError
 class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
     override fun unwrap(): Set<PyObject> = wrappedSet
 
+    override fun pyHash(): PyInt = typeError("sets are not hashable - they are mutable")
+
     override fun pyToStr(): PyString = PyString(
         "{" + wrappedSet.joinToString(", ") { it.pyGetRepr().wrappedString } + "}"
     )
@@ -41,10 +43,10 @@ class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
         }
         return PyBool.get(wrappedSet == other.wrappedSet)
     }
-    override fun pyHash(): PyInt = typeError("sets are not hashable - they are mutable")
 
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
+    override fun pyContains(other: PyObject): PyObject = PyBool.get(other in wrappedSet)
 
     override fun pyLen(): PyInt = PyInt(wrappedSet.size.toLong())
     override fun pyIter(): PyObject {

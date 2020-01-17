@@ -34,4 +34,7 @@ abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
 
     override fun pyLengthHint(): PyInt = PyInt(subobjects.size.toLong())
     override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
+
+    override fun pyContains(other: PyObject): PyObject =
+        PyBool.get(other in subobjects)
 }

@@ -87,8 +87,10 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         magicMethod1(other, "__lt__") { PyNotImplemented }
     override fun pyGreater(other: PyObject): PyObject =
         magicMethod1(other, "__gt__") { PyNotImplemented }
+    override fun pyContains(other: PyObject): PyObject =
+        magicMethod1(other, "__contains__") { PyNotImplemented }
 
-    // == unary //
+    // == unary -- //
     override fun pyNegative(): PyObject = magicMethod0("__neg__") { PyNotImplemented }
     override fun pyPositive(): PyObject = magicMethod0("__pos__") { PyNotImplemented }
     override fun pyInvert(): PyObject = magicMethod0("__invert__") { PyNotImplemented }

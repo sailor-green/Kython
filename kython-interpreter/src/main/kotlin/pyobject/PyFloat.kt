@@ -26,7 +26,7 @@ import kotlin.math.abs
  * so we're consistent there).
  */
 class PyFloat(val wrapped: Double) : PyPrimitive() {
-    override fun unwrap(): Any = wrapped
+    override fun unwrap(): Double = wrapped
 
     private val _floatStr by lazy {
         PyString(wrapped.toString())
