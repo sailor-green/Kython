@@ -115,6 +115,11 @@ tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
  * Implements the defaults get attribute for an object.
  */
 fun PyObject.getAttribute(attrName: String): PyObject {
+    // special case
+    if (attrName == "__dict__") {
+        return this.pyDict
+    }
+
     // try and find the object on the dict
     if (attrName in internalDict) {
         return if (this is PyType) {
