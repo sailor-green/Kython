@@ -18,7 +18,9 @@
 package green.sailor.kython.annotation
 
 /**
- * Exposes a read-only field to the Python world.
+ * Exposes a field to the Python world.
+ *
+ * This should only be used on [Slotted] classes. For regular classes, use a DictDelegate.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FIELD)

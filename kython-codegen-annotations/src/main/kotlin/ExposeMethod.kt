@@ -17,6 +17,8 @@
 
 package green.sailor.kython.annotation
 
+import kotlin.reflect.KClass
+
 /**
  * Exposes a Kotlin method to the Python world. This will wrap it in a PyBuiltinFunction and add it
  * to the internalDict of the object.
@@ -31,13 +33,19 @@ annotation class ExposeMethod(
 )
 
 /**
+ * Represents a default value for a method parameter.
+ */
+@Retention(AnnotationRetention.BINARY)
+annotation class Default(val type: KClass<*>, val value: String)
+
+/**
  * Represents a method parameter.
  *
  * @param name: The name of the method parameter.
  * @param type: The argument type of the method parameter. Will be looked up from ArgType.
  */
 @Retention(AnnotationRetention.BINARY)
-annotation class MethodParam(val name: String, val type: String)
+annotation class MethodParam(val name: String, val type: String, val default: Array<Default> = [])
 
 /**
  * Represents a collection of method parameters.
