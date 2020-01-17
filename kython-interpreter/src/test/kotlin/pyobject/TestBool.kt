@@ -20,14 +20,14 @@ package green.sailor.kython.test.pyobject
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyInt
-import green.sailor.kython.test.testExec
+import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class `Test bool` {
     @Test
     fun `Test boolean int() call`() {
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExecInternal("""
             result = int(True)
         """.trimIndent())
         assertTrue(result !is PyBool)

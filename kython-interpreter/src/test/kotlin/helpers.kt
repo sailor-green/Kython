@@ -18,82 +18,13 @@
 package green.sailor.kython.test
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyContainer
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
-import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
-import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.interpreter.thread.MainInterpreterThread
+import green.sailor.kython.test.helpers.assertUnwrappedEquals
+import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Assertions
-
-/**
- * Helper used for test executions.
- *
- * @param code: The code to run.
- * @param args: Any locals that need to be in the function being ran.
- */
-fun KythonInterpreter.testExec(code: String, args: Map<String, PyObject> = mapOf()): PyObject {
-    val compiled = cpyInterface.compile(code)
-    val fn = PyUserFunction(compiled)
-    val module = KyUserModule(fn, "<test>", code.split(System.lineSeparator()))
-    val frame = fn.createFrame()
-    if (frame !is UserCodeStackFrame) {
-        error("Frame isn't a user code frame, not sure what happened")
-    }
-
-    val thread = MainInterpreterThread(frame)
-    interpreterThreadLocal.set(thread)
-    try {
-        thread.runStackFrame(frame, args)
-    } finally {
-        interpreterThreadLocal.remove()
-    }
-    return frame.locals["result"] ?: error("No result assigned!")
-}
-
-/**
- * Asserts that this PyObject is truthy.
- */
-fun assertTrue(result: PyObject) {
-    if (result is PyBool) {
-        return Assertions.assertTrue(result.wrapped)
-    }
-    Assertions.fail<Nothing>("Object was $result, not a boolean")
-}
-
-/**
- * Asserts that this PyObject is falsey.
- */
-fun assertFalse(result: PyObject) {
-    if (result is PyBool) {
-        return Assertions.assertFalse(result.wrapped)
-    }
-    // todo
-    Assertions.fail<Nothing>("Object was $result, not a boolean")
-}
-
-/**
- * Asserts that this PyObject equals a different object.
- */
-fun assertUnwrappedTrue(wrapped: PyObject, fn: (Any?) -> Boolean) {
-    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
-    return Assertions.assertTrue(fn(wrapped.unwrap()))
-}
-
-fun assertUnwrappedEquals(wrapped: PyObject, expected: Any?, calledWith: String = "") {
-    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
-    Assertions.assertEquals(expected, wrapped.unwrap(), "Called with '$calledWith'")
-}
-
-/**
- * Asserts that this PyObject does not equal a different object.
- */
-fun assertUnwrappedFalse(wrapped: PyObject, fn: (Any?) -> Boolean) {
-    if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")
-    return Assertions.assertFalse(fn(wrapped.unwrap()))
-}
 
 /**
  * Tests the compiler with [code] using the [builder block][block] and unwraps
@@ -101,9 +32,9 @@ fun assertUnwrappedFalse(wrapped: PyObject, fn: (Any?) -> Boolean) {
  *
  * This function optionally takes [locals][args]
  *
- * @see KythonInterpreter.testExec
+ * @see KythonInterpreter.testExecInternal
  */
-internal inline fun <reified T : PyPrimitive> testPrimitive(
+inline fun <T : PyPrimitive> testPrimitive(
     code: String,
     args: Map<String, PyObject> = mapOf(),
     block: PyObjectTester<T>.() -> Unit
@@ -111,18 +42,18 @@ internal inline fun <reified T : PyPrimitive> testPrimitive(
     PyObjectTester<T>(code, args).block()
 
 /** Asserts whether a given unwrapped[code] result is true. */
-internal fun isTrue(code: String, args: Map<String, PyObject> = mapOf()) =
-    testPrimitive<PyBool>(code, args) { isTrue() }
+internal fun isTrue(code: String) =
+    testPrimitive<PyBool>(code) { isTrue() }
 
 /** Asserts whether a given unwrapped[code] result is false. */
-internal fun isFalse(code: String, args: Map<String, PyObject> = mapOf()) =
-    testPrimitive<PyBool>(code, args) { isFalse() }
+internal fun isFalse(code: String) =
+    testPrimitive<PyBool>(code) { isFalse() }
 
 /**
  * Helper class used to automatically unwrap PyObject tests results
  * along with assertion methods.
  */
-class PyObjectTester<T : PyPrimitive> internal constructor(
+class PyObjectTester<T : PyPrimitive>(
     /** The code to run the interpreter with */
     private val testCode: String,
     /** Potential arguments to pass as locals to the interpreter */
@@ -131,7 +62,7 @@ class PyObjectTester<T : PyPrimitive> internal constructor(
     /** The compiler result */
     @Suppress("UNCHECKED_CAST")
     private val execResult
-        get() = KythonInterpreter.testExec(testCode, args) as T
+        get() = KythonInterpreter.testExecInternal(testCode) as T
 
     /**
      * Asserts that a [PyContainer] based result equals [expected].

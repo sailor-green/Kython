@@ -18,8 +18,9 @@
 package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.test.assertUnwrappedEquals
-import green.sailor.kython.test.testExec
+import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.test.helpers.assertUnwrappedEquals
+import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Test
 
 /**
@@ -37,7 +38,7 @@ class `Test closures` {
 
             result = a()()
         """.trimIndent()
-        val result = KythonInterpreter.testExec(code)
+        val result = KythonInterpreter.testExec<PyInt>(code)
         assertUnwrappedEquals(result, 1L)
     }
 
@@ -53,7 +54,7 @@ class `Test closures` {
 
             result = a()()
         """.trimIndent()
-        val result = KythonInterpreter.testExec(code)
+        val result = KythonInterpreter.testExec<PyInt>(code)
         assertUnwrappedEquals(result, 2L)
     }
 }

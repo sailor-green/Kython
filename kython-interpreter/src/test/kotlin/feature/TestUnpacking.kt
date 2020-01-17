@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyContainer
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PySet
-import green.sailor.kython.test.testExec
+import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -37,7 +37,7 @@ class `Test unpacking` {
             y = (4, 5)
             result = (*x, *y)
         """.trimIndent()
-        val result = (KythonInterpreter.testExec(code) as PyContainer).subobjects
+        val result = (KythonInterpreter.testExecInternal(code) as PyContainer).subobjects
         val mapped = result.map { it.cast<PyInt>().wrappedInt }
         Assertions.assertEquals(listOf(1L, 2L, 4L, 5L), mapped)
     }
@@ -49,7 +49,7 @@ class `Test unpacking` {
             y = {4, 5}
             result = {*x, *y}
         """.trimIndent()
-        val result = (KythonInterpreter.testExec(code) as PySet).wrappedSet
+        val result = (KythonInterpreter.testExecInternal(code) as PySet).wrappedSet
         val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrappedInt }
         Assertions.assertEquals(setOf(1L, 2L, 4L, 5L), mapped)
     }
@@ -61,7 +61,7 @@ class `Test unpacking` {
             y = [4, 5]
             result = [*x, *y]
         """.trimIndent()
-        val result = (KythonInterpreter.testExec(code) as PyContainer).subobjects
+        val result = (KythonInterpreter.testExecInternal(code) as PyContainer).subobjects
         val mapped = result.map { it.cast<PyInt>().wrappedInt }
         Assertions.assertEquals(listOf(1L, 2L, 4L, 5L), mapped)
     }

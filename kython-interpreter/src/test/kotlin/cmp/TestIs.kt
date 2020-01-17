@@ -18,9 +18,9 @@
 package green.sailor.kython.test.cmp
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.test.assertFalse
-import green.sailor.kython.test.assertTrue
-import green.sailor.kython.test.testExec
+import green.sailor.kython.test.helpers.assertFalse
+import green.sailor.kython.test.helpers.assertTrue
+import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Test
 
 /**
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
 class `Test is` {
     @Test
     fun `Test is on a single instance`() {
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExecInternal("""
             x = object()
             y = x
             result = x is y
@@ -39,7 +39,7 @@ class `Test is` {
 
     @Test
     fun `Test is on different instances`() {
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExecInternal("""
             x = object()
             y = object()
             result = x is y

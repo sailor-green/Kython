@@ -20,15 +20,15 @@ package green.sailor.kython.test.feature
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.test.assertUnwrappedTrue
-import green.sailor.kython.test.testExec
+import green.sailor.kython.test.helpers.assertUnwrappedTrue
+import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class `Test callables` {
     @Test
     fun `Test calling a simple function`() {
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExecInternal("""
             def fn():
                 return 1
 
@@ -39,7 +39,7 @@ class `Test callables` {
 
     @Test
     fun `Test calling a function with arguments`() {
-        val result = KythonInterpreter.testExec("""
+        val result = KythonInterpreter.testExecInternal("""
             def fn(a, b):
                 return a + b
 
@@ -57,12 +57,12 @@ class `Test callables` {
         """.trimIndent()
 
         val error = Assertions.assertThrows(KyError::class.java) {
-            KythonInterpreter.testExec(initial + "result = a()")
+            KythonInterpreter.testExecInternal(initial + "result = a()")
         }
         Assertions.assertTrue(error.wrapped.type == Exceptions.TYPE_ERROR)
 
         val error2 = Assertions.assertThrows(KyError::class.java) {
-            KythonInterpreter.testExec(initial + "result = a(1, 2, 3)")
+            KythonInterpreter.testExecInternal(initial + "result = a(1, 2, 3)")
         }
         Assertions.assertTrue(error2.wrapped.type == Exceptions.TYPE_ERROR)
     }
