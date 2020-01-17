@@ -29,7 +29,7 @@ import green.sailor.kython.interpreter.typeError
 /**
  * Represents a built-in function, such as print().
  */
-abstract class PyBuiltinFunction(val name: String) : PyFunction() {
+abstract class PyBuiltinFunction(name: String) : PyFunction(name) {
     companion object {
 
         /**

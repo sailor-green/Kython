@@ -42,7 +42,7 @@ class PyUserFunction(
     val defaults: Map<String, PyObject> = mapOf(),
     val defaultsTuple: List<PyObject> = listOf(),
     closure: List<PyCellObject>? = null
-) : PyFunction() {
+) : PyFunction(codeObject.codename) {
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
@@ -96,7 +96,7 @@ class PyUserFunction(
 
     override fun pyToStr(): PyString {
         val hashCode = System.identityHashCode(this).toString(16)
-        return PyString("<user function '${code.codename}' at 0x$hashCode>")
+        return PyString("<user function '$name' at 0x$hashCode>")
     }
     override fun pyGetRepr(): PyString = pyToStr()
 

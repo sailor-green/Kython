@@ -23,7 +23,7 @@ import green.sailor.kython.interpreter.pyobject.*
 /**
  * Represents a Python function instance.
  */
-abstract class PyFunction : PyObject(),
+abstract class PyFunction(val name: String) : PyObject(),
     PyCallable {
     // overridden for method binding
     override fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject {
