@@ -23,10 +23,10 @@ import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.test.isFalse
 import green.sailor.kython.test.isTrue
 import green.sailor.kython.test.testPrimitive
+import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import java.util.*
 
 class `Test str` {
     @ParameterizedTest(name = "For value {0}")
