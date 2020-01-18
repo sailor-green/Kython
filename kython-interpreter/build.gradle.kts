@@ -51,7 +51,7 @@ dependencies {
 sourceSets {
     main {
         java {
-            srcDir("${buildDir.absolutePath}/generated/source/kaptKotlin/")
+            srcDir("${buildDir.absolutePath}/generated/source/kapt/")
         }
     }
 }

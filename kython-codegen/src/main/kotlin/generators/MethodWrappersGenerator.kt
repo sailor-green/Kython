@@ -19,19 +19,18 @@ package green.sailor.kython.generation.generators
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.metadata.*
-import com.squareup.kotlinpoet.metadata.specs.ClassData
-import com.squareup.kotlinpoet.metadata.specs.ClassInspector
+import com.squareup.kotlinpoet.metadata.ImmutableKmClass
+import com.squareup.kotlinpoet.metadata.ImmutableKmFunction
+import com.squareup.kotlinpoet.metadata.KotlinPoetMetadataPreview
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
+import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import green.sailor.kython.annotation.ExposeMethod
-import green.sailor.kython.annotation.GenerateMethods
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.generation.KythonProcessor
-import green.sailor.kython.generation.extensions.error
+import green.sailor.kython.generation.getClassMirror
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
-import javax.lang.model.type.TypeMirror
-
+import javax.lang.model.type.TypeKind
 
 val builtinMethod = ClassName(
     "green.sailor.kython.interpreter.pyobject.function",
@@ -48,6 +47,16 @@ val pyCallableSignature = ClassName(
     "PyCallableSignature"
 )
 
+val argType = ClassName("green.sailor.kython.interpreter.callable", "ArgType")
+val argTypePos = MemberName(argType, "POSITIONAL")
+val argTypePosStar = MemberName(argType, "POSITIONAL_STAR")
+val argTypeKw = MemberName(argType, "KEYWORD")
+val argTypeKwStar = MemberName(argType, "KEYWORD_STAR")
+
+val pyInt = ClassName("green.sailor.kython.interpreter.pyobject", "PyInt")
+val pyStr = ClassName("green.sailor.kython.interpreter.pyobject", "PyString")
+val pyBool = ClassName("green.sailor.kython.interpreter.pyobject", "PyBool")
+
 @KotlinPoetMetadataPreview
 data class MethodWrapperInfo(
     val original: ImmutableKmClass,
@@ -55,6 +64,64 @@ data class MethodWrapperInfo(
     val wrapperName: String,
     val methodName: String
 )
+
+/**
+ * Gets the list of signature code blocks.
+ */
+@KotlinPoetMetadataPreview
+fun getSignatureStatement(anno: MethodParams): List<CodeBlock> {
+    val statements = mutableListOf<CodeBlock>()
+    // initial CallableSignature
+    statements.add(CodeBlock.of("%T(«", pyCallableSignature))
+    // each param
+    for ((idx, param) in anno.parameters.withIndex()) {
+        val argtype = when (param.type.toUpperCase()) {
+            "POSITIONAL" -> argTypePos
+            "POSITIONAL_STAR" -> argTypePosStar
+            "KEYWORD" -> argTypeKw
+            "KEYWORD_STAR" -> argTypeKwStar
+            else -> error("Unknown arg type ${param.type}")
+        }
+
+        // don't add a trailing comma (this can be removed in Kotlin 1.4)
+        if (idx == anno.parameters.size - 1) {
+            statements.add(CodeBlock.of("%S to %M", param.name, argtype))
+        } else {
+            statements.add(CodeBlock.of("%S to %M,", param.name, argtype))
+        }
+    }
+
+    // initial closing brace
+    statements.add(CodeBlock.of("»)\n"))
+    if (anno.defaults.isNotEmpty()) {
+        // now to add the defaults
+        statements.add(CodeBlock.of("«.withDefaults("))
+        for (default in anno.defaults) {
+            // i don't know why i need to type mirror these!!
+            // they're standard kotlin classes!!!!
+            val mirror = default.getClassMirror { it.type }
+            val stmnt = when (mirror.kind) {
+                TypeKind.INT, TypeKind.LONG -> CodeBlock.of("%T(%L)", pyInt, default.value)
+                TypeKind.BOOLEAN -> CodeBlock.of("%T.get(%L)", pyBool, default.value)
+                TypeKind.DECLARED -> {
+                    val name = mirror.toString()
+                    // terrible!
+                    if (name == "java.lang.String") {
+                        CodeBlock.of("%T(%S)", pyStr, default.value)
+                    } else {
+                        error("Cannot provide $mirror as a default")
+                    }
+                }
+                else -> error("Cannot provide $mirror.asTypeName() as a default")
+            }
+            statements.add(CodeBlock.of("%S to ", default.forName))
+            statements.add(stmnt)
+        }
+        statements.add(CodeBlock.of(")»\n"))
+    }
+
+    return statements
+}
 
 @KotlinPoetMetadataPreview
 fun getTypeSpec(
@@ -78,7 +145,7 @@ fun getTypeSpec(
         addModifiers(KModifier.OVERRIDE)
 
         val mapName = Map::class.asClassName()
-            .parameterizedBy(String::class.asClassName(), KythonProcessor.pyObject)
+            .parameterizedBy(String::class.asClassName(), pyObject)
         // (kwargs: Map<String, PyObject>)
         addParameter(ParameterSpec.builder("kwargs", mapName).build())
 
@@ -90,26 +157,27 @@ fun getTypeSpec(
 
     builder.addFunction(callFunction)
 
-    val signature = PropertySpec.builder("signature", KythonProcessor.pyCallableSignature).apply {
+    // kinda hacky
+    val initFunction = FunSpec.builder("__initSignatureHelper").apply {
+        addModifiers(KModifier.PRIVATE, KModifier.INLINE)
+        addKdoc("Helper function for generating the signature, due to KotlinPoet restrictions.")
+        val statements = params?.let {
+            getSignatureStatement(it)
+        } ?: mutableListOf()
+        returns(pyCallableSignature)
+        addCode("return ")
+        statements.forEach { addCode(it) }
+    }.build()
+    builder.addFunction(initFunction)
+
+    val signature = PropertySpec.builder("signature", pyCallableSignature).apply {
+        addKdoc("The generated signature for this function.")
         addModifiers(KModifier.OVERRIDE)
-        val statements = params?.parameters?.map {
-            val argtype = when (it.type) {
-                "POSITIONAL" -> KythonProcessor.argTypePos
-                "POSITIONAL_STAR" -> KythonProcessor.argTypePosStar
-                "KEYWORD" -> KythonProcessor.argTypeKw
-                "KEYWORD_STAR" -> KythonProcessor.argTypeKwStar
-                else -> {
-                    error("Unknown arg type ${it.type}")
-                }
-            }
-            CodeBlock.of("%S to %M", it.name, argtype)
-        } ?: listOf()
-        initializer(
-            "%T(${statements.joinToString(", ")})",
-            KythonProcessor.pyCallableSignature
-        )
+        initializer(CodeBlock.of("%N()", initFunction))
     }.build()
     builder.addProperty(signature)
+
+    builder.addKdoc("Generated wrapper for $className#${fn.name} -> ${anno.name}")
 
     return builder.build()
 }
