@@ -17,10 +17,7 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.annotation.ExposeMethod
-import green.sailor.kython.annotation.GenerateMethods
-import green.sailor.kython.annotation.MethodParam
-import green.sailor.kython.annotation.MethodParams
+import green.sailor.kython.annotation.*
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.cast
@@ -154,12 +151,13 @@ object PyStringType : PyType("str") {
     @MethodParams(
         MethodParam("self", "POSITIONAL"),
         MethodParam("width", "POSITIONAL"),
-        MethodParam("fillchar", "POSITIONAL")
+        MethodParam("fillchar", "POSITIONAL"),
+        defaults = [Default("fillchar", String::class, " ")]
     )
     fun pyStrCenter(kwargs: Map<String, PyObject>): PyString {
         val width = kwargs["width"].cast<PyInt>()
-        val fillchar = kwargs["fillchar"]?.cast<PyString>()
-        val actualChar = fillchar?.wrappedString?.singleOrNull() ?: ' '
+        val fillchar = kwargs["fillchar"]?.cast<PyString>()!!
+        val actualChar = fillchar.wrappedString.single()
         val centered = kwargs.selfWrappedString.center(width.wrappedInt, actualChar)
 
         return PyString(centered)
