@@ -112,7 +112,7 @@ fun getSignatureStatement(anno: MethodParams): List<CodeBlock> {
                         error("Cannot provide $mirror as a default")
                     }
                 }
-                else -> error("Cannot provide $mirror.asTypeName() as a default")
+                else -> error("Cannot provide ${mirror.asTypeName()} as a default")
             }
             statements.add(CodeBlock.of("%S to ", default.forName))
             statements.add(stmnt)
@@ -131,7 +131,7 @@ fun getTypeSpec(
     fn: ImmutableKmFunction
 ): TypeSpec {
     val classname = target.first.asClassName()
-    val className = target.second.name.split("/").last()
+    val className = target.second.name.substringAfterLast("/")
     val mangledName = "kython generated wrapper ${className}_${fn.name}"
     val builder = TypeSpec.objectBuilder(mangledName)
     builder.superclass(builtinMethod)
@@ -161,9 +161,7 @@ fun getTypeSpec(
     val initFunction = FunSpec.builder("__initSignatureHelper").apply {
         addModifiers(KModifier.PRIVATE, KModifier.INLINE)
         addKdoc("Helper function for generating the signature, due to KotlinPoet restrictions.")
-        val statements = params?.let {
-            getSignatureStatement(it)
-        } ?: mutableListOf()
+        val statements = params?.let { getSignatureStatement(it) } ?: listOf()
         returns(pyCallableSignature)
         addCode("return ")
         statements.forEach { addCode(it) }
@@ -188,11 +186,7 @@ fun getTypeSpec(
 @KotlinPoetMetadataPreview
 fun generateDictSetter(info: MethodWrapperInfo): CodeBlock {
     val realName = ClassInspectorUtil.createClassName(info.original.name)
-    val block = CodeBlock.of(
-        "%T.internalDict[%S] = %N\n",
-        realName, info.methodName, info.builtClass
-    )
-    return block
+    return CodeBlock.of("%T.internalDict[%S] = %N\n", realName, info.methodName, info.builtClass)
 }
 
 /**
@@ -204,10 +198,10 @@ fun generateMethodWrappers(target: TypeElement): List<MethodWrapperInfo> {
     // metadata is "safe" but we still need to use this
     val functions = target.enclosedElements
         .filterIsInstance<ExecutableElement>()
-        .associateByTo(mutableMapOf()) { it.simpleName.toString() }
+        .associateBy { it.simpleName.toString() }
 
     val x = target.toImmutableKmClass()
-    val className = x.name.split("/").last()
+    val className = x.name.substringAfterLast("/")
 
     val wrappers = mutableListOf<MethodWrapperInfo>()
     for (fn in x.functions) {
