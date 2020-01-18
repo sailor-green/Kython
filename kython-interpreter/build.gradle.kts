@@ -23,7 +23,7 @@ plugins {
 
 kapt {
     correctErrorTypes = true
-    annotationProcessor("green.sailor.kython.generation.DictProcessor")
+    annotationProcessor("green.sailor.kython.generation.KythonProcessor")
 }
 
 

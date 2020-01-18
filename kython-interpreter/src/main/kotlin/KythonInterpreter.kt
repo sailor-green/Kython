@@ -19,7 +19,6 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.generation.generated.addAllFields
 import green.sailor.kython.generation.generated.addAllMethods
 import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.kyobject.KyUserModule
@@ -63,7 +62,6 @@ object KythonInterpreter {
 
     init {
         // add all the generated builtins
-        addAllFields()
         addAllMethods()
 
         // add builtin modules

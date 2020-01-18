@@ -23,4 +23,6 @@ dependencies {
     // === CODE GENERATION === //
     implementation(project(":kython-codegen-annotations"))
     implementation("com.squareup:kotlinpoet:1.5.+")
+    implementation("com.squareup:kotlinpoet-metadata:1.5.+")
+    implementation("com.squareup:kotlinpoet-metadata-specs:1.5.+")
 }
