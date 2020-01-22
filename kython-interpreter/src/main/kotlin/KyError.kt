@@ -17,6 +17,8 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.exception.BuiltinPyException
 import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.stack.StackFrame
 
@@ -29,11 +31,12 @@ class KyError(val wrapped: PyException) : RuntimeException() {
     val frames: List<StackFrame> get() = wrapped.exceptionFrames
 
     override fun toString(): String {
+        if (wrapped !is PyObject) error("Exception must be a PyObject!!!!")
         return buildString {
             append("KyError: ")
             append(wrapped.type.name)
             append(": ")
-            append(wrapped.args.subobjects.joinToString { it.getPyStringSafe().wrappedString })
+            append(wrapped.args.joinToString { it.getPyStringSafe().wrappedString })
         }
     }
 }
@@ -41,4 +44,4 @@ class KyError(val wrapped: PyException) : RuntimeException() {
 /**
  * Throws a PyException as a KyError.
  */
-fun PyException.throwKy(): Nothing = throw KyError(this)
+fun BuiltinPyException.throwKy(): Nothing = throw KyError(this)

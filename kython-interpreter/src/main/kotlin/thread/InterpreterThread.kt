@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.thread
 
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.pyError
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import org.apiguardian.api.API
@@ -70,12 +71,14 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
             val thread = Thread.currentThread()
             System.err.println("Exception in thread ${thread.name}")
             with(e.wrapped) {
+                this as PyObject
+
                 System.err.println("\nKython stack (most recent frame last):")
                 exceptionFrames.forEach {
                     System.err.println("   " + it.createStackFrameInfo().tracebackString)
                 }
 
-                val errorString = args.subobjects.joinToString(" ") {
+                val errorString = args.joinToString(" ") {
                     it.getPyStringSafe().wrappedString
                 }
                 System.err.println("${type.name}: $errorString")

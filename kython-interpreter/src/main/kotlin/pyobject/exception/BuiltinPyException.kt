@@ -17,19 +17,34 @@
 
 package green.sailor.kython.interpreter.pyobject.exception
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
- * Interface for exceptions, builtin or user.
+ * Represents a builtin exception instance.
  */
-interface PyException {
-    /** The list of exception frames for this exception. */
-    val exceptionFrames: List<StackFrame>
+open class BuiltinPyException(
+    private val excType: PyExceptionType, args: PyTuple
+) : PyObject(), PyException {
+    /**
+     * The list of exception frames this stack frame has travelled down.
+     */
+    override val exceptionFrames =
+        StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())
 
-    /** The list of arguments for this exception. */
-    val args: List<PyObject>
+    override val args = args.unwrap()
 
-    fun throwKy(): Nothing = throw KyError(this)
+    override val internalDict: MutableMap<String, PyObject> =
+        super.internalDict.apply { put("args", args) }
+
+    override var type: PyType
+        get() = excType
+        set(_) = Exceptions.invalidClassSet(this)
 }
+
+

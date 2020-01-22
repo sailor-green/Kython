@@ -20,6 +20,7 @@ package green.sailor.kython.test.feature
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.pyError
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.test.helpers.assertUnwrappedEquals
 import green.sailor.kython.test.helpers.testExec
@@ -60,11 +61,11 @@ class `Test callables` {
         val error = Assertions.assertThrows(KyError::class.java) {
             KythonInterpreter.testExec<Nothing>(initial + "result = a()")
         }
-        Assertions.assertTrue(error.wrapped.type == Exceptions.TYPE_ERROR)
+        Assertions.assertTrue(error.pyError.type == Exceptions.TYPE_ERROR)
 
         val error2 = Assertions.assertThrows(KyError::class.java) {
             KythonInterpreter.testExec<Nothing>(initial + "result = a(1, 2, 3)")
         }
-        Assertions.assertTrue(error2.wrapped.type == Exceptions.TYPE_ERROR)
+        Assertions.assertTrue(error2.pyError.type == Exceptions.TYPE_ERROR)
     }
 }

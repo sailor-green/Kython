@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
-import green.sailor.kython.interpreter.pyobject.exception.throwKy
 
 /**
  * A nice list of exceptions.
@@ -96,4 +95,4 @@ fun nameError(message: String): Nothing = Exceptions.NAME_ERROR(message).throwKy
 /**
  * Ensures an [KyError] is of the specified type.
  */
-fun KyError.ensure(type: PyExceptionType) { if (!wrapped.type.issubclass(type)) throw this }
+fun KyError.ensure(type: PyExceptionType) { if (!pyError.type.issubclass(type)) throw this }

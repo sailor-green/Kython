@@ -22,6 +22,7 @@ package green.sailor.kython.interpreter.instruction.impl
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.isinstance
+import green.sailor.kython.interpreter.pyError
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**
@@ -48,7 +49,7 @@ fun UserCodeStackFrame.forIter(param: Byte) {
         // next instruction
         1
     } catch (e: KyError) {
-        if (e.wrapped.isinstance(setOf(Exceptions.STOP_ITERATION))) {
+        if (e.pyError.isinstance(setOf(Exceptions.STOP_ITERATION))) {
             // jump past the for
             stack.pop()
             (param.toInt() / 2) + 1

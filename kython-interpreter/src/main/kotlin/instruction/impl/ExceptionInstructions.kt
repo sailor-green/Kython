@@ -21,7 +21,7 @@ package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.pyobject.exception.PyException
+import green.sailor.kython.interpreter.pyobject.exception.BuiltinPyException
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.interpreter.stack.FinallyBlock
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
@@ -74,7 +74,7 @@ fun UserCodeStackFrame.popBlock(oval: Byte) {
  */
 fun UserCodeStackFrame.reraise(opval: Byte) {
     val excType = stack.pop() as? PyExceptionType ?: error("TOS wasn't an exception type!")
-    val excVal = stack.pop() as? PyException ?: error("TOS wasn't an exception!")
+    val excVal = stack.pop() as? BuiltinPyException ?: error("TOS wasn't an exception!")
     val excTb = stack.pop()
     // TODO: properly copy tb or whatever
     excVal.throwKy()

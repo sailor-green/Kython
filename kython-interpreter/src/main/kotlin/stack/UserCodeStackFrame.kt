@@ -19,9 +19,7 @@
 
 package green.sailor.kython.interpreter.stack
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.KyError
-import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.instruction.PythonInstruction
 import green.sailor.kython.interpreter.instruction.impl.*
@@ -29,7 +27,6 @@ import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
-import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.util.PythonFunctionStack
 import java.util.*
 
@@ -277,8 +274,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // if yes block, jump to where the finally says we should jump
                 // traceback, excval, exctype
                 stack.push(PyRootObjectInstance()) // TODO
-                stack.push(e.wrapped)
-                stack.push(e.wrapped.type)
+                stack.push(e.pyError)
+                stack.push(e.pyError.type)
                 val tobs = blockStack.pop()
                 bytecodePointer = tobs.delta
             }

@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
@@ -51,7 +52,7 @@ fun PyObject.toNativeList(): MutableList<PyObject> {
         try {
             items.add(pyNext())
         } catch (e: KyError) {
-            if (e.wrapped.isinstance(setOf(Exceptions.STOP_ITERATION))) break
+            if (e.pyError.isinstance(setOf(Exceptions.STOP_ITERATION))) break
             throw e
         }
     }
@@ -94,6 +95,9 @@ fun PyObject.isinstance(others: Set<PyType>): Boolean {
 
     return type.mro.toSet().intersect(others).isNotEmpty()
 }
+
+fun PyException.asObject() = this as PyObject
+val KyError.pyError get() = wrapped.asObject()
 
 /** Checks if this PyType is a subclass of another type. */
 fun PyType.issubclass(other: PyType) = issubclass(setOf(other))

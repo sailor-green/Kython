@@ -15,21 +15,26 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.exception
+package green.sailor.kython.interpreter.pyobject.user
 
-import green.sailor.kython.interpreter.KyError
+import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.issubclass
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.typeError
 
-/**
- * Interface for exceptions, builtin or user.
- */
-interface PyException {
-    /** The list of exception frames for this exception. */
-    val exceptionFrames: List<StackFrame>
 
-    /** The list of arguments for this exception. */
-    val args: List<PyObject>
+class PyUserException(type: PyUserType) : PyUserObject(type), PyException {
+    override val exceptionFrames: List<StackFrame> =
+        StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())
 
-    fun throwKy(): Nothing = throw KyError(this)
+    override val args: List<PyObject> = listOf()
+
+    init {
+        if (!type.issubclass(Exceptions.BASE_EXCEPTION)) {
+            typeError("Attempted to instantiate an exception type that isn't an exception!")
+        }
+    }
 }

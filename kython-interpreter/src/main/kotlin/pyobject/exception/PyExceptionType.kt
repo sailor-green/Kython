@@ -35,9 +35,9 @@ open class PyExceptionType(
     override val bases: MutableList<PyType> = parentTypes.map { it as PyType }.toMutableList()
 
     /**
-     * Makes a new [PyException] object from the args specified.
+     * Makes a new [BuiltinPyException] object from the args specified.
      */
-    fun makeException(args: PyTuple) = PyException(this, args)
+    fun makeException(args: PyTuple) = BuiltinPyException(this, args)
 
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val args = kwargs["args"].cast<PyTuple>()
@@ -49,7 +49,7 @@ open class PyExceptionType(
             "*args" to ArgType.POSITIONAL_STAR
         )
 
-    operator fun invoke(vararg args: String): PyException {
+    operator fun invoke(vararg args: String): BuiltinPyException {
         return makeException(PyTuple.get(args.map { PyString(it) }))
     }
 }
