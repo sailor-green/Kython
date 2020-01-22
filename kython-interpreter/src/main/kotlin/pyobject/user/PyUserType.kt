@@ -17,8 +17,10 @@
 
 package green.sailor.kython.interpreter.pyobject.user
 
+import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.issubclass
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
@@ -53,7 +55,11 @@ class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, 
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         // effectively, object.__new__
         // TODO: `__new__`
-        val newObject = PyUserObject(this)
+        val newObject = if (issubclass(Exceptions.BASE_EXCEPTION)) {
+            PyUserException(this)
+        } else {
+            PyUserObject(this)
+        }
         newObject.pyInit(kwargs)
         return newObject
     }

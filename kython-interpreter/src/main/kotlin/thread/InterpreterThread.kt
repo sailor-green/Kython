@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.thread
 
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyError
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import org.apiguardian.api.API

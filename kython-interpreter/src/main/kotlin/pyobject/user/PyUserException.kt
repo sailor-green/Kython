@@ -25,7 +25,6 @@ import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.typeError
 
-
 class PyUserException(type: PyUserType) : PyUserObject(type), PyException {
     override val exceptionFrames: List<StackFrame> =
         StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())

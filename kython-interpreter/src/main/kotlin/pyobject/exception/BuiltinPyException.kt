@@ -18,7 +18,6 @@
 package green.sailor.kython.interpreter.pyobject.exception
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
@@ -29,7 +28,8 @@ import green.sailor.kython.interpreter.stack.StackFrame
  * Represents a builtin exception instance.
  */
 open class BuiltinPyException(
-    private val excType: PyExceptionType, args: PyTuple
+    private val excType: PyExceptionType,
+    args: PyTuple
 ) : PyObject(), PyException {
     /**
      * The list of exception frames this stack frame has travelled down.
@@ -46,5 +46,3 @@ open class BuiltinPyException(
         get() = excType
         set(_) = Exceptions.invalidClassSet(this)
 }
-
-
