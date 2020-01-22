@@ -184,5 +184,6 @@ fun PyObject.dir(): List<String> {
  */
 inline fun <reified T : PyObject> PyObject?.cast(): T {
     if (this == null) error("Casting on null?")
-    return this as? T ?: typeError("Invalid type: ${type.name}")
+    if (this !is T) typeError("Invalid type: ${type.name}")
+    return this
 }
