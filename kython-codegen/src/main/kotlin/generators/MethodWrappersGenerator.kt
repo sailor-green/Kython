@@ -154,7 +154,11 @@ fun getTypeSpec(
         val statements = params?.let { getSignatureStatement(it) } ?: listOf()
         returns(pyCallableSignature)
         addCode("return ")
-        statements.forEach { addCode(it) }
+        if (statements.isEmpty()) {
+            addCode(CodeBlock.of("%T.EMPTY", pyCallableSignature))
+        } else {
+            statements.forEach { addCode(it) }
+        }
     }.build()
     builder.addFunction(initFunction)
 
