@@ -28,6 +28,7 @@ val pyObject = ClassName("green.sailor.kython.interpreter.pyobject", "PyObject")
 val pyInt = ClassName("green.sailor.kython.interpreter.pyobject", "PyInt")
 val pyStr = ClassName("green.sailor.kython.interpreter.pyobject", "PyString")
 val pyBool = ClassName("green.sailor.kython.interpreter.pyobject", "PyBool")
+val pyTuple = ClassName("green.sailor.kython.interpreter.pyobject", "PyTuple")
 val pyNone = ClassName("green.sailor.kython.interpreter.pyobject", "PyNone")
 
 val attributeError = MemberName("green.sailor.kython.interpreter", "attributeError")

@@ -158,6 +158,22 @@ fun PyObject.setAttribute(attrName: String, value: PyObject): PyObject {
     return PyNone
 }
 
+/**
+ * Implements the default dir for PyObject instances.
+ */
+fun PyObject.dir(): List<String> {
+    val dirSet = mutableSetOf<String>().also { set ->
+        // set.addAll(magicSlots.createActiveMagicMethodList())
+        set.addAll(type.internalDict.keys)
+        set.addAll(type.bases.flatMap { it.internalDict.keys })
+        set.addAll(internalDict.keys)
+    }
+
+    // NB: CPython sorts dir() output for whatever dumb reason.
+    // We do too!
+    return dirSet.toList().sorted()
+}
+
 // helper functions
 /**
  * Casts this [PyObject] to its concrete subclass, raising a PyException if it fails.

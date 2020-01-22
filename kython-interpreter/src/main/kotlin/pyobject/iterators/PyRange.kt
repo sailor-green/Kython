@@ -18,7 +18,9 @@
 package green.sailor.kython.interpreter.pyobject.iterators
 
 import green.sailor.kython.annotation.Slotted
+import green.sailor.kython.generation.generated.dirSlotted
 import green.sailor.kython.generation.generated.getattrSlotted
+import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -37,7 +39,9 @@ class PyRange(
         get() = PyRangeType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun pyGetAttribute(name: String): PyObject = this.getattrSlotted(name)
+    override fun pyGetAttribute(name: String) = getattrSlotted(name)
+    override fun pySetAttribute(name: String, value: PyObject) = setattrSlotted(name, value)
+    override fun pyDir() = dirSlotted()
 
     override fun pyIter(): PyObject {
         return PyRangeIterator(this)

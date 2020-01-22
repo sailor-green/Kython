@@ -92,6 +92,7 @@ class KythonProcessor : AbstractProcessor() {
             info.methodWrappers.forEach { builder.addType(it.builtClass) }
             builder.addFunction(info.getAttr)
             builder.addFunction(info.setAttr)
+            builder.addFunction(info.dir)
         }
 
         val statements = info.map { generateDictSetter(it) }

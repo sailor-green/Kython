@@ -17,17 +17,15 @@
 
 package green.sailor.kython.interpreter.builtins
 
-import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.Slotted
+import green.sailor.kython.generation.generated.dirSlotted
 import green.sailor.kython.generation.generated.getattrSlotted
+import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.PyDict
-import green.sailor.kython.interpreter.pyobject.PyList
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.interpreter.util.StringDictWrapper
-import green.sailor.kython.interpreter.util.dictDelegate
 
 /**
  * Represents the sys built-in module.
@@ -42,7 +40,13 @@ object SysModule : PyBuiltinModule("sys") {
         StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
     )
 
-    override fun pyGetAttribute(name: String): PyObject = this.getattrSlotted(name)
+    @ExposeMethod("getswitchinterval")
+    fun getSwitchInterval(args: Map<String, PyObject>): PyFloat = PyFloat(0.0)
+
+    override fun pyGetAttribute(name: String): PyObject = getattrSlotted(name)
+    override fun pySetAttribute(name: String, value: PyObject): PyObject =
+        setattrSlotted(name, value)
+    override fun pyDir(): PyTuple = dirSlotted()
 }
 
 /**

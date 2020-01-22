@@ -108,16 +108,7 @@ abstract class PyObject {
      * Implements dir(some_object).
      */
     open fun pyDir(): PyTuple {
-        val dirSet = mutableSetOf<String>().also { set ->
-            // set.addAll(magicSlots.createActiveMagicMethodList())
-            set.addAll(type.internalDict.keys)
-            set.addAll(type.bases.flatMap { it.internalDict.keys })
-            set.addAll(internalDict.keys)
-        }
-
-        // NB: CPython sorts dir() output for whatever dumb reason.
-        // We do too!
-        val sorted = dirSet.toList().sorted()
+        val sorted = dir()
         return PyTuple.get(sorted.map { s -> PyString(s) })
     }
 

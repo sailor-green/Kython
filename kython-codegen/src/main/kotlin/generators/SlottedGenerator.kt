@@ -21,20 +21,18 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.metadata.*
 import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import green.sailor.kython.annotation.Slotted
-import green.sailor.kython.generation.attributeError
+import green.sailor.kython.generation.*
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.messager
-import green.sailor.kython.generation.pyNone
-import green.sailor.kython.generation.pyObject
-import kotlinx.metadata.KmClassifier
-import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import kotlinx.metadata.KmClassifier
 
 @KotlinPoetMetadataPreview
 data class SlotWrapperInfo(
     val methodWrappers: List<MethodWrapperInfo>,
     val getAttr: FunSpec,
-    val setAttr: FunSpec
+    val setAttr: FunSpec,
+    val dir: FunSpec
 )
 
 val castFn = MemberName(
@@ -42,7 +40,14 @@ val castFn = MemberName(
     "cast"
 )
 
+val dirFn = MemberName(
+    "green.sailor.kython.interpreter",
+    "dir"
+)
+
 val EXCLUDED = setOf("type")
+
+val IS_14 = KotlinVersion.CURRENT.isAtLeast(1, 4)
 
 /**
  * Generates slot wrappers for the specified element.
@@ -56,6 +61,9 @@ val EXCLUDED = setOf("type")
 fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
     // first, just generate all the required method wrappers
     val wrappers = generateMethodWrappers(element)
+    val wrapperMapping = wrappers.associateBy({ it.methodName }, { it.builtClass })
+    val dirs = mutableListOf<String>()
+
     val elemClass = element.asClassName()
 
     val anno = element.getAnnotation(Slotted::class.java)
@@ -66,7 +74,7 @@ fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
     val fields = md.properties.filter { it.isPublic }
     val name = element.simpleName.toString()
 
-    // boilerplate; configure the two functions
+    // boilerplate; configure the three functions
     val getAttrB = FunSpec.builder("getattrSlotted")
     getAttrB.receiver(elemClass)
     getAttrB.addParameter(ParameterSpec.builder("name", String::class).build())
@@ -85,6 +93,12 @@ fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
     // no return because we explicitly return PyNone at the end
     setAttrB.beginControlFlow("when (name)")
 
+    val dirWrapper = FunSpec.builder("dirSlotted")
+    dirWrapper.receiver(elemClass)
+    dirWrapper.returns(pyTuple)
+    dirWrapper.addModifiers(KModifier.INTERNAL)
+    dirWrapper.addKdoc("Generated slotted dir for $name ($objectName)")
+
     // step 1: loop over fields and add a when branch
     for (field in fields) {
         // special excluded field
@@ -98,6 +112,7 @@ fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
             messager.error("Unknown classifier: $typeClassifier")
             error("Unknown classifier: $typeClassifier")
         }
+        dirs.add(fieldName)
 
         // getattr
         // TODO: Map primitives to their PyObject type.
@@ -127,12 +142,46 @@ fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
     }
 
     // step 2: loop over methods and add a when branch
-    val methods = element.enclosedElements.filterIsInstance<ExecutableElement>()
+    for ((method, type) in wrapperMapping) {
+        dirs.add(method)
+        val getBlocks = mutableListOf<CodeBlock>()
+        getBlocks.add(CodeBlock.of("«%S -> {\n", method))
+        getBlocks.add(CodeBlock.of("%N\n", type))
+        getBlocks.add(CodeBlock.of("»}\n"))
+        getBlocks.forEach { getAttrB.addCode(it) }
 
+        val setBlocks = mutableListOf<CodeBlock>()
+        setBlocks.add(CodeBlock.of("«%S -> {\n", method))
+        setBlocks.add(CodeBlock.of(
+            "%N(\"attribute '$method' is not writable\")\n", attributeError
+        ))
+        setBlocks.add(CodeBlock.of("»}\n"))
+        setBlocks.forEach { setAttrB.addCode(it) }
+    }
+
+    // step 3: generate the dir wrapper
+    run {
+        val dirCodes = mutableListOf<CodeBlock>()
+        dirCodes.add(CodeBlock.of("«val items = listOf(\n"))
+        for ((x, subitem) in dirs.withIndex()) {
+            // trailing comma handling without needing to edit for 1.4
+            if (IS_14 || x != dirs.size - 1) {
+                dirCodes.add(CodeBlock.of("%S,\n", subitem))
+            } else {
+                dirCodes.add(CodeBlock.of("%S\n", subitem))
+            }
+        }
+        dirCodes.add(CodeBlock.of("»)\n"))
+        dirCodes.add(CodeBlock.of(
+            "return %T.get((items + this.%M()).mapTo(mutableListOf()) { s -> %T(s) } )",
+            pyTuple, dirFn, pyStr
+        ))
+        dirCodes.forEach { dirWrapper.addCode(it) }
+    }
 
     // generate else branch for getattr
     val attributeErrorCall = CodeBlock.of(
-        "%M(\"'${objectName}' has no attribute '\${name}'\")\n",
+        "%M(\"'$objectName' has no attribute '\${name}'\")\n",
         attributeError
     )
     val elseBranch = "else -> type.internalDict[name]?.pyDescriptorGet(this, type) ?: \n"
@@ -148,6 +197,5 @@ fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
 
     setAttrB.addCode(CodeBlock.of("return %T", pyNone))
 
-    return SlotWrapperInfo(wrappers, getAttrB.build(), setAttrB.build())
-
+    return SlotWrapperInfo(wrappers, getAttrB.build(), setAttrB.build(), dirWrapper.build())
 }
