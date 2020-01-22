@@ -20,8 +20,10 @@ package green.sailor.kython.annotation
 /**
  * Marks a class as a slotted class. Classes with this will have a getattr/setattr generated at
  * compile time for them.
+ *
+ * Slotted implies [GenerateMethods], but without adding them to the dict.
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
-annotation class Slotted
+annotation class Slotted(val typeName: String)

@@ -17,6 +17,8 @@
 
 package green.sailor.kython.interpreter.pyobject.iterators
 
+import green.sailor.kython.annotation.Slotted
+import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
@@ -25,16 +27,17 @@ import green.sailor.kython.interpreter.pyobject.PyType
 /**
  * Represents the range() builtin.
  */
-class PyRange(val start: Long, val stop: Long, val step: Long = 1) : PyObject() {
+@Slotted("range")
+class PyRange(
+    val start: PyInt,
+    val stop: PyInt,
+    val step: PyInt = PyInt.ONE
+) : PyObject() {
     override var type: PyType
         get() = PyRangeType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override val internalDict: MutableMap<String, PyObject> = super.internalDict.apply {
-        put("start", PyInt(start))
-        put("stop", PyInt(stop))
-        put("step", PyInt(step))
-    }
+    override fun pyGetAttribute(name: String): PyObject = this.getattrSlotted(name)
 
     override fun pyIter(): PyObject {
         return PyRangeIterator(this)

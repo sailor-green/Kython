@@ -30,13 +30,12 @@ object PyRangeType : PyType("range") {
         val argStart = kwargs["start"].cast<PyInt>()
         val argStop = kwargs["stop"] ?: error("Built-in signature mismatch!")
         return if (argStop === PyNone) {
-            val start = 0L
-            val stop = argStart.cast<PyInt>().wrappedInt
+            val start = PyInt.ZERO
+            val stop = argStart.cast<PyInt>()
             PyRange(start, stop)
         } else {
-            val start = argStart.wrappedInt
-            val stop = argStop.cast<PyInt>().wrappedInt
-            PyRange(start, stop)
+            val stop = argStop.cast<PyInt>()
+            PyRange(argStart, stop)
         }
     }
 

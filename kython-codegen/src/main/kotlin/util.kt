@@ -17,10 +17,20 @@
 
 package green.sailor.kython.generation
 
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.MemberName
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.MirroredTypesException
 import javax.lang.model.type.TypeMirror
 import kotlin.reflect.KClass
+
+val pyObject = ClassName("green.sailor.kython.interpreter.pyobject", "PyObject")
+val pyInt = ClassName("green.sailor.kython.interpreter.pyobject", "PyInt")
+val pyStr = ClassName("green.sailor.kython.interpreter.pyobject", "PyString")
+val pyBool = ClassName("green.sailor.kython.interpreter.pyobject", "PyBool")
+val pyNone = ClassName("green.sailor.kython.interpreter.pyobject", "PyNone")
+
+val attributeError = MemberName("green.sailor.kython.interpreter", "attributeError")
 
 /**
  * Gets a class mirror from an annotation.

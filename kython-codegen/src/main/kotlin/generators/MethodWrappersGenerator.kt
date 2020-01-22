@@ -26,8 +26,7 @@ import com.squareup.kotlinpoet.metadata.specs.internal.ClassInspectorUtil
 import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.MethodParams
-import green.sailor.kython.generation.KythonProcessor
-import green.sailor.kython.generation.getClassMirror
+import green.sailor.kython.generation.*
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeKind
@@ -35,11 +34,6 @@ import javax.lang.model.type.TypeKind
 val builtinMethod = ClassName(
     "green.sailor.kython.interpreter.pyobject.function",
     "PyBuiltinFunction"
-)
-
-val pyObject = ClassName(
-    "green.sailor.kython.interpreter.pyobject",
-    "PyObject"
 )
 
 val pyCallableSignature = ClassName(
@@ -52,10 +46,6 @@ val argTypePos = MemberName(argType, "POSITIONAL")
 val argTypePosStar = MemberName(argType, "POSITIONAL_STAR")
 val argTypeKw = MemberName(argType, "KEYWORD")
 val argTypeKwStar = MemberName(argType, "KEYWORD_STAR")
-
-val pyInt = ClassName("green.sailor.kython.interpreter.pyobject", "PyInt")
-val pyStr = ClassName("green.sailor.kython.interpreter.pyobject", "PyString")
-val pyBool = ClassName("green.sailor.kython.interpreter.pyobject", "PyBool")
 
 @KotlinPoetMetadataPreview
 data class MethodWrapperInfo(

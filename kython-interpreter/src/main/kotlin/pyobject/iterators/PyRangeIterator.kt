@@ -35,9 +35,9 @@ class PyRangeIterator(val range: PyRange) : PyObject() {
     var currentStep: Long = 0
 
     override fun pyNext(): PyObject {
-        val next = range.start + (currentStep * range.step)
+        val next = range.start.wrappedInt + (currentStep * range.step.wrappedInt)
         currentStep += 1
-        if (next >= range.stop) {
+        if (next >= range.stop.wrappedInt) {
             Exceptions.STOP_ITERATION().throwKy()
         }
         return PyInt(next)

@@ -17,11 +17,17 @@
 
 package green.sailor.kython.generation.extensions
 
+import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.Diagnostic
 
-internal fun ProcessingEnvironment.note(vararg items: Any?) =
-    messager.printMessage(Diagnostic.Kind.NOTE, items.joinToString(" "))
+lateinit var messager: Messager
 
-internal fun ProcessingEnvironment.error(message: String) =
-    messager.printMessage(Diagnostic.Kind.ERROR, message)
+internal fun Messager.note(vararg items: Any?) =
+    printMessage(Diagnostic.Kind.NOTE, items.joinToString(" "))
+
+internal fun Messager.warning(vararg items: Any?) =
+    printMessage(Diagnostic.Kind.WARNING, items.joinToString(" "))
+
+internal fun Messager.error(vararg items: Any?) =
+    printMessage(Diagnostic.Kind.ERROR, items.joinToString(" "))

@@ -18,6 +18,8 @@
 package green.sailor.kython.interpreter.builtins
 
 import green.sailor.kython.annotation.GenerateMethods
+import green.sailor.kython.annotation.Slotted
+import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyDict
 import green.sailor.kython.interpreter.pyobject.PyList
@@ -31,25 +33,16 @@ import green.sailor.kython.interpreter.util.dictDelegate
  * Represents the sys built-in module.
  */
 @Suppress("unused")
-@GenerateMethods
+@Slotted("sys")
 object SysModule : PyBuiltinModule("sys") {
-    val version by dictDelegate("version") { PyString("3.9.0") }
+    val version: PyString = PyString("3.9.0")
+    val platform: PyString = PyString(System.getProperty("os.name").toLowerCase())
+    var path: PyList = PyList(defaultPath() as MutableList<PyObject>)
+    var modules = PyDict.unsafeFromUnVerifiedMap(
+        StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
+    )
 
-    val platform by dictDelegate("platform") {
-        PyString(System.getProperty("os.name").toLowerCase())
-    }
-
-    val path by dictDelegate("path") {
-        @Suppress("UNCHECKED_CAST")
-        PyList(defaultPath() as MutableList<PyObject>)
-    }
-
-    val modules by dictDelegate("modules") {
-        @Suppress("UNCHECKED_CAST")
-        PyDict.unsafeFromUnVerifiedMap(
-            StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
-        )
-    }
+    override fun pyGetAttribute(name: String): PyObject = this.getattrSlotted(name)
 }
 
 /**
