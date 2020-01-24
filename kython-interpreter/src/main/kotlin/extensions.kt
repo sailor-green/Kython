@@ -178,12 +178,5 @@ fun PyObject.dir(): List<String> {
     return dirSet.toList().sorted()
 }
 
-// helper functions
-/**
- * Casts this [PyObject] to its concrete subclass, raising a PyException if it fails.
- */
-inline fun <reified T : PyObject> PyObject?.cast(): T {
-    if (this == null) error("Casting on null?")
-    if (this !is T) typeError("Invalid type: ${type.name}")
-    return this
-}
+/** Helper property for getting the type name of an object. */
+val PyObject.typeName get() = type.name

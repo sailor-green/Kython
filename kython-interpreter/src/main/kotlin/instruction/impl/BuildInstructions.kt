@@ -19,11 +19,11 @@
 @file:JvmMultifileClass
 package green.sailor.kython.interpreter.instruction.impl
 
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.PyObjectMap
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * BUILD_CONST_KEY_MAP

@@ -17,7 +17,6 @@
 
 package green.sailor.kython.interpreter.util
 
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 

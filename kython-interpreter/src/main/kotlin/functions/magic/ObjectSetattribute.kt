@@ -19,10 +19,10 @@ package green.sailor.kython.interpreter.functions.magic
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.setAttribute
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * The default implementation of `__setattr__`.

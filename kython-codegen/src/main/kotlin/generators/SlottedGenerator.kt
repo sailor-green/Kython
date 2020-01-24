@@ -36,7 +36,7 @@ data class SlotWrapperInfo(
 )
 
 val castFn = MemberName(
-    "green.sailor.kython.interpreter",
+    "green.sailor.kython.interpreter.util",
     "cast"
 )
 

@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
+import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
@@ -53,6 +54,11 @@ abstract class PyType(val name: String) : PyObject(),
 
         parents
     }
+
+    /**
+     * Called to implement user-type subclasses.
+     */
+    open fun kySuperclassInit(instance: PyUserObject, args: List<PyObject>): PyNone = PyNone
 
     /**
      * Gets the method resolution order parents of this object.

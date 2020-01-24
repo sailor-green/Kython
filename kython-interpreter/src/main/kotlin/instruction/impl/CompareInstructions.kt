@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * Implements comparison operator behaviour, handling PyNotImplemented as appropriately.

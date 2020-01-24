@@ -23,12 +23,12 @@ import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.toNativeList
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * Represents the type of a list.

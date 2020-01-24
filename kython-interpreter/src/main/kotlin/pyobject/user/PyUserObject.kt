@@ -19,11 +19,11 @@ package green.sailor.kython.interpreter.pyobject.user
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.functions.magic.DefaultBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * Represents a Python user object instance (i.e. an object created from a user type object).
@@ -31,10 +31,22 @@ import green.sailor.kython.interpreter.typeError
 open class PyUserObject(type: PyUserType) : PyObject() {
     override var type: PyType = type
 
+    /** The backing primitive subclass info. */
+    val primitiveSubclassBacking = mutableMapOf<PyType, PyObject>()
+
     /**
      * Implements user_object.__init__().
      */
-    open fun pyInit(kwargs: Map<String, PyObject>) {
+    open fun pyInit(kwargs: Map<String, PyObject>): PyNone {
+        // sets up built-in superclasses
+        // this is fugly but... im not sure of a better way
+        val unmapped = kwargs.values.toList()
+        for (parent in type.mro) {
+            if (parent !is PyUserType) {
+                parent.kySuperclassInit(this, unmapped)
+            }
+        }
+
         type.internalDict["__init__"]?.let {
             if (it !is PyUserFunction) {
                 typeError("__init__ was not a function")
@@ -45,6 +57,7 @@ open class PyUserObject(type: PyUserType) : PyObject() {
 
             KythonInterpreter.runStackFrame(it.createFrame(), kwargs)
         }
+        return PyNone
     }
 
     override fun kyIsCallable(): Boolean {

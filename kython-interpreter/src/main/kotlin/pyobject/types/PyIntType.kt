@@ -23,8 +23,8 @@ import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.interpreter.valueError
 import green.sailor.kython.util.bytesToLongBE
 import green.sailor.kython.util.longToBytesBE

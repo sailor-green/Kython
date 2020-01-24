@@ -19,10 +19,10 @@
 @file:JvmMultifileClass
 package green.sailor.kython.interpreter.instruction.impl
 
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.importing.Importer
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * IMPORT_NAME

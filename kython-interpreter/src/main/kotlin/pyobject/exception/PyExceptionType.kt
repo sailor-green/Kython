@@ -19,11 +19,11 @@ package green.sailor.kython.interpreter.pyobject.exception
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * Represents an exception type.

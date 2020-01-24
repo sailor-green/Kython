@@ -18,10 +18,10 @@
 package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.cast
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PySet
+import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
