@@ -36,6 +36,7 @@ annotation class ExposeMethod(
  * Represents a default value for a method parameter.
  */
 @Retention(AnnotationRetention.BINARY)
+@Target()
 annotation class Default(val forName: String, val type: KClass<*>, val value: String)
 
 /**
@@ -45,6 +46,7 @@ annotation class Default(val forName: String, val type: KClass<*>, val value: St
  * @param type: The argument type of the method parameter. Will be looked up from ArgType.
  */
 @Retention(AnnotationRetention.BINARY)
+@Target()
 annotation class MethodParam(val name: String, val type: String, vararg val default: Default = [])
 
 /**
