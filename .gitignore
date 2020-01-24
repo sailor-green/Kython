@@ -49,7 +49,6 @@ Thumbs.db
 
 # IntelliJ specific files/directories
 out
-.idea
 *.ipr
 *.iws
 *.iml
@@ -69,3 +68,10 @@ testfile/
 # kyc compiled files
 *.kyc
 /kython-util/build/
+
+.idea/*.iml
+.idea/*.xml
+.idea/dictionaries
+.idea/codeStyles
+.idea/copyright
+.idea/inspectionProfiles
