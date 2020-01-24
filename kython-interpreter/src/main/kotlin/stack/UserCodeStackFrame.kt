@@ -147,6 +147,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
                 // import ops
                 InstructionOpcode.IMPORT_NAME -> importName(param)
+                InstructionOpcode.IMPORT_FROM -> importFrom(param)
 
                 // load ops
                 InstructionOpcode.LOAD_FAST -> load(LoadPool.FAST, param)
@@ -284,17 +285,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
 
     // scary instruction implementations
     // this is all below the main class because there's a LOT going on her
-
-    /**
-     * IMPORT_FROM
-     */
-    fun importFrom(arg: Byte) {
-        val module = stack.last
-        val attrName = function.code.names[arg.toInt()]
-        val attr = module.pyGetAttribute(attrName)
-        stack.push(attr)
-        bytecodePointer += 1
-    }
 
     // Unary operators
     /**

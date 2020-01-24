@@ -32,6 +32,7 @@ abstract class PyObject {
          */
         fun wrapPrimitive(obb: Any?): PyObject =
             when (obb) {
+                null -> PyNone
                 is Short -> PyInt(obb.toLong())
                 is Int -> PyInt(obb.toLong())
                 is Long -> PyInt(obb.toLong())

@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyListType
 import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.interpreter.util.cast
 
 class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     companion object {
@@ -30,6 +31,11 @@ class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
         return PyString("[" + subobjects.joinToString {
             it.pyGetRepr().wrappedString
         } + "]")
+    }
+
+    override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
+        val other = other.cast<PyList>()
+        return PyList((subobjects + other.subobjects) as MutableList<PyObject>)
     }
 
     override fun pyGetRepr(): PyString = pyToStr()

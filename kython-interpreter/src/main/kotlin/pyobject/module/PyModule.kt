@@ -26,7 +26,6 @@ import green.sailor.kython.interpreter.pyobject.PyObject
  * This can either wrap a user function, or a builtin module.
  */
 abstract class PyModule(val name: String) : PyObject() {
-    override fun pyGetAttribute(name: String): PyObject {
-        return internalDict[name] ?: attributeError(name)
-    }
+    override fun pyGetAttribute(name: String): PyObject =
+        internalDict[name] ?: attributeError("module '${this.name}' has no attribute '$name'")
 }

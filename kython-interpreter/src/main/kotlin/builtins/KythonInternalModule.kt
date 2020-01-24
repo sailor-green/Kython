@@ -18,40 +18,40 @@
 package green.sailor.kython.interpreter.builtins
 
 import green.sailor.kython.annotation.ExposeMethod
+import green.sailor.kython.annotation.MethodParam
+import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.annotation.Slotted
 import green.sailor.kython.generation.generated.dirSlotted
 import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.generation.generated.setattrSlotted
-import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
-import green.sailor.kython.interpreter.util.StringDictWrapper
+import green.sailor.kython.interpreter.toPyObject
+import green.sailor.kython.interpreter.util.cast
 
 /**
- * Represents the sys built-in module.
+ * Represents the Kython internal module.
  */
-@Suppress("unused")
-@Slotted("sys")
-object SysModule : PyBuiltinModule("sys") {
-    val version: PyString = PyString("3.9.0")
-    val platform: PyString = PyString(System.getProperty("os.name").toLowerCase())
-    var path: PyList = PyList(defaultPath() as MutableList<PyObject>)
-    var modules = PyDict.unsafeFromUnVerifiedMap(
-        StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
-    )
+@Slotted("__kython_internal")
+object KythonInternalModule : PyBuiltinModule("__kython_internal") {
+    override fun pyGetAttribute(name: String): PyObject =
+        getattrSlotted(name)
 
-    @ExposeMethod("getswitchinterval")
-    fun getSwitchInterval(args: Map<String, PyObject>): PyFloat = PyFloat(0.0)
-
-    override fun pyGetAttribute(name: String): PyObject = getattrSlotted(name)
     override fun pySetAttribute(name: String, value: PyObject): PyObject =
         setattrSlotted(name, value)
-    override fun pyDir(): PyTuple = dirSlotted()
-}
 
-/**
- * Creates the default path elements.
- */
-fun defaultPath(): MutableList<PyString> {
-    return listOf("", "classpath:Lib").mapTo(mutableListOf()) { PyString(it) }
+    override fun pyDir(): PyTuple =
+        dirSlotted()
+
+    /** __kython_internal.kotlin_type_name */
+    @ExposeMethod("kotlin_type_name")
+    @MethodParams(
+        MethodParam("thing", "POSITIONAL")
+    )
+    fun getTypeName(kwargs: Map<String, PyObject>): PyObject {
+        val obb = kwargs["thing"].cast<PyObject>()
+        val klass = obb::class.java
+        return klass.simpleName.toPyObject()
+    }
 }

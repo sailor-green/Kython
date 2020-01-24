@@ -45,3 +45,14 @@ fun UserCodeStackFrame.importName(arg: Byte) {
 
     bytecodePointer += 1
 }
+
+/**
+ * IMPORT_FROM
+ */
+fun UserCodeStackFrame.importFrom(arg: Byte) {
+    val module = stack.last
+    val attrName = function.code.names[arg.toInt()]
+    val attr = module.pyGetAttribute(attrName)
+    stack.push(attr)
+    bytecodePointer += 1
+}

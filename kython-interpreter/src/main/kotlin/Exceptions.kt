@@ -45,7 +45,7 @@ object Exceptions {
 
     // import errors
     val IMPORT_ERROR = PyExceptionType("ImportError", EXCEPTION)
-    val MODULE_NOT_FOUND_ERROR = PyExceptionType("ModuleNotFoundError", EXCEPTION)
+    val MODULE_NOT_FOUND_ERROR = PyExceptionType("ModuleNotFoundError", IMPORT_ERROR)
 
     // runtimeerror and its children
     val RUNTIME_ERROR = PyExceptionType("RuntimeError", EXCEPTION)

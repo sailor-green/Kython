@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.util
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.kyc.KycFile
 import green.sailor.kython.kyc.UnKyc
+import java.io.FileNotFoundException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
@@ -72,6 +73,9 @@ class CPythonCompiler {
      * Compiles from a path.
      */
     fun compile(path: Path): KyCodeObject {
+        if (!Files.exists(path)) {
+            throw FileNotFoundException(path.toString())
+        }
         val args = listOf("--path", path.toAbsolutePath().toString())
         return KyCodeObject(executeCompiler(args).code)
     }

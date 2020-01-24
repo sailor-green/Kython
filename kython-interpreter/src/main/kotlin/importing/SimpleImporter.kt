@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.module.PyModule
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.util.cast
+import java.io.FileNotFoundException
 import java.nio.file.Paths
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -47,7 +48,7 @@ class SimpleImporter : Importer {
         // loaded from the classpath
         if (path.startsWith("classpath:")) {
             // try and find the module from the jar path
-            val realPath = path.removePrefix("classpath:")
+            val realPath = path.removePrefix("classpath:") + "/"
             val absolutePath = realPath + name.replace(".", "/")
             return JarFileModuleLoader.getClasspathModule(absolutePath)
         }
@@ -55,7 +56,11 @@ class SimpleImporter : Importer {
         val resolvedPath = Paths.get(
             path, name.replace(".", "/") + ".py"
         ).toAbsolutePath()
-        val compiled = KythonInterpreter.cpyInterface.compile(resolvedPath)
+        val compiled = try {
+            KythonInterpreter.cpyInterface.compile(resolvedPath)
+        } catch (e: FileNotFoundException) {
+            Exceptions.MODULE_NOT_FOUND_ERROR(resolvedPath.toString()).throwKy()
+        }
         val moduleFn = PyUserFunction(compiled)
         val module = KythonInterpreter.buildModule(moduleFn, resolvedPath)
         val userModule = PyUserModule(module, name)

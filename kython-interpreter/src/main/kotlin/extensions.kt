@@ -78,7 +78,7 @@ fun PyObject.asIterator(): Iterator<PyObject> = object : Iterator<PyObject> {
     }
 
     override fun next(): PyObject {
-        if (!hasNext()) {
+        if (backing.isEmpty()) {
             error("Next called whilst there was no next")
         }
         return backing.removeAt(0)
@@ -100,7 +100,10 @@ fun PyException.asObject() = this as PyObject
 val KyError.pyError get() = wrapped.asObject()
 
 /** Checks if this PyType is a subclass of another type. */
-fun PyType.issubclass(other: PyType) = issubclass(setOf(other))
+fun PyType.issubclass(other: PyType): Boolean {
+    if (this === other) return true
+    return issubclass(setOf(other))
+}
 
 /**
  * Checks if this PyType is a subclass of another type.
@@ -180,3 +183,7 @@ fun PyObject.dir(): List<String> {
 
 /** Helper property for getting the type name of an object. */
 val PyObject.typeName get() = type.name
+
+fun Any?.toPyObject() = PyObject.wrapPrimitive(this)
+fun String.toPyObject() = PyString(this)
+fun Int.toPyObject() = PyInt(this.toLong())
