@@ -25,12 +25,12 @@ import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a python type (i.e. a class).
  */
-abstract class PyType(val name: String) : PyObject(),
-    PyCallable {
+abstract class PyType(val name: String) : PyObject(), PyCallable {
     /**
      * Creates a new instance of the object represented by this type.
      *
@@ -58,7 +58,8 @@ abstract class PyType(val name: String) : PyObject(),
     /**
      * Called to implement user-type subclasses.
      */
-    open fun kySuperclassInit(instance: PyUserObject, args: List<PyObject>): PyNone = PyNone
+    open fun kySuperclassInit(instance: PyUserObject, args: List<PyObject>): PyNone =
+        typeError("Type $name does not support subclassing!")
 
     /**
      * Gets the method resolution order parents of this object.
