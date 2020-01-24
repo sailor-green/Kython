@@ -38,8 +38,7 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      * from Kotlin land.
      */
     val builtinFunctionWrapper by lazy {
-        PyBuiltinFunction
-            .wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
+        PyBuiltinFunction.wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
     }
 
     /** A list of parent classes for this PyType. */

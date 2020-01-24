@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.cast
 
@@ -47,6 +48,16 @@ object PyListType : PyType("list") {
         )
     }
 
+    override fun kySuperclassInit(instance: PyUserObject, args: List<PyObject>): PyNone {
+        if (args.isEmpty()) {
+            instance.primitiveSubclassBacking[this] = PyList.empty()
+        } else {
+            val list = args.first().pyIter()
+            instance.primitiveSubclassBacking[this] = PyList(list.toNativeList())
+        }
+        return PyNone
+    }
+
     /** list.append(item) */
     @ExposeMethod("append")
     @MethodParams(
@@ -55,8 +66,28 @@ object PyListType : PyType("list") {
     )
     fun pyListAppend(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"].cast<PyList>()
-        val value = kwargs["value"] ?: error("Built-in signature mismatch!")
+        val value = kwargs["item"] ?: error("Built-in signature mismatch!")
         (self.subobjects as MutableList).add(value)
         return PyNone
+    }
+
+    // magic methods
+    /** list.__str__() */
+    @ExposeMethod("__str__")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL")
+    )
+    fun pyListStr(kwargs: Map<String, PyObject>): PyObject {
+        val self = kwargs["self"].cast<PyList>()
+        return self.pyToStr()
+    }
+
+    @ExposeMethod("__repr__")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL")
+    )
+    fun pyListRepr(kwargs: Map<String, PyObject>): PyObject {
+        val self = kwargs["self"].cast<PyList>()
+        return self.pyGetRepr()
     }
 }

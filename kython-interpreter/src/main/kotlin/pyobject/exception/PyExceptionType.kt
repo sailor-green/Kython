@@ -19,10 +19,8 @@ package green.sailor.kython.interpreter.pyobject.exception
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyTuple
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.util.cast
 
 /**
@@ -38,6 +36,9 @@ open class PyExceptionType(
      * Makes a new [BuiltinPyException] object from the args specified.
      */
     fun makeException(args: PyTuple) = BuiltinPyException(this, args)
+
+    // don't update anything on the class, it's handled specially
+    override fun kySuperclassInit(instance: PyUserObject, args: List<PyObject>) = PyNone
 
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val args = kwargs["args"].cast<PyTuple>()

@@ -22,6 +22,10 @@ import green.sailor.kython.interpreter.pyobject.types.PyListType
 import green.sailor.kython.interpreter.typeError
 
 class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
+    companion object {
+        fun empty() = PyList(mutableListOf())
+    }
+
     override fun pyToStr(): PyString {
         return PyString("[" + subobjects.joinToString {
             it.pyGetRepr().wrappedString
