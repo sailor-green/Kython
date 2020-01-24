@@ -93,18 +93,6 @@ object Builtins {
         "None" to NONE,
         "True" to PyBool.TRUE,
         "False" to PyBool.FALSE,
-        "NotImplemented" to NOT_IMPLEMENTED,
-
-        "_raw_type" to object : PyBuiltinFunction("_raw_type") {
-            override val signature: PyCallableSignature
-                get() = PyCallableSignature.EMPTY_METHOD
-
-            override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-                val self = kwargs["self"].cast<PyObject>()
-                val klass = self::class
-                println(klass.qualifiedName)
-                return PyNone
-            }
-        }
+        "NotImplemented" to NOT_IMPLEMENTED
     ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
 }
