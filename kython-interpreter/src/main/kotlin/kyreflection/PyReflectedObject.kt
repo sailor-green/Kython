@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.kyreflection
 
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
 import kotlin.reflect.full.memberProperties
@@ -26,10 +27,12 @@ import kotlin.reflect.full.memberProperties
 /**
  * Represents a reflection object wrapper.
  */
-class PyReflectedObject(val wrapped: Any) : PyObject() {
+class PyReflectedObject(val wrapped: Any) : PyPrimitive() {
     override var type: PyType
         get() = PyReflectedType
         set(value) = Exceptions.invalidClassSet(this)
+
+    override fun unwrap(): Any = wrapped
 
     override fun pyToStr(): PyString = PyString(wrapped.toString())
     override fun pyGetRepr(): PyString {
