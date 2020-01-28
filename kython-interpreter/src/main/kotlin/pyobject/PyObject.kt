@@ -35,12 +35,12 @@ abstract class PyObject {
                 null -> PyNone
                 is Short -> PyInt(obb.toLong())
                 is Int -> PyInt(obb.toLong())
-                is Long -> PyInt(obb.toLong())
-                is String -> PyString(
-                    obb.toString()
-                )
-                is Boolean -> if (obb) PyBool.TRUE else PyBool.FALSE
+                is Long -> PyInt(obb)
+                is String -> PyString(obb)
+                is Boolean -> PyBool.get(obb)
                 is ByteArray -> PyBytes(obb)
+                is MutableList<*> -> PyList(obb.mapTo(mutableListOf()) { get(it) })
+                is Map<*, *> -> PyDict.fromAnyMap(obb)
                 else -> error("Don't know how to wrap $obb in a PyObject")
             }
 

@@ -93,6 +93,11 @@ fun attributeError(message: String): Nothing = Exceptions.ATTRIBUTE_ERROR(messag
 fun nameError(message: String): Nothing = Exceptions.NAME_ERROR(message).throwKy()
 
 /**
+ * Causes a new SystemError.
+ */
+fun systemError(message: String): Nothing = Exceptions.SYSTEM_ERROR(message).throwKy()
+
+/**
  * Ensures an [KyError] is of the specified type.
  */
 fun KyError.ensure(type: PyExceptionType) { if (!pyError.type.issubclass(type)) throw this }

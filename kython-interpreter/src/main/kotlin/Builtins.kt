@@ -17,15 +17,12 @@
 
 package green.sailor.kython.interpreter
 
-import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.*
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.function.PyClassmethod
 import green.sailor.kython.interpreter.pyobject.function.PyStaticmethod
 import green.sailor.kython.interpreter.pyobject.iterators.PyRangeType
 import green.sailor.kython.interpreter.pyobject.types.*
-import green.sailor.kython.interpreter.util.cast
 
 /**
  * Represents the builtins.

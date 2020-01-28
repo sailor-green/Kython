@@ -120,10 +120,10 @@ tailrec fun Collection<PyType>.issubclass(others: Set<PyType>): Boolean {
 }
 
 /**
- * Implements the defaults get attribute for an object.
+ * Implements the default get attribute for an object.
  */
-fun PyObject.getAttribute(attrName: String): PyObject {
-    // special case
+fun PyObject.maybeGetAttribute(attrName: String): PyObject? {
+        // special case
     if (attrName == "__dict__") {
         return this.pyDict
     }
@@ -145,8 +145,25 @@ fun PyObject.getAttribute(attrName: String): PyObject {
         it.internalDict[attrName]
     }.firstOrNull()?.let { return it.pyDescriptorGet(descriptorSelf, type) }
 
+    return null
+}
+
+/**
+ * Implements the default get attribute for an object, but returns an error if it can't be found.
+ */
+fun PyObject.getAttribute(attrName: String): PyObject {
+    maybeGetAttribute(attrName)?.let { return it }
     // can't find it
     attributeError("Object '${type.name}' has no attribute '$attrName'")
+}
+
+/**
+ * Attempts to find an attribute on the MRO.
+ */
+fun PyType.findOnMro(name: String): PyObject? {
+    val internal = internalDict[name]
+    if (internal != null) return internal
+    return mro.find { name in it.internalDict }?.internalDict?.get(name)
 }
 
 /**

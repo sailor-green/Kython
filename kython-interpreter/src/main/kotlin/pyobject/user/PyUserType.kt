@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject.user
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.findOnMro
 import green.sailor.kython.interpreter.issubclass
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyTuple
@@ -40,7 +41,7 @@ class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, 
 
     // figure out signature
     override val signature = run {
-        val initMethod = internalDict["__init__"]
+        val initMethod = findOnMro("__init__")
         if (initMethod != null && initMethod is PyCallable) {
             val initSig = initMethod.signature
             // chop off the first arg, the self arg

@@ -122,7 +122,7 @@ fun getTypeSpec(
 ): TypeSpec {
     val classname = target.first.asClassName()
     val className = target.second.name.substringAfterLast("/")
-    val mangledName = "kython generated wrapper ${className}_${fn.name}"
+    val mangledName = "kython-generated-wrapper\$${className}_${fn.name}"
     val builder = TypeSpec.objectBuilder(mangledName)
     builder.superclass(builtinMethod)
     builder.addSuperclassConstructorParameter("%S", anno.name)
@@ -204,7 +204,7 @@ fun generateMethodWrappers(target: TypeElement): List<MethodWrapperInfo> {
         val anno = executableElement.getAnnotation(ExposeMethod::class.java) ?: continue
         val params = executableElement.getAnnotation(MethodParams::class.java)
         val spec = getTypeSpec(Pair(target, x), anno, params, fn)
-        val mangledName = "kython generated wrapper ${className}_${fn.name}"
+        val mangledName = "kython-generated-wrapper\$${className}_${fn.name}"
         val info = MethodWrapperInfo(x, spec, mangledName, anno.name)
         wrappers.add(info)
     }
