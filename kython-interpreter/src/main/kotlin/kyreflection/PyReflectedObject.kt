@@ -50,5 +50,4 @@ class PyReflectedObject(val wrapped: Any) : PyObject() {
         }
         return PyReflectedObject(property)
     }
-
 }

@@ -27,15 +27,8 @@ import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.util.isKotlinClass
-import org.apache.commons.beanutils.BeanUtils
-import org.apache.commons.beanutils.PropertyUtils
-import kotlin.reflect.KClass
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
-import kotlin.reflect.jvm.javaGetter
-import kotlin.reflect.jvm.javaMethod
+import org.apache.commons.beanutils.PropertyUtils
 
 @GenerateMethods
 object PyReflectedType : PyType("PyReflectedObject") {
@@ -118,6 +111,4 @@ object PyReflectedType : PyType("PyReflectedObject") {
         val instance = ctor.newInstance(*unwrappedParams.toTypedArray())
         return PyReflectedObject(instance)
     }
-
-
 }

@@ -18,8 +18,6 @@
 package green.sailor.kython.util
 
 /**
- * Checks if a class is a Kotlin class.
+ * Checks if a class is a Kotlin class through the presence of the @Metadata annotation.
  */
-fun Class<*>.isKotlinClass(): Boolean {
-    return isAnnotationPresent(Metadata::class.java)
-}
+fun Class<*>.isKotlinClass(): Boolean = isAnnotationPresent(Metadata::class.java)

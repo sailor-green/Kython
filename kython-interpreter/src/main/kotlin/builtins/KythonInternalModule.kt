@@ -26,11 +26,9 @@ import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.kyreflection.PyReflectedObject
-import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
-import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.interpreter.toPyObject
