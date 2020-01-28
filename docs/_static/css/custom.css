@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Overpass+Mono|Roboto|Quicksand&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Overpass+Mono|Rubik|Quicksand&display=swap');
 
 div.highlight pre, span.pre {
     font-family: "Jetbrains Mono", "Overpass Mono", monospace !important;
@@ -6,9 +6,16 @@ div.highlight pre, span.pre {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Quicksand";
+    font-family: "Rubik";
 }
 
 p, li, strong, em, a {
-    font-family: "Roboto" !important;
+    font-family: "Rubik" !important;
+}
+
+.wy-nav-side {
+    background-color: #173545;
+}
+.wy-menu-vertical a:hover {
+    background-color: #5D7F91;
 }

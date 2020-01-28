@@ -53,5 +53,6 @@ html_css_files = [
 ]
 
 html_theme_options = {
-    "collapse_navigation": True,
+    "collapse_navigation": False,
+    "style_nav_header_background": "#1EDDB9"
 }
