@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Overpass+Mono|Roboto|Quicksand&display=swap');
+
+div.highlight pre, span.pre {
+    font-family: "Jetbrains Mono", "Overpass Mono", monospace !important;
+    font-size: 14px !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Quicksand";
+}
+
+p, li, strong, em, a {
+    font-family: "Roboto" !important;
+}

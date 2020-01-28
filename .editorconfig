@@ -6,6 +6,9 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+[*.rst]
+max_line_length = 100
+
 [*.py]
 max_line_length = 100
 
