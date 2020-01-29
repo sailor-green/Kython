@@ -19,13 +19,14 @@
 @file:JvmMultifileClass
 package green.sailor.kython.interpreter.instruction.impl
 
+import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.exception.BuiltinPyException
+import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.interpreter.stack.FinallyBlock
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.interpreter.throwKy
 
 /**
  * Represents the NULL object pushed onto the stack by BEGIN_FINALLY.
@@ -73,9 +74,29 @@ fun UserCodeStackFrame.popBlock(oval: Byte) {
  * RERAISE
  */
 fun UserCodeStackFrame.reraise(opval: Byte) {
-    val excType = stack.pop() as? PyExceptionType ?: error("TOS wasn't an exception type!")
-    val excVal = stack.pop() as? BuiltinPyException ?: error("TOS wasn't an exception!")
+    val excType = stack.pop() as? PyType ?: error("TOS wasn't a type!")
+    if (!excType.issubclass(Exceptions.BASE_EXCEPTION)) {
+        typeError("${excType.name} is not an Exception type")
+    }
+    val excVal = stack.pop() as? PyException ?: error("TOS wasn't an exception!")
     val excTb = stack.pop()
     // TODO: properly copy tb or whatever
     excVal.throwKy()
+}
+
+/**
+ * JUMP_IF_NOT_EXC_MATCH
+ */
+fun UserCodeStackFrame.jumpIfNotExcMatch(opval: Byte) {
+    val tos = stack.pop() as? PyType ?: error("TOS wasn't a type!")
+    val exc = stack.pop() as? PyType ?: error("TOS1 wasn't a type!")
+    if (!exc.issubclass(Exceptions.BASE_EXCEPTION)) {
+        typeError("${exc.name} is not an Exception type")
+    }
+    val isinstance = exc.issubclass(tos)
+    if (!isinstance) {
+        bytecodePointer = opval.toUByte().toInt() / 2
+    } else {
+        bytecodePointer += 1
+    }
 }

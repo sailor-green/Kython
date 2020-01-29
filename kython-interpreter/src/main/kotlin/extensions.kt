@@ -86,6 +86,11 @@ fun PyObject.asIterator(): Iterator<PyObject> = object : Iterator<PyObject> {
 }
 
 /**
+ * Checks if this PyObject is an instance of a type.
+ */
+fun PyObject.isinstance(other: PyType) = isinstance(setOf(other))
+
+/**
  * Checks if this PyObject is an instance of other types.
  */
 fun PyObject.isinstance(others: Set<PyType>): Boolean {

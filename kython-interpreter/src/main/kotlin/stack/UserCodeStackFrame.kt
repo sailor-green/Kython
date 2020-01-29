@@ -139,11 +139,12 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             // switch on opcode
             // Reference: https://docs.python.org/3/library/dis.html#python-bytecode-instructions
             try { when (opcode) {
-                // block ops
+                // exceptions
                 InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
                 InstructionOpcode.POP_EXCEPT -> popExcept(param)
                 InstructionOpcode.POP_BLOCK -> popBlock(param)
                 InstructionOpcode.RERAISE -> reraise(param)
+                InstructionOpcode.JUMP_IF_NOT_EXC_MATCH -> jumpIfNotExcMatch(param)
 
                 // import ops
                 InstructionOpcode.IMPORT_NAME -> importName(param)
