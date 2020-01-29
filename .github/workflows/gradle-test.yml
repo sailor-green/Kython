@@ -33,7 +33,7 @@ jobs:
                     restore-keys: |
                         ${{ runner.os }}-gradle-
 
-            -   name: Install CPython 3.8
+            -   name: Install CPython 3.9
                 run: |
                     sudo add-apt-repository ppa:deadsnakes/ppa
                     sudo apt-get update
