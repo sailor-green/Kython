@@ -31,8 +31,8 @@ import green.sailor.kython.interpreter.thread.MainInterpreterThread
  * @param args: Any locals that need to be in the function being ran.
  */
 fun KythonInterpreter.testExecInternal(code: String): PyObject {
-    val compiled = cpyInterface
-        .compile(code)
+    config.debugMode = true
+    val compiled = cpyInterface.compile(code)
     val fn = PyUserFunction(compiled)
     val module = KyUserModule(fn, "<test>", code.split(System.lineSeparator()))
     val frame = fn.createFrame()
@@ -40,11 +40,11 @@ fun KythonInterpreter.testExecInternal(code: String): PyObject {
         error("Frame isn't a user code frame, not sure what happened")
     }
 
-    val thread =
-        MainInterpreterThread(frame)
+    val thread = MainInterpreterThread(frame)
     interpreterThreadLocal.set(thread)
     try {
-        thread.runStackFrame(frame, mapOf())
+        thread.internalRunThreadWithErrorLogs(true)
+        //thread.runStackFrame(frame, mapOf())
     } finally {
         interpreterThreadLocal.remove()
     }
