@@ -48,5 +48,4 @@ class `Test Exceptions` {
         """.trimIndent())
         assertTrue(result)
     }
-
 }

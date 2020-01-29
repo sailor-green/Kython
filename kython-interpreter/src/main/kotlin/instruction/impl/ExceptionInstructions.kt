@@ -22,9 +22,7 @@ package green.sailor.kython.interpreter.instruction.impl
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.pyobject.exception.BuiltinPyException
 import green.sailor.kython.interpreter.pyobject.exception.PyException
-import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.interpreter.stack.FinallyBlock
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
