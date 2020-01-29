@@ -37,3 +37,13 @@ object CompareOp {
     const val IS_NOT = 9
     const val EXCEPTION_MATCH = 10
 }
+
+enum class IsOp {
+    IS, IS_NOT;
+
+    companion object {
+        private val _values = IsOp.values()
+
+        fun byId(value: Byte) = _values[value.toInt()]
+    }
+}

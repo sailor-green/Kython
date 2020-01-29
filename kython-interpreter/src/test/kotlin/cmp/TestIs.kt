@@ -47,4 +47,33 @@ class `Test is` {
         """.trimIndent())
         assertFalse(result)
     }
+
+    @Test
+    fun `Test is None`() {
+        val result = KythonInterpreter.testExec<PyBool>("""
+            x = print()
+            result = x is None
+        """.trimIndent())
+        assertTrue(result)
+
+        val result2 = KythonInterpreter.testExec<PyBool>("""
+            result = 1 is None
+        """.trimIndent())
+        assertFalse(result2)
+    }
+
+    @Test
+    fun `Test boolean singletons`() {
+        val result = KythonInterpreter.testExec<PyBool>("""
+            x = 1 == 2
+            result = x is False
+        """.trimIndent())
+        assertTrue(result)
+
+        val result2 = KythonInterpreter.testExec<PyBool>("""
+            x = 2 == 2
+            result = x is True
+        """.trimIndent())
+        assertTrue(result2)
+    }
 }

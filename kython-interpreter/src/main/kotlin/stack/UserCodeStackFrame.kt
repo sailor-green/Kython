@@ -260,7 +260,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
                 InstructionOpcode.LOAD_BUILD_CLASS -> loadBuildClass(param)
 
+                // comparison operators
                 InstructionOpcode.COMPARE_OP -> compareOp(param)
+                InstructionOpcode.IS_OP -> isOp(param)
+
                 else -> {
                     if (KythonInterpreter.config.debugMode) {
                         error("Unimplemented opcode $opcode")
