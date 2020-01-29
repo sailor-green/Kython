@@ -263,6 +263,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // comparison operators
                 InstructionOpcode.COMPARE_OP -> compareOp(param)
                 InstructionOpcode.IS_OP -> isOp(param)
+                InstructionOpcode.CONTAINS_OP -> containsOp(param)
 
                 else -> {
                     if (KythonInterpreter.config.debugMode) {

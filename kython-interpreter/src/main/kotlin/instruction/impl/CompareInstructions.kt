@@ -95,8 +95,6 @@ fun UserCodeStackFrame.compareOp(arg: Byte) {
         )
         EQUAL -> implCompareOp { tos, tos1 -> tos.pyEquals(tos1) }
         NOT_EQUAL -> implCompareOp { tos, tos1 -> tos.pyNotEquals(tos1) }
-        CONTAINS -> implCompareOp { tos, tos1 -> tos.pyContains(tos1) }
-        NOT_CONTAINS -> implCompareOp { tos, tos1 -> tos.pyContains(tos1).pyToBool().invert() }
         EXCEPTION_MATCH -> {
             // TOS is the name we just loaded, which is the one we want to compare
             val top = stack.pop().cast<PyExceptionType>()
@@ -126,6 +124,18 @@ fun UserCodeStackFrame.isOp(arg: Byte) {
             val second = stack.pop()
             if (top !== second) PyBool.TRUE else PyBool.FALSE
         }
+    }
+    stack.push(toPush)
+    bytecodePointer += 1
+}
+
+/**
+ * CONTAINS_OP
+ */
+fun UserCodeStackFrame.containsOp(arg: Byte) {
+    val toPush = when (ContainsOp.byId(arg)) {
+        ContainsOp.IN -> implCompareOp { tos, tos1 -> tos.pyContains(tos1) }
+        ContainsOp.NOT_IN -> implCompareOp { tos, tos1 -> tos.pyContains(tos1).pyToBool().invert() }
     }
     stack.push(toPush)
     bytecodePointer += 1

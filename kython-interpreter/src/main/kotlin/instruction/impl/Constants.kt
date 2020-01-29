@@ -47,3 +47,13 @@ enum class IsOp {
         fun byId(value: Byte) = _values[value.toInt()]
     }
 }
+
+enum class ContainsOp {
+    IN, NOT_IN;
+
+    companion object {
+        private val _values = ContainsOp.values()
+
+        fun byId(value: Byte) = _values[value.toInt()]
+    }
+}
