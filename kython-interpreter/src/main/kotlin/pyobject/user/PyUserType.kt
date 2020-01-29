@@ -48,7 +48,9 @@ class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, 
             val items = initSig.args.drop(1).toTypedArray()
             PyCallableSignature(*items)
         } else {
-            PyCallableSignature()
+            // if we're a builtin subclass..
+            val supertype = mro.find { it !is PyUserType }
+            supertype?.kyGetSignature() ?: PyCallableSignature()
         }
     }
 
