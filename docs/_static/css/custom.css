@@ -14,8 +14,13 @@ p, li, strong, em, a {
 }
 
 .wy-nav-side {
-    background-color: #173545;
+    background-color: #416478;
 }
+.wy-nav-side span.caption-text {
+    color: #D9D9D9;
+    font-family: "Quicksand";
+}
+
 .wy-menu-vertical a:hover {
     background-color: #5D7F91;
 }

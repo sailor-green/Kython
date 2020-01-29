@@ -24,8 +24,10 @@ Getting Started
 ---------------
 
 .. toctree::
-   :maxdepth: 2
-   :caption: User Guide
+    :maxdepth: 2
+    :caption: User Guide
+
+    user-guide/01_installation
 
 .. toctree::
     :maxdepth: 2
