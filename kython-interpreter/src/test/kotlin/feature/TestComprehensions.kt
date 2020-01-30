@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyList
 import green.sailor.kython.interpreter.pyobject.PySet
 import green.sailor.kython.interpreter.util.cast
-import green.sailor.kython.test.helpers.testExecInternal
+import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -32,7 +32,7 @@ class `Test comprehensions` {
         val code = """
             result = [int(x) for x in ("1", "2", "3", "4")]
         """.trimIndent()
-        val result = (KythonInterpreter.testExecInternal(code) as PyList).unwrap()
+        val result = KythonInterpreter.testExec<PyList>(code).unwrap()
         Assertions.assertTrue(result.map { it.cast<PyInt>().wrappedInt } == listOf(1L, 2L, 3L, 4L))
     }
 
@@ -41,7 +41,7 @@ class `Test comprehensions` {
         val code = """
             result = {int(x) for x in ("1", "2", "3", "4")}
         """.trimIndent()
-        val result = (KythonInterpreter.testExecInternal(code) as PySet).unwrap()
+        val result = KythonInterpreter.testExec<PySet>(code).unwrap()
         val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrappedInt }
         Assertions.assertTrue(mapped == setOf(1L, 2L, 3L, 4L))
     }

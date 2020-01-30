@@ -21,3 +21,10 @@ package green.sailor.kython.util
  * Checks if a class is a Kotlin class through the presence of the @Metadata annotation.
  */
 fun Class<*>.isKotlinClass(): Boolean = isAnnotationPresent(Metadata::class.java)
+
+// kotlin.String.split is stupid
+/**
+ * Explodes a string into an Array<String>.
+ */
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+fun String.explode(): Array<String> = (this as java.lang.String).split("")

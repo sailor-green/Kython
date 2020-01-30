@@ -62,7 +62,7 @@ class PyObjectTester<T : PyPrimitive>(
     /** The compiler result */
     @Suppress("UNCHECKED_CAST")
     private val execResult
-        get() = KythonInterpreter.testExecInternal(testCode) as T
+        get() = KythonInterpreter.testExecInternal(testCode, withErrorLogs = true) as T
 
     /**
      * Asserts that a [PyContainer] based result equals [expected].

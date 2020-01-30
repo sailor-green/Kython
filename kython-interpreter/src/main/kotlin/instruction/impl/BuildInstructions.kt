@@ -68,6 +68,40 @@ fun UserCodeStackFrame.buildSimple(type: BuildType, arg: Byte) {
     bytecodePointer += 1
 }
 
+/**
+ * LIST_EXTEND
+ */
+fun UserCodeStackFrame.listExtend(arg: Byte) {
+    // second.extend(first)
+    // this modifies TOS1 in-place
+    val first = stack.pop()
+    val second = stack.pop().cast<PyList>()
+
+    second.extend(first)
+    stack.push(second)
+    bytecodePointer += 1
+}
+
+/**
+ * LIST_TO_TUPLE
+ */
+fun UserCodeStackFrame.listToTuple(arg: Byte) {
+    val list = stack.pop().cast<PyList>()
+    val tuple = PyTuple.get(list.subobjects)
+    stack.push(tuple)
+    bytecodePointer += 1
+}
+
+fun UserCodeStackFrame.setUpdate(arg: Byte) {
+    // second.update(first)
+    val first = stack.pop()
+    val second = stack.pop().cast<PySet>()
+
+    second.update(first)
+    stack.push(second)
+    bytecodePointer += 1
+}
+
 // (*a, *b)
 /**
  * BUILD_*_UNPACK

@@ -30,8 +30,8 @@ import green.sailor.kython.interpreter.thread.MainInterpreterThread
  * @param code: The code to run.
  * @param args: Any locals that need to be in the function being ran.
  */
-fun KythonInterpreter.testExecInternal(code: String): PyObject {
-    config.debugMode = true
+fun KythonInterpreter.testExecInternal(code: String, withErrorLogs: Boolean): PyObject {
+    config.debugMode = withErrorLogs
     val compiled = cpyInterface.compile(code)
     val fn = PyUserFunction(compiled)
     val module = KyUserModule(fn, "<test>", code.split(System.lineSeparator()))
@@ -43,8 +43,11 @@ fun KythonInterpreter.testExecInternal(code: String): PyObject {
     val thread = MainInterpreterThread(frame)
     interpreterThreadLocal.set(thread)
     try {
-        thread.internalRunThreadWithErrorLogs(true)
-        //thread.runStackFrame(frame, mapOf())
+        if (withErrorLogs) {
+            thread.internalRunThreadWithErrorLogs(true)
+        } else {
+            thread.runStackFrame(frame, mapOf())
+        }
     } finally {
         interpreterThreadLocal.remove()
     }
@@ -54,8 +57,13 @@ fun KythonInterpreter.testExecInternal(code: String): PyObject {
 /**
  * Executes test code, executing it.
  */
-fun <T : PyObject> KythonInterpreter.testExec(
-    code: String
-) = testExecInternal(code) as T
+fun <T : PyObject> KythonInterpreter.testExec(code: String) =
+    testExecInternal(code, withErrorLogs = true) as T
+
+/**
+ * Executes test code that should throw an error.
+ */
+fun <T : PyObject> KythonInterpreter.testExecErrors(code: String): T =
+    testExecInternal(code, withErrorLogs = false) as T
 
 fun <T : PyObject> String.runPy() = KythonInterpreter.testExec<T>(this)

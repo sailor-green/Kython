@@ -18,20 +18,17 @@
 package green.sailor.kython.test.pyobject
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyInt
-import green.sailor.kython.test.helpers.testExecInternal
+import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class `Test bool` {
     @Test
     fun `Test boolean int() call`() {
-        val result = KythonInterpreter.testExecInternal("""
+        val result = KythonInterpreter.testExec<PyInt>("""
             result = int(True)
         """.trimIndent())
-        assertTrue(result !is PyBool)
-        assertTrue(result is PyInt)
-        assertTrue((result as PyInt).wrappedInt == 1L)
+        assertTrue(result.wrappedInt == 1L)
     }
 }

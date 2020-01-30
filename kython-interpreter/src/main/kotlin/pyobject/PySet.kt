@@ -21,7 +21,9 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
 import green.sailor.kython.interpreter.pyobject.types.PySetType
+import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.util.explode
 
 /**
  * Represents a Python set.
@@ -54,6 +56,20 @@ class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
             return PyEmptyIterator
         }
         return PyBuiltinIterator(wrappedSet.iterator())
+    }
+
+    /**
+     * Implements set updating from another iterable object.
+     */
+    fun update(other: PyObject) {
+        when (other) {
+            is PySet -> wrappedSet.addAll(other.wrappedSet)
+            is PyContainer -> wrappedSet.addAll(other.subobjects)
+            is PyString -> wrappedSet.addAll(
+                other.wrappedString.explode().map { PyString(it) }
+            )
+            else -> wrappedSet.addAll(other.pyIter().toNativeList())
+        }
     }
 
     override var type: PyType

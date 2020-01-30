@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
  */
 class `Test unpacking` {
     @Test
-    fun `Test BUILD_TUPLE_UNPACK`() {
+    fun `Test tuple unpack`() {
         val code = """
             x = (1, 2)
             y = (4, 5)
@@ -41,7 +41,18 @@ class `Test unpacking` {
     }
 
     @Test
-    fun `Test BUILD_SET_UNPACK`() {
+    fun `Test set unpack into list`() {
+        val code = """
+            x = {1,}
+            result = [*x]
+        """.trimIndent()
+        val result = KythonInterpreter.testExec<PyList>(code).subobjects
+        val mapped = result.map { it.cast<PyInt>().wrappedInt }
+        Assertions.assertEquals(listOf(1L), mapped)
+    }
+
+    @Test
+    fun `Test set unpack`() {
         val code = """
             x = {1, 2}
             y = {4, 5}
@@ -53,7 +64,7 @@ class `Test unpacking` {
     }
 
     @Test
-    fun `Test BUILD_LIST_UNPACK`() {
+    fun `Test list unpack`() {
         val code = """
             x = [1, 2]
             y = [4, 5]
@@ -62,5 +73,15 @@ class `Test unpacking` {
         val result = KythonInterpreter.testExec<PyList>(code).subobjects
         val mapped = result.map { it.cast<PyInt>().wrappedInt }
         Assertions.assertEquals(listOf(1L, 2L, 4L, 5L), mapped)
+    }
+
+    @Test
+    fun `Test string unpack`() {
+        val code = """
+            result = [*"miku"]
+        """.trimIndent()
+        val result = KythonInterpreter.testExec<PyList>(code).subobjects
+        val mapped = result.map { it.cast<PyString>().wrappedString }
+        Assertions.assertEquals(listOf("m", "i", "k", "u"), mapped)
     }
 }

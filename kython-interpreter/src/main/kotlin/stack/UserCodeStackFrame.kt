@@ -179,7 +179,13 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
                 InstructionOpcode.BUILD_CONST_KEY_MAP -> buildConstKeyMap(param)
 
+                // unpacking
                 InstructionOpcode.LIST_APPEND -> listAppend(param)
+                InstructionOpcode.LIST_EXTEND -> listExtend(param)
+                InstructionOpcode.LIST_TO_TUPLE -> listToTuple(param)
+                InstructionOpcode.SET_UPDATE -> setUpdate(param)
+
+                // comprehension
                 InstructionOpcode.SET_ADD -> setAdd(param)
                 InstructionOpcode.MAP_ADD -> mapAdd(param)
 
