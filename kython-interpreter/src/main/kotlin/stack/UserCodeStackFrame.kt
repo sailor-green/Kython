@@ -189,23 +189,25 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
 
-            // Special-cased Instructions
-            // These instructions all terminate from the loop, so they're handled specifically.
-
-            if (opcode == InstructionOpcode.RETURN_VALUE) {
-                val finalResult = stack.pop()
-                state = FrameState.RETURNED
-                return finalResult
-            } else if (opcode == InstructionOpcode.YIELD_VALUE) {
-                val yieldValue = stack.pop()
-                state = FrameState.YIELDING
-                bytecodePointer += 1
-                return yieldValue
-            }
-
             // switch on opcode
             // Reference: https://docs.python.org/3/library/dis.html#python-bytecode-instructions
             try { when (opcode) {
+                // == Special Instructions == //
+                InstructionOpcode.RETURN_VALUE -> {
+                    val returned = stack.pop()
+                    state = FrameState.RETURNED
+                    return returned
+                }
+
+                InstructionOpcode.YIELD_VALUE -> {
+                    val yielded = stack.pop()
+                    state = FrameState.YIELDING
+                    return yielded
+                }
+
+
+                // == Regular Instructions == //
+
                 // exceptions
                 InstructionOpcode.SETUP_FINALLY -> setupFinally(param)
                 InstructionOpcode.POP_EXCEPT -> popExcept(param)
