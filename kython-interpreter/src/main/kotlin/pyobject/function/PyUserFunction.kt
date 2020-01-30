@@ -20,11 +20,13 @@ package green.sailor.kython.interpreter.pyobject.function
 import green.sailor.kython.interpreter.Builtins
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.generator.PyGenerator
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -102,6 +104,30 @@ class PyUserFunction(
 
     override val internalDict: MutableMap<String, PyObject> = super.internalDict.apply {
         put("__code__", wrappedCode)
+    }
+
+    override fun kyCall(args: List<PyObject>): PyObject {
+        if (code.flags.isGenerator) {
+            val sig = kyGetSignature()
+            val transformed = sig.argsToKwargs(args)
+            val us = this as PyCallable
+            val frame = us.createFrame() as UserCodeStackFrame
+            frame.setupLocals(transformed)
+            return PyGenerator(frame)
+        }
+        return super.kyCall(args)
+    }
+
+    override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
+        if (code.flags.isGenerator) {
+            val sig = kyGetSignature()
+            val transformed = sig.callFunctionGetArgs(args, kwargTuple)
+            val us = this as PyCallable
+            val frame = us.createFrame() as UserCodeStackFrame
+            frame.setupLocals(transformed)
+            return PyGenerator(frame)
+        }
+        return super.pyCall(args, kwargTuple)
     }
 
     override var type: PyType

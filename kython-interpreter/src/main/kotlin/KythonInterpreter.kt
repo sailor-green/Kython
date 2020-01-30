@@ -114,8 +114,7 @@ object KythonInterpreter {
     fun runPythonFromPath(path: Path) {
         val fn = cpyInterface.compile(path)
 
-        val rootFunction =
-            PyUserFunction(fn)
+        val rootFunction = PyUserFunction(fn)
         val module = KyUserModule(rootFunction, path.toString(), Files.readAllLines(path))
         module.attribs["__name__"] = PyString("__main__")
         modules["__main__"] = PyUserModule(module, "__main__")

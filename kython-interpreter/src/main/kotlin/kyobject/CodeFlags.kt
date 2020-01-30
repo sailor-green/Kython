@@ -41,7 +41,17 @@ inline class CodeFlags(val flags: Int) {
     // unsure
     inline val CO_ITERABLE_ASYNC_FUNCTION get() = (flags and 256) != 0
     /** Marks if this function is an async generator. */
-    inline val CO_ASYNC_GENERATOR get() = (flags and 512)
+    inline val CO_ASYNC_GENERATOR get() = (flags and 512) != 0
+
+    /**
+     * If this function is some sort of generator.
+     */
+    inline val isGenerator get() = (
+        CO_GENERATOR ||
+        CO_ASYNC_FUNCTION ||
+        CO_ITERABLE_ASYNC_FUNCTION ||
+        CO_ASYNC_GENERATOR
+    )
 }
 
 infix fun CodeFlags.and(p: Int) = flags and p

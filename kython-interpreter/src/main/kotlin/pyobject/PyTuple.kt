@@ -32,7 +32,8 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
         val EMPTY = PyTuple(listOf())
 
         /**
-         * Gets
+         * Gets a new [PyTuple]. This will return the empty tuple for optimisation purposes, if
+         * the list is empty.
          */
         fun get(subobjects: List<PyObject>): PyTuple {
             if (subobjects.isEmpty()) {
@@ -41,6 +42,8 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
 
             return PyTuple(subobjects)
         }
+
+        fun of(vararg items: PyObject): PyTuple = get(items.toList())
     }
 
     override fun pyToStr(): PyString {

@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.instruction.PythonInstruction
 import green.sailor.kython.interpreter.instruction.impl.*
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
@@ -32,11 +33,41 @@ import java.util.*
 
 /**
  * Represents a single stack frame on the stack of stack frames.
- *
- * @param function: The function being ran. This may not be a *real* function, but we treat it as if it is.
  */
 @Suppress("MemberVisibilityCanBePrivate")
 class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
+    /**
+     * The enum of states a running frame can be in.
+     */
+    enum class FrameState {
+        /**
+         * This frame is paused, and is not executing.
+         *
+         * Used when a frame is first created.
+         */
+        PAUSED,
+
+        /**
+         * This frame is running an instruction.
+         */
+        RUNNING,
+
+        /**
+         * This frame is not running, and has yielded a value.
+         */
+        YIELDING,
+
+        /**
+         * This frame is not running, and has yield from'd a value.
+         */
+        YIELD_FROM,
+
+        /**
+         * This frame has returned a value, and cannot be re-used.
+         */
+        RETURNED
+    }
+
     /**
      * The bytecode pointer to the bytecode of the KyFunction.
      *
@@ -75,29 +106,9 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     val lineNo: Int get() = function.code.getLineNumber(bytecodePointer)
 
     /**
-     * Utility function for calling magic methods
+     * The state this frame is in.
      */
-    @JvmOverloads
-    fun magicMethod(obj: PyObject, magicName: String, param: PyObject? = null) {
-        val fn = obj.pyGetAttribute(magicName)
-        if (!fn.kyIsCallable()) {
-            Exceptions.TYPE_ERROR("'${obj.type.name}'.$magicName is not callable.").throwKy()
-        }
-        val result = if (param != null) fn.kyCall(listOf(param)) else fn.kyCall(listOf())
-        stack.push(result)
-    }
-
-    fun magicMethod(obj: PyObject, magicName: String, param: PyObject, fallback: String) {
-        try {
-            magicMethod(obj, magicName, param)
-        } catch (e: KyError) {
-            try {
-                magicMethod(param, fallback, obj)
-            } catch (_: KyError) {
-                throw e
-            }
-        }
-    }
+    var state: FrameState = FrameState.PAUSED
 
     /**
      * Creates a new [StackFrameInfo] for this stack frame.
@@ -106,34 +117,90 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
         StackFrameInfo.UserFrameInfo(this)
 
     /**
+     * Unpacks the local variables into varnames for this function.
+     */
+    fun setupLocals(locals: Map<String, PyObject>) {
+        this.locals.putAll(locals)
+    }
+
+    /**
      * Runs this stack frame, executing the function within.
+     *
+     * This should only be used for regular functions!
      */
     override fun runFrame(kwargs: Map<String, PyObject>): PyObject {
+        if (function.code.flags.isGenerator) {
+            error("Cannot call runFrame on a generator function!")
+        }
+
         locals.putAll(kwargs)
 
+        val result = evaluateBytecode()
+        if (state !== FrameState.RETURNED) {
+            error("Frame ran successfully, but is not in a RETURNED state!")
+        }
+        return result
+    }
+
+    // === GENERATOR API === //
+
+    /**
+     * Sends a value to this frame using the generator API.
+     *
+     * This does NOT perform safety checks; use the generator wrapper for that!
+     */
+    fun send(value: PyObject): PyObject {
+        // initially, a generator is in PAUSED
+        // and you can only send None
+        if (state === FrameState.PAUSED) {
+            if (value !== PyNone) {
+                typeError("can't send non-None value to a just-started generator")
+            }
+        }
+        if (state === FrameState.YIELDING) {
+            stack.push(value)
+        }
+        return evaluateBytecode()
+    }
+
+    /**
+     * Evaluates the bytecode for this frame.
+     *
+     * This is the *main* function evaluating code in the interpreter.
+     */
+    fun evaluateBytecode(): PyObject {
+        state = FrameState.RUNNING
         while (true) {
             // simple fetch decode execute loop
             // maybe this could be pipelined.
             val nextInstruction = function.getInstruction(bytecodePointer)
             if (KythonInterpreter.config.debugMode) {
-
+                val stream = System.err
                 if (_lastBytecodePointer == bytecodePointer) {
-                    System.err.println(
-                        "WARNING: Bytecode pointer is unchanged from last instruction"
-                    )
-                    System.err.println("WARNING: You may have forgotten a bytecodePointer += 1!")
+                    stream.println("WARNING: Bytecode pointer is unchanged from last instruction")
+                    stream.println("WARNING: You may have forgotten a bytecodePointer += 1!")
                 }
 
-                System.err.println("idx: $bytecodePointer | Next instruction: $nextInstruction")
+                stream.println("idx: $bytecodePointer | Next instruction: $nextInstruction")
                 _lastBytecodePointer = bytecodePointer
             }
             if (nextInstruction !is PythonInstruction) TODO("Intristic instruction evaluation")
 
             val opcode = nextInstruction.opcode
             val param = nextInstruction.argument
-            // special case this, because it returns from runFrame
+
+            // Special-cased Instructions
+            // These instructions all terminate from the loop, so they're handled specifically.
+
             if (opcode == InstructionOpcode.RETURN_VALUE) {
-                return stack.pop()
+                val finalResult = stack.pop()
+                state = FrameState.RETURNED
+                return finalResult
+            } else if (opcode == InstructionOpcode.YIELD_VALUE) {
+                val yieldValue = stack.pop()
+                state = FrameState.YIELDING
+                bytecodePointer += 1
+                return yieldValue
             }
 
             // switch on opcode
@@ -259,9 +326,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // iteration
                 InstructionOpcode.GET_ITER -> getIter(param)
                 InstructionOpcode.FOR_ITER -> forIter(param)
-                InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldIter(param)
-
-                InstructionOpcode.NOP -> Unit
 
                 // meta
                 InstructionOpcode.MAKE_FUNCTION -> makeFunction(param)
@@ -272,6 +336,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.IS_OP -> isOp(param)
                 InstructionOpcode.CONTAINS_OP -> containsOp(param)
 
+                InstructionOpcode.NOP -> Unit
+
                 else -> {
                     if (KythonInterpreter.config.debugMode) {
                         error("Unimplemented opcode $opcode")
@@ -280,6 +346,15 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     }
                 }
             } } catch (e: KyError) {
+                // == Generator Path == //
+                // StopIteration
+                val isGenerator = function.code.flags.isGenerator
+                if (isGenerator && e.pyError.isinstance(Exceptions.STOP_ITERATION)) {
+                    TODO("StopIteration -> RuntimeError")
+                }
+
+                // == Regular path == //
+
                 // if no block, just throw through
                 if (blockStack.isEmpty()) throw e
 
@@ -292,17 +367,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 bytecodePointer = tobs.delta
             }
         }
-    }
-
-    // scary instruction implementations
-    // this is all below the main class because there's a LOT going on her
-
-    // Unary operators
-    /**
-     * GET_YIELD_ITER
-     */
-    fun getYieldIter(param: Byte) {
-        TODO("Implement GET_YIELD_ITER")
     }
 
     /**
