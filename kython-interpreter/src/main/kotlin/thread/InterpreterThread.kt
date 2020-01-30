@@ -22,34 +22,49 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 import org.apiguardian.api.API
+import java.util.*
 
 /**
  * The base class for an interpreter thread.
  */
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class InterpreterThread(val rootStackFrame: StackFrame) {
-    /** The current executing stack frame for this thread. */
-    var currentStackFrame: StackFrame? = null
+    /** The frame stack for this thread. */
+    open val frameStack = ArrayDeque<StackFrame>(10)
+
+    /** The top-most stack frame. */
+    open val currentStackFrame: StackFrame? get() = frameStack.peekLast()
+
+    /**
+     * Pushes a stack frame onto the list of stack frames.
+     */
+    open fun pushFrame(frame: StackFrame) {
+        frame.parentFrame = currentStackFrame
+        // can be null if this is the root frame
+        currentStackFrame?.childFrame = frame
+        frameStack.push(frame)
+    }
+
+    /**
+     * Pops the top-most stack frame from the list of stack frames.
+     */
+    open fun popFrame() {
+        val topFrame = frameStack.pop()
+        topFrame.parentFrame = null
+        // can be null if this was the root frame
+        currentStackFrame?.childFrame = null
+    }
 
     /**
      * Runs a stack frame on this thread.
      */
     @API(status = API.Status.MAINTAINED)
-    fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): PyObject {
-        val parent = currentStackFrame
-        parent?.let {
-            frame.parentFrame = it
-            it.childFrame = frame
-        }
+    open fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): PyObject {
+        pushFrame(frame)
 
-        currentStackFrame = frame
         val result = frame.runFrame(args)
-        frame.parentFrame = null
 
-        parent?.let {
-            it.childFrame = null
-            currentStackFrame = it
-        }
+        popFrame()
 
         return result
     }
@@ -58,7 +73,7 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
      * Wraps a root frame to handle otherwise unhandled KyErrors.
      */
     @API(status = API.Status.INTERNAL)
-    fun internalWrapTraceback(rootFrame: StackFrame) {
+    open fun internalWrapTraceback(rootFrame: StackFrame) {
         try {
             runStackFrame(rootFrame, mapOf())
         } catch (e: KyError) {
@@ -89,7 +104,7 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
      * Runs this thread, wrapping internal errors in a full dump.
      */
     @API(status = API.Status.INTERNAL)
-    fun internalRunThreadWithErrorLogs(rethrow: Boolean = true) {
+    open fun internalRunThreadWithErrorLogs(rethrow: Boolean = true) {
         try {
             internalWrapTraceback(rootStackFrame)
         } catch (e: Throwable) { // blah blah, bad practice, who cares

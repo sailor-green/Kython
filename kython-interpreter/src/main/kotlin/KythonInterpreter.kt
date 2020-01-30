@@ -83,6 +83,22 @@ object KythonInterpreter {
             ?: error("There is nothing running on this thread?")
 
     /**
+     * Pushes a frame onto the frame stack for this thread.
+     */
+    fun pushFrame(frame: StackFrame) {
+        val thread = interpreterThreadLocal.get()
+        thread.pushFrame(frame)
+    }
+
+    /**
+     * Pops a frame from the frame stack for this thread.
+     */
+    fun popFrame() {
+        val thread = interpreterThreadLocal.get()
+        thread.popFrame()
+    }
+
+    /**
      * Runs a stack frame.
      */
     fun runStackFrame(frame: StackFrame, args: Map<String, PyObject>): PyObject {
