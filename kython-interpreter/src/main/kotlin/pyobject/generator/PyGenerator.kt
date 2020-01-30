@@ -18,10 +18,7 @@
 package green.sailor.kython.interpreter.pyobject.generator
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyTuple
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toPyObject
 
@@ -32,6 +29,10 @@ class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
     override var type: PyType
         get() = PyGeneratorType
         set(value) = Exceptions.invalidClassSet(this)
+
+    // iter(gen) == gen
+    override fun pyIter(): PyObject = this
+    override fun pyNext(): PyObject = send(PyNone)
 
     /**
      * Sends an object to the generator frame.

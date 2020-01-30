@@ -202,9 +202,11 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.YIELD_VALUE -> {
                     val yielded = stack.pop()
                     state = FrameState.YIELDING
+
+                    // when we resume, our pointer will be ahead
+                    bytecodePointer += 1
                     return yielded
                 }
-
 
                 // == Regular Instructions == //
 
