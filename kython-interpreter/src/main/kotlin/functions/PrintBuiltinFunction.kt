@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter.functions
 
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyNone
@@ -34,7 +35,11 @@ class PrintBuiltinFunction : PyBuiltinFunction("print") {
         val args = kwargs["args"] as PyTuple
         val result = args.subobjects.joinToString(" ") { it.pyToStr().wrappedString }
 
-        println(result)
+        if (KythonInterpreter.config.debugMode) {
+            System.err.println("PRINT: $result")
+        } else {
+            println(result)
+        }
         return PyNone
     }
 

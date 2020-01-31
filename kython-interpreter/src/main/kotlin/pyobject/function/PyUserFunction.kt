@@ -65,6 +65,12 @@ class PyUserFunction(
     /** The code object for this function. */
     val code = codeObject
 
+    /** If this function is a generator. Alias for code.flags.isGenerator */
+    val isGenerator: Boolean get() = code.flags.isGenerator
+
+    /** If this function is async. Alias for code.flags.isAsync */
+    val isAsync: Boolean get() = code.flags.isAsync
+
     /** The closure for this function. */
     val closure = closure?.let {
         Array(closure.size) { closure[it] }

@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.generator.PyGenerator
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.util.PythonFunctionStack
 import java.util.*
@@ -39,33 +40,38 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
      * The enum of states a running frame can be in.
      */
-    enum class FrameState {
+    enum class FrameState(val isYielding: Boolean) {
         /**
          * This frame is paused, and is not executing.
          *
          * Used when a frame is first created.
          */
-        PAUSED,
+        PAUSED(false),
 
         /**
          * This frame is running an instruction.
          */
-        RUNNING,
+        RUNNING(false),
 
         /**
          * This frame is not running, and has yielded a value.
          */
-        YIELDING,
+        YIELDING(true),
 
         /**
          * This frame is not running, and has yield from'd a value.
          */
-        YIELD_FROM,
+        YIELD_FROM(true),
 
         /**
          * This frame has returned a value, and cannot be re-used.
          */
-        RETURNED
+        RETURNED(false),
+
+        /**
+         * This frame has had an uncaught error.
+         */
+        ERRORED(false)
     }
 
     /**
@@ -149,7 +155,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      *
      * This does NOT perform safety checks; use the generator wrapper for that!
      */
-    fun send(value: PyObject): PyObject {
+    fun send(value: PyObject): Pair<FrameState, PyObject> {
+        if (KythonInterpreter.config.debugMode) {
+            System.err.println("=== Sending $value for ${function.code.codename} ===")
+        }
         // initially, a generator is in PAUSED
         // and you can only send None
         if (state === FrameState.PAUSED) {
@@ -157,10 +166,14 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 typeError("can't send non-None value to a just-started generator")
             }
         }
-        if (state === FrameState.YIELDING) {
+        if (state.isYielding) {
             stack.push(value)
         }
-        return evaluateBytecode()
+
+        KythonInterpreter.pushFrame(this)
+        val result = evaluateBytecode()
+        KythonInterpreter.popFrame()
+        return state to result
     }
 
     /**
@@ -169,6 +182,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * This is the *main* function evaluating code in the interpreter.
      */
     fun evaluateBytecode(): PyObject {
+        if (KythonInterpreter.config.debugMode) {
+            System.err.println("=== Entering frame for ${function.code.codename} ===")
+        }
+
         state = FrameState.RUNNING
         while (true) {
             // simple fetch decode execute loop
@@ -200,12 +217,59 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 }
 
                 InstructionOpcode.YIELD_VALUE -> {
+                    // This will be the value that was sent to us, via gen.send()
                     val yielded = stack.pop()
                     state = FrameState.YIELDING
 
-                    // when we resume, our pointer will be ahead
+                    // when we resume, we want to go to the next instruction
+                    // (or else we yield endlessly)
                     bytecodePointer += 1
                     return yielded
+                }
+
+                InstructionOpcode.YIELD_FROM -> {
+                    // A note to all bytecode readers:
+                    // A YIELD_FROM is always preceded by a LOAD_CONST None.
+                    // This is the initial value to send to the generator to start the generator.
+                    // Afterwards, the value just sent to us will be on TOS (via send) so we send
+                    // that up.
+                    val toSend = stack.pop()
+                    // note: always keep the generator on the stack.
+                    // optimise slightly: if generator, always just send
+                    val gen = stack.last
+                    if (gen is PyGenerator) {
+                        val (state, yielded) = gen.sendRaw(toSend)
+                        // if the state is yielding, we update our state to signify we are
+                        // ALSO yielding, then return the yielded value
+                        // we do NOT update our pointer because we want to return to YIELD_FROM
+                        // immediately afterwards.
+                        if (state.isYielding) {
+                            this.state = FrameState.YIELD_FROM
+                            return yielded
+                        } else {
+                            // state is non-yielding, so we continue onwards
+                            // pop off the generator
+                            stack.pop()
+                            stack.push(yielded)
+                            bytecodePointer += 1
+                        }
+                    } else {
+                        // not a generator; we go through the standard iteration flow
+                        // the object is *already* an iterator (due to get_yield_from_iter)
+                        // two paths taken here:
+                        // 1) StopIteration, we continue to the next instruction
+                        // 2) no StopIteration, we simply yield the value
+                        try {
+                            val yielded = gen.pyNext()
+                            state = FrameState.YIELD_FROM
+                            return yielded
+                        } catch (e: KyError) {
+                            e.ensure(Exceptions.STOP_ITERATION)
+                            // pop off the iterator
+                            stack.pop()
+                        }
+                    }
+
                 }
 
                 // == Regular Instructions == //
@@ -228,6 +292,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.LOAD_GLOBAL -> load(LoadPool.GLOBAL, param)
                 InstructionOpcode.LOAD_ATTR -> load(LoadPool.ATTR, param)
                 InstructionOpcode.LOAD_METHOD -> load(LoadPool.METHOD, param)
+
+                InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldFromIter(param)
 
                 // store ops
                 InstructionOpcode.STORE_NAME -> store(LoadPool.NAME, param)
@@ -360,7 +426,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 // == Regular path == //
 
                 // if no block, just throw through
-                if (blockStack.isEmpty()) throw e
+                if (blockStack.isEmpty()) {
+                    state = FrameState.ERRORED
+                    throw e
+                }
 
                 // if yes block, jump to where the finally says we should jump
                 // traceback, excval, exctype

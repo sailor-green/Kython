@@ -21,9 +21,13 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toPyObject
+import green.sailor.kython.interpreter.typeError
 
 /**
- * Implementation of a PyGenerator.
+ * Implementation of a generator.
+ *
+ * This class is *also* used for coroutines (as Python coroutines are just generators),
+ * but with some additional checks.
  */
 class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
     override var type: PyType
@@ -31,15 +35,31 @@ class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
         set(value) = Exceptions.invalidClassSet(this)
 
     // iter(gen) == gen
-    override fun pyIter(): PyObject = this
-    override fun pyNext(): PyObject = send(PyNone)
+    override fun pyIter(): PyObject =
+        if (frame.function.code.flags.CO_ASYNC_FUNCTION) {
+            typeError("Coroutine functions are not iterable")
+        } else {
+            this
+        }
+
+    override fun pyNext(): PyObject =
+        if (frame.function.code.flags.CO_ASYNC_FUNCTION) {
+            typeError("Coroutine functions are not iterable")
+        } else {
+            send(PyNone)
+        }
+
+    /**
+     * Sends directly to the underlying stack frame.
+     */
+    fun sendRaw(value: PyObject): Pair<UserCodeStackFrame.FrameState, PyObject> = frame.send(value)
 
     /**
      * Sends an object to the generator frame.
      */
     fun send(value: PyObject): PyObject {
-        val result = frame.send(value)
-        if (frame.state == UserCodeStackFrame.FrameState.RETURNED) {
+        val (state, result) = frame.send(value)
+        if (state == UserCodeStackFrame.FrameState.RETURNED) {
             Exceptions.STOP_ITERATION.makeException(PyTuple.of(result)).throwKy()
         }
         return result
@@ -47,7 +67,13 @@ class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
 
     override fun pyGetRepr(): PyString {
         val hc = System.identityHashCode(this).toString(16)
-        return "<generator object of ${frame.function.name} at 0x$hc>".toPyObject()
+        val name = if (frame.function.code.flags.CO_ASYNC_FUNCTION) {
+            "coroutine"
+        } else {
+            "generator"
+        }
+
+        return "<$name object of ${frame.function.name} at 0x$hc>".toPyObject()
     }
 
     override fun pyToStr(): PyString = pyGetRepr()

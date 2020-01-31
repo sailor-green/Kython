@@ -21,8 +21,8 @@ import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
-import org.apiguardian.api.API
 import java.util.*
+import org.apiguardian.api.API
 
 /**
  * The base class for an interpreter thread.
@@ -48,11 +48,12 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     /**
      * Pops the top-most stack frame from the list of stack frames.
      */
-    open fun popFrame() {
+    open fun popFrame(): StackFrame {
         val topFrame = frameStack.pop()
         topFrame.parentFrame = null
         // can be null if this was the root frame
         currentStackFrame?.childFrame = null
+        return topFrame
     }
 
     /**
@@ -108,7 +109,7 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
         try {
             internalWrapTraceback(rootStackFrame)
         } catch (e: Throwable) { // blah blah, bad practice, who cares
-            System.err.println("Fatal interpreter error!")
+            System.err.println("\n▉▉▉  Fatal interpreter error! ▉▉▉")
             if (!rethrow) e.printStackTrace(System.err)
             System.err.println("\nKython stack (most recent frame first):")
 

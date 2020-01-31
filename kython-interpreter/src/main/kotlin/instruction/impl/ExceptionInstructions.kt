@@ -79,6 +79,7 @@ fun UserCodeStackFrame.reraise(opval: Byte) {
     val excVal = stack.pop() as? PyException ?: error("TOS wasn't an exception!")
     val excTb = stack.pop()
     // TODO: properly copy tb or whatever
+    state = UserCodeStackFrame.FrameState.ERRORED
     excVal.throwKy()
 }
 

@@ -54,8 +54,9 @@ class PythonFunctionStack(val maxSize: Int) : Collection<PyObject> {
      * Pops an object from the stack.
      */
     fun pop(): PyObject {
+        // Error check first to prevent error output like "size: -1"
+        if (watermark - 1 < 0) error("Stack is empty")
         watermark -= 1
-        if (watermark < 0) error("Stack is empty")
 
         val item = backingArray[watermark] ?: error("Stack is empty")
         // deref object so it gets GC'd earlier

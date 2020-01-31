@@ -52,6 +52,11 @@ inline class CodeFlags(val flags: Int) {
         CO_ITERABLE_ASYNC_FUNCTION ||
         CO_ASYNC_GENERATOR
     )
+
+    inline val isAsync get() =
+        CO_ASYNC_FUNCTION ||
+        CO_ITERABLE_ASYNC_FUNCTION ||
+        CO_ASYNC_GENERATOR
 }
 
 infix fun CodeFlags.and(p: Int) = flags and p

@@ -20,6 +20,7 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.nameError
+import green.sailor.kython.interpreter.pyobject.generator.PyGenerator
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
@@ -175,6 +176,21 @@ fun UserCodeStackFrame.delete(pool: LoadPool, opval: Byte) {
             }
         }
         else -> error("Unknown pool to delete from: $pool")
+    }
+
+    bytecodePointer += 1
+}
+
+/**
+ * GET_YIELD_FROM_ITER
+ */
+fun UserCodeStackFrame.getYieldFromIter(opval: Byte) {
+    // avoid a pop if we can
+    // If TOS is a generator iterator or coroutine object it is left as is. O
+    val tos = stack.last
+    if (tos !is PyGenerator) {
+        // Otherwise, implements TOS = iter(TOS).
+        stack.push(stack.pop().pyIter())
     }
 
     bytecodePointer += 1
