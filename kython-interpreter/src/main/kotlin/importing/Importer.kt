@@ -28,7 +28,7 @@ interface Importer {
     // there is a single global importer per interpreter
     companion object {
         /** The global importer for the interpreter. */
-        var CURRENT = SimpleImporter()
+        var CURRENT: Importer = SimpleImporter()
     }
 
     /**

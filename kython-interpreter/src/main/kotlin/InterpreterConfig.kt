@@ -17,6 +17,9 @@
 
 package green.sailor.kython.interpreter
 
+/**
+ * The configuration for the interpreter.
+ */
 data class InterpreterConfig(
     var debugMode: Boolean = false
 )
