@@ -38,43 +38,6 @@ import java.util.*
 @Suppress("MemberVisibilityCanBePrivate")
 class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
     /**
-     * The enum of states a running frame can be in.
-     */
-    enum class FrameState(val isYielding: Boolean) {
-        /**
-         * This frame is paused, and is not executing.
-         *
-         * Used when a frame is first created.
-         */
-        PAUSED(false),
-
-        /**
-         * This frame is running an instruction.
-         */
-        RUNNING(false),
-
-        /**
-         * This frame is not running, and has yielded a value.
-         */
-        YIELDING(true),
-
-        /**
-         * This frame is not running, and has yield from'd a value.
-         */
-        YIELD_FROM(true),
-
-        /**
-         * This frame has returned a value, and cannot be re-used.
-         */
-        RETURNED(false),
-
-        /**
-         * This frame has had an uncaught error.
-         */
-        ERRORED(false)
-    }
-
-    /**
      * The bytecode pointer to the bytecode of the KyFunction.
      *
      * This points to the actual instruction index, not the raw code index.
@@ -110,11 +73,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      * Gets the source code line number currently being executed.
      */
     val lineNo: Int get() = function.code.getLineNumber(bytecodePointer)
-
-    /**
-     * The state this frame is in.
-     */
-    var state: FrameState = FrameState.PAUSED
 
     /**
      * Creates a new [StackFrameInfo] for this stack frame.
@@ -269,7 +227,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                             stack.pop()
                         }
                     }
-
                 }
 
                 // == Regular Instructions == //

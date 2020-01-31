@@ -87,7 +87,7 @@ object KythonInterpreter {
      */
     fun pushFrame(frame: StackFrame) {
         if (config.debugMode) {
-            System.err.println("=== Pushing frame: $frame ===")
+            System.err.println("=== Pushing frame: $frame / ${frame.state} ===")
         }
         val thread = interpreterThreadLocal.get()
         thread.pushFrame(frame)
@@ -100,7 +100,7 @@ object KythonInterpreter {
         val thread = interpreterThreadLocal.get()
         val frame = thread.popFrame()
         if (config.debugMode) {
-            System.err.println("=== Popped frame: $frame ===")
+            System.err.println("=== Popped frame: $frame / ${frame.state} ===")
         }
         return frame
     }

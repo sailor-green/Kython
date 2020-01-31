@@ -42,6 +42,43 @@ abstract class StackFrame {
     }
 
     /**
+     * The enum of states a running frame can be in.
+     */
+    enum class FrameState(val isYielding: Boolean) {
+        /**
+         * This frame is paused, and is not executing.
+         *
+         * Used when a frame is first created.
+         */
+        PAUSED(false),
+
+        /**
+         * This frame is running an instruction.
+         */
+        RUNNING(false),
+
+        /**
+         * This frame is not running, and has yielded a value.
+         */
+        YIELDING(true),
+
+        /**
+         * This frame is not running, and has yield from'd a value.
+         */
+        YIELD_FROM(true),
+
+        /**
+         * This frame has returned a value, and cannot be re-used.
+         */
+        RETURNED(false),
+
+        /**
+         * This frame has had an uncaught error.
+         */
+        ERRORED(false)
+    }
+
+    /**
      * The child frame for this stack frame, if any.
      */
     var childFrame: StackFrame? = null
@@ -50,6 +87,11 @@ abstract class StackFrame {
      * The parent frame for this stack frame, if any.
      */
     var parentFrame: StackFrame? = null
+
+    /**
+     * The [FrameState] this stack frame is in.
+     */
+    var state = FrameState.PAUSED
 
     /**
      * Runs this stack frame, invoking the function underneath.

@@ -24,6 +24,7 @@ import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.stack.FinallyBlock
+import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 
 /**
@@ -79,7 +80,7 @@ fun UserCodeStackFrame.reraise(opval: Byte) {
     val excVal = stack.pop() as? PyException ?: error("TOS wasn't an exception!")
     val excTb = stack.pop()
     // TODO: properly copy tb or whatever
-    state = UserCodeStackFrame.FrameState.ERRORED
+    state = StackFrame.FrameState.ERRORED
     excVal.throwKy()
 }
 

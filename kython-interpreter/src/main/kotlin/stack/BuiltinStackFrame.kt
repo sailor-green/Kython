@@ -24,8 +24,17 @@ import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
  * Represents a built-in stack frame.
  */
 class BuiltinStackFrame(val builtinFunction: PyBuiltinFunction) : StackFrame() {
-    override fun runFrame(kwargs: Map<String, PyObject>): PyObject =
-        builtinFunction.callFunction(kwargs)
+    override fun runFrame(kwargs: Map<String, PyObject>): PyObject {
+        try {
+            state = FrameState.RUNNING
+            val result = builtinFunction.callFunction(kwargs)
+            state = FrameState.RETURNED
+            return result
+        } catch (e: Throwable) {
+            state = FrameState.ERRORED
+            throw e
+        }
+    }
 
     override fun createStackFrameInfo(): StackFrameInfo.BuiltinFrameInfo =
         StackFrameInfo.BuiltinFrameInfo(this)

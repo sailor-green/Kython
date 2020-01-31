@@ -19,9 +19,11 @@ package green.sailor.kython.interpreter.pyobject.generator
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toPyObject
 import green.sailor.kython.interpreter.typeError
+import org.apiguardian.api.API
 
 /**
  * Implementation of a generator.
@@ -52,14 +54,15 @@ class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
     /**
      * Sends directly to the underlying stack frame.
      */
-    fun sendRaw(value: PyObject): Pair<UserCodeStackFrame.FrameState, PyObject> = frame.send(value)
+    @API(status = API.Status.INTERNAL)
+    fun sendRaw(value: PyObject): Pair<StackFrame.FrameState, PyObject> = frame.send(value)
 
     /**
      * Sends an object to the generator frame.
      */
     fun send(value: PyObject): PyObject {
         val (state, result) = frame.send(value)
-        if (state == UserCodeStackFrame.FrameState.RETURNED) {
+        if (state == StackFrame.FrameState.RETURNED) {
             Exceptions.STOP_ITERATION.makeException(PyTuple.of(result)).throwKy()
         }
         return result
