@@ -23,6 +23,7 @@ import java.nio.file.Paths
 import java.util.concurrent.Callable
 import picocli.CommandLine.Command
 import picocli.CommandLine.Parameters
+import java.nio.file.Path
 
 @Command(
     name = "file",
@@ -36,7 +37,7 @@ object PythonFileCommand : Callable<Int> {
     var args: MutableList<String> = mutableListOf()
 
     override fun call(): Int {
-        val path = Paths.get(filename).toAbsolutePath()
+        val path = Path.of(filename).toAbsolutePath()
         if (!Files.exists(path)) {
             System.err.println("Cannot open file $filename: Does not exist")
             return 1
@@ -50,7 +51,7 @@ object PythonFileCommand : Callable<Int> {
             return 1
         }
 
-        KythonInterpreter.runPythonFromPath(Paths.get(
+        KythonInterpreter.runPythonFromPath(Path.of(
             filename
         ).toAbsolutePath())
         return 0

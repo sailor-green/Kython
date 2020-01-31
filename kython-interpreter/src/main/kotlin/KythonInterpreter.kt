@@ -22,7 +22,6 @@ package green.sailor.kython.interpreter
 import green.sailor.kython.generation.generated.addAllMethods
 import green.sailor.kython.interpreter.builtins.KythonInternalModule
 import green.sailor.kython.interpreter.builtins.SysModule
-import green.sailor.kython.interpreter.importing.Importer
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString

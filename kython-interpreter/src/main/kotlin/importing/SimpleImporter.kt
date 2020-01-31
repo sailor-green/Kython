@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.pyobject.module.PyModule
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.util.cast
 import java.io.FileNotFoundException
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -45,6 +46,9 @@ class SimpleImporter : Importer {
      * Imports a module from the specified path in sys.path.
      */
     fun importFrom(path: String, name: String): PyModule {
+        val toLoad = name.split(".")
+
+
         // loaded from the classpath
         if (path.startsWith("classpath:")) {
             // try and find the module from the jar path
@@ -53,7 +57,7 @@ class SimpleImporter : Importer {
             return JarFileModuleLoader.getClasspathModule(absolutePath)
         }
 
-        val resolvedPath = Paths.get(
+        val resolvedPath = Path.of(
             path, name.replace(".", "/") + ".py"
         ).toAbsolutePath()
         val compiled = try {
