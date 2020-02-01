@@ -28,7 +28,7 @@ import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.util.cast
 
-/* getattr(object, name) */
+/* getattr(object, name[, default]) */
 class GetattrBuiltinFunction : PyBuiltinFunction("getattr") {
     companion object {
         @JvmField val DEFAULT_SENTINEL = PyRootObjectInstance()

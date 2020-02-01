@@ -40,6 +40,7 @@ object Builtins {
     val ID = IdBuiltinFunction()
     val GETATTR = GetattrBuiltinFunction()
     val HASATTR = HasattrBuiltinFunction()
+    val SETATTR = SetattrBuiltinFunction()
 
     val OBJECT = PyRootObjectType
     val TYPE = PyRootType
@@ -74,6 +75,7 @@ object Builtins {
         "id" to ID,
         "getattr" to GETATTR,
         "hasattr" to HASATTR,
+        "setattr" to SETATTR,
 
         "__build_class__" to BUILD_CLASS,
 

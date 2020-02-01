@@ -17,34 +17,28 @@
 
 package green.sailor.kython.interpreter.functions
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.ensure
-import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.util.cast
 
-/* hasattr(object, name) */
-class HasattrBuiltinFunction : PyBuiltinFunction("hasattr") {
+/* setattr(object, name, value) */
+class SetattrBuiltinFunction : PyBuiltinFunction("setattr") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["object"].cast<PyObject>()
         val name = kwargs["name"].cast<PyString>().wrappedString
+        val value = kwargs["value"].cast<PyObject>()
 
-        return try {
-            obb.pyGetAttribute(name)
-            PyBool.TRUE
-        } catch (e: KyError) {
-            e.ensure(Exceptions.ATTRIBUTE_ERROR)
-            PyBool.FALSE
-        }
+        obb.pySetAttribute(name, value)
+        return PyNone
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
+    override val signature = PyCallableSignature(
         "object" to ArgType.POSITIONAL,
-        "name" to ArgType.POSITIONAL
+        "name" to ArgType.POSITIONAL,
+        "value" to ArgType.POSITIONAL
     )
 }
