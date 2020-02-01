@@ -17,16 +17,12 @@
 
 package green.sailor.kython.interpreter.pyobject.types
 
-import green.sailor.kython.annotation.ExposeMethod
-import green.sailor.kython.annotation.GenerateMethods
-import green.sailor.kython.annotation.MethodParam
-import green.sailor.kython.annotation.MethodParams
+import green.sailor.kython.annotation.*
 import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyList
-import green.sailor.kython.interpreter.pyobject.PyNone
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.indexError
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.cast
@@ -69,6 +65,30 @@ object PyListType : PyType("list") {
         val value = kwargs["item"] ?: error("Built-in signature mismatch!")
         (self.subobjects as MutableList).add(value)
         return PyNone
+    }
+
+    /** list.pop() */
+    @ExposeMethod("pop")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("index", "POSITIONAL"),
+        defaults = [Default("index", EMPTY::class)]
+    )
+    fun pyListPop(kwargs: Map<String, PyObject>): PyObject {
+        val self = kwargs["self"].cast<PyList>()
+        if (self.subobjects.isEmpty()) indexError("Cannot pop from empty list")
+
+        val indexArg = kwargs["index"]
+        return if (indexArg === EMPTY) {
+            (self.subobjects as MutableList).removeAt(self.subobjects.size - 1)
+        } else {
+            val idx = indexArg.cast<PyInt>().wrappedInt.toInt()
+            val realIdx = self.getRealIndex(idx)
+            if (!self.verifyIndex(realIdx)) {
+                indexError("list index $idx is out of range (list size: ${self.subobjects.size})")
+            }
+            (self.subobjects as MutableList).removeAt(realIdx)
+        }
     }
 
     // magic methods

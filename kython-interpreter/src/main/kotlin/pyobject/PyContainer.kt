@@ -42,10 +42,24 @@ abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
         return subobjects.size + idx
     }
 
+    /**
+     * Checks the specified index to see if it is valid within this list.
+     *
+     * You should call [getRealIndex] first before calling this.
+     */
+    fun verifyIndex(idx: Int): Boolean {
+        if (subobjects.isEmpty()) return false
+        if (idx < 0) return false
+        // Note: 0-offset indexes means that <= is effectively the same as (size + 1) <.
+        if (subobjects.size <= idx) return false
+
+        return true
+    }
+
     override fun pyGetItem(idx: PyObject): PyObject {
         val initial = idx.cast<PyInt>().wrappedInt.toInt()
         val realIdx = getRealIndex(initial)
-        if (subobjects.size <= realIdx) {
+        if (!verifyIndex(realIdx)) {
             indexError("list index $realIdx is out of range (list size: ${subobjects.size})")
         }
         return subobjects[realIdx]

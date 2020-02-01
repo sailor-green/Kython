@@ -55,7 +55,7 @@ class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
         val initial = idx.cast<PyInt>().wrappedInt.toInt()
         val realIdx = getRealIndex(initial)
-        if (realIdx < 0 || subobjects.size <= realIdx) {
+        if (!verifyIndex(realIdx)) {
             indexError("list index $realIdx is out of range (list size: ${subobjects.size})")
         }
         (subobjects as MutableList)[realIdx] = value
