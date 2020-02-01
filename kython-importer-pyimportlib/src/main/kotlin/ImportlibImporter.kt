@@ -15,14 +15,12 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/python")
-        }
-    }
-}
+package green.sailor.kython.interpreter.importing
 
-dependencies {
-    implementation(project(":kython-interpreter"))
+import green.sailor.kython.interpreter.pyobject.module.PyModule
+
+class ImportlibImporter : Importer {
+    override fun absoluteImport(name: String): PyModule {
+        TODO("not implemented")
+    }
 }

@@ -59,6 +59,15 @@ subprojects {
         }
     }
 
+    sourceSets {
+        main {
+            resources {
+                srcDir("src/main/python")
+            }
+        }
+    }
+
+
     // enforce java 11 class files
     tasks {
         compileKotlin {
@@ -83,16 +92,31 @@ subprojects {
     }
 }
 
-/* distributions {
-    create("release") {
-        distributionBaseName.set("kython")
-        contents {
-            with(subprojects.first { it.name == "kython-core" }) {
-                plugins.withType(ApplicationPlugin::class.java) {
-                    from(tasks.distZip)
-                    into("/")
-                }
+tasks.register("copyCPythonStdlib") {
+    doLast {
+        val outputDir = project.buildDir.resolve("tmp/cpython")
+        if (!outputDir.exists()) {
+            outputDir.mkdir()
+            logger.lifecycle("Cloning CPython...")
+            exec {
+                setCommandLine(
+                    "git", "clone", "--depth=1",
+                    "https://github.com/Python/CPython.git",
+                    outputDir.absolutePath
+                )
+            }
+        } else {
+            logger.lifecycle("Updating CPython...")
+            exec {
+                workingDir = outputDir
+                setCommandLine("git", "pull", "--depth=1")
             }
         }
+
+        logger.lifecycle("Copying stdlib...")
+        copy {
+            from(outputDir.resolve("Lib/importlib"))
+            into(project(":kython-importer-pyimportlib").file("src/main/python/Lib"))
+        }
     }
-}*/
+}

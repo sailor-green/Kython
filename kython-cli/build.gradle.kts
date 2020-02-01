@@ -24,6 +24,7 @@ dependencies {
     implementation(group = "info.picocli", name = "picocli", version = "4.1.2")
 
     implementation(project(":kython-interpreter"))
+    implementation(project(":kython-importer-pyimportlib"))
 }
 
 application {

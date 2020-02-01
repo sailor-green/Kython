@@ -26,7 +26,6 @@ import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.util.cast
 import java.io.FileNotFoundException
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -47,7 +46,6 @@ class SimpleImporter : Importer {
      */
     fun importFrom(path: String, name: String): PyModule {
         val toLoad = name.split(".")
-
 
         // loaded from the classpath
         if (path.startsWith("classpath:")) {

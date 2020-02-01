@@ -51,15 +51,6 @@ dependencies {
     kapt(project(":kython-codegen"))
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDir("src/main/python")
-        }
-    }
-}
-
-
 // apparently this is how you do junit
 tasks.test {
     useJUnitPlatform()

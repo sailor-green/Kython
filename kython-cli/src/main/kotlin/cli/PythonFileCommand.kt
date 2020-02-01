@@ -19,11 +19,10 @@ package green.sailor.kython.cli
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.util.concurrent.Callable
 import picocli.CommandLine.Command
 import picocli.CommandLine.Parameters
-import java.nio.file.Path
 
 @Command(
     name = "file",

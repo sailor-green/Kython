@@ -20,7 +20,6 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.generation.generated.addAllMethods
-import green.sailor.kython.interpreter.bootstrap.Bootstrapper
 import green.sailor.kython.interpreter.builtins.KythonInternalModule
 import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.kyobject.KyUserModule
