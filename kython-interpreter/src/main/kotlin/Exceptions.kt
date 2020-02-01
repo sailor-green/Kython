@@ -41,7 +41,10 @@ object Exceptions {
     val NAME_ERROR = PyExceptionType("NameError", EXCEPTION)
     val TYPE_ERROR = PyExceptionType("TypeError", EXCEPTION)
     val VALUE_ERROR = PyExceptionType("ValueError", EXCEPTION)
-    val INDEX_ERROR = PyExceptionType("IndexError", EXCEPTION)
+
+    val LOOKUP_ERROR = PyExceptionType("LookupError", EXCEPTION)
+    val INDEX_ERROR = PyExceptionType("IndexError", LOOKUP_ERROR)
+    val KEY_ERROR = PyExceptionType("KeyError", LOOKUP_ERROR)
 
     // import errors
     val IMPORT_ERROR = PyExceptionType("ImportError", EXCEPTION)
@@ -57,11 +60,17 @@ object Exceptions {
 
         "StopIteration" to STOP_ITERATION,
 
+        "SystemError" to SYSTEM_ERROR,
+
         "AttributeError" to ATTRIBUTE_ERROR,
         "NameError" to NAME_ERROR,
         "TypeError" to TYPE_ERROR,
         "ValueError" to VALUE_ERROR,
         "IndexError" to INDEX_ERROR,
+        "KeyError" to KEY_ERROR,
+
+        "ImportError" to IMPORT_ERROR,
+        "ModuleNotFoundError" to MODULE_NOT_FOUND_ERROR,
 
         "RuntimeError" to RUNTIME_ERROR,
         "NotImplementedError" to NOT_IMPLEMENTED_ERROR
@@ -91,6 +100,16 @@ fun attributeError(message: String): Nothing = Exceptions.ATTRIBUTE_ERROR(messag
  * Causes a new NameError.
  */
 fun nameError(message: String): Nothing = Exceptions.NAME_ERROR(message).throwKy()
+
+/**
+ * Causes a new IndexError.
+ */
+fun indexError(message: String): Nothing = Exceptions.INDEX_ERROR(message).throwKy()
+
+/**
+ * Causes a new KeyError.
+ */
+fun keyError(message: String): Nothing = Exceptions.KEY_ERROR(message).throwKy()
 
 /**
  * Causes a new SystemError.
