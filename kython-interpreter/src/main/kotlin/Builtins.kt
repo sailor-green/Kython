@@ -39,6 +39,7 @@ object Builtins {
     val LEN = LenBuiltinFunction()
     val ID = IdBuiltinFunction()
     val GETATTR = GetattrBuiltinFunction()
+    val HASATTR = HasattrBuiltinFunction()
 
     val OBJECT = PyRootObjectType
     val TYPE = PyRootType
@@ -72,6 +73,7 @@ object Builtins {
         "len" to LEN,
         "id" to ID,
         "getattr" to GETATTR,
+        "hasattr" to HASATTR,
 
         "__build_class__" to BUILD_CLASS,
 

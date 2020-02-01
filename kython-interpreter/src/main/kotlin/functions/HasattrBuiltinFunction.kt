@@ -22,37 +22,28 @@ import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.ensure
+import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyRootObjectInstance
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.util.cast
 
-/* getattr(object, name) */
-class GetattrBuiltinFunction : PyBuiltinFunction("getattr") {
-    companion object {
-        @JvmField val DEFAULT_SENTINEL = PyRootObjectInstance()
-    }
-
+class HasattrBuiltinFunction : PyBuiltinFunction("hasattr") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val obb = kwargs["object"].cast<PyObject>()
-        val attr = kwargs["attribute"].cast<PyString>().wrappedString
-        val default = kwargs["default"].cast<PyObject>()
+        val name = kwargs["name"].cast<PyString>().wrappedString
 
         return try {
             obb.pyGetAttribute(name)
+            PyBool.TRUE
         } catch (e: KyError) {
             e.ensure(Exceptions.ATTRIBUTE_ERROR)
-            if (default === DEFAULT_SENTINEL) {
-                throw e
-            }
-            default
+            PyBool.FALSE
         }
     }
 
     override val signature: PyCallableSignature = PyCallableSignature(
         "object" to ArgType.POSITIONAL,
-        "attribute" to ArgType.POSITIONAL,
-        "default" to ArgType.POSITIONAL
-    ).withDefaults("default" to DEFAULT_SENTINEL)
+        "name" to ArgType.POSITIONAL
+    )
 }
