@@ -37,7 +37,7 @@ annotation class ExposeMethod(
  */
 @Retention(AnnotationRetention.BINARY)
 @Target()
-annotation class Default(val forName: String, val type: KClass<*>, val value: String)
+annotation class Default(val forName: String, val type: KClass<*>, val value: String = "")
 
 /**
  * Represents a method parameter.
@@ -47,7 +47,7 @@ annotation class Default(val forName: String, val type: KClass<*>, val value: St
  */
 @Retention(AnnotationRetention.BINARY)
 @Target()
-annotation class MethodParam(val name: String, val type: String, vararg val default: Default = [])
+annotation class MethodParam(val name: String, val type: String)
 
 /**
  * Represents a collection of method parameters.
@@ -57,6 +57,6 @@ annotation class MethodParam(val name: String, val type: String, vararg val defa
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
 annotation class MethodParams(
-    vararg val parameters: MethodParam,
+    vararg val parameters: MethodParam = [],
     val defaults: Array<Default> = []
 )

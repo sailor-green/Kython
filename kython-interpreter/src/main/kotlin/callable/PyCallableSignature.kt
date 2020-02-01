@@ -17,9 +17,7 @@
 
 package green.sailor.kython.interpreter.callable
 
-import green.sailor.kython.interpreter.pyobject.PyDict
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.typeError
 import java.util.*
 
@@ -199,4 +197,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
 
         return finalArgs
     }
+}
+
+object EMPTY : PyObject() {
+    override var type: PyType
+        get() = error("You shouldn't be seeing this")
+        set(value) = error("You shouldn't be seeing this")
 }

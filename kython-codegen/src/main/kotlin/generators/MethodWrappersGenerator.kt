@@ -55,6 +55,12 @@ data class MethodWrapperInfo(
     val methodName: String
 )
 
+val SPECIAL_SENTINELS = mapOf(
+    "green.sailor.kython.interpreter.callable.EMPTY" to CodeBlock.of(
+        "%T", ClassName("green.sailor.kython.interpreter.callable", "EMPTY")
+    )
+)
+
 /**
  * Gets the list of signature code blocks.
  */
@@ -96,10 +102,16 @@ fun getSignatureStatement(anno: MethodParams): List<CodeBlock> {
                 TypeKind.DECLARED -> {
                     val name = mirror.toString()
                     // terrible!
-                    if (name == "java.lang.String") {
-                        CodeBlock.of("%T(%S)", pyStr, default.value)
-                    } else {
-                        error("Cannot provide $mirror as a default")
+                    when (name) {
+                        "java.lang.String" -> {
+                            CodeBlock.of("%T(%S)", pyStr, default.value)
+                        }
+                        in SPECIAL_SENTINELS -> {
+                            SPECIAL_SENTINELS[name] ?: error("????")
+                        }
+                        else -> {
+                            error("Cannot provide $mirror as a default")
+                        }
                     }
                 }
                 else -> error("Cannot provide ${mirror.asTypeName()} as a default")
