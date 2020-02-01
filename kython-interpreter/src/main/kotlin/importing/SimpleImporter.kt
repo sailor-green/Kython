@@ -37,7 +37,7 @@ import kotlin.concurrent.withLock
  * This does *not* implement the full range of importlib semantics, including loaders. See
  * [BuiltinImportlibImporter] or [PythonImportlibImporter] for that.
  */
-class SimpleImporter : Importer {
+object SimpleImporter : Importer {
     /** The import lock held whilst doing imports. */
     val lock = ReentrantLock()
 

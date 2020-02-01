@@ -19,11 +19,13 @@ package green.sailor.kython
 
 import green.sailor.kython.cli.PythonFileCommand
 import green.sailor.kython.interpreter.KythonInterpreter
+import green.sailor.kython.interpreter.importing.SimpleImporter
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.HelpCommand
+import java.lang.IllegalStateException
 
 /**
  * Main initialiser for Kython.
@@ -42,12 +44,33 @@ import picocli.CommandLine.HelpCommand
     ]
 )
 object MakeUp : Callable<Int> {
+    const val DEFAULT_IMPORTER = "green.sailor.kython.interpreter.importing.SimpleImporter"
+
     // == CLI PROPERTIES == //
     @CommandLine.Option(
-        names = ["-d"]
+        names = ["-d"],
+        description = ["Enables debug mode."]
     )
     @JvmStatic fun setDebugMode(mode: Boolean) {
         KythonInterpreter.config.debugMode = true
+    }
+
+    @CommandLine.Option(
+        names = ["--importer"],
+        description = ["Changes the default importer to use."],
+        defaultValue = DEFAULT_IMPORTER,
+        type = [String::class]
+    )
+    @JvmStatic fun setImporter(importer: String) {
+        if (importer != DEFAULT_IMPORTER) {
+            System.err.println("WARNING: Using custom importer: $importer")
+        }
+        try {
+            KythonInterpreter.loadImporter(importer)
+        } catch (e: IllegalStateException) {
+            System.err.println(e.message)
+            throw e
+        }
     }
 
     /**

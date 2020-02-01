@@ -28,7 +28,21 @@ interface Importer {
     // there is a single global importer per interpreter
     companion object {
         /** The global importer for the interpreter. */
-        var CURRENT: Importer = SimpleImporter()
+        lateinit var CURRENT: Importer
+
+        /**
+         * Loads an importer by name.
+         */
+        fun load(name: String) {
+            val klass = Class.forName(name)
+                ?: error("Could not find importer $name!")
+            val kotlin = klass.kotlin
+            val instance = kotlin.objectInstance ?: error("Importer $name is not an object!")
+            if (instance !is Importer) {
+                error("Importer $name is not an instance of Importer!")
+            }
+            CURRENT = instance
+        }
     }
 
     /**
