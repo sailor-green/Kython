@@ -38,6 +38,7 @@ object Builtins {
     val ISINSTANCE = IsinstanceBuiltinFunction()
     val LEN = LenBuiltinFunction()
     val ID = IdBuiltinFunction()
+    val GETATTR = GetattrBuiltinFunction()
 
     val OBJECT = PyRootObjectType
     val TYPE = PyRootType
@@ -70,7 +71,10 @@ object Builtins {
         "isinstance" to ISINSTANCE,
         "len" to LEN,
         "id" to ID,
+        "getattr" to GETATTR,
+
         "__build_class__" to BUILD_CLASS,
+
         // class types
         "object" to OBJECT,
         "type" to TYPE,
