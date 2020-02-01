@@ -306,6 +306,27 @@ abstract class PyObject {
      */
     open fun pyFloorDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
+    // __getitem__
+    /**
+     * Implements some_object\[other_object\].
+     */
+    open fun pyGetItem(idx: PyObject): PyObject =
+        typeError("'${type.name}' object is not subscriptable")
+
+    // __setitem__
+    /**
+     * Implements some_object\[name\] = other_object.
+     */
+    open fun pySetItem(idx: PyObject, value: PyObject): PyNone =
+        typeError("'${type.name}' object does not support item assignment")
+
+    // __delitem__
+    /**
+     * Implements del some_object\[other_object\].
+     */
+    open fun pyDelItem(idx: PyObject): PyNone =
+        typeError("'${type.name}' object is not subscriptable")
+
     // == Iterators/iterables ==
     // __iter__
     /**

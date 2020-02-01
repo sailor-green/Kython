@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.indexError
 import green.sailor.kython.interpreter.pyobject.types.PyListType
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.typeError
@@ -50,6 +51,16 @@ class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyHash(): PyInt = typeError("lists are not hashable - they are mutable")
+
+    override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
+        val initial = idx.cast<PyInt>().wrappedInt.toInt()
+        val realIdx = getRealIndex(initial)
+        if (realIdx < 0 || subobjects.size <= realIdx) {
+            indexError("list index $realIdx is out of range (list size: ${subobjects.size})")
+        }
+        (subobjects as MutableList)[realIdx] = value
+        return PyNone
+    }
 
     /**
      * Implements list extension from another iterable object.

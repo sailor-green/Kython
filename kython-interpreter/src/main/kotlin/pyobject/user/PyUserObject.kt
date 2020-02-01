@@ -76,6 +76,7 @@ open class PyUserObject(type: PyUserType) : PyObject() {
 
     // magicMethodX wrappers
 
+    // == attributes == //
     override fun pyGetAttribute(name: String): PyObject =
         magicMethod1(PyString(name), "__getattribute__") {
             super.pyGetAttribute(name)
@@ -85,6 +86,15 @@ open class PyUserObject(type: PyUserType) : PyObject() {
         magicMethod2(PyString(name), value, "__setattr__") {
             super.pySetAttribute(name, value)
         }
+
+    override fun pyGetItem(idx: PyObject): PyObject = magicMethod1(idx, "__getitem__") {
+        super.pyGetItem(idx)
+    }
+
+    override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
+        magicMethod2(idx, value, "__setitem__") { super.pySetItem(idx, value) }
+        return PyNone
+    }
 
     override fun pyDir(): PyTuple = magicMethod0("__dir__") { super.pyDir() }
 

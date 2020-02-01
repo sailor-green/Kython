@@ -62,6 +62,17 @@ fun UserCodeStackFrame.buildSimple(type: BuildType, arg: Byte) {
                 LinkedHashSet((0 until count).map { stack.pop() }.reversed())
             )
         }
+        BuildType.DICT -> {
+            val items = (0 until count)
+                .map { stack.pop() }
+                .reversed()
+                .chunked(2)
+                .map { it[0] to it[1] }
+            val map = PyObjectMap().apply {
+                putAll(items)
+            }
+            PyDict.from(map)
+        }
         else -> TODO("Unimplemented build type $type")
     }
     stack.push(built)

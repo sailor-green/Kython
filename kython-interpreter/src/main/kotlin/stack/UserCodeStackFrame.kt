@@ -275,6 +275,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.BUILD_TUPLE -> buildSimple(BuildType.TUPLE, param)
                 InstructionOpcode.BUILD_LIST -> buildSimple(BuildType.LIST, param)
                 InstructionOpcode.BUILD_STRING -> buildSimple(BuildType.STRING, param)
+                InstructionOpcode.BUILD_MAP -> buildSimple(BuildType.DICT, param)
                 InstructionOpcode.BUILD_SET -> buildSimple(BuildType.SET, param)
                 InstructionOpcode.BUILD_CONST_KEY_MAP -> buildConstKeyMap(param)
 
@@ -304,7 +305,6 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                     binaryOp(BinaryOp.TRUE_DIVIDE, param)
                 InstructionOpcode.BINARY_MODULO -> binaryOp(BinaryOp.MODULO, param)
                 InstructionOpcode.BINARY_SUBTRACT -> binaryOp(BinaryOp.SUBTRACT, param)
-                InstructionOpcode.BINARY_SUBSCR -> binaryOp(BinaryOp.SUBSCR, param)
                 InstructionOpcode.BINARY_LSHIFT -> binaryOp(BinaryOp.LSHIFT, param)
                 InstructionOpcode.BINARY_RSHIFT -> binaryOp(BinaryOp.RSHIFT, param)
                 InstructionOpcode.BINARY_AND -> binaryOp(BinaryOp.AND, param)
@@ -328,8 +328,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
                 InstructionOpcode.INPLACE_AND -> inplaceOp(BinaryOp.AND, param)
                 InstructionOpcode.INPLACE_XOR -> inplaceOp(BinaryOp.XOR, param)
                 InstructionOpcode.INPLACE_OR -> inplaceOp(BinaryOp.OR, param)
-                InstructionOpcode.STORE_SUBSCR -> inplaceOp(BinaryOp.STORE_SUBSCR, param)
-                InstructionOpcode.DELETE_SUBSCR -> inplaceOp(BinaryOp.DELETE_SUBSCR, param)
+
+                InstructionOpcode.BINARY_SUBSCR -> getItem(param)
+                InstructionOpcode.STORE_SUBSCR -> setItem(param)
+                // InstructionOpcode.DELETE_SUBSCR -> deleteItem()
 
                 // fundamentally the same thing.
                 InstructionOpcode.CALL_METHOD -> callFunction(param)

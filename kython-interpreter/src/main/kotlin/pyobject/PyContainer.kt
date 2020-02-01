@@ -17,8 +17,10 @@
 
 package green.sailor.kython.interpreter.pyobject
 
+import green.sailor.kython.interpreter.indexError
 import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
+import green.sailor.kython.interpreter.util.cast
 
 /**
  * Abstract superclass shared between PyList and PyTuple, contains some common methods.
@@ -30,6 +32,24 @@ abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
     override fun pyIter(): PyObject {
         if (subobjects.isEmpty()) return PyEmptyIterator
         return PyBuiltinIterator(subobjects.listIterator())
+    }
+
+
+    /**
+     * Gets the real index from an index, calculating negative slices appropriately.
+     */
+    fun getRealIndex(idx: Int): Int {
+        if (idx >= 0) return idx
+        return subobjects.size + idx
+    }
+
+    override fun pyGetItem(idx: PyObject): PyObject {
+        val initial = idx.cast<PyInt>().wrappedInt.toInt()
+        val realIdx = getRealIndex(initial)
+        if (subobjects.size <= realIdx) {
+            indexError("list index $realIdx is out of range (list size: ${subobjects.size})")
+        }
+        return subobjects[realIdx]
     }
 
     override fun pyLengthHint(): PyInt = PyInt(subobjects.size.toLong())

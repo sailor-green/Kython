@@ -85,6 +85,27 @@ fun UserCodeStackFrame.loadClosure(arg: Byte) {
 }
 
 /**
+ * BINARY_SUBSCR (renamed to GET_ITEM by us)
+ */
+fun UserCodeStackFrame.getItem(arg: Byte) {
+    val idx = stack.pop()
+    val tos1 = stack.pop()
+    stack.push(tos1.pyGetItem(idx))
+    bytecodePointer += 1
+}
+
+fun UserCodeStackFrame.setItem(arg: Byte) {
+    val idx = stack.pop()
+    val tos1 = stack.pop()
+    val toStore = stack.pop()
+
+    tos1.pySetItem(idx, toStore)
+
+    // nothing goes back on the stack after this
+    bytecodePointer += 1
+}
+
+/**
  * LOAD_DEREF
  */
 fun UserCodeStackFrame.loadDeref(arg: Byte) {

@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.keyError
 import green.sailor.kython.interpreter.pyobject.types.PyDictType
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.PyObjectMap
@@ -73,6 +74,15 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
     override fun pyContains(other: PyObject): PyObject =
         PyBool.get(other in items)
+
+    override fun pyGetItem(idx: PyObject): PyObject {
+        return items[idx] ?: keyError(idx.pyToStr().wrappedString)
+    }
+
+    override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
+        items[idx] = value
+        return PyNone
+    }
 
     override fun pyHash(): PyInt = typeError("dicts are not hashable - they are mutable")
     override fun pyLen(): PyInt = PyInt(items.size.toLong())

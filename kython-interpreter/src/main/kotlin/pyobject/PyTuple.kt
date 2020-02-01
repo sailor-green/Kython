@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.types.PyTupleType
+import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
@@ -68,6 +69,14 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
         if (other !is PyTuple) return PyNotImplemented
         return get(subobjects + other.subobjects)
+    }
+
+    override fun pyHash(): PyInt = PyInt(
+        subobjects.map { it.pyHash().wrappedInt }.hashCode().toLong()
+    )
+
+    override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
+        typeError("tuples are immutable - cannot set items")
     }
 
     override fun hashCode() = subobjects.hashCode()
