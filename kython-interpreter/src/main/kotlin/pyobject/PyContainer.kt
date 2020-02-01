@@ -34,7 +34,6 @@ abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
         return PyBuiltinIterator(subobjects.listIterator())
     }
 
-
     /**
      * Gets the real index from an index, calculating negative slices appropriately.
      */
