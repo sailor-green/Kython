@@ -77,22 +77,11 @@ subprojects {
             kotlinOptions.jvmTarget = "11"
         }
     }
-
-    tasks.register("spotlessLint") {
-        group = "linting"
-        description = "Run the spotless linter for Kotlin."
-        dependsOn(tasks.spotlessCheck)
-        dependsOn(tasks.projects)
-    }
-
-    tasks.register("spotlessCorrect") {
-        group = "linting"
-        description = "Apply a spotless linter correction for Kotlin."
-        dependsOn(tasks.spotlessApply)
-    }
 }
 
-tasks.register("copyCPythonStdlib") {
+val cloneCPython = tasks.register("cloneCPython") {
+    group = "cpython"
+    description = "Clones CPython to a temporary dir."
     doLast {
         val outputDir = project.buildDir.resolve("tmp/cpython")
         if (!outputDir.exists()) {
@@ -112,7 +101,16 @@ tasks.register("copyCPythonStdlib") {
                 setCommandLine("git", "pull", "--depth=1")
             }
         }
+    }
+}
 
+tasks.register("copyCPythonStdlib") {
+    group = "cpython"
+    description = "Copies parts of the CPython stdlib."
+
+    dependsOn(cloneCPython)
+    doLast {
+        val outputDir = project.buildDir.resolve("tmp/cpython")
         logger.lifecycle("Copying stdlib...")
         copy {
             from(outputDir.resolve("Lib/importlib"))
@@ -120,3 +118,4 @@ tasks.register("copyCPythonStdlib") {
         }
     }
 }
+
