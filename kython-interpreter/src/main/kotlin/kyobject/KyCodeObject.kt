@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter.kyobject
 
+import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.instruction.InstructionOpcode
 import green.sailor.kython.interpreter.instruction.PythonInstruction
@@ -90,6 +91,10 @@ class KyCodeObject(original: KycCodeObject) {
      * Parses the instructions of this code object.
      */
     fun parseInstructions(): Array<Instruction> {
+        if (KythonInterpreter.config.debugMode) {
+            System.err.println("=== Loading instructions for $codename / $filename ===")
+        }
+
         val instructions = mutableListOf<Instruction>()
         val buf = ByteBuffer.wrap(rawBytecode)
 
@@ -98,6 +103,10 @@ class KyCodeObject(original: KycCodeObject) {
             val opcode = buf.get().toUByte().toInt()
             val opval = buf.get()
             instructions.add(PythonInstruction(InstructionOpcode.get(opcode), opval))
+        }
+
+        if (KythonInterpreter.config.debugMode) {
+            System.err.println("=== Loaded ${instructions.size} instructions ===")
         }
 
         return instructions.toTypedArray()

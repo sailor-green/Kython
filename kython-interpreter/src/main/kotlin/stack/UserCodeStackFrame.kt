@@ -141,7 +141,8 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun evaluateBytecode(): PyObject {
         if (KythonInterpreter.config.debugMode) {
-            System.err.println("=== Entering frame for ${function.code.codename} ===")
+            System.err.println("=== Evaluating frame for ${function.code.codename} / " +
+                "${function.code.filename} ===")
         }
 
         state = FrameState.RUNNING

@@ -53,8 +53,8 @@ dependencies {
 
 sourceSets {
     main {
-        java {
-            srcDir("${buildDir.absolutePath}/generated/source/kapt/")
+        resources {
+            srcDir("src/main/python")
         }
     }
 }
