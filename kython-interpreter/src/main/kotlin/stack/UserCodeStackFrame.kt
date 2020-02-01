@@ -85,6 +85,10 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
      */
     fun setupLocals(locals: Map<String, PyObject>) {
         this.locals.putAll(locals)
+        // make new cells
+        for (cell in this.function.code.cellvars) {
+            this.cellvars[cell] = PyCellObject(this.locals, cell)
+        }
     }
 
     /**
@@ -97,7 +101,7 @@ class UserCodeStackFrame(val function: PyUserFunction) : StackFrame() {
             error("Cannot call runFrame on a generator function!")
         }
 
-        locals.putAll(kwargs)
+        setupLocals(kwargs)
 
         val result = evaluateBytecode()
         if (state !== FrameState.RETURNED) {

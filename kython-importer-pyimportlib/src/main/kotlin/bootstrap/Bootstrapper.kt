@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.bootstrap
+package green.sailor.kython.importing.importlib.bootstrap
 
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.importing.JarFileModuleLoader
@@ -28,8 +28,9 @@ class Bootstrapper private constructor(bsFrame: StackFrame) : InterpreterThread(
          * Builds the bootstrapper frame.
          */
         fun build(): Bootstrapper {
-            val bootstrapModule = JarFileModuleLoader
-                .unsafeInternalGetModuleNoRun("bootstrap", "__kython_bootstrap")
+            val bootstrapModule = JarFileModuleLoader.unsafeInternalGetModuleNoRun(
+                "bootstrap", "__kython_bootstrap"
+            )
             addBootstrapFunctions(bootstrapModule.userModule)
             val frame = bootstrapModule.userModule.stackFrame
             return Bootstrapper(frame)

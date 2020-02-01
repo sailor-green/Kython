@@ -17,7 +17,7 @@
 
 package green.sailor.kython.interpreter.importing
 
-import green.sailor.kython.interpreter.pyobject.module.PyModule
+import green.sailor.kython.interpreter.pyobject.PyObject
 import org.apiguardian.api.API
 
 /**
@@ -37,7 +37,7 @@ interface Importer {
             val klass = Class.forName(name)
                 ?: error("Could not find importer $name!")
             val kotlin = klass.kotlin
-            val instance = kotlin.objectInstance ?: error("Importer $name is not an object!")
+            val instance = kotlin.constructors.first().call()
             if (instance !is Importer) {
                 error("Importer $name is not an instance of Importer!")
             }
@@ -46,11 +46,17 @@ interface Importer {
     }
 
     /**
+     * Called once an importer has been loaded to perform setup.
+     */
+    fun setup() = Unit
+
+    /**
      * Imports a module with the specified name absolutely.
      *
      * @param name: The name to get.
-     * @return A [PyModule] representing the module that has been imported.
+     * @param fromList: A list of items to copy from the module.
+     * @return A list of [PyObject] representing the objects beeing imported.
      */
     @API(status = API.Status.STABLE)
-    fun absoluteImport(name: String): PyModule
+    fun absoluteImport(name: String, fromList: List<String>): List<PyObject>
 }

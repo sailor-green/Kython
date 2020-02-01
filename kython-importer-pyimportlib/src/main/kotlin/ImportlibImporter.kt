@@ -15,12 +15,27 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.importing
+package green.sailor.kython.importing.importlib
 
-import green.sailor.kython.interpreter.pyobject.module.PyModule
+import green.sailor.kython.importing.importlib.bootstrap.Bootstrapper
+import green.sailor.kython.interpreter.importing.Importer
+import green.sailor.kython.interpreter.pyobject.PyObject
 
+/**
+ * Represents the importlib importer.
+ */
+@Suppress("unused")
 class ImportlibImporter : Importer {
-    override fun absoluteImport(name: String): PyModule {
+    var exception: Throwable? = null
+
+    // load bootstrap
+    override fun setup() {
+        val bootstrapper = Bootstrapper.build()
+        // this runs on a second thread as not to pollute the thread locals of the interpreter
+        bootstrapper.runThread()
+    }
+
+    override fun absoluteImport(name: String, fromList: List<String>): List<PyObject> {
         TODO("not implemented")
     }
 }

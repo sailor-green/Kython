@@ -19,12 +19,14 @@ package green.sailor.kython.interpreter.importing
 
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.builtins.SysModule
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.module.PyModule
 import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.util.cast
 import java.io.FileNotFoundException
+import java.lang.NullPointerException
 import java.nio.file.Path
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
@@ -37,7 +39,8 @@ import kotlin.concurrent.withLock
  * This does *not* implement the full range of importlib semantics, including loaders. See
  * [BuiltinImportlibImporter] or [PythonImportlibImporter] for that.
  */
-object SimpleImporter : Importer {
+@Suppress("unused")
+class SimpleImporter : Importer {
     /** The import lock held whilst doing imports. */
     val lock = ReentrantLock()
 
@@ -45,8 +48,6 @@ object SimpleImporter : Importer {
      * Imports a module from the specified path in sys.path.
      */
     fun importFrom(path: String, name: String): PyModule {
-        val toLoad = name.split(".")
-
         // loaded from the classpath
         if (path.startsWith("classpath:")) {
             // try and find the module from the jar path
@@ -70,10 +71,16 @@ object SimpleImporter : Importer {
         return userModule
     }
 
-    override fun absoluteImport(name: String): PyModule = lock.withLock {
+    override fun absoluteImport(name: String, fromList: List<String>):
+        List<PyObject> = lock.withLock {
         // first try and just return it if its in modules
         try {
-            return KythonInterpreter.modules[name]!!
+            val rootModule = KythonInterpreter.modules[name]!!
+            // load the subattributes
+            if (fromList.isEmpty()) return listOf(rootModule)
+            else {
+                TODO("fromlist")
+            }
         } catch (e: NullPointerException) {}
 
         // ok, so we have to actually *load* the modules
@@ -81,7 +88,7 @@ object SimpleImporter : Importer {
         for (item in SysModule.path.asIterator()) {
             val unwrapped = item.cast<PyString>().unwrap()
             try {
-                return importFrom(unwrapped, name)
+                return listOf(importFrom(unwrapped, name))
             } catch (e: KyError) {
                 e.ensure(Exceptions.IMPORT_ERROR)
             }

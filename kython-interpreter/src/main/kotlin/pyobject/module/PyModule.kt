@@ -27,5 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyObject
  */
 abstract class PyModule(val name: String) : PyObject() {
     override fun pyGetAttribute(name: String): PyObject =
-        internalDict[name] ?: attributeError("module '${this.name}' has no attribute '$name'")
+        internalDict[name] ?: run {
+            attributeError("module '${this.name}' has no attribute '$name'")
+        }
 }

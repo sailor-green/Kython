@@ -116,7 +116,7 @@ tasks.register("copyCPythonStdlib") {
         logger.lifecycle("Copying stdlib...")
         copy {
             from(outputDir.resolve("Lib/importlib"))
-            into(project(":kython-importer-pyimportlib").file("src/main/python/Lib"))
+            into(project(":kython-importer-pyimportlib").file("src/main/python/Lib/importlib"))
         }
     }
 }

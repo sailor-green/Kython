@@ -33,7 +33,10 @@ import kotlin.reflect.KProperty
  * @param localsMap: The local variables of the function being enclosed.
  * @param
  */
-class PyCellObject(val localsMap: MutableMap<String, PyObject>, val name: String) : PyObject() {
+open class PyCellObject(
+    open val localsMap: MutableMap<String, PyObject>,
+    open val name: String
+) : PyObject() {
     private inner class Delegate {
         operator fun getValue(thisRef: PyCellObject, property: KProperty<*>): PyObject {
             return localsMap[name] ?: TODO("Proper error")

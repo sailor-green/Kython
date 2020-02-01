@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.throwKy
@@ -37,32 +38,55 @@ import green.sailor.kython.interpreter.util.cast
  * Represents the `__build_class__` builtin, used to create new classes.
  */
 object BuildClassFunction : PyBuiltinFunction("__build_class__") {
+
+    private class GrossHackClassCellVar(
+        override var localsMap: MutableMap<String, PyObject>,
+        override var name: String
+    ) : PyCellObject(linkedMapOf(), "")
+
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
         val clsFn = kwargs["class_body"].cast<PyUserFunction>()
         val name = kwargs["name"].cast<PyString>()
         val bases = kwargs["bases"].cast<PyTuple>()
 
+        // Note to self:
+        // Sometimes, classes have an implicit `__class__` in their cellvars.
+        // (ECH)
+        // So if cellvar length is > 0, we make a cell for the class object, which we update
+        // afterwards.
+
+        val cell = if ("__classcell__" in clsFn.code.names) {
+            GrossHackClassCellVar(linkedMapOf(), "__class__")
+        } else {
+            null
+        }
+
         // TODO: __prepare__
         // build the class body dict
         val items = PyObjectMap()
         val bodyDict = PyDict.from(items)
-        if (clsFn.code.argCount > 0) {
-            clsFn.kyCall(listOf(bodyDict))
-        } else {
-            // if you pass a builtin to `__build_class__`, you deserve this error
-            val frame = clsFn.createFrame()
-            if (frame !is UserCodeStackFrame) {
-                Exceptions.SYSTEM_ERROR("Cannot pass builtin function").throwKy()
-            }
-            KythonInterpreter.runStackFrame(frame, mapOf())
-            items.putAll(frame.locals.mapKeys { PyString(it.key) })
+        val frame = clsFn.createFrame()
+        if (frame !is UserCodeStackFrame) {
+            Exceptions.SYSTEM_ERROR("Cannot pass builtin function").throwKy()
         }
+
+        val newKwargs = if (clsFn.code.argCount > 0) {
+            clsFn.kyGetSignature().argsToKwargs(listOf(bodyDict))
+        } else {
+            mapOf()
+        }
+
+        cell?.let { frame.cellvars["__class__"] = it }
+        KythonInterpreter.runStackFrame(frame, newKwargs)
+        items.putAll(frame.locals.mapKeys { PyString(it.key) })
 
         // figure out the metaclass
         val kws = kwargs["keywords"]!!.cast<PyDict>().internalDict
         val metaclass = kws.getOrDefault("metaclass", PyRootType)
         // type(name, bases, class_dict)
-        return metaclass.kyCall(listOf(bodyDict, bases, name))
+        val newType = metaclass.kyCall(listOf(bodyDict, bases, name))
+        cell?.localsMap = newType.internalDict
+        return newType
     }
 
     override val signature: PyCallableSignature =

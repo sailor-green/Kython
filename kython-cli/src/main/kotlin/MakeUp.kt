@@ -19,13 +19,11 @@ package green.sailor.kython
 
 import green.sailor.kython.cli.PythonFileCommand
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.importing.SimpleImporter
 import java.util.concurrent.Callable
 import kotlin.system.exitProcess
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.HelpCommand
-import java.lang.IllegalStateException
 
 /**
  * Main initialiser for Kython.
@@ -61,17 +59,7 @@ object MakeUp : Callable<Int> {
         defaultValue = DEFAULT_IMPORTER,
         type = [String::class]
     )
-    @JvmStatic fun setImporter(importer: String) {
-        if (importer != DEFAULT_IMPORTER) {
-            System.err.println("WARNING: Using custom importer: $importer")
-        }
-        try {
-            KythonInterpreter.loadImporter(importer)
-        } catch (e: IllegalStateException) {
-            System.err.println(e.message)
-            throw e
-        }
-    }
+    lateinit var importer: String
 
     /**
      * CLI entry point.

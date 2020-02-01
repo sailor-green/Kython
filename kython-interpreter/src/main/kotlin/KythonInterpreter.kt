@@ -79,6 +79,7 @@ object KythonInterpreter {
             System.err.println("=== Loading importer: $importerName ===")
         }
         Importer.load(importerName)
+        Importer.CURRENT.setup()
     }
 
     /**

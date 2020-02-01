@@ -1,3 +1,18 @@
+#  This file is part of kython.
+#
+#  kython is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  kython is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with kython.  If not, see <https://www.gnu.org/licenses/>.
+
 """
 kyc file creator. Used to compile py files into kyc files, as a replacement for the internal
 pyc format for Kython.
@@ -7,17 +22,13 @@ but can be used on any interpreter to generate compliant kyc files.
 """
 from __future__ import annotations
 
-# This file is only allowed to import the sys and os modules, because potentially it can be used
-# with a Python implementation that has no modules available. Sys/os will always be available.
-# sys is only used for path parsing, or in command mode, std i/o.
-# os is only used for working directory.
 import sys
+import os
 
 # kyc is a simple format very very similar to marshal, except documented, no refs, and with less
 # redundant types.
 # see SPEC.rst for more info.
 
-# type annotations; these are ok because they're never really imported.
 if False:
     import types
     from typing import Tuple, Any, List, Dict, Set
@@ -249,6 +260,21 @@ def compile_kyc_code(code: str):
     return compile_kyc(compiled)
 
 
+def compile_kyc_recursive(dirname: str):
+    walk_iter = os.walk(dirname)
+    files = []
+
+    for root, subdir, walk_files in walk_iter:
+        files.extend(root + path_sep + file for file in walk_files)
+
+    for file in files:
+        if file.endswith(".kyc"):
+            continue
+
+        result = compile_kyc_file(file)
+        print(f"Compiled {file}")
+
+
 def daemonise():
     """
     Runs the compiler as a daemon.
@@ -298,12 +324,15 @@ def main(mode: int):
     elif mode == 1:
         filename = sys.argv[2]
         output = compile_kyc_file(filename)
-        print(output.hex())
 
     elif mode == 2:
         code = sys.argv[2]
         output = compile_kyc_code(code)
         print(output.hex())
+
+    elif mode == 3:
+        dirname = sys.argv[2]
+        compile_kyc_recursive(dirname)
 
 
 if __name__ == "__main__":
@@ -313,3 +342,5 @@ if __name__ == "__main__":
         main(1)
     elif sys.argv[1] == "--code":
         main(2)
+    elif sys.argv[1] == "--recursive":
+        main(3)

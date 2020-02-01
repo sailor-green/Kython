@@ -17,6 +17,7 @@
 
 package green.sailor.kython.cli
 
+import green.sailor.kython.MakeUp
 import green.sailor.kython.interpreter.KythonInterpreter
 import java.nio.file.Files
 import java.nio.file.Path
@@ -36,6 +37,8 @@ object PythonFileCommand : Callable<Int> {
     var args: MutableList<String> = mutableListOf()
 
     override fun call(): Int {
+        KythonInterpreter.loadImporter(MakeUp.importer)
+
         val path = Path.of(filename).toAbsolutePath()
         if (!Files.exists(path)) {
             System.err.println("Cannot open file $filename: Does not exist")
@@ -50,9 +53,7 @@ object PythonFileCommand : Callable<Int> {
             return 1
         }
 
-        KythonInterpreter.runPythonFromPath(Path.of(
-            filename
-        ).toAbsolutePath())
+        KythonInterpreter.runPythonFromPath(Path.of(filename).toAbsolutePath())
         return 0
     }
 }

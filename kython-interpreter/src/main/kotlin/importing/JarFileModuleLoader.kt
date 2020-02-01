@@ -84,6 +84,7 @@ object JarFileModuleLoader {
         val kyModule = KyUserModule(moduleFunction, kycPath.fileName.toString(), sourceLines)
         kyModule.attribs["__name__"] = PyString(pyName)
         val userModule = PyUserModule(kyModule, moduleFunction.code.codename)
+        KythonInterpreter.modules[pyName] = userModule
         return userModule
     }
 }

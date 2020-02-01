@@ -21,6 +21,9 @@ package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.importing.Importer
 import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.PyNone
+import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.util.cast
 
@@ -31,14 +34,19 @@ fun UserCodeStackFrame.importName(arg: Byte) {
     val idx = arg.toUByte().toInt()
     val name = function.code.names[idx]
 
-    val from = stack.pop()
+    val fromObb = stack.pop()
+    val from = if (fromObb === PyNone) listOf()
+    else {
+        val tup = fromObb.cast<PyTuple>()
+        tup.subobjects.map { it.cast<PyString>().wrappedString }
+    }
+
     val level = stack.pop().cast<PyInt>()
 
     if (level.wrappedInt == 0L) {
         // absolute import
-        val module = Importer.CURRENT.absoluteImport(name)
-        // TODO: from
-        stack.push(module)
+        val items = Importer.CURRENT.absoluteImport(name, from)
+        items.forEach { stack.push(it) }
     } else {
         TODO("Relative imports")
     }

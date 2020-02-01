@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.bootstrap
+package green.sailor.kython.importing.importlib.bootstrap
 
 import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.callable.PyCallableSignature
@@ -34,10 +34,14 @@ private val loadSys = wrap("__load_kython_sys") { SysModule }
 private val loadImp = wrap("__load_imp") { PyNone }
 
 private val loadBootstrapExternal = wrap("__load_bootstrap_external") {
-    JarFileModuleLoader.getClasspathModule("importlib/_bootstrap_external")
+    JarFileModuleLoader.getClasspathModule(
+        "Lib/importlib/_bootstrap_external", "importlib._bootstrap_external"
+    )
 }
 private val loadBootstrap = wrap("__load_bootstrap") {
-    JarFileModuleLoader.getClasspathModule("importlib/_bootstrap")
+    JarFileModuleLoader.getClasspathModule(
+        "Lib/importlib/_bootstrap", "importlib._bootstrap"
+    )
 }
 
 /**
