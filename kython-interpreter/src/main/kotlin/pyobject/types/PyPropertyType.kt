@@ -55,7 +55,6 @@ object PyPropertyType : PyType("property") {
         "doc" to PyNone
     )
 
-
     @ExposeMethod("setter")
     @MethodParams(
         MethodParam("self", "POSITIONAL"),
