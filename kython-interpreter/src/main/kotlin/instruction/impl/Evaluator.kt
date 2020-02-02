@@ -145,8 +145,9 @@ fun UserCodeStackFrame.evaluateBytecode(): PyObject {
             InstructionOpcode.GET_YIELD_FROM_ITER -> getYieldFromIter(param)
 
             // store ops
-            InstructionOpcode.STORE_NAME -> store(LoadPool.NAME, param)
-            InstructionOpcode.STORE_FAST -> store(LoadPool.FAST, param)
+            InstructionOpcode.STORE_NAME -> storeLocal(LoadPool.NAME, param)
+            InstructionOpcode.STORE_FAST -> storeLocal(LoadPool.FAST, param)
+            InstructionOpcode.STORE_GLOBAL -> storeGlobal(param)
             InstructionOpcode.STORE_ATTR -> storeAttr(param)
 
             // closure awfulness

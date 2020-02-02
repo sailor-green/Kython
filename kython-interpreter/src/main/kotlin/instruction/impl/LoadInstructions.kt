@@ -127,7 +127,7 @@ fun UserCodeStackFrame.loadDeref(arg: Byte) {
 /**
  * STORE_(NAME|FAST).
  */
-fun UserCodeStackFrame.store(pool: LoadPool, arg: Byte) {
+fun UserCodeStackFrame.storeLocal(pool: LoadPool, arg: Byte) {
     val idx = arg.toInt()
     val toGetName = when (pool) {
         LoadPool.NAME -> function.code.names
@@ -137,6 +137,17 @@ fun UserCodeStackFrame.store(pool: LoadPool, arg: Byte) {
     val name = toGetName[idx]
     locals[name] = stack.pop()
 
+    bytecodePointer += 1
+}
+
+/**
+ * STORE_GLOBAL
+ */
+fun UserCodeStackFrame.storeGlobal(arg: Byte) {
+    val idx = arg.toInt()
+    val name = function.code.names[idx]
+
+    function.module.attribs[name] = stack.pop()
     bytecodePointer += 1
 }
 
