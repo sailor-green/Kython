@@ -65,6 +65,7 @@ class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
         if (other !is PyBytes) return PyNotImplemented
         // simple case, concatting empty bytes, we can micro-optimise and just return this
         if (other.wrapped.isEmpty()) return this
+        if (wrapped.isEmpty()) return other
 
         return PyBytes(wrapped + other.wrapped)
     }
