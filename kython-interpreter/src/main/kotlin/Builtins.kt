@@ -59,6 +59,7 @@ object Builtins {
     val RANGE_TYPE = PyRangeType
     val CLASSMETHOD_TYPE = PyClassmethod.PyClassmethodType
     val STATICMETHOD_TYPE = PyStaticmethod.PyStaticmethodType
+    val PROPERTY_TYPE = PyPropertyType
 
     val BUILD_CLASS = BuildClassFunction
 
@@ -93,6 +94,7 @@ object Builtins {
         "range" to RANGE_TYPE,
         "classmethod" to CLASSMETHOD_TYPE,
         "staticmethod" to STATICMETHOD_TYPE,
+        "property" to PROPERTY_TYPE,
 
         // specials
         "None" to NONE,
