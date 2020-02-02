@@ -15,11 +15,11 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.dict
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.keyError
-import green.sailor.kython.interpreter.pyobject.types.PyDictType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.PyObjectMap
 
@@ -72,8 +72,7 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
 
     override fun pyGreater(other: PyObject): PyObject = PyNotImplemented
     override fun pyLesser(other: PyObject): PyObject = PyNotImplemented
-    override fun pyContains(other: PyObject): PyObject =
-        PyBool.get(other in items)
+    override fun pyContains(other: PyObject): PyObject = PyBool.get(other in items)
 
     override fun pyGetItem(idx: PyObject): PyObject {
         return items[idx] ?: keyError(idx.pyToStr().wrappedString)

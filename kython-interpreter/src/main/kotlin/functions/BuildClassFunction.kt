@@ -21,7 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyDict
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
@@ -30,7 +30,6 @@ import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.pyobject.types.PyRootType
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.util.PyObjectMap
 import green.sailor.kython.interpreter.util.cast
 

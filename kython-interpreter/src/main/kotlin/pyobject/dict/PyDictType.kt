@@ -15,11 +15,11 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.types
+package green.sailor.kython.interpreter.pyobject.dict
 
 import green.sailor.kython.annotation.*
 import green.sailor.kython.interpreter.callable.EMPTY
-import green.sailor.kython.interpreter.pyobject.PyDict
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType

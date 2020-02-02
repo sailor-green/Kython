@@ -21,6 +21,7 @@ package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject

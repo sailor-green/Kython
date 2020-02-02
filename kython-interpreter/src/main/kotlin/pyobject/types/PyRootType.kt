@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.user.PyUserType
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast

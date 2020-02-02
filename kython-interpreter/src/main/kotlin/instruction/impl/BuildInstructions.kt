@@ -20,6 +20,7 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.PyObjectMap

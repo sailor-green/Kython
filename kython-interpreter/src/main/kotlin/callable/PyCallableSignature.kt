@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.callable
 
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.typeError
 import java.util.*
 

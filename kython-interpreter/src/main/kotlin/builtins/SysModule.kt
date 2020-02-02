@@ -24,6 +24,7 @@ import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.interpreter.util.StringDictWrapper
 
