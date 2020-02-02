@@ -49,16 +49,17 @@ object PyDictType : PyType("dict") {
         val other = kwargs["other_mapping"] ?: error("Built-in signature mismatch!")
 
         // optimisation case
-        if (other is PyDict) {
-            self.items.putAll(other.items)
-        } else {
-            val keys = other.pyIter().toNativeList()
-            for (key in keys) {
-                val item = other.pyGetItem(key)
-                self.items[key] = item
+        if (other !== EMPTY) {
+            if (other is PyDict) {
+                self.items.putAll(other.items)
+            } else {
+                val keys = other.pyIter().toNativeList()
+                for (key in keys) {
+                    val item = other.pyGetItem(key)
+                    self.items[key] = item
+                }
             }
         }
-
         val fnKwargs = kwargs["kwargs"].cast<PyDict>()
         self.items.putAll(fnKwargs.items)
 
