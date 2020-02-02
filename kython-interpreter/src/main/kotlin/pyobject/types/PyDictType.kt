@@ -64,5 +64,4 @@ object PyDictType : PyType("dict") {
 
         return PyNone
     }
-
 }

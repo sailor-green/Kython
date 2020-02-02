@@ -98,9 +98,6 @@ object KythonInterpreter {
      * Pushes a frame onto the frame stack for this thread.
      */
     fun pushFrame(frame: StackFrame) {
-        if (config.debugMode) {
-            System.err.println("=== Pushing frame: $frame / ${frame.state} ===")
-        }
         val thread = interpreterThreadLocal.get()
         thread.pushFrame(frame)
     }
@@ -110,11 +107,7 @@ object KythonInterpreter {
      */
     fun popFrame(): StackFrame {
         val thread = interpreterThreadLocal.get()
-        val frame = thread.popFrame()
-        if (config.debugMode) {
-            System.err.println("=== Popped frame: $frame / ${frame.state} ===")
-        }
-        return frame
+        return thread.popFrame()
     }
 
     /**

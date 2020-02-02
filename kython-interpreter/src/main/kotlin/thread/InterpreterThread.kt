@@ -39,6 +39,11 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
      * Pushes a stack frame onto the list of stack frames.
      */
     open fun pushFrame(frame: StackFrame) {
+        if (KythonInterpreter.config.debugMode) {
+            val info = frame.createStackFrameInfo()
+            System.err.println("=== Pushing frame: ${info.name} / ${frame.state} ===")
+        }
+
         frame.parentFrame = currentStackFrame
         // can be null if this is the root frame
         currentStackFrame?.childFrame = frame
@@ -53,6 +58,10 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
         topFrame.parentFrame = null
         // can be null if this was the root frame
         currentStackFrame?.childFrame = null
+        if (KythonInterpreter.config.debugMode) {
+            val info = topFrame.createStackFrameInfo()
+            System.err.println("=== Popped frame: ${info.name} / ${topFrame.state} ===")
+        }
         return topFrame
     }
 
