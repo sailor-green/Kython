@@ -28,7 +28,7 @@ import green.sailor.kython.util.explode
 /**
  * Represents a Python set.
  */
-class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
+open class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
     override fun unwrap(): Set<PyObject> = wrappedSet
 
     override fun pyHash(): PyInt = typeError("sets are not hashable - they are mutable")

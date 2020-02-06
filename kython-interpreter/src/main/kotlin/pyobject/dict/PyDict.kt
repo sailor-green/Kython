@@ -20,6 +20,8 @@ package green.sailor.kython.interpreter.pyobject.dict
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.keyError
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
+import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.PyObjectMap
 
@@ -85,6 +87,12 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
 
     override fun pyHash(): PyInt = typeError("dicts are not hashable - they are mutable")
     override fun pyLen(): PyInt = PyInt(items.size.toLong())
+
+    override fun pyIter(): PyObject {
+        if (items.isEmpty()) return PyEmptyIterator
+
+        return PyBuiltinIterator(items.keys.iterator())
+    }
 
     override var type: PyType
         get() = PyDictType

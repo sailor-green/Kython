@@ -64,7 +64,7 @@ fun UserCodeStackFrame.buildSimple(type: BuildType, arg: Byte) {
             )
         }
         BuildType.DICT -> {
-            val items = (0 until count)
+            val items = (0 until count * 2)
                 .map { stack.pop() }
                 .reversed()
                 .chunked(2)

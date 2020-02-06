@@ -15,32 +15,26 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.iterators
+package green.sailor.kython.interpreter.pyobject.dict
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PySet
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.throwKy
+import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 import green.sailor.kython.interpreter.typeError
 
 /**
- * Represents a built-in iterator over a Kotlin iterator.
+ * Represents a view of a [PyDict]'s keys.
  */
-class PyBuiltinIterator(val kotlinIterator: Iterator<PyObject>) : PyObject() {
-    object PyGenericIteratorType : PyType("builtin_iterator") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
-            typeError("Cannot create new instances of builtin_iterator")
+class PyDictKeys(map: MutableMap<PyObject, PyObject>) : PySet(map.keys) {
+    object PyDictKeysType : PyType("dict_keys") {
+        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+            typeError("Cannot create new instances of this class")
+        }
     }
 
     override var type: PyType
-        get() = PyGenericIteratorType
+        get() = PyDictKeysType
         set(_) = Exceptions.invalidClassSet(this)
-
-    override fun pyNext(): PyObject {
-        if (!kotlinIterator.hasNext()) {
-            Exceptions.STOP_ITERATION().throwKy()
-        }
-
-        return kotlinIterator.next()
-    }
 }

@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.pyobject.dict
 
 import green.sailor.kython.annotation.*
 import green.sailor.kython.interpreter.callable.EMPTY
-import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
@@ -36,7 +35,17 @@ object PyDictType : PyType("dict") {
         return PyDict.fromAnyMap(kwargs)
     }
 
-    /** dict.update */
+    /** dict.keys() */
+    @ExposeMethod("keys")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL")
+    )
+    fun pyDictKeys(kwargs: Map<String, PyObject>): PyObject {
+        val self = kwargs["self"].cast<PyDict>()
+        return PyDictKeys(self.items)
+    }
+
+    /** dict.update() */
     @ExposeMethod("update")
     @MethodParams(
         MethodParam("self", "POSITIONAL"),

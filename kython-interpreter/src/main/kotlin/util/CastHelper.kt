@@ -20,8 +20,8 @@ package green.sailor.kython.interpreter.util
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
-import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.dict.PyDictType
+import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.pyobject.types.PyListType
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
