@@ -331,8 +331,7 @@ object PyStringType : PyType("str") {
         val start = kwargs["start"].unwrappedOrNull<Long>()?.toInt() ?: 0
         val end = kwargs["end"].unwrappedOrNull<Long>()?.toInt() ?: str.length
         // str.count supports slices.
-        val range = SliceAwareRange(str, start, end)
-        val count = range.substring(range.start, range.endInclusive).split(sub).size - 1
+        val count = SliceAwareRange(str, start, end).sliced.split(sub).size - 1
         return PyInt(count.toLong())
     }
 }

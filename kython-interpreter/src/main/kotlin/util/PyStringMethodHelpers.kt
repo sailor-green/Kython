@@ -41,14 +41,14 @@ fun String.center(width: Long, padWith: Char): String {
  * A slice aware [ClosedRange] implementation that conforms to python's slice notation.
  * @param ref The [String] reference.
  */
-class SliceAwareRange(private val ref: String, start: Int, end: Int) : ClosedRange<Int> {
-    override val start by lazy { start.convertedIndex }
-    override val endInclusive by lazy { end.convertedIndex }
+class SliceAwareRange(private val ref: String, startIndex: Int, endIndex: Int) : ClosedRange<Int> {
+    override val start by lazy { startIndex.convertedIndex }
+    override val endInclusive by lazy { endIndex.convertedIndex }
 
     /** Converts a regular index to a slice aware integer. **/
     private val Int.convertedIndex
         get() = if (this >= 0) coerceAtMost(ref.length) else (ref.length + this).coerceAtLeast(0)
 
-    /** @see [String.substring] **/
-    fun substring(start: Int, end: Int) = ref.substring(start, end)
+    /** The sliced substring. **/
+    val sliced by lazy { ref.substring(start, endInclusive) }
 }
