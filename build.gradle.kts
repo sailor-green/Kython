@@ -57,6 +57,9 @@ subprojects {
             licenseHeaderFile("$rootDir/gradle/LICENCE-HEADER")
 
         }
+        java {
+            targetExclude("src/main/com/ochafik/**")
+        }
     }
 
     sourceSets {

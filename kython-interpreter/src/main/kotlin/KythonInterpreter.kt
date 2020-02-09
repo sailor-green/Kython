@@ -19,10 +19,12 @@
 
 package green.sailor.kython.interpreter
 
+import green.sailor.kython.compiler.Compiler
 import green.sailor.kython.generation.generated.addAllMethods
 import green.sailor.kython.interpreter.builtins.KythonInternalModule
 import green.sailor.kython.interpreter.builtins.SysModule
 import green.sailor.kython.interpreter.importing.Importer
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
@@ -32,7 +34,6 @@ import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.thread.InterpreterThread
 import green.sailor.kython.interpreter.thread.MainInterpreterThread
-import green.sailor.kython.interpreter.util.CPythonCompiler
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -43,9 +44,6 @@ import java.nio.file.Path
  * This is a singleton encapsulating several [InterpreterThread] objects.
  */
 object KythonInterpreter {
-    /** The CPython compiler backend. */
-    val cpyInterface = CPythonCompiler()
-
     /** The mapping of modules. */
     val modules = mutableMapOf<String, PyModule>()
 
@@ -140,7 +138,8 @@ object KythonInterpreter {
      * Runs Python code from a file.
      */
     fun runPythonFromPath(path: Path) {
-        val fn = cpyInterface.compile(path)
+        val compiled = Compiler.compile(path)
+        val fn = KyCodeObject(compiled.code)
 
         val rootFunction = PyUserFunction(fn)
         val module = KyUserModule(rootFunction, path.toString(), Files.readAllLines(path))
@@ -154,7 +153,8 @@ object KythonInterpreter {
      * Runs Python code from a string. Used for `-c` invocation.
      */
     fun runPythonFromString(s: String) {
-        val fn = cpyInterface.compile(s)
+        val compiled = Compiler.CURRENT.compileFromString(s, "<code>")
+        val fn = KyCodeObject(compiled.code)
 
         val rootFunction = PyUserFunction(fn)
         val module = KyUserModule(rootFunction, "<code>", s.split(System.lineSeparator()))

@@ -42,6 +42,7 @@ dependencies {
     // == SUBPROJECTS == //
     api(project(":kython-kyc"))
     api(project(":kython-util"))
+    api(project(":kython-compiler"))
 
     // === TEST === //
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.5.2")

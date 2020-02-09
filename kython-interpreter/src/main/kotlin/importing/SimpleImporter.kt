@@ -17,8 +17,10 @@
 
 package green.sailor.kython.interpreter.importing
 
+import green.sailor.kython.compiler.Compiler
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.builtins.SysModule
+import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
@@ -60,7 +62,7 @@ class SimpleImporter : Importer {
             path, name.replace(".", "/") + ".py"
         ).toAbsolutePath()
         val compiled = try {
-            KythonInterpreter.cpyInterface.compile(resolvedPath)
+            KyCodeObject(Compiler.compile(resolvedPath).code)
         } catch (e: FileNotFoundException) {
             Exceptions.MODULE_NOT_FOUND_ERROR(resolvedPath.toString()).throwKy()
         }

@@ -42,7 +42,7 @@ open class UnKyc(private val buf: ByteBuffer) {
          */
         fun parseKycFile(data: ByteBuffer): KycFile {
             val magicNumber = String(listOf(data.get(), data.get(), data.get()).toByteArray())
-            check(magicNumber == "KYC") { "Magic number is not KYC" }
+            check(magicNumber == "KYC") { "Magic number was $magicNumber, not KYC" }
             val kycVer = data.get().toChar()
             check(kycVer == 'A') { "KYC is not version 1" }
 
@@ -110,12 +110,10 @@ open class UnKyc(private val buf: ByteBuffer) {
     /**
      * Reads a float from the stream.
      */
-    fun readFloat(): KycFloat = KycFloat(buf.double)
+    fun readFloat(): KycFloat = KycFloat(Double.fromBits(buf.long))
 
     /**
      * Reads a string from the stream.
-     *
-     * @param short: If this is a short string (TYPE_SHORT_ASCII).
      */
     fun readString(): KycUnicodeString {
         val size = buf.int
