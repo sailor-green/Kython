@@ -34,27 +34,32 @@ open class PyInt(val wrappedInt: Long) : PyPrimitive() {
 
     // default impls
     override fun pyToStr(): PyString = PyString(wrappedInt.toString())
+
     override fun pyGetRepr(): PyString = pyToStr()
 
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyInt) return PyNotImplemented
         return PyBool.get(other.wrappedInt == wrappedInt)
     }
+
     override fun pyGreater(other: PyObject): PyObject {
         if (other is PyInt) return PyBool.get(wrappedInt > other.wrappedInt)
         if (other is PyFloat) return PyBool.get(wrappedInt > other.wrapped)
         return PyNotImplemented
     }
+
     override fun pyLesser(other: PyObject): PyObject {
         if (other is PyInt) return PyBool.get(wrappedInt < other.wrappedInt)
         if (other is PyFloat) return PyBool.get(wrappedInt < other.wrapped)
         return PyNotImplemented
     }
+
     override fun pyGreaterEquals(other: PyObject): PyObject {
         if (other is PyInt) return PyBool.get(wrappedInt < other.wrappedInt)
         if (other is PyFloat) return PyBool.get(wrappedInt < other.wrapped)
         return PyNotImplemented
     }
+
     override fun pyLesserEquals(other: PyObject): PyObject {
         if (other is PyInt) return PyBool.get(wrappedInt < other.wrappedInt)
         if (other is PyFloat) return PyBool.get(wrappedInt < other.wrapped)
@@ -76,16 +81,19 @@ open class PyInt(val wrappedInt: Long) : PyPrimitive() {
         if (other is PyFloat) return PyFloat(wrappedInt.toDouble() + other.wrapped)
         return PyNotImplemented
     }
+
     override fun pySub(other: PyObject, reverse: Boolean): PyObject {
         if (other is PyInt) return PyInt(wrappedInt - other.wrappedInt)
         if (other is PyFloat) return PyFloat(wrappedInt.toDouble() - other.wrapped)
         return PyNotImplemented
     }
+
     override fun pyMul(other: PyObject, reverse: Boolean): PyObject {
         if (other is PyInt) return PyInt(wrappedInt * other.wrappedInt)
         if (other is PyFloat) return PyFloat(wrappedInt.toDouble() * other.wrapped)
         return PyNotImplemented
     }
+
     override fun pyDiv(other: PyObject, reverse: Boolean): PyObject { // non-floor div
         if (other is PyInt) return PyFloat(wrappedInt.toDouble() / other.wrappedInt.toDouble())
         if (other is PyFloat) return PyFloat(wrappedInt.toDouble() / other.wrapped)
