@@ -35,8 +35,6 @@ interface Compiler {
         fun compile(path: Path): KycFile {
             return CURRENT?.compile(path) ?: error("No compiler has been loaded!")
         }
-
-
     }
 
     /**

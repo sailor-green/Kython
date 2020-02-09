@@ -17,9 +17,6 @@
 
 package green.sailor.kython.compiler
 
-import com.sun.jna.Memory
-import com.sun.jna.Platform
-import com.sun.jna.ptr.PointerByReference
 import green.sailor.kython.compiler.cpython.jna.LibkythonBridge
 import green.sailor.kython.kyc.KycFile
 import green.sailor.kython.kyc.UnKyc
@@ -27,7 +24,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
