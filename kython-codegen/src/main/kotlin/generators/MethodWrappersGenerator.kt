@@ -83,7 +83,7 @@ fun getSignatureStatement(anno: MethodParams): List<CodeBlock> {
         if (idx == anno.parameters.size - 1) {
             statements.add(CodeBlock.of("%S to %M", param.name, argtype))
         } else {
-            statements.add(CodeBlock.of("%S to %M,", param.name, argtype))
+            statements.add(CodeBlock.of("%S to %M, ", param.name, argtype))
         }
     }
 
@@ -92,7 +92,7 @@ fun getSignatureStatement(anno: MethodParams): List<CodeBlock> {
     if (anno.defaults.isNotEmpty()) {
         // now to add the defaults
         statements.add(CodeBlock.of("«.withDefaults("))
-        for (default in anno.defaults) {
+        for ((idx, default) in anno.defaults.withIndex()) {
             // i don't know why i need to type mirror these!!
             // they're standard kotlin classes!!!!
             val mirror = default.getClassMirror { it.type }
@@ -116,8 +116,13 @@ fun getSignatureStatement(anno: MethodParams): List<CodeBlock> {
                 }
                 else -> error("Cannot provide ${mirror.asTypeName()} as a default")
             }
+
             statements.add(CodeBlock.of("%S to ", default.forName))
             statements.add(stmnt)
+            // don't add a trailing comma (this can be removed in Kotlin 1.4)
+            if (idx != anno.defaults.size - 1) {
+                statements.add(CodeBlock.of(", "))
+            }
         }
         statements.add(CodeBlock.of(")»\n"))
     }
