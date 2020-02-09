@@ -19,8 +19,10 @@ package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.annotation.*
 import green.sailor.kython.interpreter.callable.ArgType
+import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.util.SliceAwareRange
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.interpreter.util.center
 import java.util.*
@@ -305,5 +307,32 @@ object PyStringType : PyType("str") {
     fun pyStrZFill(kwargs: Map<String, PyObject>): PyString {
         val width = kwargs["width"].cast<PyInt>().wrappedInt
         return PyString(kwargs.selfWrappedString.padStart(width.toInt(), '0'))
+    }
+
+    /** Attempts to unwrap a PyObject, if it's not EMPTY. **/
+    private fun <T : Any> PyObject?.unwrappedOrNull(): T? {
+        if (this == null || this === EMPTY) return null
+        @Suppress("UNCHECKED_CAST")
+        return (this as? PyPrimitive)?.unwrap() as T
+    }
+
+    /** str.count **/
+    @ExposeMethod("count")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("sub", "POSITIONAL"),
+        MethodParam("start", "POSITIONAL"),
+        MethodParam("end", "POSITIONAL"),
+        defaults = [Default("start", EMPTY::class), Default("end", EMPTY::class)]
+    )
+    fun pyStrCount(kwargs: Map<String, PyObject>): PyInt {
+        val str = kwargs.selfWrappedString
+        val sub = kwargs["sub"].cast<PyString>().wrappedString
+        val start = kwargs["start"].unwrappedOrNull<Long>()?.toInt() ?: 0
+        val end = kwargs["end"].unwrappedOrNull<Long>()?.toInt() ?: str.length
+        // str.count supports slices.
+        val range = SliceAwareRange(str, start, end)
+        val count = range.substring(range.start, range.endInclusive).split(sub).size - 1
+        return PyInt(count.toLong())
     }
 }

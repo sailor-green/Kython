@@ -17,7 +17,6 @@
 
 package green.sailor.kython.test.pyobject
 
-import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.test.isFalse
@@ -98,17 +97,9 @@ class `Test str` {
     @Test
     fun `Test str isdigit`() {
         // KHAROSHTHI DIGIT (UTF-16 surrogates edgecase)
-        testPrimitive<PyBool>("""result = "𐩃𐩂".isdigit()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "123".isdigit()""") {
-            isTrue()
-        }
-
-        testPrimitive<PyBool>("""result = "hey".isdigit()""") {
-            isFalse()
-        }
+        isTrue("""result = "𐩃𐩂".isdigit()""")
+        isTrue("""result = "123".isdigit()""")
+        isFalse("""result = "hey".isdigit()""")
     }
 
     @Test
@@ -240,5 +231,15 @@ class `Test str` {
         testPrimitive<PyString>("""result = "123".zfill(6)""") {
             resultsIn("000123")
         }
+    }
+
+    @Test
+    fun `Test str count`() {
+        isTrue("""result = "aaa".count("a") == 3""")
+        isTrue("""result = "aaa".count("b") == 0""")
+        isTrue("""result = "aaa".count("a", 1) == 2""")
+        isTrue("""result = "aaa".count("a", 10) == 0""")
+        isTrue("""result = "aaa".count("a", 0, 1) == 1""")
+        isTrue("""result = "aaa".count("", -10) == 4""")
     }
 }
