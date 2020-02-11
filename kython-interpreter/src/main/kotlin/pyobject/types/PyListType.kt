@@ -92,6 +92,19 @@ object PyListType : PyType("list") {
         }
     }
 
+    /** list.extend() */
+    @ExposeMethod("extend")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL"),
+        MethodParam("other", "POSITIONAL")
+    )
+    fun pyListExtend(kwargs: Map<String, PyObject>): PyNone {
+        val self = kwargs["self"].cast<PyList>()
+        val other = kwargs["other"].cast<PyObject>()
+        self.extend(other)
+        return PyNone
+    }
+
     // magic methods
     /** list.__str__() */
     @ExposeMethod("__str__")
