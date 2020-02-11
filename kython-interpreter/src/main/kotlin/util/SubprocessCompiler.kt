@@ -18,7 +18,6 @@
 package green.sailor.kython.interpreter.util
 
 import green.sailor.kython.compiler.Compiler
-import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.kyc.KycFile
 import green.sailor.kython.kyc.UnKyc
 import java.io.FileNotFoundException
