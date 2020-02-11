@@ -34,6 +34,7 @@ import green.sailor.kython.interpreter.pyobject.module.PyUserModule
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.thread.InterpreterThread
 import green.sailor.kython.interpreter.thread.MainInterpreterThread
+import green.sailor.kython.interpreter.util.SubprocessCompiler
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -63,6 +64,12 @@ object KythonInterpreter {
     init {
         // add all the generated builtins
         addAllMethods()
+
+        // TODO: The DLL bridge is currently unstable. We fall back to the subprocess compiler
+        // until it is stabilised.
+        if (System.getProperty("kython.compiler.usedll") != "true") {
+            Compiler.CURRENT = SubprocessCompiler()
+        }
 
         // add builtin modules
         modules["sys"] = SysModule

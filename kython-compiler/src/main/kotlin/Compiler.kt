@@ -27,13 +27,12 @@ interface Compiler {
     companion object {
         /** The current compiler instance. */
         var CURRENT: Compiler = CPythonCompiler
-            private set
 
         /**
          * Compiles a file from a path using a compiler backend.
          */
         fun compile(path: Path): KycFile {
-            return CURRENT?.compile(path) ?: error("No compiler has been loaded!")
+            return CURRENT.compile(path) ?: error("No compiler has been loaded!")
         }
     }
 

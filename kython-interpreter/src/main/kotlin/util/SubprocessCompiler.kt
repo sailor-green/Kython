@@ -17,6 +17,7 @@
 
 package green.sailor.kython.interpreter.util
 
+import green.sailor.kython.compiler.Compiler
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.kyc.KycFile
 import green.sailor.kython.kyc.UnKyc
@@ -30,7 +31,7 @@ import java.nio.file.Path
 /**
  * Represents the CPython compiler interface.
  */
-class CPythonCompiler {
+class SubprocessCompiler : Compiler {
     private val kycDir = Files.createTempDirectory("kython")
     private val kycPyPath = kycDir.resolve("kyc.py")
     val cPythonExe = System.getenv("CPYTHON_EXE") ?: "python3.9"
@@ -72,29 +73,28 @@ class CPythonCompiler {
     /**
      * Compiles from a path.
      */
-    fun compile(path: Path): KyCodeObject {
+    override fun compile(path: Path): KycFile {
         if (!Files.exists(path)) {
             throw FileNotFoundException(path.toString())
         }
         val args = listOf("--path", path.toAbsolutePath().toString())
-        return KyCodeObject(executeCompiler(args).code)
+        return executeCompiler(args)
     }
 
     /**
      * Compiles from a string.
      */
-    fun compile(data: String): KyCodeObject {
+    override fun compileFromString(data: String, filename: String): KycFile {
         return if (true) {
             val args = listOf("--code", data)
-            KyCodeObject(executeCompiler(args).code)
+            executeCompiler(args)
         } else {
             // windows requires a... different approach
             val tmp = Files.createTempFile("kyc-windows-sucks", ".py")
             try {
                 Files.write(tmp, data.toByteArray(Charset.defaultCharset()))
                 val args = listOf("--path", tmp.toAbsolutePath().toString())
-                val result = KyCodeObject(executeCompiler(args).code)
-                result
+                executeCompiler(args)
             } finally {
                 Files.deleteIfExists(tmp)
             }
