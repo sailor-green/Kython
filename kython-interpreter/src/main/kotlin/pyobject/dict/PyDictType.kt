@@ -40,9 +40,18 @@ object PyDictType : PyType("dict") {
     @MethodParams(
         MethodParam("self", "POSITIONAL")
     )
-    fun pyDictKeys(kwargs: Map<String, PyObject>): PyObject {
+    fun pyDictKeys(kwargs: Map<String, PyObject>): PyDictKeys {
         val self = kwargs["self"].cast<PyDict>()
         return PyDictKeys(self.items)
+    }
+
+    @ExposeMethod("values")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL")
+    )
+    fun pyDictValues(kwargs: Map<String, PyObject>): PyDictValues {
+        val self = kwargs["self"].cast<PyDict>()
+        return PyDictValues(self.items)
     }
 
     /** dict.update() */
