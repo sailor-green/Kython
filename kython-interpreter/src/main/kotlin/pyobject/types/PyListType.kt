@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.indexError
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyList
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.cast

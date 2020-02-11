@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.generator
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toPyObject
@@ -63,7 +64,8 @@ class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
     fun send(value: PyObject): PyObject {
         val (state, result) = frame.send(value)
         if (state == StackFrame.FrameState.RETURNED) {
-            Exceptions.STOP_ITERATION.makeException(PyTuple.of(result)).throwKy()
+            Exceptions.STOP_ITERATION.makeException(
+                PyTuple.of(result)).throwKy()
         }
         return result
     }

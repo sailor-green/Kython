@@ -23,6 +23,7 @@ import green.sailor.kython.annotation.MethodParam
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.attributeError
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast

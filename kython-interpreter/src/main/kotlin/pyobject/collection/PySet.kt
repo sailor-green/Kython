@@ -15,11 +15,13 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
-import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
+import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.types.PySetType
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.typeError
@@ -28,7 +30,9 @@ import green.sailor.kython.util.explode
 /**
  * Represents a Python set.
  */
-open class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
+open class PySet(wrappedSet: MutableSet<PyObject>) : PyCollection(wrappedSet) {
+    val wrappedSet: MutableSet<PyObject> get() = subobjects as MutableSet<PyObject>
+
     override fun unwrap(): Set<PyObject> = wrappedSet
 
     override fun pyHash(): PyInt = typeError("sets are not hashable - they are mutable")
@@ -36,27 +40,10 @@ open class PySet(val wrappedSet: MutableSet<PyObject>) : PyPrimitive() {
     override fun pyToStr(): PyString = PyString(
         "{" + wrappedSet.joinToString(", ") { it.pyGetRepr().wrappedString } + "}"
     )
-
     override fun pyGetRepr(): PyString = pyToStr()
-    override fun pyToBool(): PyBool = PyBool.get(wrappedSet.isNotEmpty())
-    override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PySet) {
-            return PyNotImplemented
-        }
-        return PyBool.get(wrappedSet == other.wrappedSet)
-    }
 
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")
-    override fun pyContains(other: PyObject): PyObject = PyBool.get(other in wrappedSet)
-
-    override fun pyLen(): PyInt = PyInt(wrappedSet.size.toLong())
-    override fun pyIter(): PyObject {
-        if (wrappedSet.isEmpty()) {
-            return PyEmptyIterator
-        }
-        return PyBuiltinIterator(wrappedSet.iterator())
-    }
 
     /**
      * Implements set updating from another iterable object.

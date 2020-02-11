@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject.exception
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.util.cast
 
@@ -51,6 +52,7 @@ open class PyExceptionType(
         )
 
     operator fun invoke(vararg args: String): BuiltinPyException {
-        return makeException(PyTuple.get(args.map { PyString(it) }))
+        return makeException(
+            PyTuple.get(args.map { PyString(it) }))
     }
 }

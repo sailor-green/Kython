@@ -21,6 +21,7 @@ package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.functions.BuildClassFunction
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
@@ -78,7 +79,7 @@ fun UserCodeStackFrame.makeFunction(arg: Byte) {
     } else { mapOf() }
 
     val defaultsTuple = if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
-        stack.pop().cast<PyTuple>().subobjects
+        stack.pop().cast<PyTuple>().unwrap()
     } else {
         listOf()
     }

@@ -24,6 +24,8 @@ import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyList
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.interpreter.util.StringDictWrapper
@@ -36,7 +38,8 @@ import green.sailor.kython.interpreter.util.StringDictWrapper
 object SysModule : PyBuiltinModule("sys") {
     val version: PyString = PyString("3.9.0")
     val platform: PyString = PyString(System.getProperty("os.name").toLowerCase())
-    var path: PyList = PyList(defaultPath() as MutableList<PyObject>)
+    var path: PyList =
+        PyList(defaultPath() as MutableList<PyObject>)
     var modules = PyDict.unsafeFromUnVerifiedMap(
         StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
     )

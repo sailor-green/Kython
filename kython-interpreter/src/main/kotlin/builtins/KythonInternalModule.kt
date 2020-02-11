@@ -28,7 +28,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.kyreflection.PyReflectedObject
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
 import green.sailor.kython.interpreter.toPyObject

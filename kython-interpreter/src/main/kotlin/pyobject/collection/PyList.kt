@@ -15,16 +15,20 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.indexError
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.types.PyListType
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.util.explode
 
+/**
+ * Represents a list type.
+ */
 class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     companion object {
         fun empty() = PyList(mutableListOf())
@@ -42,11 +46,6 @@ class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
     }
 
     override fun pyGetRepr(): PyString = pyToStr()
-
-    override fun pyEquals(other: PyObject): PyObject {
-        if (other !is PyList) return PyNotImplemented
-        return PyBool.get(subobjects == other.subobjects)
-    }
 
     override fun pyGreater(other: PyObject): PyObject = TODO("Not implemented")
     override fun pyLesser(other: PyObject): PyObject = TODO("Not implemented")

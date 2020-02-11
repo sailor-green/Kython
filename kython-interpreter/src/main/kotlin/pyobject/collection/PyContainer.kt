@@ -15,24 +15,20 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.indexError
-import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
-import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
+import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.PyNotImplemented
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.util.cast
 
 /**
  * Abstract superclass shared between PyList and PyTuple, contains some common methods.
  */
-abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
-    override fun unwrap(): List<PyObject> = subobjects
-
-    override fun pyToBool(): PyBool = PyBool.get(subobjects.isNotEmpty())
-    override fun pyIter(): PyObject {
-        if (subobjects.isEmpty()) return PyEmptyIterator
-        return PyBuiltinIterator(subobjects.listIterator())
-    }
+abstract class PyContainer(subobjects: List<PyObject>) : PyCollection(subobjects) {
+    override fun unwrap(): List<PyObject> = subobjects as List<PyObject>
 
     /**
      * Gets the real index from an index, calculating negative slices appropriately.
@@ -62,12 +58,16 @@ abstract class PyContainer(val subobjects: List<PyObject>) : PyPrimitive() {
         if (!verifyIndex(realIdx)) {
             indexError("list index $realIdx is out of range (list size: ${subobjects.size})")
         }
-        return subobjects[realIdx]
+        return (subobjects as List<PyObject>)[realIdx]
     }
 
-    override fun pyLengthHint(): PyInt = PyInt(subobjects.size.toLong())
-    override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
-
-    override fun pyContains(other: PyObject): PyObject =
-        PyBool.get(other in subobjects)
+    /**
+     * Checks if two containers are equal to each other.
+     */
+    override fun pyEquals(other: PyObject): PyObject {
+        if (other !is PyContainer) return PyNotImplemented
+        return PyBool.get(subobjects.zip(other.subobjects).all {
+            it.first.pyEquals(it.second).pyToBool().wrapped
+        })
+    }
 }

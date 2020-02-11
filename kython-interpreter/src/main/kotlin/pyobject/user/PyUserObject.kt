@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.functions.magic.DefaultBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast

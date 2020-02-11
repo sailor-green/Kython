@@ -15,9 +15,10 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 import green.sailor.kython.interpreter.typeError
 
@@ -44,6 +45,9 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
             return PyTuple(subobjects)
         }
 
+        /**
+         * Vararg alias for [get].
+         */
         fun of(vararg items: PyObject): PyTuple = get(items.toList())
     }
 

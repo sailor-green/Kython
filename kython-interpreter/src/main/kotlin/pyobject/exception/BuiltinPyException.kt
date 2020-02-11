@@ -20,8 +20,8 @@ package green.sailor.kython.interpreter.pyobject.exception
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**

@@ -20,6 +20,9 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyList
+import green.sailor.kython.interpreter.pyobject.collection.PySet
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toNativeList
@@ -99,7 +102,7 @@ fun UserCodeStackFrame.listExtend(arg: Byte) {
  */
 fun UserCodeStackFrame.listToTuple(arg: Byte) {
     val list = stack.pop().cast<PyList>()
-    val tuple = PyTuple.get(list.subobjects)
+    val tuple = PyTuple.get(list.unwrap())
     stack.push(tuple)
     bytecodePointer += 1
 }

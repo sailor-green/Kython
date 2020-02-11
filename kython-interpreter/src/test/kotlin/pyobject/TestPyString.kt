@@ -18,7 +18,7 @@
 package green.sailor.kython.test.pyobject
 
 import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyTuple
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.test.isFalse
 import green.sailor.kython.test.isTrue
 import green.sailor.kython.test.testPrimitive

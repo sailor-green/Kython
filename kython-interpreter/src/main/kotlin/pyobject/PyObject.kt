@@ -20,6 +20,8 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.interpreter.pyobject.collection.PyList
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.util.PyObjectMap
 
@@ -111,7 +113,8 @@ abstract class PyObject {
      */
     open fun pyDir(): PyTuple {
         val sorted = dir()
-        return PyTuple.get(sorted.map { s -> PyString(s) })
+        return PyTuple
+            .get(sorted.map { s -> PyString(s) })
     }
 
     // __getattribute__

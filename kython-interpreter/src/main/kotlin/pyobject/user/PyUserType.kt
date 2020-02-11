@@ -23,8 +23,8 @@ import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.findOnMro
 import green.sailor.kython.interpreter.issubclass
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyTuple
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 
 /**
  * Represents a Python user type, i.e. one created from type(name, bases, dict).
