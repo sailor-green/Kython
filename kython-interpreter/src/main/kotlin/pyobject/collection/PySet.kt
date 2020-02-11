@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.pyobject.types.PySetType
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.util.explode

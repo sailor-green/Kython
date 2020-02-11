@@ -15,7 +15,7 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.types
+package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.annotation.*
 import green.sailor.kython.interpreter.callable.ArgType
@@ -23,7 +23,6 @@ import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.indexError
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.pyobject.collection.PyList
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.cast

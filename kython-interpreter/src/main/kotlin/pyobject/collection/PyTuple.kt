@@ -19,7 +19,6 @@ package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.pyobject.types.PyTupleType
 import green.sailor.kython.interpreter.typeError
 
 /**

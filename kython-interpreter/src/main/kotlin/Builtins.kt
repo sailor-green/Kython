@@ -19,6 +19,8 @@ package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.*
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyListType
+import green.sailor.kython.interpreter.pyobject.collection.PyTupleType
 import green.sailor.kython.interpreter.pyobject.dict.PyDictType
 import green.sailor.kython.interpreter.pyobject.function.PyClassmethod
 import green.sailor.kython.interpreter.pyobject.function.PyStaticmethod

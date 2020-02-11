@@ -15,28 +15,27 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.types
+package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.pyobject.collection.PySet
 import green.sailor.kython.interpreter.toNativeList
 
 /**
- * Represents the type of a set.
+ * Represents the type of a tuple (the `tuple` builtin).
  */
-object PySetType : PyType("set") {
+object PyTupleType : PyType("tuple") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
         val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
         val items = iterator.toNativeList()
-        val set = LinkedHashSet(items)
-        return PySet(set)
+        return PyTuple.get(items)
     }
 
-    override val signature: PyCallableSignature =
+    override val signature: PyCallableSignature by lazy {
         PyCallableSignature(
             "x" to ArgType.POSITIONAL
         )
+    }
 }
