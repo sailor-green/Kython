@@ -77,7 +77,9 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
      *
      * @param kwargs: The arguments that were called for this object.
      */
-    abstract fun newInstance(kwargs: Map<String, PyObject>): PyObject
+    open fun newInstance(kwargs: Map<String, PyObject>): PyObject {
+        typeError("Cannot create new instances of '$name'")
+    }
 
     override val signature: PyCallableSignature by lazy {
         PyCallableSignature(
