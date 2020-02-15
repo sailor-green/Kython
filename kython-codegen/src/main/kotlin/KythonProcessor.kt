@@ -79,14 +79,14 @@ class KythonProcessor : AbstractProcessor() {
         val methodTargets = roundEnv.getElementsAnnotatedWith(GenerateMethods::class.java)
         val info = methodTargets
             .filterIsInstance<TypeElement>()
-            .flatMap { generateMethodWrappers(it) }
+            .flatMap { generateMethodWrappers(processingEnv, it) }
 
         info.forEach { builder.addType(it.builtClass) }
 
         val slotTargets = roundEnv.getElementsAnnotatedWith(Slotted::class.java)
         val slotGen = slotTargets
             .filterIsInstance<TypeElement>()
-            .map { generateSlotWrappers(it) }
+            .map { generateSlotWrappers(processingEnv, it) }
 
         for (info in slotGen) {
             info.methodWrappers.forEach { builder.addType(it.builtClass) }

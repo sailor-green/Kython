@@ -27,6 +27,7 @@ import com.squareup.kotlinpoet.metadata.toImmutableKmClass
 import green.sailor.kython.annotation.ExposeMethod
 import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.generation.*
+import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeKind
@@ -204,25 +205,49 @@ fun generateDictSetter(info: MethodWrapperInfo): CodeBlock {
  * Generates method wrappers for the specified target.
  */
 @KotlinPoetMetadataPreview
-fun generateMethodWrappers(target: TypeElement): List<MethodWrapperInfo> {
+fun generateMethodWrappers(
+    env: ProcessingEnvironment,
+    target: TypeElement
+): List<MethodWrapperInfo> {
+    val kmClass = target.toImmutableKmClass()
     // needed to get the annotations out
     // metadata is "safe" but we still need to use this
     val functions = target.enclosedElements
         .filterIsInstance<ExecutableElement>()
-        .associateBy { it.simpleName.toString() }
+        .associateByTo(mutableMapOf()) { it.simpleName.toString() }
 
-    val x = target.toImmutableKmClass()
-    val className = x.name.substringAfterLast("/")
+    val annoFunctions: MutableList<ImmutableKmFunction> =
+        kmClass.functions.toMutableList()
+
+    val typeUtils = env.typeUtils
+
+    var superclass = typeUtils.asElement(target.superclass) as? TypeElement
+    while (superclass != null) {
+        // only get classes w/ metadata annos
+        if (superclass.getAnnotation(Metadata::class.java) == null) {
+            break
+        }
+
+        val superfunctions = superclass.enclosedElements
+            .filterIsInstance<ExecutableElement>()
+            .associateByTo(mutableMapOf()) { it.simpleName.toString() }
+        val superAnnoFunctions = superclass.toImmutableKmClass().functions
+
+        functions.putAll(superfunctions)
+        annoFunctions.addAll(superAnnoFunctions)
+        superclass = typeUtils.asElement(superclass.superclass) as? TypeElement
+    }
+    val className = kmClass.name.substringAfterLast("/")
 
     val wrappers = mutableListOf<MethodWrapperInfo>()
-    for (fn in x.functions) {
+    for (fn in annoFunctions) {
         val executableElement = functions[fn.name] ?: error("???")
         // find the associated ExposeMethod annotation
         val anno = executableElement.getAnnotation(ExposeMethod::class.java) ?: continue
         val params = executableElement.getAnnotation(MethodParams::class.java)
-        val spec = getTypeSpec(Pair(target, x), anno, params, fn)
+        val spec = getTypeSpec(Pair(target, kmClass), anno, params, fn)
         val mangledName = "kython-generated-wrapper\$${className}_${fn.name}"
-        val info = MethodWrapperInfo(x, spec, mangledName, anno.name)
+        val info = MethodWrapperInfo(kmClass, spec, mangledName, anno.name)
         wrappers.add(info)
     }
     return wrappers

@@ -24,6 +24,7 @@ import green.sailor.kython.annotation.Slotted
 import green.sailor.kython.generation.*
 import green.sailor.kython.generation.extensions.error
 import green.sailor.kython.generation.extensions.messager
+import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.TypeElement
 import kotlinx.metadata.KmClassifier
 
@@ -58,9 +59,9 @@ val IS_14 = KotlinVersion.CURRENT.isAtLeast(1, 4)
  *  3) A list of method wrappers
  */
 @KotlinPoetMetadataPreview
-fun generateSlotWrappers(element: TypeElement): SlotWrapperInfo {
+fun generateSlotWrappers(env: ProcessingEnvironment, element: TypeElement): SlotWrapperInfo {
     // first, just generate all the required method wrappers
-    val wrappers = generateMethodWrappers(element)
+    val wrappers = generateMethodWrappers(env, element)
     val wrapperMapping = wrappers.associateBy({ it.methodName }, { it.builtClass })
     val dirs = mutableListOf<String>()
 
