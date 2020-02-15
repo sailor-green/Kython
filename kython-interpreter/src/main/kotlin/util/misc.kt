@@ -15,25 +15,16 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.dict
+package green.sailor.kython.interpreter.util
 
-import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyType
-import green.sailor.kython.interpreter.pyobject.collection.PySet
-import green.sailor.kython.interpreter.typeError
+import org.apache.commons.collections4.set.MapBackedSet
 
 /**
- * Represents a view of a [PyDict]'s keys.
+ * Creates a new [MapBackedSet] backed by a [PyObjectMap] for correct hashing.
  */
-class PyDictKeys(map: MutableMap<PyObject, PyObject>) : PySet(map.keys, frozen = true) {
-    object PyDictKeysType : PyType("dict_keys") {
-        override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-            typeError("Cannot create new instances of this class")
-        }
-    }
-
-    override var type: PyType
-        get() = PyDictKeysType
-        set(_) = Exceptions.invalidClassSet(this)
+fun mapBackedSet(): MapBackedSet<PyObject, PyNone> {
+    val map = PyObjectMap()
+    return MapBackedSet.mapBackedSet(map)
 }

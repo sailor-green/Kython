@@ -17,25 +17,24 @@
 
 package green.sailor.kython.interpreter.pyobject.collection
 
-import green.sailor.kython.annotation.GenerateMethods
-import green.sailor.kython.interpreter.callable.ArgType
-import green.sailor.kython.interpreter.callable.PyCallableSignature
+import green.sailor.kython.annotation.ExposeMethod
+import green.sailor.kython.annotation.MethodParam
+import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.toNativeList
+import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.util.cast
 
 /**
- * Represents the type of a mutable set.
+ * Represents the base type for a set object.
  */
-@GenerateMethods
-object PySetType : PyBaseSetType("set") {
-    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
-        val items = iterator.toNativeList()
-        return PySet.of(items)
+abstract class PyBaseSetType(name: String) : PyType(name) {
+    /** set.copy() */
+    @ExposeMethod("copy")
+    @MethodParams(
+        MethodParam("self", "POSITIONAL")
+    )
+    open fun pySetCopy(kwargs: Map<String, PyObject>): PySet {
+        val self = kwargs["self"].cast<PySet>()
+        return self.copy()
     }
-
-    override val signature: PyCallableSignature =
-        PyCallableSignature(
-            "x" to ArgType.POSITIONAL
-        )
 }

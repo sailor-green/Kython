@@ -45,6 +45,13 @@ class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subo
         }
 
         /**
+         * Gets a new [PyTuple] from a pair.
+         */
+        fun getPair(pair: Pair<PyObject, PyObject>): PyTuple {
+            return get(listOf(pair.first, pair.second))
+        }
+
+        /**
          * Vararg alias for [get].
          */
         fun of(vararg items: PyObject): PyTuple = get(items.toList())

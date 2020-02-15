@@ -18,24 +18,6 @@
 package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.annotation.GenerateMethods
-import green.sailor.kython.interpreter.callable.ArgType
-import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.toNativeList
 
-/**
- * Represents the type of a mutable set.
- */
 @GenerateMethods
-object PySetType : PyBaseSetType("set") {
-    override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val iterator = kwargs["x"]?.pyIter() ?: error("Built-ih signature mismatch!")
-        val items = iterator.toNativeList()
-        return PySet.of(items)
-    }
-
-    override val signature: PyCallableSignature =
-        PyCallableSignature(
-            "x" to ArgType.POSITIONAL
-        )
-}
+object PyFrozenSetType : PyBaseSetType("frozen_set")

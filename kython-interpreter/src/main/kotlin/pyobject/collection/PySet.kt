@@ -18,23 +18,42 @@
 package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.PyInt
-import green.sailor.kython.interpreter.pyobject.PyObject
-import green.sailor.kython.interpreter.pyobject.PyString
-import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.toNativeList
-import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.interpreter.util.PyObjectMap
 import green.sailor.kython.util.explode
+import org.apache.commons.collections4.set.MapBackedSet
 
 /**
  * Represents a Python set.
  */
-open class PySet(wrappedSet: MutableSet<PyObject>) : PyCollection(wrappedSet) {
+open class PySet internal constructor(
+    wrappedSet: MutableSet<PyObject>,
+    val frozen: Boolean
+) : PyCollection(wrappedSet) {
+    companion object {
+        /**
+         * Creates a new [PySet] of the specified collection.
+         *
+         * This copies all of the items in the collection.
+         */
+        @JvmOverloads
+        fun of(items: Collection<PyObject>, frozen: Boolean = false): PySet {
+            val set = MapBackedSet.mapBackedSet(PyObjectMap(), PyNone)
+            set.addAll(items)
+            return PySet(set, frozen)
+        }
+
+        /**
+         * Creates a new [PySet] from the [MapBackedSet] object specified.
+         */
+        @JvmOverloads
+        fun of(set: MapBackedSet<PyObject, *>, frozen: Boolean = false): PySet =
+            PySet(set, frozen)
+    }
+
     val wrappedSet: MutableSet<PyObject> get() = subobjects as MutableSet<PyObject>
-
-    override fun unwrap(): Set<PyObject> = wrappedSet
-
-    override fun pyHash(): PyInt = typeError("sets are not hashable - they are mutable")
+    override fun unwrap(): MutableSet<PyObject> = wrappedSet
 
     override fun pyToStr(): PyString = PyString(
         "{" + wrappedSet.joinToString(", ") { it.pyGetRepr().wrappedString } + "}"
@@ -48,6 +67,8 @@ open class PySet(wrappedSet: MutableSet<PyObject>) : PyCollection(wrappedSet) {
      * Implements set updating from another iterable object.
      */
     fun update(other: PyObject) {
+        if (frozen) error("This set is frozen")
+
         when (other) {
             is PySet -> wrappedSet.addAll(other.wrappedSet)
             is PyContainer -> wrappedSet.addAll(other.subobjects)
@@ -58,7 +79,16 @@ open class PySet(wrappedSet: MutableSet<PyObject>) : PyCollection(wrappedSet) {
         }
     }
 
+    /**
+     * Copies this PySet.
+     */
+    fun copy(): PySet {
+        return of(unwrap(), frozen)
+    }
+
     override var type: PyType
-        get() = PySetType
+        get() =
+            if (frozen) PySetType
+            else PyFrozenSetType
         set(_) = Exceptions.invalidClassSet(this)
 }

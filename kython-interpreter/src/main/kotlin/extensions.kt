@@ -37,12 +37,12 @@ import green.sailor.kython.kyc.*
 fun BaseKycType.unwrap(): PyObject =
     when (this) {
         KycNone -> PyNone
-        is KycList -> PyList(wrapped.mapTo(mutableListOf()) { it.unwrap() })
-        is KycTuple -> PyTuple.get(wrapped.map { it.unwrap() })
+        is KycList -> PyList(wrapped.mapTo(ArrayList(wrapped.size)) { it.unwrap() })
+        is KycTuple -> PyTuple.get(wrapped.mapTo(ArrayList(wrapped.size)) { it.unwrap() })
         is KycDict -> PyDict.from(
             wrapped.entries.associateByTo(PyObjectMap(), { it.key.unwrap() }, { it.value.unwrap() })
         )
-        is KycSet -> PySet(wrapped.mapTo(mutableSetOf()) { it.unwrap() })
+        is KycSet -> PySet.of(wrapped.map { it.unwrap() })
         is KycCodeObject -> PyCodeObject(KyCodeObject(this))
         else -> PyObject.wrapPrimitive(this.wrapped)
     }

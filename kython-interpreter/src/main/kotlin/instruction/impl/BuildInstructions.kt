@@ -28,6 +28,7 @@ import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.PyObjectMap
 import green.sailor.kython.interpreter.util.cast
+import green.sailor.kython.interpreter.util.mapBackedSet
 
 /**
  * BUILD_CONST_KEY_MAP
@@ -62,9 +63,7 @@ fun UserCodeStackFrame.buildSimple(type: BuildType, arg: Byte) {
             PyString(concatString)
         }
         BuildType.SET -> {
-            PySet(
-                LinkedHashSet((0 until count).map { stack.pop() }.reversed())
-            )
+            PySet.of((0 until count).map { stack.pop() }.reversed())
         }
         BuildType.DICT -> {
             val items = (0 until count * 2)
@@ -139,8 +138,8 @@ fun UserCodeStackFrame.buildUnpack(type: BuildType, arg: Byte) {
         BuildType.SET -> {
             val items = (0 until count)
                 .map { stack.pop() }.asReversed()
-                .flatMapTo(mutableSetOf()) { it.pyIter().toNativeList() }
-            PySet(items)
+                .flatMapTo(mapBackedSet()) { it.pyIter().toNativeList() }
+            PySet.of(items)
         }
         else -> TODO("Unimplemented build type $type")
     }
