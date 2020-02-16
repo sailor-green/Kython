@@ -122,7 +122,7 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
             if (!rethrow) e.printStackTrace(System.err)
             System.err.println("\nKython stack (most recent frame first):")
 
-            val stacks = StackFrame.flatten(rootStackFrame).reversed()
+            val stacks = frameStack.toList()
             for ((idx, frame) in stacks.withIndex()) {
                 System.err.println("Frame $idx:")
                 with(frame.createStackFrameInfo()) {
