@@ -141,6 +141,12 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
                             System.err.println("Function stack is empty")
                         }
                     }
+                    locals.let {
+                        System.err.println("Local variables:")
+                        for ((name, value) in locals.entries) {
+                            System.err.println("    - $name -> $value")
+                        }
+                    }
                 }
                 // newline
                 System.err.println()
