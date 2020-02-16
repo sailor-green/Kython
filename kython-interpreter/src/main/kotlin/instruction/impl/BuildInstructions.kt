@@ -19,13 +19,13 @@
 @file:JvmMultifileClass
 package green.sailor.kython.interpreter.instruction.impl
 
+import green.sailor.kython.interpreter.*
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.collection.PyList
 import green.sailor.kython.interpreter.pyobject.collection.PySet
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
-import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.PyObjectMap
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.interpreter.util.mapBackedSet
@@ -183,4 +183,45 @@ fun UserCodeStackFrame.mapAdd(param: Byte) {
     val dict = stack[stack.size - param.toInt()]
     if (dict !is PyDict) error("Cannot MAP_ADD on non-dict $dict")
     dict.items[name] = toAdd
+}
+
+/**
+ * UNPACK_SEQUENCE
+ */
+fun UserCodeStackFrame.unpackSequence(param: Byte) {
+    val from_ = stack.pop()
+    val iterator = from_.pyIter()
+    val count = param.toInt()
+
+    // todo: we could get around this by just putting onto the stack offset instead...
+    val toPush = arrayOfNulls<PyObject>(count)
+
+    // weird instruction...
+    var popped = 0
+    while (true) {
+        val next = try {
+            iterator.pyNext()
+        } catch (e: KyError) {
+            e.ensure(Exceptions.STOP_ITERATION)
+            // if StopIteration was raised before we had enough items, it's an error
+            if (popped != count) {
+                valueError("Iterator has not enough items " +
+                    "(expected to unpack $count items, got $popped items)")
+            }
+            break
+        }
+        popped += 1
+
+        // this will only happen if the iterator does not raise a StopIteration
+        // we have popped too many items off, so we raise an error
+        if (popped > count) {
+            valueError("Iterable has too many items (expected to unpack $count items)")
+        }
+
+        System.err.println("Pushing $next onto the stack")
+        toPush[count - popped] = next
+    }
+    toPush.forEach { stack.push(it!!) }
+
+    bytecodePointer += 1
 }
