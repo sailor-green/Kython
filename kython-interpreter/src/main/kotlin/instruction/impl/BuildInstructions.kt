@@ -218,7 +218,6 @@ fun UserCodeStackFrame.unpackSequence(param: Byte) {
             valueError("Iterable has too many items (expected to unpack $count items)")
         }
 
-        System.err.println("Pushing $next onto the stack")
         toPush[count - popped] = next
     }
     toPush.forEach { stack.push(it!!) }
