@@ -27,6 +27,7 @@ import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.typeError
+import green.sailor.kython.interpreter.typeName
 
 class IsinstanceBuiltinFunction : PyBuiltinFunction("isinstance") {
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
@@ -39,7 +40,7 @@ class IsinstanceBuiltinFunction : PyBuiltinFunction("isinstance") {
             is PyTuple -> ofType.subobjects
                 .map { it as? PyType ?: typeError("Tuple must be only types") }
                 .toSet()
-            else -> typeError("of_type must be a type or a tuple of types")
+            else -> typeError("of_type must be a type or a tuple of types, not ${ofType.typeName}")
         }
         return PyBool.get(obb.isinstance(toCheckSet))
     }
