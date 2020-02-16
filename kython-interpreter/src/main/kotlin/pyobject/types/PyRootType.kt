@@ -38,8 +38,8 @@ object PyRootType : PyType("type") {
 
         return when {
             second === PyNone && third === PyNone -> {
-                // lol
-                return PyString(first.type.name)
+                // WHY WAS THIS EVER TYPE.NAME
+                return first.type
             }
             else -> {
                 val name = first.cast<PyString>()
