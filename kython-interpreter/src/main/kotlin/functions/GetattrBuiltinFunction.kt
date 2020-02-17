@@ -40,7 +40,7 @@ class GetattrBuiltinFunction : PyBuiltinFunction("getattr") {
         val default = kwargs["default"].cast<PyObject>()
 
         return try {
-            obb.pyGetAttribute(name)
+            obb.pyGetAttribute(attr)
         } catch (e: KyError) {
             e.ensure(Exceptions.ATTRIBUTE_ERROR)
             if (default === DEFAULT_SENTINEL) {
