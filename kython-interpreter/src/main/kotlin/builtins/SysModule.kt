@@ -25,10 +25,13 @@ import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.collection.PyList
+import green.sailor.kython.interpreter.pyobject.collection.PySet
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
+import green.sailor.kython.interpreter.toPyObject
 import green.sailor.kython.interpreter.util.StringDictWrapper
+import green.sailor.kython.interpreter.util.mapBackedSet
 
 /**
  * Represents the sys built-in module.
@@ -43,6 +46,11 @@ object SysModule : PyBuiltinModule("sys") {
     var modules = PyDict.unsafeFromUnVerifiedMap(
         StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
     )
+
+    // TODO keep these updates
+    val builtin_module_names = PySet.of(listOf(
+        "sys", "_imp", "_io"
+    ).mapTo(mapBackedSet()) { it.toPyObject() }, frozen = true)
 
     @ExposeMethod("getswitchinterval")
     fun getSwitchInterval(args: Map<String, PyObject>): PyFloat = PyFloat(0.0)
