@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
-import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents a builtin exception instance.

@@ -22,7 +22,6 @@ import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.issubclass
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.exception.PyException
-import green.sailor.kython.interpreter.stack.StackFrame
 import green.sailor.kython.interpreter.typeError
 
 class PyUserException(type: PyUserType) : PyUserObject(type), PyException {

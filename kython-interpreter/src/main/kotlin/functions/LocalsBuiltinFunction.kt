@@ -24,6 +24,8 @@ import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
+import green.sailor.kython.interpreter.systemError
+import green.sailor.kython.interpreter.util.thisThread
 
 /**
  * The implementation for the locals() function. Returns a PyDict wrapping the locals.
@@ -32,8 +34,8 @@ class LocalsBuiltinFunction : PyBuiltinFunction("locals") {
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-        val frame = KythonInterpreter.getCurrentFrameForThisThread().parentFrame
-            ?: error("Parent frame was null!")
+        val frame = KythonInterpreter.thisThread.frameStack.caller ?:
+            systemError("Parent frame was null - was locals() called from an empty thread?")
         if (frame !is UserCodeStackFrame) {
             Exceptions.RUNTIME_ERROR("Built-in frames do not have locals").throwKy()
         }

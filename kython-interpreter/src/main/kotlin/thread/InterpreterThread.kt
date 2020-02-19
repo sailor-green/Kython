@@ -21,6 +21,7 @@ import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
+import green.sailor.kython.interpreter.util.FrameStack
 import java.util.*
 import org.apiguardian.api.API
 
@@ -30,10 +31,10 @@ import org.apiguardian.api.API
 @Suppress("MemberVisibilityCanBePrivate")
 abstract class InterpreterThread(val rootStackFrame: StackFrame) {
     /** The frame stack for this thread. */
-    open val frameStack = ArrayDeque<StackFrame>(10)
+    open val frameStack = FrameStack()
 
     /** The top-most stack frame. */
-    open val currentStackFrame: StackFrame? get() = frameStack.peekLast()
+    open val currentStackFrame: StackFrame? get() = frameStack.current
 
     /**
      * Pushes a stack frame onto the list of stack frames.
@@ -44,9 +45,6 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
             System.err.println("=== Pushing frame: ${info.name} / ${frame.state} ===")
         }
 
-        frame.parentFrame = currentStackFrame
-        // can be null if this is the root frame
-        currentStackFrame?.childFrame = frame
         frameStack.push(frame)
     }
 
@@ -55,9 +53,6 @@ abstract class InterpreterThread(val rootStackFrame: StackFrame) {
      */
     open fun popFrame(): StackFrame {
         val topFrame = frameStack.pop()
-        topFrame.parentFrame = null
-        // can be null if this was the root frame
-        currentStackFrame?.childFrame = null
         if (KythonInterpreter.config.debugMode) {
             val info = topFrame.createStackFrameInfo()
             System.err.println("=== Popped frame: ${info.name} / ${topFrame.state} ===")

@@ -24,23 +24,6 @@ import java.util.*
  * Base class for a stack frame. This can either be an abstract class stack frame, or a
  */
 abstract class StackFrame {
-    companion object {
-        /**
-         * Flattens the list of stack frames down.
-         *
-         * @param root: The root stack frame to flatten all the children to.
-         */
-        fun flatten(root: StackFrame): List<StackFrame> {
-            val frames = mutableListOf(root)
-            while (true) {
-                val child = frames.last().childFrame ?: break
-                frames.add(child)
-            }
-
-            return frames
-        }
-    }
-
     /**
      * The enum of states a running frame can be in.
      */
@@ -77,16 +60,6 @@ abstract class StackFrame {
          */
         ERRORED(false)
     }
-
-    /**
-     * The child frame for this stack frame, if any.
-     */
-    var childFrame: StackFrame? = null
-
-    /**
-     * The parent frame for this stack frame, if any.
-     */
-    var parentFrame: StackFrame? = null
 
     /**
      * The [FrameState] this stack frame is in.
