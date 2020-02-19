@@ -35,7 +35,7 @@ open class BuiltinPyException(
      * The list of exception frames this stack frame has travelled down.
      */
     override val exceptionFrames =
-        StackFrame.flatten(KythonInterpreter.getRootFrameForThisThread())
+        KythonInterpreter.interpreterThreadLocal.get().frameStack.map { it }
 
     override val args = args.unwrap()
 
