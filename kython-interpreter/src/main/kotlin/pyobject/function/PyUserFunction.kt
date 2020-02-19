@@ -133,6 +133,8 @@ class PyUserFunction(
             frame.setupLocals(transformed)
             return PyGenerator(frame)
         }
+
+        // normal path
         return super.pyCall(args, kwargTuple)
     }
 

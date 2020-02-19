@@ -15,7 +15,6 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-@file:JvmName("Evaluator")
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.*
