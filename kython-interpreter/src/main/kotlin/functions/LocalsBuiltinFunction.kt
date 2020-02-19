@@ -34,8 +34,8 @@ class LocalsBuiltinFunction : PyBuiltinFunction("locals") {
     override val signature: PyCallableSignature = PyCallableSignature.EMPTY
 
     override fun callFunction(kwargs: Map<String, PyObject>): PyObject {
-        val frame = KythonInterpreter.thisThread.frameStack.caller ?:
-            systemError("Parent frame was null - was locals() called from an empty thread?")
+        val frame = KythonInterpreter.thisThread.frameStack.caller
+            ?: systemError("Parent frame was null - was locals() called from an empty thread?")
         if (frame !is UserCodeStackFrame) {
             Exceptions.RUNTIME_ERROR("Built-in frames do not have locals").throwKy()
         }
