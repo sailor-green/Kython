@@ -135,10 +135,6 @@ class PyUserFunction(
     /** The closure for this function. */
     val closure = builder.closure.copyOf()
 
-    // used for
-    val defaultMap = builder.defaultsMap
-    val defaultList = builder.positionalDefaults
-
     /**
      * The PyCodeObject for this function.
      * Used to expose the code object to Python land.
@@ -208,7 +204,7 @@ class PyUserFunction(
     /**
      * Generates a [PyCallableSignature] for this function.
      */
-    fun generateSignature(): PyCallableSignature {
+    override val signature: PyCallableSignature = run {
         // ref: inspect._signature_from_function
         // varnames starting format: args, args with defaults, *args, kwonly, **kwargs
 
@@ -239,9 +235,21 @@ class PyUserFunction(
         }
 
         val sig = PyCallableSignature(*args.toTypedArray())
-        sig.defaults.putAll(defaultMap)
-        return sig
-    }
 
-    override val signature: PyCallableSignature by lazy { generateSignature() }
+        // calculate defaults
+        val defaults = mutableMapOf<String, PyObject>()
+        defaults.putAll(builder.defaultsMap)
+        val defaultList = builder.positionalDefaults
+        if (defaultList.isNotEmpty()) {
+            // starting offset for positional defaults
+            val offset = code.argCount - defaultList.size
+            for (item in offset until code.argCount) {
+                val pair = sig.args[offset]
+                defaults[pair.first] = defaultList[item - offset]
+            }
+        }
+
+        sig.loadDefaults(defaults)
+        sig
+    }
 }

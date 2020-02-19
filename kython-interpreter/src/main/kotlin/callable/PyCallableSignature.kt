@@ -60,6 +60,13 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
     val defaults = mutableMapOf<String, PyObject>()
 
     /**
+     * Loads defaults from a map of default values.
+     */
+    fun loadDefaults(from: Map<String, PyObject>) {
+        defaults.putAll(from)
+    }
+
+    /**
      * Applies defaults for this signature.
      */
     fun withDefaults(vararg defaults: Pair<String, PyObject>): PyCallableSignature {
