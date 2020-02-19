@@ -60,28 +60,27 @@ fun UserCodeStackFrame.makeFunction(arg: Byte) {
 
     val code = stack.pop()
     require(code is PyCodeObject) { "Function code was not a code object!" }
-    val freevarTuple = if (flags and FunctionFlags.FREEVARS != 0) {
-        stack.pop().cast<PyTuple>().subobjects.map { it.cast<PyCellObject>() }
-    } else {
-        listOf()
+
+    val builder = PyUserFunction.Builder(code.wrappedCodeObject)
+
+    if (flags and FunctionFlags.FREEVARS != 0) {
+        val tup = stack.pop().cast<PyTuple>()
+        builder.closure(tup)
     }
 
     if (flags and FunctionFlags.ANNOTATIONS != 0) {
         val annotationDict = stack.pop()
     }
-    val defaults = if (flags and FunctionFlags.KEYWORD_DEFAULT != 0) {
-        val kwOnlyParamDefaultDict = stack.pop().cast<PyDict>()
-        val newKeys =
-            kwOnlyParamDefaultDict.items.mapKeys { it.key.cast<PyString>().wrappedString }
-        newKeys
-    } else { mapOf() }
 
-    val defaultsTuple = if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
-        stack.pop().cast<PyTuple>().unwrap()
-    } else {
-        listOf()
+    if (flags and FunctionFlags.KEYWORD_DEFAULT != 0) {
+        builder.keywordDefaults(stack.pop().cast())
     }
-    val function = PyUserFunction(code.wrappedCodeObject, defaults, defaultsTuple, freevarTuple)
+
+    if (flags and FunctionFlags.POSITIONAL_DEFAULT != 0) {
+        builder.positionalDefaults(stack.pop().cast())
+    }
+
+    val function = builder.build()
     function.module = this.function.module
     stack.push(function)
     bytecodePointer += 1

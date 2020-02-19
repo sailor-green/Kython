@@ -75,7 +75,7 @@ object JarFileModuleLoader {
             ?: error("Could not find resource $kycName")
 
         val file = UnKyc.parseKycFile(kycPath)
-        val moduleFunction = PyUserFunction(KyCodeObject(file.code))
+        val moduleFunction = PyUserFunction.ofCode(KyCodeObject(file.code))
         val sourcePath = javaClass.classLoader.getResource(sourceName)
             ?.toURI()?.let { Paths.get(it) } ?: error("Could not find resource $kycName")
 

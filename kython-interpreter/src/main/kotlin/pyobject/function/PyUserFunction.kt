@@ -26,6 +26,8 @@ import green.sailor.kython.interpreter.instruction.Instruction
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
 import green.sailor.kython.interpreter.kyobject.KyUserModule
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.collection.PyTuple
+import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.generator.PyGenerator
 import green.sailor.kython.interpreter.pyobject.internal.PyCellObject
 import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
@@ -37,21 +39,27 @@ import green.sailor.kython.interpreter.typeError
 /**
  * Represents a Python function object.
  *
- * @param codeObject: The marshalled code object to transform into a real code object.
+
  */
 class PyUserFunction(
-    codeObject: KyCodeObject,
-    val defaults: Map<String, PyObject> = mapOf(),
-    val defaultsTuple: List<PyObject> = listOf(),
-    closure: List<PyCellObject>? = null
-) : PyFunction(codeObject.codename) {
+    builder: Builder
+) : PyFunction(builder.codeObject.codename) {
+    companion object {
+        /**
+         * Creates a function from the specified code object.
+         */
+        fun ofCode(code: KyCodeObject): PyUserFunction {
+            return Builder(code).build()
+        }
+    }
+
     object PyUserFunctionType : PyType("function") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val code = kwargs["code"] ?: error("Built-in signature mismatch")
             if (code !is PyCodeObject) {
                 typeError("Arg 'code' is not a code object")
             }
-            return PyUserFunction(code.wrappedCodeObject)
+            return PyUserFunction(Builder(code.wrappedCodeObject))
         }
 
         override val signature: PyCallableSignature by lazy {
@@ -62,8 +70,61 @@ class PyUserFunction(
         }
     }
 
+    /**
+     * Function builder.
+     *
+     * @param codeObject: The raw code object to build with.
+     */
+    class Builder(val codeObject: KyCodeObject) {
+        /**
+         * The KEYWORD_DEFAULTS map.
+         */
+        var defaultsMap: Map<String, PyObject> = mapOf()
+
+        /**
+         * THE POSITIONAL_DEFAULTS map.
+         */
+        var positionalDefaults: List<PyObject> = listOf()
+
+        /**
+         * The list of cells for this function.
+         */
+        var closure: Array<PyCellObject> = emptyArray()
+
+        /**
+         * Sets the keyword defaults for this builder from a PyDict.
+         */
+        fun keywordDefaults(dict: PyDict) {
+            defaultsMap = dict.items.mapKeys {
+                (it.key as? PyString)?.wrappedString
+                    ?: error("Keyword defaults dict was not a dict")
+            }
+        }
+
+        /**
+         * Sets the positional defaults for this builder from a PyTuple.
+         */
+        fun positionalDefaults(items: PyTuple) {
+            positionalDefaults = items.unwrap()
+        }
+
+        /**
+         * Sets the closure for this builder from a PyTuple.
+         */
+        fun closure(items: PyTuple) {
+            closure = items.subobjects.map {
+                it as? PyCellObject ?: error("Object $it was not a cell")
+            }.toTypedArray()
+        }
+
+        /**
+         * Builds the function.
+         */
+        fun build(): PyUserFunction = PyUserFunction(this)
+    }
+
     /** The code object for this function. */
-    val code = codeObject
+    val code = builder.codeObject
 
     /** If this function is a generator. Alias for code.flags.isGenerator */
     val isGenerator: Boolean get() = code.flags.isGenerator
@@ -72,9 +133,11 @@ class PyUserFunction(
     val isAsync: Boolean get() = code.flags.isAsync
 
     /** The closure for this function. */
-    val closure = closure?.let {
-        Array(closure.size) { closure[it] }
-    } ?: emptyArray()
+    val closure = builder.closure.copyOf()
+
+    // used for
+    val defaultMap = builder.defaultsMap
+    val defaultList = builder.positionalDefaults
 
     /**
      * The PyCodeObject for this function.
@@ -176,7 +239,7 @@ class PyUserFunction(
         }
 
         val sig = PyCallableSignature(*args.toTypedArray())
-        sig.defaults.putAll(defaults)
+        sig.defaults.putAll(defaultMap)
         return sig
     }
 

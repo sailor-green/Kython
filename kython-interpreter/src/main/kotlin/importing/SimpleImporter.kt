@@ -66,7 +66,7 @@ class SimpleImporter : Importer {
         } catch (e: FileNotFoundException) {
             Exceptions.MODULE_NOT_FOUND_ERROR(resolvedPath.toString()).throwKy()
         }
-        val moduleFn = PyUserFunction(compiled)
+        val moduleFn = PyUserFunction.ofCode(compiled)
         val module = KythonInterpreter.buildModule(moduleFn, resolvedPath)
         val userModule = PyUserModule(module, name)
         KythonInterpreter.modules[name] = userModule

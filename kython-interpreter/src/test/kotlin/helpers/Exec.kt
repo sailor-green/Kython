@@ -35,7 +35,7 @@ import green.sailor.kython.interpreter.thread.MainInterpreterThread
 fun KythonInterpreter.testExecInternal(code: String, withErrorLogs: Boolean): PyObject {
     config.debugMode = withErrorLogs
     val compiled = Compiler.CURRENT.compileFromString(code, "<test>")
-    val fn = PyUserFunction(KyCodeObject(compiled.code))
+    val fn = PyUserFunction.ofCode(KyCodeObject(compiled.code))
     val module = KyUserModule(fn, "<test>", code.split(System.lineSeparator()))
     val frame = fn.createFrame()
     if (frame !is UserCodeStackFrame) {

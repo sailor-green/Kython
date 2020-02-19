@@ -148,7 +148,7 @@ object KythonInterpreter {
         val compiled = Compiler.compile(path)
         val fn = KyCodeObject(compiled.code)
 
-        val rootFunction = PyUserFunction(fn)
+        val rootFunction = PyUserFunction.ofCode(fn)
         val module = KyUserModule(rootFunction, path.toString(), Files.readAllLines(path))
         module.attribs["__name__"] = PyString("__main__")
         modules["__main__"] = PyUserModule(module, "__main__")
@@ -163,7 +163,7 @@ object KythonInterpreter {
         val compiled = Compiler.CURRENT.compileFromString(s, "<code>")
         val fn = KyCodeObject(compiled.code)
 
-        val rootFunction = PyUserFunction(fn)
+        val rootFunction = PyUserFunction.ofCode(fn)
         val module = KyUserModule(rootFunction, "<code>", s.split(System.lineSeparator()))
         modules["__main__"] = PyUserModule(module, "__main__")
 
