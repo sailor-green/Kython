@@ -28,7 +28,7 @@ import org.apache.commons.collections4.set.MapBackedSet
  * Represents a Python set.
  */
 open class PySet internal constructor(
-    wrappedSet: MutableSet<PyObject>,
+    wrappedSet: MutableSet<out PyObject>,
     val frozen: Boolean
 ) : PyCollection(wrappedSet) {
     companion object {
@@ -48,7 +48,7 @@ open class PySet internal constructor(
          * Creates a new [PySet] from the [MapBackedSet] object specified.
          */
         @JvmOverloads
-        fun of(set: MapBackedSet<PyObject, *>, frozen: Boolean = false): PySet =
+        fun of(set: MapBackedSet<out PyObject, *>, frozen: Boolean = false): PySet =
             PySet(set, frozen)
     }
 

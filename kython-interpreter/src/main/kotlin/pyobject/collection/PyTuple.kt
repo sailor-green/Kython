@@ -25,7 +25,7 @@ import green.sailor.kython.interpreter.typeError
  * Represents a python tuple of objects. This is a fixed-size immutable container for other PyObject.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class PyTuple private constructor(subobjects: List<PyObject>) : PyContainer(subobjects) {
+class PyTuple private constructor(subobjects: List<out PyObject>) : PyContainer(subobjects) {
     companion object {
         /**
          * Represents the empty tuple.

@@ -39,7 +39,7 @@ object SysModule : PyBuiltinModule("sys") {
     val version: PyString = PyString("3.9.0")
     val platform: PyString = PyString(System.getProperty("os.name").toLowerCase())
     var path: PyList =
-        PyList(defaultPath() as MutableList<PyObject>)
+        PyList(defaultPath())
     var modules = PyDict.unsafeFromUnVerifiedMap(
         StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
     )
@@ -56,6 +56,6 @@ object SysModule : PyBuiltinModule("sys") {
 /**
  * Creates the default path elements.
  */
-fun defaultPath(): MutableList<PyString> {
+fun defaultPath(): MutableList<out PyObject> {
     return listOf("", "classpath:Lib").mapTo(mutableListOf()) { PyString(it) }
 }

@@ -28,7 +28,7 @@ import green.sailor.kython.util.explode
 /**
  * Represents a list type.
  */
-class PyList(subobjects: MutableList<PyObject>) : PyContainer(subobjects) {
+class PyList(subobjects: MutableList<out PyObject>) : PyContainer(subobjects) {
     companion object {
         fun empty() = PyList(mutableListOf())
     }
