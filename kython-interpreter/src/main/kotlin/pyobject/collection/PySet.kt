@@ -30,7 +30,7 @@ import org.apache.commons.collections4.set.MapBackedSet
 open class PySet internal constructor(
     wrappedSet: MutableSet<out PyObject>,
     val frozen: Boolean
-) : PyCollection(wrappedSet) {
+) : PyCollection(wrappedSet), MutableSet<PyObject> by wrappedSet as MutableSet<PyObject> {
     companion object {
         /**
          * Creates a new [PySet] of the specified collection.
