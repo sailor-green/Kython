@@ -36,9 +36,11 @@ import green.sailor.kython.interpreter.util.mapBackedSet
 /**
  * Represents the sys built-in module.
  */
-@Suppress("unused")
+@Suppress("unused", "ObjectPropertyName")
 @Slotted("sys")
 object SysModule : PyBuiltinModule("sys") {
+
+    // == sys object properties == //
     val version: PyString = PyString("3.9.0")
     val platform: PyString = PyString(System.getProperty("os.name").toLowerCase())
     var path: PyList =
@@ -47,11 +49,15 @@ object SysModule : PyBuiltinModule("sys") {
         StringDictWrapper(KythonInterpreter.modules as MutableMap<String, PyObject>)
     )
 
+    val __name__ = PyString("sys")
+
     // TODO keep these updates
     val builtin_module_names = PySet.of(listOf(
         "sys", "_imp", "_io"
     ).mapTo(mapBackedSet()) { it.toPyObject() }, frozen = true)
 
+
+    // == sys object methods == //
     @ExposeMethod("getswitchinterval")
     fun getSwitchInterval(args: Map<String, PyObject>): PyFloat = PyFloat(0.0)
 
