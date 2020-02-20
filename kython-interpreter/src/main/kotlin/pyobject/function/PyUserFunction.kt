@@ -172,7 +172,7 @@ class PyUserFunction(
     }
 
     override fun kyCall(args: List<PyObject>): PyObject {
-        if (code.flags.isGenerator) {
+        if (isGenerator) {
             val sig = kyGetSignature()
             val transformed = sig.argsToKwargs(args)
             val us = this as PyCallable
@@ -184,7 +184,7 @@ class PyUserFunction(
     }
 
     override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
-        if (code.flags.isGenerator) {
+        if (isGenerator) {
             val sig = kyGetSignature()
             val transformed = sig.callFunctionGetArgs(args, kwargTuple)
             val us = this as PyCallable
@@ -244,7 +244,7 @@ class PyUserFunction(
             // starting offset for positional defaults
             val offset = code.argCount - defaultList.size
             for (item in offset until code.argCount) {
-                val pair = sig.args[offset]
+                val pair = sig.args[item]
                 defaults[pair.first] = defaultList[item - offset]
             }
         }

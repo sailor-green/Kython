@@ -68,4 +68,23 @@ class `Test callables` {
         }
         Assertions.assertTrue(error2.pyError.type == Exceptions.TYPE_ERROR)
     }
+
+    @Test
+    fun `Test calling a function with default arguments`() {
+        val first = KythonInterpreter.testExec<PyInt>("""
+            def fn(a, b=1, c=2):
+                return a + b + c
+
+            result = fn(1)
+        """.trimIndent())
+        assertUnwrappedEquals(first, 4L)
+
+        val second = KythonInterpreter.testExec<PyInt>("""
+            def fn(a, b=1, c=2):
+                return a + b + c
+
+            result = fn(1, 3)
+        """.trimIndent())
+        assertUnwrappedEquals(second, 6L)
+    }
 }
