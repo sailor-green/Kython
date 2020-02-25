@@ -98,8 +98,10 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
      * kwargs tuple, and the kwargs tuple itself. If this is just CALL_FUNCTION, then the kwargTuple
      * should be empty. kwargcount should be the co_kwonlyargcount.
      */
-    fun callFunctionGetArgs(passedArgs: List<PyObject>, kwargTuple: List<String> = listOf()):
-        Map<String, PyObject> {
+    fun callFunctionGetArgs(
+        passedArgs: List<PyObject>,
+        kwargTuple: List<String>
+    ): Map<String, PyObject> {
         // if our args is empty, we obviously take zero arguments
         // so we can short-circuit all of this and just make sure the passed arg list is empty
         // (and if it isn't, uh oh!)
@@ -180,9 +182,9 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         // step 5) match up defaults
         if (kwargNames.isNotEmpty()) {
             for (kwarg in kwargNames) {
-                finalArgs[kwarg] =
-                    defaults[kwarg]
+                val default = defaults[kwarg]
                     ?: typeError("Missing required keyword argument: $kwarg")
+                finalArgs[kwarg] = default
             }
         }
 
