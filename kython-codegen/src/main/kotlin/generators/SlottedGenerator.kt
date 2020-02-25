@@ -72,7 +72,13 @@ fun generateSlotWrappers(env: ProcessingEnvironment, element: TypeElement): Slot
 
     // kotlin metadata
     val md = element.toImmutableKmClass()
-    val fields = md.properties.filter { it.isPublic }
+    val fields = md.properties.filter { it.isPublic }.filter {
+        val sig = it.syntheticMethodForAnnotations ?: return@filter true
+        val syn = element.enclosedElements.find { subit -> subit.simpleName.toString() == sig.name }
+            ?: return@filter true
+
+        syn.getAnnotation(Slotted.Ignore::class.java) == null
+    }
     val name = element.simpleName.toString()
 
     // boilerplate; configure the three functions

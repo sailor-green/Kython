@@ -26,4 +26,9 @@ package green.sailor.kython.annotation
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
-annotation class Slotted(val typeName: String)
+annotation class Slotted(val typeName: String) {
+    /**
+     * Marks a field as ignored; it won't be put in the slot listing.
+     */
+    annotation class Ignore
+}
