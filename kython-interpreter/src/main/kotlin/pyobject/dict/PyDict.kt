@@ -35,7 +35,7 @@ class PyDict private constructor(val items: MutableMap<PyObject, PyObject>) : Py
          */
         fun fromAnyMap(map: Map<*, *>): PyDict {
             val newMap = map.entries.associateByTo(
-                PyObjectMap(), { get(it.key) }, { get(it.value) }
+                PyObjectMap(), { PyObject.get(it.key) }, { PyObject.get(it.value) }
             )
 
             return PyDict(newMap)

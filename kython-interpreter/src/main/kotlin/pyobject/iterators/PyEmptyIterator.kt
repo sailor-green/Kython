@@ -20,12 +20,13 @@ package green.sailor.kython.interpreter.pyobject.iterators
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 import green.sailor.kython.interpreter.throwKy
 
 /**
  * Represents an empty builtin iterator object.
  */
-object PyEmptyIterator : PyObject() {
+object PyEmptyIterator : PyUndicted {
     override var type: PyType
         get() = PyBuiltinIterator.PyGenericIteratorType
         set(_) = Exceptions.invalidClassSet(this)

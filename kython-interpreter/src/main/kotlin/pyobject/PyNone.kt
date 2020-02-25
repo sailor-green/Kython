@@ -23,7 +23,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyNoneType
 /**
  * Represents the Python None.
  */
-object PyNone : PyObject() {
+object PyNone : PyUndicted {
 
     private val noneString =
         PyString("None")

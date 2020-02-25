@@ -29,7 +29,7 @@ import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 open class BuiltinPyException(
     private val excType: PyExceptionType,
     args: PyTuple
-) : PyObject(), PyException {
+) : PyObject, PyException {
     /**
      * The list of exception frames this stack frame has travelled down.
      */
@@ -39,7 +39,7 @@ open class BuiltinPyException(
     override val args = args.unwrap()
 
     override val internalDict: MutableMap<String, PyObject> =
-        super.internalDict.apply { put("args", args) }
+        linkedMapOf("args" to args)
 
     override var type: PyType
         get() = excType

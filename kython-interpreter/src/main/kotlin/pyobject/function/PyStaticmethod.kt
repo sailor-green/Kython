@@ -22,12 +22,13 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 import green.sailor.kython.interpreter.util.cast
 
 /**
  * Represents a static method object.
  */
-class PyStaticmethod(val wrapped: PyObject) : PyObject() {
+class PyStaticmethod(val wrapped: PyObject) : PyUndicted {
     object PyStaticmethodType : PyType("staticmethod") {
         override val signature = PyCallableSignature(
             "function" to ArgType.POSITIONAL

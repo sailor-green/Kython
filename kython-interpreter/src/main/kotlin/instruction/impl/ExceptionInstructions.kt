@@ -18,8 +18,8 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.*
-import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 import green.sailor.kython.interpreter.pyobject.exception.PyException
 import green.sailor.kython.interpreter.stack.FinallyBlock
 import green.sailor.kython.interpreter.stack.StackFrame
@@ -28,7 +28,7 @@ import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 /**
  * Represents the NULL object pushed onto the stack by BEGIN_FINALLY.
  */
-val nullFinally = object : PyObject() {
+val nullFinally = object : PyUndicted {
     override var type: PyType
         get() = error("You should never see this")
         set(_) = error("You should never see this")

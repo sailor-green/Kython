@@ -17,12 +17,13 @@
 
 package green.sailor.kython.interpreter.callable
 
+import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.stack.StackFrame
 
 /**
  * Represents a callable, be it a builtin or a regular function.
  */
-interface PyCallable {
+interface PyCallable : PyObject {
     /**
      * Create a runnable stack frame for this callable.
      */

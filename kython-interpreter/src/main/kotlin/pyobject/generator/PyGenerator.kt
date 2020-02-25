@@ -32,7 +32,7 @@ import org.apiguardian.api.API
  * This class is *also* used for coroutines (as Python coroutines are just generators),
  * but with some additional checks.
  */
-class PyGenerator(val frame: UserCodeStackFrame) : PyObject() {
+class PyGenerator(val frame: UserCodeStackFrame) : PyUndicted {
     override var type: PyType
         get() = PyGeneratorType
         set(value) = Exceptions.invalidClassSet(this)

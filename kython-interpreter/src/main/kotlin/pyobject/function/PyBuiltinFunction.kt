@@ -58,6 +58,8 @@ abstract class PyBuiltinFunction(name: String) : PyFunction(name) {
         }
     }
 
+    override val internalDict: MutableMap<String, PyObject> = linkedMapOf()
+
     open val kotlinClassName: String = javaClass.name.split(".").last()
 
     override fun pyToStr(): PyString = PyString("<built-in function $name>")

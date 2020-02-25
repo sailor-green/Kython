@@ -24,11 +24,12 @@ import green.sailor.kython.interpreter.pyobject.collection.PyList
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.util.PyObjectMap
+import java.util.*
 
 /**
  * Represents a Python object. Examples include an int, strings, et cetera, or user-defined objects.
  */
-abstract class PyObject {
+interface PyObject {
     companion object {
         /**
          * Wraps a primitive type into a PyObject.
@@ -57,15 +58,15 @@ abstract class PyObject {
 
     // exposed attribs
     /** The type of this PyObject. */
-    abstract var type: PyType
+    var type: PyType
 
     /** The `__dict__` of this PyObject. */
-    open val internalDict: MutableMap<String, PyObject> = linkedMapOf()
+    val internalDict: MutableMap<String, PyObject>
 
     /**
      * Checks if this type is callable. This will check for [PyCallable], or a valid `__call__`.
      */
-    open fun kyIsCallable(): Boolean {
+    fun kyIsCallable(): Boolean {
         if (this is PyCallable) {
             return true
         }
@@ -75,7 +76,7 @@ abstract class PyObject {
     /**
      * Gets the signature for this type, if callable.
      */
-    open fun kyGetSignature(): PyCallableSignature {
+    fun kyGetSignature(): PyCallableSignature {
         if (this is PyCallable) return signature
         typeError("This object is not callable")
     }
@@ -86,7 +87,7 @@ abstract class PyObject {
      *
      * @param args: The arguments to pass in that will be transformed into keyword arguments.
      */
-    open fun kyCall(
+    fun kyCall(
         args: List<PyObject> = listOf()
     ): PyObject {
         val sig = kyGetSignature()
@@ -102,16 +103,16 @@ abstract class PyObject {
     /**
      * Implements hash(some_object).
      */
-    open fun pyHash(): PyInt {
+    fun pyHash(): PyInt {
         // this should be Object.hashcode()
-        return PyInt(super.hashCode().toLong())
+        return PyInt(Objects.hashCode(this).toLong())
     }
 
     // __dir__
     /**
      * Implements dir(some_object).
      */
-    open fun pyDir(): PyTuple {
+    fun pyDir(): PyTuple {
         val sorted = dir()
         return PyTuple
             .get(sorted.map { s -> PyString(s) })
@@ -121,7 +122,7 @@ abstract class PyObject {
     /**
      * Implements some_object.some_attribute.
      */
-    open fun pyGetAttribute(name: String): PyObject {
+    fun pyGetAttribute(name: String): PyObject {
         return getAttribute(name)
     }
 
@@ -129,7 +130,7 @@ abstract class PyObject {
     /**
      * Implements some_object.some_attribute = other_object.
      */
-    open fun pySetAttribute(name: String, value: PyObject): PyObject {
+    fun pySetAttribute(name: String, value: PyObject): PyObject {
         return setAttribute(name, value)
     }
 
@@ -138,7 +139,7 @@ abstract class PyObject {
     /**
      * Implements some_object() from the bytecode layer.
      */
-    open fun pyCall(
+    fun pyCall(
         args: List<PyObject>,
         kwargTuple: List<String> = listOf()
     ): PyObject {
@@ -153,44 +154,44 @@ abstract class PyObject {
     /**
      * Implements the `__enter__` portion of `with some_object`.
      */
-    open fun pyWithEnter(): PyObject = attributeError("__enter__")
+    fun pyWithEnter(): PyObject = attributeError("__enter__")
 
     // __exit__
     /**
      * Implements the `__exit__` portion of `with some_object`.
      */
-    open fun pyWithExit(): PyObject = attributeError("__exit__")
+    fun pyWithExit(): PyObject = attributeError("__exit__")
 
     // == Conversion ==
     // __bool__
     /**
      * Implements bool(some_object).
      */
-    open fun pyToBool(): PyBool = PyBool.TRUE
+    fun pyToBool(): PyBool = PyBool.TRUE
 
     // __int__
     /**
      * Implements int(some_object).
      */
-    open fun pyToInt(): PyInt = typeError("Cannot convert '${type.name}' to int")
+    fun pyToInt(): PyInt = typeError("Cannot convert '${type.name}' to int")
 
     // __float__
     /**
      * Implements float(some_object).
      */
-    open fun pyToFloat(): PyFloat = typeError("Cannot convert '${type.name}' to float")
+    fun pyToFloat(): PyFloat = typeError("Cannot convert '${type.name}' to float")
 
     // __bytes__
     /**
      * Implements bytes(some_object).
      */
-    open fun pyToBytes(): PyBytes = typeError("Cannot convert '${type.name}' to bytes")
+    fun pyToBytes(): PyBytes = typeError("Cannot convert '${type.name}' to bytes")
 
     // __str__
     /**
      * Implements str(some_object).
      */
-    open fun pyToStr(): PyString {
+    fun pyToStr(): PyString {
         val hashCode = System.identityHashCode(this).toString(16)
 
         return PyString("<object '${type.name}' at 0x$hashCode>")
@@ -200,7 +201,7 @@ abstract class PyObject {
     /**
      * Implements repr(some_object).
      */
-    open fun pyGetRepr(): PyString = pyToStr()
+    fun pyGetRepr(): PyString = pyToStr()
 
     // == Comparison operators ==
 
@@ -208,13 +209,13 @@ abstract class PyObject {
     /**
      * Implements some_object == other_object.
      */
-    open fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
+    fun pyEquals(other: PyObject): PyObject = PyBool.get(this === other)
 
     // __neq__
     /**
      * Implements some_object != other_object.
      */
-    open fun pyNotEquals(other: PyObject): PyObject {
+    fun pyNotEquals(other: PyObject): PyObject {
         val equals = pyEquals(other)
         return if (equals == PyNotImplemented) {
             PyNotImplemented
@@ -227,50 +228,50 @@ abstract class PyObject {
     /**
      * Implements some_object > other_object.
      */
-    open fun pyGreater(other: PyObject): PyObject = PyNotImplemented
+    fun pyGreater(other: PyObject): PyObject = PyNotImplemented
 
     // __lt__
     /**
      * Implements some_object < other_object.
      */
-    open fun pyLesser(other: PyObject): PyObject = PyNotImplemented
+    fun pyLesser(other: PyObject): PyObject = PyNotImplemented
 
     // __ge__
     /**
      * Implements some_object >= other_object.
      */
-    open fun pyGreaterEquals(other: PyObject): PyObject = PyNotImplemented
+    fun pyGreaterEquals(other: PyObject): PyObject = PyNotImplemented
 
     // __le__
     /**
      * Implements some_object <= other_object.
      */
-    open fun pyLesserEquals(other: PyObject): PyObject = PyNotImplemented
+    fun pyLesserEquals(other: PyObject): PyObject = PyNotImplemented
 
     // __contains__
     /**
      * Implements some_object in other_object.
      */
-    open fun pyContains(other: PyObject): PyObject = PyNotImplemented
+    fun pyContains(other: PyObject): PyObject = PyNotImplemented
 
     // == Unary operators == //
     // __invert__
     /**
      * Implements ~some_object.
      */
-    open fun pyInvert(): PyObject = typeError("'${type.name}' does not support unary inversion")
+    fun pyInvert(): PyObject = typeError("'${type.name}' does not support unary inversion")
 
     // __neg__
     /**
      * Implements -some_object.
      */
-    open fun pyNegative(): PyObject = typeError("'${type.name}' does not support unary negative")
+    fun pyNegative(): PyObject = typeError("'${type.name}' does not support unary negative")
 
     // __pos__
     /**
      * Implements +some_object.
      */
-    open fun pyPositive(): PyObject = typeError("'${type.name}' does not support unary positive")
+    fun pyPositive(): PyObject = typeError("'${type.name}' does not support unary positive")
 
     // == Binary operators == //
 
@@ -278,57 +279,57 @@ abstract class PyObject {
     /**
      * Implements some_object + other_object.
      */
-    open fun pyAdd(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+    fun pyAdd(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // __sub__
     /**
      * Implements some_object - other_object.
      */
-    open fun pySub(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+    fun pySub(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // __mul__
     /**
      * Implements some_object * other_object.
      */
-    open fun pyMul(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+    fun pyMul(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // __matmul__
     /**
      * Implements some_object @ other_object.
      */
-    open fun pyMatMul(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+    fun pyMatMul(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // __truediv__
     /**
      * Implements some_object / other_object.
      */
-    open fun pyDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+    fun pyDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // __floordiv__
     /**
      * Implements some_object // other_object.
      */
-    open fun pyFloorDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
+    fun pyFloorDiv(other: PyObject, reverse: Boolean = false): PyObject = PyNotImplemented
 
     // __getitem__
     /**
      * Implements some_object\[other_object\].
      */
-    open fun pyGetItem(idx: PyObject): PyObject =
+    fun pyGetItem(idx: PyObject): PyObject =
         typeError("'${type.name}' object is not subscriptable")
 
     // __setitem__
     /**
      * Implements some_object\[name\] = other_object.
      */
-    open fun pySetItem(idx: PyObject, value: PyObject): PyNone =
+    fun pySetItem(idx: PyObject, value: PyObject): PyNone =
         typeError("'${type.name}' object does not support item assignment")
 
     // __delitem__
     /**
      * Implements del some_object\[other_object\].
      */
-    open fun pyDelItem(idx: PyObject): PyNone =
+    fun pyDelItem(idx: PyObject): PyNone =
         typeError("'${type.name}' object is not subscriptable")
 
     // == Iterators/iterables ==
@@ -336,25 +337,25 @@ abstract class PyObject {
     /**
      * Implements iter(some_object).
      */
-    open fun pyIter(): PyObject = typeError("'${type.name}' object is not iterable")
+    fun pyIter(): PyObject = typeError("'${type.name}' object is not iterable")
 
     // __next__
     /**
      * Implements next(some_object).
      */
-    open fun pyNext(): PyObject = typeError("'${type.name}' object is not an iterator")
+    fun pyNext(): PyObject = typeError("'${type.name}' object is not an iterator")
 
     // __len__
     /**
      * Implements len(some_object).
      */
-    open fun pyLen(): PyInt = typeError("object of type '${type.name}' has no len")
+    fun pyLen(): PyInt = typeError("object of type '${type.name}' has no len")
 
     // __length_hint__
     /**
      * Used internally for optimisation.
      */
-    open fun pyLengthHint(): PyInt = PyInt.ZERO
+    fun pyLengthHint(): PyInt = PyInt.ZERO
 
     // == Descriptors == //
 
@@ -365,24 +366,24 @@ abstract class PyObject {
      * @param parent: The parent instance.
      * @param klass: The parent class.
      */
-    open fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject = this
+    fun pyDescriptorGet(parent: PyObject, klass: PyObject): PyObject = this
 
     /**
      * If this object has a `__set__` descriptor.
      */
-    open fun kyHasSet(): Boolean = false
+    fun kyHasSet(): Boolean = false
 
     // __set__
     /**
      * Implements `__set__` for this object.
      */
-    open fun pyDescriptorSet(instance: PyObject, value: PyObject) = Unit
+    fun pyDescriptorSet(instance: PyObject, value: PyObject) = Unit
 
     // __set_name__
     /**
      * Implements `__set_name__` for this object.
      */
-    open fun pyDescriptorSetName(): PyObject {
+    fun pyDescriptorSetName(): PyObject {
         TODO()
     }
 
@@ -400,7 +401,7 @@ abstract class PyObject {
     /**
      * The internal [`__dict__`][PyDict] of this object, wrapped. This corresponds to `__dict__`.
      */
-    open val pyDict: PyDict
+    val pyDict: PyDict
         get() {
             val mapTo = PyObjectMap()
             return PyDict.from(internalDict.mapKeysTo(mapTo) { PyString(it.key) })

@@ -48,7 +48,7 @@ object PyReflectedType : PyType("PyReflectedObject") {
     )
     fun methAsPythonObject(kwargs: Map<String, PyObject>): PyObject {
         val self = kwargs["self"].cast<PyReflectedObject>()
-        return wrapPrimitive(self.wrapped)
+        return PyObject.wrapPrimitive(self.wrapped)
     }
 
     /* PyReflectedObject.java_type */

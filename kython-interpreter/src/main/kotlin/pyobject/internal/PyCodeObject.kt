@@ -18,14 +18,16 @@
 package green.sailor.kython.interpreter.pyobject.internal
 
 import green.sailor.kython.interpreter.kyobject.KyCodeObject
-import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.pyobject.PyType
 
 /**
  * Represents a code object. Wraps a KyCodeObject, but exposes it to Python.
  */
-class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyObject() {
+class PyCodeObject(val wrappedCodeObject: KyCodeObject) : PyPrimitive() {
     override var type: PyType
         get() = PyCodeType
         set(_) {}
+
+    override fun unwrap(): KyCodeObject = wrappedCodeObject
 }

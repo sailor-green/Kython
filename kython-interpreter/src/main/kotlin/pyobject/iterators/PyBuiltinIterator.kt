@@ -20,13 +20,14 @@ package green.sailor.kython.interpreter.pyobject.iterators
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 import green.sailor.kython.interpreter.throwKy
 import green.sailor.kython.interpreter.typeError
 
 /**
  * Represents a built-in iterator over a Kotlin iterator.
  */
-class PyBuiltinIterator(val kotlinIterator: Iterator<PyObject>) : PyObject() {
+class PyBuiltinIterator(val kotlinIterator: Iterator<PyObject>) : PyUndicted {
     object PyGenericIteratorType : PyType("builtin_iterator") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject =
             typeError("Cannot create new instances of builtin_iterator")

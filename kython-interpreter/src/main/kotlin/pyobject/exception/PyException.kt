@@ -24,7 +24,7 @@ import green.sailor.kython.interpreter.stack.StackFrame
 /**
  * Interface for exceptions, builtin or user.
  */
-interface PyException {
+interface PyException : PyObject {
     /** The list of exception frames for this exception. */
     val exceptionFrames: List<StackFrame>
 

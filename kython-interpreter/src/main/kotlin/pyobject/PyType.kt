@@ -30,7 +30,7 @@ import green.sailor.kython.interpreter.typeError
 /**
  * Represents a python type (i.e. a class).
  */
-abstract class PyType(val name: String) : PyObject(), PyCallable {
+abstract class PyType(val name: String) : PyObject, PyCallable {
     /**
      * Creates a new instance of the object represented by this type.
      *
@@ -40,6 +40,8 @@ abstract class PyType(val name: String) : PyObject(), PyCallable {
     val builtinFunctionWrapper by lazy {
         PyBuiltinFunction.wrap(name, PyCallableSignature.ALL_CONSUMING, this::newInstance)
     }
+
+    override val internalDict: MutableMap<String, PyObject> = linkedMapOf()
 
     /** A list of parent classes for this PyType. */
     open val bases = mutableListOf<PyType>()

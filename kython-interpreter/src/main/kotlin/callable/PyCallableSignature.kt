@@ -208,7 +208,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
     }
 }
 
-object EMPTY : PyObject() {
+object EMPTY : PyUndicted {
     override var type: PyType
         get() = error("You shouldn't be seeing this")
         set(value) = error("You shouldn't be seeing this")

@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject.internal
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 import kotlin.reflect.KProperty
 
 // this is a VERY naiive implementation of cellvars
@@ -36,7 +37,7 @@ import kotlin.reflect.KProperty
 open class PyCellObject(
     open val localsMap: MutableMap<String, PyObject>,
     open val name: String
-) : PyObject() {
+) : PyUndicted {
     private inner class Delegate {
         operator fun getValue(thisRef: PyCellObject, property: KProperty<*>): PyObject {
             return localsMap[name] ?: TODO("Proper error")

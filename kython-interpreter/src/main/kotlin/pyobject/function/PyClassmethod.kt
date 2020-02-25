@@ -22,12 +22,13 @@ import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 import green.sailor.kython.interpreter.util.cast
 
 /**
  * Represents a class method object.
  */
-class PyClassmethod(val wrapped: PyObject) : PyObject() {
+class PyClassmethod(val wrapped: PyObject) : PyUndicted {
     object PyClassmethodType : PyType("classmethod") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             val fn = kwargs["function"].cast<PyObject>()

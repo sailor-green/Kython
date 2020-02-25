@@ -167,9 +167,8 @@ class PyUserFunction(
     }
     override fun pyGetRepr(): PyString = pyToStr()
 
-    override val internalDict: MutableMap<String, PyObject> = super.internalDict.apply {
-        put("__code__", wrappedCode)
-    }
+    override val internalDict: MutableMap<String, PyObject> =
+        linkedMapOf("__code__" to PyCodeObject(code))
 
     override fun kyCall(args: List<PyObject>): PyObject {
         if (isGenerator) {

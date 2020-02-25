@@ -31,7 +31,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyPropertyType
  * Property object implementation.
  */
 @Slotted("property")
-class PyProperty(getter: PyObject) : PyObject() {
+class PyProperty(getter: PyObject) : PyUndicted {
     override var type: PyType
         get() = PyPropertyType
         set(_) = Exceptions.invalidClassSet(this)

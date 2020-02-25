@@ -29,8 +29,10 @@ import green.sailor.kython.interpreter.util.cast
 /**
  * Represents a Python user object instance (i.e. an object created from a user type object).
  */
-open class PyUserObject(type: PyUserType) : PyObject() {
+open class PyUserObject(type: PyUserType) : PyObject {
     override var type: PyType = type
+
+    override val internalDict: MutableMap<String, PyObject> = linkedMapOf()
 
     /** The backing primitive subclass info. */
     val primitiveSubclassBacking = mutableMapOf<PyType, PyObject>()

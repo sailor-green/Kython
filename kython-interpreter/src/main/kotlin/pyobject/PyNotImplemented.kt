@@ -22,7 +22,7 @@ import green.sailor.kython.interpreter.Exceptions
 /**
  * Represents the NotImplemented builtin.
  */
-object PyNotImplemented : PyObject() {
+object PyNotImplemented : PyUndicted {
     object PyNotImplementedType : PyType("NotImplementedType") {
         override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
             return PyNotImplemented

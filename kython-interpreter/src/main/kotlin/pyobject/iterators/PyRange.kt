@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.PyUndicted
 
 /**
  * Represents the range() builtin.
@@ -34,7 +35,7 @@ class PyRange(
     val start: PyInt,
     val stop: PyInt,
     val step: PyInt = PyInt.ONE
-) : PyObject() {
+) : PyUndicted {
     override var type: PyType
         get() = PyRangeType
         set(_) = Exceptions.invalidClassSet(this)

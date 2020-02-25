@@ -28,9 +28,11 @@ import green.sailor.kython.interpreter.pyobject.types.PyMethodType
 class PyMethod(
     val function: PyObject,
     val instance: PyObject
-) : PyObject() {
+) : PyObject {
     override fun kyIsCallable(): Boolean = true
     override fun kyGetSignature(): PyCallableSignature = function.kyGetSignature()
+
+    override val internalDict: MutableMap<String, PyObject> get() = function.internalDict
 
     override fun pyCall(args: List<PyObject>, kwargTuple: List<String>): PyObject {
         val realArgs = args.toMutableList().also { it.add(instance) }

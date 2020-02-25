@@ -17,14 +17,15 @@
 
 package green.sailor.kython.interpreter.pyobject
 
-import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
+import green.sailor.kython.interpreter.attributeError
+import green.sailor.kython.interpreter.util.FakeDict
 
 /**
- * Represents a root object instance (i.e. the result of doing `object()`).
+ * Simple base class for objects without a dict.
  */
-class PyRootObjectInstance : PyUndicted {
-    override var type: PyType
-        get() = PyRootObjectType
-        set(_) = Exceptions.invalidClassSet(this)
+interface PyUndicted : PyObject {
+    override val internalDict: MutableMap<String, PyObject> get() = FakeDict
+
+    override val pyDict get() =
+        attributeError("'${type.name}' object has no attribute '__dict__'")
 }
