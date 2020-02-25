@@ -50,7 +50,7 @@ class PyUserType(name: String, bases: List<PyType>, dict: LinkedHashMap<String, 
         } else {
             // if we're a builtin subclass..
             val supertype = mro.find { it !is PyUserType }
-            supertype?.kyGetSignature() ?: PyCallableSignature()
+            supertype?.kyGetSignature() ?: PyCallableSignature.EMPTY
         }
     }
 
