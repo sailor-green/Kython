@@ -159,8 +159,14 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
         val extraKwargs = mutableMapOf<String, PyObject>()
         val kwargNames = reverseMapping.getOrDefault(ArgType.KEYWORD, listOf()).toMutableSet()
         for ((name, value) in pairedKwargs) {
-            // if it's already in the list of keyword arguments, just set it in finalargs
-            if (name in kwargNames) {
+            if (name in finalArgs) {
+                // if it's in finalargs, it was paired off in step 2
+                // and it's a positional or keyword
+                // therefore we just skip this processing block
+                // since it can't be added to finalargs again or **kwargs
+                continue
+            } else if (name in kwargNames) {
+                // if it's already in the list of keyword arguments, just set it in finalargs
                 finalArgs[name] = value
             } else {
                 if (kwCollectedArgName == null) typeError("Unexpected keyword argument $name")
