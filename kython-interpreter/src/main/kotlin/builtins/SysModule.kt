@@ -56,7 +56,6 @@ object SysModule : PyBuiltinModule("sys") {
         "sys", "_imp", "_io"
     ).mapTo(mapBackedSet()) { it.toPyObject() }, frozen = true)
 
-
     // == sys object methods == //
     @ExposeMethod("getswitchinterval")
     fun getSwitchInterval(args: Map<String, PyObject>): PyFloat = PyFloat(0.0)

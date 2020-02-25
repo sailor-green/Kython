@@ -140,7 +140,7 @@ fun UserCodeStackFrame.buildUnpack(type: BuildType, arg: Byte) {
             PySet.of(items)
         }
         else -> TODO("Unimplemented build type $type")
-    }
+    } as PyObject  // ??
     stack.push(built)
     bytecodePointer += 1
 }

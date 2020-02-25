@@ -27,8 +27,8 @@ import green.sailor.kython.interpreter.util.cast
 /**
  * Abstract superclass shared between PyList and PyTuple, contains some common methods.
  */
-abstract class PyContainer(subobjects: List<PyObject>)
-    : PyCollection(subobjects), Collection<PyObject> by subobjects {
+abstract class PyContainer(subobjects: List<PyObject>) :
+    PyCollection(subobjects), Collection<PyObject> by subobjects {
     override fun unwrap(): List<PyObject> = subobjects as List<PyObject>
 
     /**

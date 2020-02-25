@@ -220,6 +220,7 @@ fun UserCodeStackFrame.evaluateBytecode(): PyObject {
             // fundamentally the same thing.
             InstructionOpcode.CALL_METHOD -> callFunction(param)
             InstructionOpcode.CALL_FUNCTION -> callFunction(param)
+            InstructionOpcode.CALL_FUNCTION_KW -> callFunctionKw(param)
 
             // stack ops
             InstructionOpcode.POP_TOP -> popTop(param)

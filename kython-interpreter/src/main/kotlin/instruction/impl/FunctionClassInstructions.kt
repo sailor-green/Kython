@@ -18,7 +18,8 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.functions.BuildClassFunction
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
 import green.sailor.kython.interpreter.pyobject.internal.PyCodeObject
@@ -43,6 +44,30 @@ fun UserCodeStackFrame.callFunction(opval: Byte) {
     }
 
     val result = fn.pyCall(toCallWith)
+    stack.push(result)
+    bytecodePointer += 1
+}
+
+/**
+ * CALL_FUNCTION_KW
+ */
+fun UserCodeStackFrame.callFunctionKw(opval: Byte) {
+    val kwargTuple = stack.pop().cast<PyTuple>()
+    val kwargs = kwargTuple.map {
+        (it as? PyString ?: error("kwarg tuple contained non-string $it")).wrappedString
+    }
+
+    val toCallWith = mutableListOf<PyObject>()
+    for (x in 0 until opval.toInt()) {
+        toCallWith.add(stack.pop())
+    }
+
+    val fn = stack.pop()
+    if (!fn.kyIsCallable()) {
+        typeError("'${fn.type.name}' is not callable")
+    }
+
+    val result = fn.pyCall(toCallWith, kwargs)
     stack.push(result)
     bytecodePointer += 1
 }

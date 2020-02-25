@@ -176,7 +176,7 @@ class PyCallableSignature(vararg val args: Pair<String, ArgType>) {
             for (kwarg in kwargNames) {
                 finalArgs[kwarg] =
                     defaults[kwarg]
-                    ?: typeError("Missing required keyword argument: $argName")
+                    ?: typeError("Missing required keyword argument: $kwarg")
             }
         }
 
