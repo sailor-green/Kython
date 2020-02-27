@@ -18,10 +18,10 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.importing.Importer
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.util.cast
 

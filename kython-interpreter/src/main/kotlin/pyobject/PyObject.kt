@@ -23,6 +23,9 @@ import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.collection.PyList
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyFloat
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.PyObjectMap
 import java.util.*
 
@@ -37,9 +40,15 @@ interface PyObject {
         fun wrapPrimitive(obb: Any?): PyObject =
             when (obb) {
                 null -> PyNone
-                is Short -> PyInt(obb.toLong())
-                is Int -> PyInt(obb.toLong())
-                is Long -> PyInt(obb)
+                is Short -> PyInt(
+                    obb.toLong()
+                )
+                is Int -> PyInt(
+                    obb.toLong()
+                )
+                is Long -> PyInt(
+                    obb
+                )
                 is String -> PyString(obb)
                 is Boolean -> PyBool.get(obb)
                 is ByteArray -> PyBytes(obb)
@@ -105,7 +114,11 @@ interface PyObject {
      */
     fun pyHash(): PyInt {
         // this should be Object.hashcode()
-        return PyInt(Objects.hashCode(this).toLong())
+        return PyInt(
+            Objects.hashCode(
+                this
+            ).toLong()
+        )
     }
 
     // __dir__

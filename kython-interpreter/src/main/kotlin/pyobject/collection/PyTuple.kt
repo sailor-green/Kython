@@ -19,6 +19,8 @@ package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.typeError
 
 /**
@@ -81,9 +83,10 @@ class PyTuple private constructor(subobjects: List<out PyObject>) : PyContainer(
         return get(subobjects + other.subobjects)
     }
 
-    override fun pyHash(): PyInt = PyInt(
-        subobjects.map { it.pyHash().wrappedInt }.hashCode().toLong()
-    )
+    override fun pyHash(): PyInt =
+        PyInt(
+            subobjects.map { it.pyHash().wrappedInt }.hashCode().toLong()
+        )
 
     override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
         typeError("tuples are immutable - cannot set items")

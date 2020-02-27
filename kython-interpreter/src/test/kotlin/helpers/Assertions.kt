@@ -18,6 +18,8 @@
 package green.sailor.kython.test.helpers
 
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import org.junit.jupiter.api.Assertions
 
 /**

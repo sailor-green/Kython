@@ -18,10 +18,10 @@
 package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.indexError
-import green.sailor.kython.interpreter.pyobject.PyBool
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.cast
 
 /**

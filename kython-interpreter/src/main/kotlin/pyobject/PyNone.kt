@@ -18,6 +18,7 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.interpreter.pyobject.types.PyNoneType
 
 /**

@@ -25,6 +25,7 @@ import green.sailor.kython.interpreter.pyobject.dict.PyDictType
 import green.sailor.kython.interpreter.pyobject.function.PyClassmethod
 import green.sailor.kython.interpreter.pyobject.function.PyStaticmethod
 import green.sailor.kython.interpreter.pyobject.iterators.PyRangeType
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.interpreter.pyobject.types.*
 
 /**

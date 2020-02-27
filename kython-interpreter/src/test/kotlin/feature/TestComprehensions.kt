@@ -18,9 +18,9 @@
 package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.collection.PyList
 import green.sailor.kython.interpreter.pyobject.collection.PySet
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions

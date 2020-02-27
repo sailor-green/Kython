@@ -22,10 +22,10 @@ import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.ensure
-import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyString
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.interpreter.util.cast
 
 /* hasattr(object, name) */

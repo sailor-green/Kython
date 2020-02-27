@@ -15,9 +15,12 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.numeric
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.types.PyBoolType
 
 /**
@@ -27,9 +30,11 @@ import green.sailor.kython.interpreter.pyobject.types.PyBoolType
 class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(intValue) {
     companion object {
         // The TRUE instance of this.
-        val TRUE = PyBool(true, 1L)
+        val TRUE =
+            PyBool(true, 1L)
         // The FALSE instance of this.
-        val FALSE = PyBool(false, 1L)
+        val FALSE =
+            PyBool(false, 1L)
 
         /**
          * Gets the appropriate instance of a boolean from the specified JVM Boolean.
@@ -39,8 +44,10 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
 
     override fun unwrap(): Any = wrapped
 
-    private val cachedTrueString = PyString("True")
-    private val cachedFalseString = PyString("False")
+    private val cachedTrueString =
+        PyString("True")
+    private val cachedFalseString =
+        PyString("False")
 
     override var type: PyType
         get() = PyBoolType
@@ -50,7 +57,10 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
     override fun pyGetRepr(): PyString = pyToStr()
     override fun pyToBool(): PyBool = this
     override fun pyToInt(): PyInt = if (wrapped) ONE else ZERO
-    override fun pyEquals(other: PyObject): PyObject = get(this === other)
+    override fun pyEquals(other: PyObject): PyObject =
+        get(
+            this === other
+        )
 
     /**
      * Inverts this PyBool.

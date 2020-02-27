@@ -18,10 +18,10 @@
 package green.sailor.kython.interpreter.instruction.impl
 
 import green.sailor.kython.interpreter.*
-import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.exception.PyExceptionType
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.interpreter.stack.UserCodeStackFrame
 import green.sailor.kython.interpreter.util.cast
 

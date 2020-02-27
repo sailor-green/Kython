@@ -18,6 +18,8 @@
 package green.sailor.kython.interpreter.pyobject
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.pyobject.types.PyBytesType
 
 /**
@@ -59,7 +61,8 @@ class PyBytes(val wrapped: ByteArray) : PyPrimitive() {
         TODO()
     }
 
-    override fun pyLen(): PyInt = PyInt(wrapped.size.toLong())
+    override fun pyLen(): PyInt =
+        PyInt(wrapped.size.toLong())
 
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
         if (other !is PyBytes) return PyNotImplemented

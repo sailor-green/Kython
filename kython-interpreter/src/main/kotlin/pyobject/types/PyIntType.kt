@@ -24,6 +24,8 @@ import green.sailor.kython.annotation.MethodParams
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.interpreter.valueError
 import green.sailor.kython.util.bytesToLongBE
@@ -49,7 +51,9 @@ object PyIntType : PyType("int") {
             is PyString -> { // special case, for int(x, base)
                 val base = kwargs["base"]!!.cast<PyInt>()
                 try {
-                    return PyInt(value.wrappedString.toInt(base.wrappedInt.toInt()).toLong())
+                    return PyInt(
+                        value.wrappedString.toInt(base.wrappedInt.toInt()).toLong()
+                    )
                 } catch (e: NumberFormatException) {
                     valueError(
                         "Cannot convert '${value.wrappedString}' to int " +

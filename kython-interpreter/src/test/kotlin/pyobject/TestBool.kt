@@ -18,7 +18,7 @@
 package green.sailor.kython.test.pyobject
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

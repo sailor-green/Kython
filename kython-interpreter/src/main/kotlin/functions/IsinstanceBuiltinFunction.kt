@@ -20,11 +20,11 @@ package green.sailor.kython.interpreter.functions
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.isinstance
-import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.interpreter.pyobject.types.PyRootObjectType
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.typeName

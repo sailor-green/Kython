@@ -18,10 +18,10 @@
 package green.sailor.kython.test
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.PyBool
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.pyobject.collection.PyContainer
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.test.helpers.assertUnwrappedEquals
 import green.sailor.kython.test.helpers.testExecInternal
 import org.junit.jupiter.api.Assertions

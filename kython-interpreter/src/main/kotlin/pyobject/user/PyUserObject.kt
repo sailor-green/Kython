@@ -23,6 +23,9 @@ import green.sailor.kython.interpreter.functions.magic.DefaultBuiltinFunction
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.function.PyUserFunction
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyFloat
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast
 

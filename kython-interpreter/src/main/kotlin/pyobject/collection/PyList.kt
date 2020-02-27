@@ -20,6 +20,7 @@ package green.sailor.kython.interpreter.pyobject.collection
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.indexError
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.typeError
 import green.sailor.kython.interpreter.util.cast

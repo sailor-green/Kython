@@ -23,6 +23,8 @@ import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.SliceAwareRange
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.interpreter.util.center
