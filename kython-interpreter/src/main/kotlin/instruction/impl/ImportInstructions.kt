@@ -41,7 +41,7 @@ fun UserCodeStackFrame.importName(arg: Byte) {
 
     val level = stack.pop().cast<PyInt>()
 
-    if (level.wrappedInt == 0L) {
+    if (level.wrapped == 0L) {
         // absolute import
         val items = Importer.CURRENT.absoluteImport(name, from)
         items.forEach { stack.push(it) }

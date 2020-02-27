@@ -43,7 +43,7 @@ object PyIntType : PyType("int") {
             // MUST COME FIRST
             // cpython: int(True) == 1, type(int(True)) == int
             is PyBool -> {
-                return if (value.wrapped) PyInt.ONE else PyInt.ZERO
+                return if (value.wrappedBool) PyInt.ONE else PyInt.ZERO
             }
             is PyInt -> {
                 return value
@@ -52,12 +52,12 @@ object PyIntType : PyType("int") {
                 val base = kwargs["base"]!!.cast<PyInt>()
                 try {
                     return PyInt(
-                        value.wrappedString.toInt(base.wrappedInt.toInt()).toLong()
+                        value.wrappedString.toInt(base.wrapped.toInt()).toLong()
                     )
                 } catch (e: NumberFormatException) {
                     valueError(
                         "Cannot convert '${value.wrappedString}' to int " +
-                            "with base ${base.wrappedInt}"
+                            "with base ${base.wrapped}"
                     )
                 }
             }
@@ -74,8 +74,8 @@ object PyIntType : PyType("int") {
         MethodParam("byteorder", "POSITIONAL")
     )
     fun pyIntToBytes(kwargs: Map<String, PyObject>): PyBytes {
-        val self = kwargs["self"].cast<PyInt>().wrappedInt
-        val size = kwargs["size"].cast<PyInt>().wrappedInt
+        val self = kwargs["self"].cast<PyInt>().wrapped
+        val size = kwargs["size"].cast<PyInt>().wrapped
         val endian = kwargs["byteorder"].cast<PyString>().wrappedString
         val iSize = size.toInt()
 

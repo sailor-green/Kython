@@ -83,7 +83,7 @@ object PyListType : PyType("list") {
         return if (indexArg === EMPTY) {
             (self.subobjects as MutableList).removeAt(self.subobjects.size - 1)
         } else {
-            val idx = indexArg.cast<PyInt>().wrappedInt.toInt()
+            val idx = indexArg.cast<PyInt>().wrapped.toInt()
             val realIdx = self.getRealIndex(idx)
             if (!self.verifyIndex(realIdx)) {
                 indexError("list index $idx is out of range (list size: ${self.subobjects.size})")

@@ -27,7 +27,7 @@ import green.sailor.kython.interpreter.pyobject.types.PyBoolType
  * Represents a Python boolean.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(intValue) {
+class PyBool private constructor(val wrappedBool: Boolean, intValue: Long) : PyInt(intValue) {
     companion object {
         // The TRUE instance of this.
         val TRUE =
@@ -42,7 +42,7 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
         fun get(b: Boolean) = if (b) TRUE else FALSE
     }
 
-    override fun unwrap(): Any = wrapped
+    override fun unwrap(): Any = wrappedBool
 
     private val cachedTrueString =
         PyString("True")
@@ -53,10 +53,10 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
         get() = PyBoolType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun pyToStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
+    override fun pyToStr(): PyString = if (wrappedBool) cachedTrueString else cachedFalseString
     override fun pyGetRepr(): PyString = pyToStr()
     override fun pyToBool(): PyBool = this
-    override fun pyToInt(): PyInt = if (wrapped) ONE else ZERO
+    override fun pyToInt(): PyInt = if (wrappedBool) ONE else ZERO
     override fun pyEquals(other: PyObject): PyObject =
         get(
             this === other
@@ -65,6 +65,7 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
     /**
      * Inverts this PyBool.
      */
-    fun invert(): PyBool = if (wrapped) FALSE else TRUE
+    fun invert(): PyBool = if (wrappedBool) FALSE else TRUE
+
     operator fun not() = invert()
 }

@@ -78,7 +78,7 @@ class PyString private constructor(val wrappedString: String) : PyPrimitive() {
     }
     override fun pyMul(other: PyObject, reverse: Boolean): PyObject {
         if (other !is PyInt) return PyNotImplemented
-        return PyString(wrappedString.repeat(other.wrappedInt.toInt()))
+        return PyString(wrappedString.repeat(other.wrapped.toInt()))
     }
     override fun pyContains(other: PyObject): PyObject {
         if (other !is PyString) return PyNotImplemented

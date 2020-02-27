@@ -26,9 +26,7 @@ import org.junit.jupiter.api.Test
 class `Test bool` {
     @Test
     fun `Test boolean int() call`() {
-        val result = KythonInterpreter.testExec<PyInt>("""
-            result = int(True)
-        """.trimIndent())
-        assertTrue(result.wrappedInt == 1L)
+        val result = KythonInterpreter.testExec<PyInt>("""result = int(True)""")
+        assertTrue(result.wrapped == 1L)
     }
 }

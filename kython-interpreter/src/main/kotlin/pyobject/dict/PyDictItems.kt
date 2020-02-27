@@ -46,7 +46,7 @@ class PyDictItems(val map: Map<PyObject, PyObject>) : PySet(EntrySetMapper(map),
             val key = element.unwrap()[0]
             val value = element.unwrap()[1]
 
-            return map.containsKey(key) && map[key]!!.pyEquals(value).pyToBool().wrapped
+            return map.containsKey(key) && map[key]!!.pyEquals(value).pyToBool().wrappedBool
         }
         override fun containsAll(elements: Collection<PyObject>) = elements.all {
             contains(it)

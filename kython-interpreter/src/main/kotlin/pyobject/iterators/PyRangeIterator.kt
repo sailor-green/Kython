@@ -35,9 +35,9 @@ class PyRangeIterator(val range: PyRange) : PyUndicted {
     var currentStep: Long = 0
 
     override fun pyNext(): PyObject {
-        val next = range.start.wrappedInt + (currentStep * range.step.wrappedInt)
+        val next = range.start.wrapped + (currentStep * range.step.wrapped)
         currentStep += 1
-        if (next >= range.stop.wrappedInt) {
+        if (next >= range.stop.wrapped) {
             Exceptions.STOP_ITERATION().throwKy()
         }
         return PyInt(next)

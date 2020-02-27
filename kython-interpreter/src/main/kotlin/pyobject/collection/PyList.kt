@@ -52,7 +52,7 @@ class PyList(subobjects: MutableList<out PyObject>) : PyContainer(subobjects) {
     override fun pyHash(): PyInt = typeError("lists are not hashable - they are mutable")
 
     override fun pySetItem(idx: PyObject, value: PyObject): PyNone {
-        val initial = idx.cast<PyInt>().wrappedInt.toInt()
+        val initial = idx.cast<PyInt>().wrapped.toInt()
         val realIdx = getRealIndex(initial)
         if (!verifyIndex(realIdx)) {
             indexError("list index $realIdx is out of range (list size: ${subobjects.size})")

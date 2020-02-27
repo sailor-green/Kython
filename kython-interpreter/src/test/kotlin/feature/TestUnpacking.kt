@@ -40,7 +40,7 @@ class `Test unpacking` {
             result = (*x, *y)
         """.trimIndent()
         val result = KythonInterpreter.testExec<PyTuple>(code).subobjects
-        val mapped = result.map { it.cast<PyInt>().wrappedInt }
+        val mapped = result.map { it.cast<PyInt>().wrapped }
         Assertions.assertEquals(listOf(1L, 2L, 4L, 5L), mapped)
     }
 
@@ -51,7 +51,7 @@ class `Test unpacking` {
             result = [*x]
         """.trimIndent()
         val result = KythonInterpreter.testExec<PyList>(code).subobjects
-        val mapped = result.map { it.cast<PyInt>().wrappedInt }
+        val mapped = result.map { it.cast<PyInt>().wrapped }
         Assertions.assertEquals(listOf(1L), mapped)
     }
 
@@ -63,7 +63,7 @@ class `Test unpacking` {
             result = {*x, *y}
         """.trimIndent()
         val result = KythonInterpreter.testExec<PySet>(code).wrappedSet
-        val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrappedInt }
+        val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrapped }
         Assertions.assertEquals(setOf(1L, 2L, 4L, 5L), mapped)
     }
 
@@ -75,7 +75,7 @@ class `Test unpacking` {
             result = [*x, *y]
         """.trimIndent()
         val result = KythonInterpreter.testExec<PyList>(code).subobjects
-        val mapped = result.map { it.cast<PyInt>().wrappedInt }
+        val mapped = result.map { it.cast<PyInt>().wrapped }
         Assertions.assertEquals(listOf(1L, 2L, 4L, 5L), mapped)
     }
 

@@ -194,6 +194,12 @@ interface PyObject {
      */
     fun pyToFloat(): PyFloat = typeError("Cannot convert '${type.name}' to float")
 
+    // __complex__
+    /**
+     * Implements complex(some_object).
+     */
+    fun pyToComplex(): Nothing = TODO() // = typeError("Cannot convert '${type.name}' to complex")
+
     // __bytes__
     /**
      * Implements bytes(some_object).

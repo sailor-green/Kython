@@ -45,7 +45,7 @@ class PyObjectMap : AbstractLinkedMap<PyObject, PyObject>(
      */
     override fun hash(key: Any?): Int {
         require(key is PyObject) { "Keys must be PyObject" }
-        var h = key.pyHash().wrappedInt.toInt()
+        var h = key.pyHash().wrapped.toInt()
         h += (h shl 9).inv()
         h = h xor h ushr 14
         h += h shl 4
@@ -65,10 +65,10 @@ class PyObjectMap : AbstractLinkedMap<PyObject, PyObject>(
             if (isEqual2 === PyNotImplemented) {
                 false
             } else {
-                isEqual2.pyToBool().wrapped
+                isEqual2.pyToBool().wrappedBool
             }
         } else {
-            isEqual1.pyToBool().wrapped
+            isEqual1.pyToBool().wrappedBool
         }
     }
 }

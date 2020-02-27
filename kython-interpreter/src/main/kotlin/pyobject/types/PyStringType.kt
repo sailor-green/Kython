@@ -163,7 +163,7 @@ object PyStringType : PyType("str") {
         val width = kwargs["width"].cast<PyInt>()
         val fillchar = kwargs["fillchar"]?.cast<PyString>()!!
         val actualChar = fillchar.wrappedString.single()
-        val centered = kwargs.selfWrappedString.center(width.wrappedInt, actualChar)
+        val centered = kwargs.selfWrappedString.center(width.wrapped, actualChar)
 
         return PyString(centered)
     }
@@ -308,7 +308,7 @@ object PyStringType : PyType("str") {
         MethodParam("width", "POSITIONAL")
     )
     fun pyStrZFill(kwargs: Map<String, PyObject>): PyString {
-        val width = kwargs["width"].cast<PyInt>().wrappedInt
+        val width = kwargs["width"].cast<PyInt>().wrapped
         return PyString(kwargs.selfWrappedString.padStart(width.toInt(), '0'))
     }
 

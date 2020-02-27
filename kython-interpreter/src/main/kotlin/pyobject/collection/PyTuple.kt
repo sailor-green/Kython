@@ -85,7 +85,7 @@ class PyTuple private constructor(subobjects: List<out PyObject>) : PyContainer(
 
     override fun pyHash(): PyInt =
         PyInt(
-            subobjects.map { it.pyHash().wrappedInt }.hashCode().toLong()
+            subobjects.map { it.pyHash().wrapped }.hashCode().toLong()
         )
 
     override fun pySetItem(idx: PyObject, value: PyObject): PyNone {

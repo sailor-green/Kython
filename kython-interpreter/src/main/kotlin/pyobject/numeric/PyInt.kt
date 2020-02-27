@@ -20,122 +20,134 @@ package green.sailor.kython.interpreter.pyobject.numeric
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.types.PyIntType
+import green.sailor.kython.interpreter.util.toComplex
 import kotlin.math.abs
 
 /**
  * Represents a Python int type. This internally wraps a long,
  */
-open class PyInt(val wrappedInt: Long) : PyPrimitive(), PyNumber<PyInt>, Comparable<PyInt> {
+open class PyInt(override val wrapped: Long) : PyPrimitive(), PyNumeric<Long, PyInt, PyFloat>,
+    Comparable<PyInt> {
     companion object {
         val ZERO = PyInt(0L)
         val ONE = PyInt(1L)
     }
 
-    override fun unwrap(): Any = wrappedInt
+    override fun unwrap(): Any = wrapped
 
     // default impls
-    override fun pyToStr(): PyString = PyString(wrappedInt.toString())
+    override fun pyToStr(): PyString = PyString(wrapped.toString())
 
     override fun pyGetRepr(): PyString = pyToStr()
 
     override fun pyEquals(other: PyObject): PyObject {
-        if (other is PyNumber<*>) return PyBool.get(other.compareValue(this) == 0)
+        if (other is PyNumeric<*, *, *>) return PyBool.get(other.compareTo(this) == 0)
         return PyNotImplemented
     }
 
     override fun pyGreater(other: PyObject): PyObject {
-        if (other is PyNumber<*>) return PyBool.get(other < this)
+        if (other is PyNumeric<*, *, *>) return PyBool.get(other < this)
         return PyNotImplemented
     }
 
     override fun pyLesser(other: PyObject): PyObject {
-        if (other is PyNumber<*>) return PyBool.get(other > this)
+        if (other is PyNumeric<*, *, *>) return PyBool.get(other > this)
         return PyNotImplemented
     }
 
     override fun pyGreaterEquals(other: PyObject): PyObject {
-        if (other is PyNumber<*>) return PyBool.get(other <= this)
+        if (other is PyNumeric<*, *, *>) return PyBool.get(other <= this)
         return PyNotImplemented
     }
 
     override fun pyLesserEquals(other: PyObject): PyObject {
-        if (other is PyNumber<*>) return PyBool.get(other >= this)
+        if (other is PyNumeric<*, *, *>) return PyBool.get(other >= this)
         return PyNotImplemented
     }
 
     override fun pyPositive(): PyObject {
-        if (wrappedInt > 0L) return this
-        return PyInt(abs(wrappedInt))
+        if (wrapped > 0L) return this
+        return PyInt(abs(wrapped))
     }
 
     override fun pyNegative(): PyObject {
-        if (wrappedInt < 0L) return this
-        return PyInt(-wrappedInt)
+        if (wrapped < 0L) return this
+        return PyInt(-wrapped)
     }
 
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
-        if (other is PyNumber<*>) return other + this
+        if (other is PyNumeric<*, *, *>) return other + this
         return PyNotImplemented
     }
 
     override fun pySub(other: PyObject, reverse: Boolean): PyObject {
-        if (other is PyNumber<*>) return other leftHandMinus this
+        if (other is PyNumeric<*, *, *>) return other leftHandMinus this
         return PyNotImplemented
     }
 
     override fun pyMul(other: PyObject, reverse: Boolean): PyObject {
-        if (other is PyNumber<*>) return other * this
+        if (other is PyNumeric<*, *, *>) return other * this
         return PyNotImplemented
     }
 
     override fun pyDiv(other: PyObject, reverse: Boolean): PyObject { // non-floor div
-        if (other is PyNumber<*>) return other leftHandDiv this
+        if (other is PyNumeric<*, *, *>) return other leftHandDiv this
         return PyNotImplemented
     }
 
-    override fun pyToBool(): PyBool = PyBool.get(wrappedInt != 0L)
+    override fun pyToBool(): PyBool = PyBool.get(wrapped != 0L)
 
     override fun pyToInt(): PyInt = this
 
-    override fun pyToFloat(): PyFloat = PyFloat(wrappedInt.toDouble())
+    override fun pyToFloat(): PyFloat = PyFloat(wrapped.toDouble())
 
-    override fun compareTo(other: PyInt): Int = other.wrappedInt.compareTo(wrappedInt)
+    override fun compareTo(other: PyInt): Int = other.wrapped.compareTo(wrapped)
 
-    override fun compareTo(other: PyFloat): Int = other.wrapped.compareTo(wrappedInt)
+    override fun compareTo(other: PyFloat): Int = other.wrapped.compareTo(wrapped)
 
-    override fun plus(other: PyFloat): PyFloat = PyFloat(wrappedInt + other.wrapped)
+    override fun compareTo(other: PyComplex): Int =
+        other.wrapped.compareTo(wrapped.toDouble().toComplex())
 
-    override fun plus(other: PyInt): PyInt = PyInt(wrappedInt + other.wrappedInt)
+    override fun plus(other: PyInt): PyInt = PyInt(wrapped + other.wrapped)
 
-    override fun times(other: PyFloat): PyFloat = PyFloat(wrappedInt.toDouble() * other.wrapped)
+    override fun plus(other: PyFloat): PyFloat = PyFloat(wrapped + other.wrapped)
 
-    override fun times(other: PyInt): PyInt = PyInt(wrappedInt * other.wrappedInt)
+    override fun plus(other: PyComplex): PyComplex =
+        PyComplex(other.wrapped + wrapped.toDouble().toComplex())
+
+    override fun times(other: PyFloat): PyFloat = PyFloat(wrapped.toDouble() * other.wrapped)
+
+    override fun times(other: PyInt): PyInt = PyInt(wrapped * other.wrapped)
 
     override fun leftHandMinus(actualObj: PyFloat) =
-        PyFloat(actualObj.wrapped - wrappedInt.toDouble())
+        PyFloat(actualObj.wrapped - wrapped.toDouble())
 
-    override fun leftHandMinus(actualObj: PyInt): PyInt = PyInt(actualObj.wrappedInt - wrappedInt)
+    override fun leftHandMinus(actualObj: PyInt): PyInt = PyInt(actualObj.wrapped - wrapped)
+
+    override fun leftHandMinus(actualObj: PyComplex): PyComplex =
+        PyComplex(actualObj.wrapped - wrapped.toComplex())
 
     override fun leftHandDiv(actualObj: PyFloat): PyFloat =
-        PyFloat(actualObj.wrapped / wrappedInt.toDouble())
+        PyFloat(actualObj.wrapped / wrapped.toDouble())
 
     override fun leftHandDiv(actualObj: PyInt): PyFloat =
-        PyFloat(actualObj.wrappedInt.toDouble() / wrappedInt.toDouble())
+        PyFloat(actualObj.wrapped.toDouble() / wrapped.toDouble())
 
-    override fun compareValue(other: PyFloat): Int = wrappedInt.compareTo(other.wrapped)
-
-    override fun compareValue(other: PyInt): Int = wrappedInt.compareTo(other.wrappedInt)
+    override fun leftHandDiv(actualObj: PyComplex): PyComplex =
+        PyComplex(actualObj.wrapped / wrapped.toComplex())
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is PyInt) return false
 
-        return wrappedInt == other.wrappedInt
+        return wrapped == other.wrapped
     }
 
-    override fun hashCode() = wrappedInt.hashCode()
+    override fun hashCode() = wrapped.hashCode()
 
     override var type: PyType
         get() = PyIntType
         set(_) = Exceptions.invalidClassSet(this)
+
+    override fun times(other: PyComplex): PyComplex = PyComplex(wrapped.toComplex() * other.wrapped)
 }

@@ -25,12 +25,12 @@ import org.junit.jupiter.api.Assertions
 /**
  * Asserts that this PyBool is true.
  */
-fun assertTrue(result: PyBool) = Assertions.assertTrue(result.wrapped)
+fun assertTrue(result: PyBool) = Assertions.assertTrue(result.wrappedBool)
 
 /**
  * Asserts that this PyBool is false.
  */
-fun assertFalse(result: PyBool) = Assertions.assertFalse(result.wrapped)
+fun assertFalse(result: PyBool) = Assertions.assertFalse(result.wrappedBool)
 
 fun assertUnwrappedEquals(wrapped: PyObject, expected: Any?, calledWith: String = "") {
     if (wrapped !is PyPrimitive) return Assertions.fail<Nothing>("Object was not a primitive")

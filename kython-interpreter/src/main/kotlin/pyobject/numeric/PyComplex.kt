@@ -19,32 +19,14 @@ package green.sailor.kython.interpreter.pyobject.numeric
 
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.*
-import green.sailor.kython.interpreter.pyobject.types.PyFloatType
+import green.sailor.kython.interpreter.pyobject.types.PyComplexType
+import green.sailor.kython.interpreter.util.Complex
 import green.sailor.kython.interpreter.util.plus
 import green.sailor.kython.interpreter.util.toComplex
-import kotlin.math.abs
 
-/**
- * Represents a Python float. This wraps a kotlin Double (CPython wraps a C double,
- * so we're consistent there).
- */
-class PyFloat(override val wrapped: Double) : PyPrimitive(), PyNumeric<Double, PyFloat, PyFloat>,
-    Comparable<PyFloat> {
-    override fun unwrap(): Double = wrapped
-
-    private val _floatStr by lazy {
-        PyString(wrapped.toString())
-    }
-
-    override fun pyToStr(): PyString = _floatStr
-    override fun pyGetRepr(): PyString = _floatStr
-
-    // NaN is truthy?
-    override fun pyToBool(): PyBool = PyBool.get(wrapped != 0.0)
-
-    override fun pyToInt(): PyInt = PyInt(wrapped.toLong())
-
-    override fun pyToFloat(): PyFloat = this
+class PyComplex(override val wrapped: Complex) :
+    PyNumeric<Complex, PyComplex, PyComplex>,
+    Comparable<PyComplex>, PyPrimitive() {
 
     override fun pyEquals(other: PyObject): PyObject {
         if (other is PyNumeric<*, *, *>) return PyBool.get(other.compareTo(this) == 0)
@@ -71,14 +53,22 @@ class PyFloat(override val wrapped: Double) : PyPrimitive(), PyNumeric<Double, P
         return PyNotImplemented
     }
 
+    private val complexStr by lazy { PyString(wrapped.toString()) }
+
+    override fun pyToStr(): PyString = complexStr
+    override fun pyGetRepr(): PyString = complexStr
+
+    override fun pyToBool(): PyBool = PyBool.get(wrapped.real != 0.0 || wrapped.imaginary != 0.0)
+
     override fun pyPositive(): PyObject {
-        if (wrapped > 0) return this
-        return PyFloat(abs(wrapped))
+        // ??
+        return PyFloat(wrapped.abs)
     }
 
     override fun pyNegative(): PyObject {
-        if (wrapped < 0) return this
-        return PyFloat(-wrapped)
+        // Weird flip, but alright.
+        val comp = wrapped.copy(real = -wrapped.real, imaginary = -wrapped.imaginary)
+        return PyComplex(comp)
     }
 
     override fun pyAdd(other: PyObject, reverse: Boolean): PyObject {
@@ -101,50 +91,59 @@ class PyFloat(override val wrapped: Double) : PyPrimitive(), PyNumeric<Double, P
         return PyNotImplemented
     }
 
+    override fun unwrap(): Complex = wrapped
+
     override fun hashCode() = wrapped.hashCode()
 
-    override fun compareTo(other: PyInt): Int = other.wrapped.compareTo(wrapped)
+    override fun compareTo(other: PyInt): Int =
+        wrapped.compareTo(other.wrapped.toDouble().toComplex())
 
-    override fun compareTo(other: PyFloat): Int = other.wrapped.compareTo(wrapped)
+    override fun compareTo(other: PyFloat): Int = wrapped.compareTo(other.wrapped.toComplex())
 
-    override fun compareTo(other: PyComplex): Int = other.wrapped.compareTo(wrapped.toComplex())
+    override fun compareTo(other: PyComplex): Int = wrapped.compareTo(other.wrapped)
 
-    override fun plus(other: PyFloat): PyFloat = PyFloat(wrapped + other.wrapped)
+    override fun plus(other: PyFloat): PyComplex = PyComplex(other.wrapped.plus(wrapped))
 
-    override fun plus(other: PyInt): PyFloat = PyFloat(wrapped + other.wrapped)
+    override fun plus(other: PyInt): PyComplex = PyComplex(wrapped + other.wrapped.toComplex())
 
     override fun plus(other: PyComplex): PyComplex = PyComplex(wrapped.plus(other.wrapped))
 
-    override fun times(other: PyFloat): PyFloat = PyFloat(wrapped * other.wrapped)
+    override fun times(other: PyFloat): PyComplex = PyComplex(wrapped * other.wrapped)
 
-    override fun times(other: PyInt): PyFloat = PyFloat(wrapped * other.wrapped)
+    override fun times(other: PyInt): PyComplex = PyComplex(wrapped * other.wrapped.toComplex())
 
     override fun times(other: PyComplex): PyComplex = PyComplex(other.wrapped * wrapped)
 
-    override fun leftHandMinus(actualObj: PyFloat) = PyFloat(actualObj.wrapped - wrapped)
+    override fun leftHandMinus(actualObj: PyFloat): PyComplex =
+        PyComplex(actualObj.wrapped.toComplex() - wrapped)
 
     override fun leftHandMinus(actualObj: PyComplex): PyComplex =
-        PyComplex(actualObj.wrapped - wrapped.toComplex())
+        PyComplex(actualObj.wrapped - wrapped)
 
-    override fun leftHandMinus(actualObj: PyInt): PyFloat = PyFloat(actualObj.wrapped - wrapped)
+    override fun leftHandMinus(actualObj: PyInt): PyComplex =
+        PyComplex(actualObj.wrapped.toComplex() - wrapped)
 
-    override fun leftHandDiv(actualObj: PyFloat): PyFloat = PyFloat(actualObj.wrapped / wrapped)
+    override fun leftHandDiv(actualObj: PyFloat): PyComplex =
+        PyComplex(actualObj.wrapped.toComplex() / wrapped)
 
     override fun leftHandDiv(actualObj: PyComplex): PyComplex =
-        PyComplex(actualObj.wrapped / wrapped.toComplex())
+        PyComplex(actualObj.wrapped / wrapped)
 
-    override fun leftHandDiv(actualObj: PyInt): PyFloat =
-        PyFloat(actualObj.wrapped.toDouble() / wrapped)
+    override fun leftHandDiv(actualObj: PyInt): PyComplex =
+        PyComplex(actualObj.wrapped.toComplex() / wrapped)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is PyFloat) return false
+        if (javaClass != other?.javaClass) return false
+
+        other as PyComplex
+
         if (wrapped != other.wrapped) return false
 
         return true
     }
 
     override var type: PyType
-        get() = PyFloatType
+        get() = PyComplexType
         set(_) = Exceptions.invalidClassSet(this)
 }

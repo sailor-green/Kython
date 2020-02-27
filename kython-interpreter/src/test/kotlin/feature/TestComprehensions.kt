@@ -33,7 +33,7 @@ class `Test comprehensions` {
             result = [int(x) for x in ("1", "2", "3", "4")]
         """.trimIndent()
         val result = KythonInterpreter.testExec<PyList>(code).unwrap()
-        Assertions.assertTrue(result.map { it.cast<PyInt>().wrappedInt } == listOf(1L, 2L, 3L, 4L))
+        Assertions.assertTrue(result.map { it.cast<PyInt>().wrapped } == listOf(1L, 2L, 3L, 4L))
     }
 
     @Test
@@ -42,7 +42,7 @@ class `Test comprehensions` {
             result = {int(x) for x in ("1", "2", "3", "4")}
         """.trimIndent()
         val result = KythonInterpreter.testExec<PySet>(code).unwrap()
-        val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrappedInt }
+        val mapped = result.mapTo(mutableSetOf()) { it.cast<PyInt>().wrapped }
         Assertions.assertTrue(mapped == setOf(1L, 2L, 3L, 4L))
     }
 }
