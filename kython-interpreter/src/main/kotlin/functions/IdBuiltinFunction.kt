@@ -19,9 +19,9 @@ package green.sailor.kython.interpreter.functions
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.function.PyBuiltinFunction
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 
 /**
  * Represents the id() builtin function.

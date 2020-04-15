@@ -23,6 +23,8 @@ import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.pyobject.*
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.SliceAwareRange
 import green.sailor.kython.interpreter.util.cast
 import green.sailor.kython.interpreter.util.center
@@ -161,7 +163,7 @@ object PyStringType : PyType("str") {
         val width = kwargs["width"].cast<PyInt>()
         val fillchar = kwargs["fillchar"]?.cast<PyString>()!!
         val actualChar = fillchar.wrappedString.single()
-        val centered = kwargs.selfWrappedString.center(width.wrappedInt, actualChar)
+        val centered = kwargs.selfWrappedString.center(width.wrapped, actualChar)
 
         return PyString(centered)
     }
@@ -306,7 +308,7 @@ object PyStringType : PyType("str") {
         MethodParam("width", "POSITIONAL")
     )
     fun pyStrZFill(kwargs: Map<String, PyObject>): PyString {
-        val width = kwargs["width"].cast<PyInt>().wrappedInt
+        val width = kwargs["width"].cast<PyInt>().wrapped
         return PyString(kwargs.selfWrappedString.padStart(width.toInt(), '0'))
     }
 

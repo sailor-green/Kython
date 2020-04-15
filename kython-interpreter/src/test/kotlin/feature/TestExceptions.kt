@@ -18,7 +18,7 @@
 package green.sailor.kython.test.feature
 
 import green.sailor.kython.interpreter.KythonInterpreter
-import green.sailor.kython.interpreter.pyobject.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.test.helpers.assertTrue
 import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Test

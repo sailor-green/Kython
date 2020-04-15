@@ -40,7 +40,7 @@ fun UserCodeStackFrame.jumpForward(arg: Byte) {
  */
 fun UserCodeStackFrame.popJumpIf(arg: Byte, compare: Boolean) {
     val tos = stack.pop()
-    if (tos.pyToBool().wrapped == compare) {
+    if (tos.pyToBool().wrappedBool == compare) {
         bytecodePointer = arg.toInt() / 2
     } else {
         // move onto the next instruction

@@ -17,12 +17,12 @@
 
 package green.sailor.kython.interpreter.pyobject.collection
 
-import green.sailor.kython.interpreter.pyobject.PyBool
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyPrimitive
 import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 
 /**
  * Superclass for basic collections. Contains base overrides common to all collection types.
@@ -39,6 +39,8 @@ abstract class PyCollection(val subobjects: Collection<PyObject>) : PyPrimitive(
         return PyBool.get(other in subobjects)
     }
 
-    override fun pyLengthHint(): PyInt = PyInt(subobjects.size.toLong())
-    override fun pyLen(): PyInt = PyInt(subobjects.size.toLong())
+    override fun pyLengthHint(): PyInt =
+        PyInt(subobjects.size.toLong())
+    override fun pyLen(): PyInt =
+        PyInt(subobjects.size.toLong())
 }

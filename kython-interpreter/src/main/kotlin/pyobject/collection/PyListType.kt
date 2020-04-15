@@ -23,6 +23,7 @@ import green.sailor.kython.interpreter.callable.EMPTY
 import green.sailor.kython.interpreter.callable.PyCallableSignature
 import green.sailor.kython.interpreter.indexError
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.pyobject.user.PyUserObject
 import green.sailor.kython.interpreter.toNativeList
 import green.sailor.kython.interpreter.util.cast
@@ -82,7 +83,7 @@ object PyListType : PyType("list") {
         return if (indexArg === EMPTY) {
             (self.subobjects as MutableList).removeAt(self.subobjects.size - 1)
         } else {
-            val idx = indexArg.cast<PyInt>().wrappedInt.toInt()
+            val idx = indexArg.cast<PyInt>().wrapped.toInt()
             val realIdx = self.getRealIndex(idx)
             if (!self.verifyIndex(realIdx)) {
                 indexError("list index $idx is out of range (list size: ${self.subobjects.size})")

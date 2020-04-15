@@ -21,7 +21,7 @@ import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.KyError
 import green.sailor.kython.interpreter.KythonInterpreter
 import green.sailor.kython.interpreter.pyError
-import green.sailor.kython.interpreter.pyobject.PyInt
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.test.helpers.assertUnwrappedEquals
 import green.sailor.kython.test.helpers.testExec
 import org.junit.jupiter.api.Assertions

@@ -15,33 +15,34 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject.iterators
+package green.sailor.kython.interpreter.pyobject.types
 
 import green.sailor.kython.interpreter.callable.ArgType
 import green.sailor.kython.interpreter.callable.PyCallableSignature
-import green.sailor.kython.interpreter.pyobject.PyNone
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyComplex
+import green.sailor.kython.interpreter.pyobject.numeric.PyFloat
 import green.sailor.kython.interpreter.pyobject.numeric.PyInt
-import green.sailor.kython.interpreter.util.cast
+import green.sailor.kython.interpreter.util.toComplex
 
-object PyRangeType : PyType("range") {
+object PyComplexType : PyType("complex") {
     override fun newInstance(kwargs: Map<String, PyObject>): PyObject {
-        val argStart = kwargs["start"].cast<PyInt>()
-        val argStop = kwargs["stop"] ?: error("Built-in signature mismatch!")
-        return if (argStop === PyNone) {
-            val start = PyInt.ZERO
-            val stop = argStart.cast<PyInt>()
-            PyRange(start, stop)
-        } else {
-            val stop = argStop.cast<PyInt>()
-            PyRange(argStart, stop)
+        return when (val value = kwargs["real"] ?: error("Built-in signature mismatch")) {
+            is PyInt -> PyComplex(value.wrapped.toComplex())
+            is PyFloat -> PyComplex(value.wrapped.toComplex())
+            is PyBool -> PyComplex(value.wrapped.toComplex())
+            else -> TODO()
         }
     }
 
-    override val signature: PyCallableSignature = PyCallableSignature(
-        "start" to ArgType.POSITIONAL,
-        "stop" to ArgType.POSITIONAL,
-        "step" to ArgType.POSITIONAL
-    ).withDefaults("stop" to PyNone, "step" to PyNone)
+    override val signature: PyCallableSignature by lazy {
+        PyCallableSignature(
+            "real" to ArgType.POSITIONAL,
+            "imag" to ArgType.POSITIONAL
+        ).withDefaults(
+            "real" to PyInt(0)
+        )
+    }
 }

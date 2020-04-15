@@ -18,10 +18,10 @@
 package green.sailor.kython.interpreter.pyobject.collection
 
 import green.sailor.kython.interpreter.indexError
-import green.sailor.kython.interpreter.pyobject.PyBool
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.util.cast
 
 /**
@@ -54,7 +54,7 @@ abstract class PyContainer(subobjects: List<PyObject>) :
     }
 
     override fun pyGetItem(idx: PyObject): PyObject {
-        val initial = idx.cast<PyInt>().wrappedInt.toInt()
+        val initial = idx.cast<PyInt>().wrapped.toInt()
         val realIdx = getRealIndex(initial)
         if (!verifyIndex(realIdx)) {
             indexError("list index $realIdx is out of range (list size: ${subobjects.size})")
@@ -68,7 +68,7 @@ abstract class PyContainer(subobjects: List<PyObject>) :
     override fun pyEquals(other: PyObject): PyObject {
         if (other !is PyContainer) return PyNotImplemented
         return PyBool.get(subobjects.zip(other.subobjects).all {
-            it.first.pyEquals(it.second).pyToBool().wrapped
+            it.first.pyEquals(it.second).pyToBool().wrappedBool
         })
     }
 }

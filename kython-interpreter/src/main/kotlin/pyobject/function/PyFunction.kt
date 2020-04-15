@@ -19,6 +19,7 @@ package green.sailor.kython.interpreter.pyobject.function
 
 import green.sailor.kython.interpreter.callable.PyCallable
 import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 
 /**
  * Represents a Python function instance.

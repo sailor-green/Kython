@@ -22,10 +22,10 @@ import green.sailor.kython.generation.generated.dirSlotted
 import green.sailor.kython.generation.generated.getattrSlotted
 import green.sailor.kython.generation.generated.setattrSlotted
 import green.sailor.kython.interpreter.Exceptions
-import green.sailor.kython.interpreter.pyobject.PyInt
 import green.sailor.kython.interpreter.pyobject.PyObject
 import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.PyUndicted
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 
 /**
  * Represents the range() builtin.

@@ -15,21 +15,26 @@
  * along with kython.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package green.sailor.kython.interpreter.pyobject
+package green.sailor.kython.interpreter.pyobject.numeric
 
 import green.sailor.kython.interpreter.Exceptions
+import green.sailor.kython.interpreter.pyobject.PyObject
+import green.sailor.kython.interpreter.pyobject.PyString
+import green.sailor.kython.interpreter.pyobject.PyType
 import green.sailor.kython.interpreter.pyobject.types.PyBoolType
 
 /**
  * Represents a Python boolean.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(intValue) {
+class PyBool private constructor(val wrappedBool: Boolean, intValue: Long) : PyInt(intValue) {
     companion object {
         // The TRUE instance of this.
-        val TRUE = PyBool(true, 1L)
+        val TRUE =
+            PyBool(true, 1L)
         // The FALSE instance of this.
-        val FALSE = PyBool(false, 1L)
+        val FALSE =
+            PyBool(false, 1L)
 
         /**
          * Gets the appropriate instance of a boolean from the specified JVM Boolean.
@@ -37,24 +42,30 @@ class PyBool private constructor(val wrapped: Boolean, intValue: Long) : PyInt(i
         fun get(b: Boolean) = if (b) TRUE else FALSE
     }
 
-    override fun unwrap(): Any = wrapped
+    override fun unwrap(): Any = wrappedBool
 
-    private val cachedTrueString = PyString("True")
-    private val cachedFalseString = PyString("False")
+    private val cachedTrueString =
+        PyString("True")
+    private val cachedFalseString =
+        PyString("False")
 
     override var type: PyType
         get() = PyBoolType
         set(_) = Exceptions.invalidClassSet(this)
 
-    override fun pyToStr(): PyString = if (wrapped) cachedTrueString else cachedFalseString
+    override fun pyToStr(): PyString = if (wrappedBool) cachedTrueString else cachedFalseString
     override fun pyGetRepr(): PyString = pyToStr()
     override fun pyToBool(): PyBool = this
-    override fun pyToInt(): PyInt = if (wrapped) ONE else ZERO
-    override fun pyEquals(other: PyObject): PyObject = get(this === other)
+    override fun pyToInt(): PyInt = if (wrappedBool) ONE else ZERO
+    override fun pyEquals(other: PyObject): PyObject =
+        get(
+            this === other
+        )
 
     /**
      * Inverts this PyBool.
      */
-    fun invert(): PyBool = if (wrapped) FALSE else TRUE
+    fun invert(): PyBool = if (wrappedBool) FALSE else TRUE
+
     operator fun not() = invert()
 }

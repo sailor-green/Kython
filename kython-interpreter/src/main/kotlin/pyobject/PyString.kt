@@ -20,6 +20,9 @@ package green.sailor.kython.interpreter.pyobject
 import green.sailor.kython.interpreter.Exceptions
 import green.sailor.kython.interpreter.pyobject.iterators.PyBuiltinIterator
 import green.sailor.kython.interpreter.pyobject.iterators.PyEmptyIterator
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
+import green.sailor.kython.interpreter.pyobject.numeric.PyFloat
+import green.sailor.kython.interpreter.pyobject.numeric.PyInt
 import green.sailor.kython.interpreter.pyobject.types.PyStringType
 import green.sailor.kython.interpreter.valueError
 
@@ -75,7 +78,7 @@ class PyString private constructor(val wrappedString: String) : PyPrimitive() {
     }
     override fun pyMul(other: PyObject, reverse: Boolean): PyObject {
         if (other !is PyInt) return PyNotImplemented
-        return PyString(wrappedString.repeat(other.wrappedInt.toInt()))
+        return PyString(wrappedString.repeat(other.wrapped.toInt()))
     }
     override fun pyContains(other: PyObject): PyObject {
         if (other !is PyString) return PyNotImplemented
@@ -98,7 +101,8 @@ class PyString private constructor(val wrappedString: String) : PyPrimitive() {
         })
     }
 
-    override fun pyLen(): PyInt = PyInt(wrappedString.length.toLong())
+    override fun pyLen(): PyInt =
+        PyInt(wrappedString.length.toLong())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

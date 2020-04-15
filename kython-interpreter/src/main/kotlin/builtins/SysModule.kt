@@ -29,6 +29,7 @@ import green.sailor.kython.interpreter.pyobject.collection.PySet
 import green.sailor.kython.interpreter.pyobject.collection.PyTuple
 import green.sailor.kython.interpreter.pyobject.dict.PyDict
 import green.sailor.kython.interpreter.pyobject.module.PyBuiltinModule
+import green.sailor.kython.interpreter.pyobject.numeric.PyFloat
 import green.sailor.kython.interpreter.toPyObject
 import green.sailor.kython.interpreter.util.StringDictWrapper
 import green.sailor.kython.interpreter.util.mapBackedSet
@@ -58,7 +59,8 @@ object SysModule : PyBuiltinModule("sys") {
 
     // == sys object methods == //
     @ExposeMethod("getswitchinterval")
-    fun getSwitchInterval(args: Map<String, PyObject>): PyFloat = PyFloat(0.0)
+    fun getSwitchInterval(args: Map<String, PyObject>): PyFloat =
+        PyFloat(0.0)
 
     override fun pyGetAttribute(name: String): PyObject = getattrSlotted(name)
     override fun pySetAttribute(name: String, value: PyObject): PyObject =

@@ -18,13 +18,15 @@
 package green.sailor.kython.interpreter
 
 import green.sailor.kython.interpreter.functions.*
-import green.sailor.kython.interpreter.pyobject.*
+import green.sailor.kython.interpreter.pyobject.PyNone
+import green.sailor.kython.interpreter.pyobject.PyNotImplemented
 import green.sailor.kython.interpreter.pyobject.collection.PyListType
 import green.sailor.kython.interpreter.pyobject.collection.PyTupleType
 import green.sailor.kython.interpreter.pyobject.dict.PyDictType
 import green.sailor.kython.interpreter.pyobject.function.PyClassmethod
 import green.sailor.kython.interpreter.pyobject.function.PyStaticmethod
 import green.sailor.kython.interpreter.pyobject.iterators.PyRangeType
+import green.sailor.kython.interpreter.pyobject.numeric.PyBool
 import green.sailor.kython.interpreter.pyobject.types.*
 
 /**
@@ -50,6 +52,7 @@ object Builtins {
     val INT_TYPE = PyIntType
     val STRING_TYPE = PyStringType
     val FLOAT_TYPE = PyFloatType
+    val COMPLEX_TYPE = PyComplexType
     val NONE = PyNone
     val NONE_TYPE = PyNoneType
     val NOT_IMPLEMENTED = PyNotImplemented
@@ -104,5 +107,5 @@ object Builtins {
         "True" to PyBool.TRUE,
         "False" to PyBool.FALSE,
         "NotImplemented" to NOT_IMPLEMENTED
-    ).apply { this.putAll(Exceptions.EXCEPTION_MAP) }
+    ).apply { putAll(Exceptions.EXCEPTION_MAP) }
 }
